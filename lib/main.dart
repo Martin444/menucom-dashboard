@@ -1,9 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pickmeup_dashboard/core/config.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/pages/login_page.dart';
+import 'package:pickmeup_dashboard/routes/routes.dart';
+import 'package:pu_material/pu_material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'core/injection_bindings.dart';
+import 'routes/pages.dart';
 
 void main() {
+  getToken();
   runApp(const MyApp());
+}
+
+final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+Future<String?> getToken() async {
+  var prefs = await _prefs;
+  var token = prefs.getString('acccesstoken');
+  if (token != null) {
+    ACCESS_TOKEN = token;
+  }
+  return token;
 }
 
 class MyApp extends StatelessWidget {
@@ -12,61 +31,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Pickme Up Dashboard',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: PUColors.primaryColor,
+        ),
         useMaterial3: true,
       ),
-      home: const LoginPage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      initialRoute: PURoutes.LOGIN,
+      getPages: PUPages.listPages,
+      initialBinding: MainBindings(),
     );
   }
 }

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pickmeup_dashboard/features/login/presentation/controllers/login_controller.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
-import 'package:pu_material/utils/pu_colors.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+import '../controllers/login_controller.dart';
+
+class ChangePasswordPage extends StatefulWidget {
+  const ChangePasswordPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,32 +38,35 @@ class _LoginPageState extends State<LoginPage> {
                         height: 20,
                       ),
                       PUInput(
-                        labelText: 'Email',
-                        hintText: 'Escribe el email',
-                        controller: _.emailController,
-                        errorText: _.errorTextEmail?.value.isEmpty ?? false
-                            ? null
-                            : _.errorTextEmail!.value,
+                        labelText: 'Nueva contraseña',
+                        hintText: 'Ingresa una contraseña',
+                        isPassword: true,
+                        controller: _.newPassController,
                       ),
                       const SizedBox(
                         height: 20,
                       ),
                       PUInput(
-                        labelText: 'Contraseña',
-                        hintText: 'Contraseña',
+                        labelText: 'Repite la contraseña',
+                        hintText: 'Ingresa una contraseña',
                         isPassword: true,
-                        errorText: _.errorTextPassword.value.isEmpty
+                        errorText: _.errorRepitPass?.value.isEmpty ?? false
                             ? null
-                            : _.errorTextPassword.value,
-                        controller: _.passwordController,
+                            : _.errorRepitPass!.value,
+                        controller: _.newPassRepitController,
+                        onChanged: (p0) {
+                          _.validateRepitePass();
+                        },
                       ),
                       const SizedBox(
                         height: 40,
                       ),
                       ButtonPrimary(
-                        title: 'Inicia sesión',
+                        title: 'Cambiar contraseña',
                         onPressed: () {
-                          _.loginWithEmailandPassword();
+                          if (_.errorRepitPass!.value.isEmpty) {
+                            _.changePasswordCommerce();
+                          }
                         },
                         load: _.isLogging.value,
                       ),
