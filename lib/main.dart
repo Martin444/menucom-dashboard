@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/config.dart';
-import 'package:pickmeup_dashboard/features/login/presentation/pages/login_page.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,7 +39,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialRoute: PURoutes.LOGIN,
+      initialRoute: PURoutes.HOME,
       getPages: PUPages.listPages,
       initialBinding: MainBindings(),
     );

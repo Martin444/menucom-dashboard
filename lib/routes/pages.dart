@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
-import 'package:pickmeup_dashboard/features/home/pages/home_page.dart';
+import 'package:pickmeup_dashboard/core/middlewares/auth_middleware.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinning_binding.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/pages/create_item_page.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/pages/home_page.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/controllers/login_bindings.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/pages/change_password_page.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/pages/login_page.dart';
@@ -23,8 +26,20 @@ class PUPages {
     ),
     GetPage(
       name: PURoutes.HOME,
+      middlewares: [
+        AuthMiddleware(),
+      ],
       page: () => const HomePage(),
-      bindings: [],
+      bindings: [
+        DinningBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.REGISTER_ITEM_MENU,
+      page: () => const CreateItemPage(),
+      bindings: [
+        DinningBinding(),
+      ],
     ),
   ];
 }
