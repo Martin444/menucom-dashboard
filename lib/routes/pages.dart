@@ -30,12 +30,14 @@ class PUPages {
         AuthMiddleware(),
       ],
       page: () => const HomePage(),
+      transition: Transition.fadeIn,
       bindings: [
         DinningBinding(),
       ],
     ),
     GetPage(
       name: PURoutes.REGISTER_ITEM_MENU,
+      transition: Transition.fadeIn,
       page: () => const CreateItemPage(),
       bindings: [
         DinningBinding(),
