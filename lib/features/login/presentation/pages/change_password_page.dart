@@ -26,7 +26,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               children: [
                 Container(
                   alignment: Alignment.center,
-                  constraints: BoxConstraints(
+                  constraints: const BoxConstraints(
                     maxWidth: 400,
                   ),
                   child: Column(

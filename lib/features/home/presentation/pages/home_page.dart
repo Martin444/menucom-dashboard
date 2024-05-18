@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pickmeup_dashboard/core/config.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_item_tile.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
@@ -51,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                   Column(
                     children: [
                       Image.asset(PUImages.dashLogo),
-                      SizedBox(
+                      const SizedBox(
                         height: 40,
                       ),
                       ItemDrawMenu(
@@ -104,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
                                         children: [
-                                          Container(
+                                          SizedBox(
                                             width: 300,
                                             child: ButtonPrimary(
                                               title: 'Agrega un plato',
@@ -167,63 +166,61 @@ class _HomePageState extends State<HomePage> {
                               flex: 1,
                               child: GetBuilder<DinningController>(
                                 builder: (_) {
-                                  return Container(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Text(
-                                              'Edita tu plato en el menu del dia',
-                                              style: PuTextStyle.title3,
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Image.network(
-                                              _.photoController,
-                                              width: double.infinity,
-                                              height: 150,
-                                              fit: BoxFit.cover,
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            PUInput(
-                                              labelText: 'Nombre del plato',
-                                              controller: _.nameController,
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            PUInput(
-                                              labelText: 'Precio',
-                                              controller: _.priceController,
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            PUInput(
-                                              labelText:
-                                                  'Tiempo de preparación (en minutos)',
-                                              controller: _.deliveryController,
-                                            ),
-                                          ],
-                                        ),
-                                        Column(
-                                          children: [
-                                            ButtonPrimary(
-                                              title: 'Guardar cambios',
-                                              onPressed: () {
-                                                _.editItemMenu();
-                                              },
-                                              load: _.isEditProcess,
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
+                                  return Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text(
+                                            'Edita tu plato en el menu del dia',
+                                            style: PuTextStyle.title3,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Image.network(
+                                            _.photoController,
+                                            width: double.infinity,
+                                            height: 150,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          PUInput(
+                                            labelText: 'Nombre del plato',
+                                            controller: _.nameController,
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          PUInput(
+                                            labelText: 'Precio',
+                                            controller: _.priceController,
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          PUInput(
+                                            labelText:
+                                                'Tiempo de preparación (en minutos)',
+                                            controller: _.deliveryController,
+                                          ),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          ButtonPrimary(
+                                            title: 'Guardar cambios',
+                                            onPressed: () {
+                                              _.editItemMenu();
+                                            },
+                                            load: _.isEditProcess,
+                                          ),
+                                        ],
+                                      )
+                                    ],
                                   );
                                 },
                               ),

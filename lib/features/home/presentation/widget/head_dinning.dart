@@ -25,7 +25,7 @@ class HeadDinning extends StatelessWidget {
                   '${_.dinningLogin.name}',
                   style: PuTextStyle.title3,
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 CircleAvatar(

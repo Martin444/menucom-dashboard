@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/controllers/login_controller.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
-import 'package:pu_material/utils/pu_colors.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -26,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Container(
                   alignment: Alignment.center,
-                  constraints: BoxConstraints(
+                  constraints: const BoxConstraints(
                     maxWidth: 400,
                   ),
                   child: Column(

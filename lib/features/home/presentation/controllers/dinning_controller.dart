@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -63,7 +61,7 @@ class DinningController extends GetxController {
         deliveryTime: int.tryParse(deliveryController.text),
         price: int.tryParse(priceController.text),
       );
-      var item = await PutMenuItemUsesCases().execute(
+      await PutMenuItemUsesCases().execute(
         newItem,
       );
       isEditProcess = false;
@@ -75,7 +73,6 @@ class DinningController extends GetxController {
           .toList();
       setDataToEditItem(detectItem.first);
     } catch (e) {
-      print('Error creando Item $e');
       setDataToEditItem(menusToEdit);
     }
   }
@@ -132,7 +129,6 @@ class DinningController extends GetxController {
       var responUrl = await UploadFileUsesCase().execute(file);
       return responUrl;
     } catch (e) {
-      print('Error al craer imagen: $e');
       rethrow;
     }
   }
@@ -145,14 +141,13 @@ class DinningController extends GetxController {
         deliveryTime: int.tryParse(newdeliveryController.text),
         price: int.tryParse(newpriceController.text),
       );
-      var item = await PostMenuItemUsesCases().execute(
+      await PostMenuItemUsesCases().execute(
         menusList[0].id ?? '',
         newItem,
       );
-      print(item);
       Get.toNamed(PURoutes.HOME);
     } catch (e) {
-      print('Error creando Item $e');
+      rethrow;
     }
   }
 

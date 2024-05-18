@@ -31,7 +31,6 @@ class LoginController extends GetxController {
         passwordController.text,
       );
       ACCESS_TOKEN = responseLogin.accessToken;
-      print(responseLogin.accessToken);
 
       var sharedToken = await _prefs;
       sharedToken.setString('acccesstoken', ACCESS_TOKEN);
@@ -46,7 +45,6 @@ class LoginController extends GetxController {
       update();
     } on ApiException catch (e) {
       isLogging.value = false;
-      print(e);
       if (e.statusCode == 401) {
         errorTextEmail?.value = '';
         errorTextPassword.value = e.message;
@@ -109,7 +107,6 @@ class LoginController extends GetxController {
       var responsePass = await ChangePasswordUseCase().execute(
         newPassRepitController.text,
       );
-      print(responsePass);
       if (responsePass) {
         errorRepitPass?.value = '';
         Get.toNamed(PURoutes.LOGIN);
