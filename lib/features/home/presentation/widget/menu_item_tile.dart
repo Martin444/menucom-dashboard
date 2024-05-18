@@ -19,86 +19,89 @@ class MenuItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 5,
-        horizontal: 10,
-      ),
-      decoration: BoxDecoration(
-        color: selected
-            ? PUColors.secundaryBackground
-            : PUColors.primaryBackground,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(0, 4),
-            color: Colors.black.withOpacity(0.4),
-            blurRadius: 4,
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {
+          onAddCart(item);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: 5,
+            horizontal: 10,
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Image.network(
-            item.photoUrl!,
-            height: 120,
-            width: double.infinity,
-            fit: BoxFit.cover,
+          decoration: BoxDecoration(
+            color: selected
+                ? PUColors.secundaryBackground
+                : PUColors.primaryBackground,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                offset: const Offset(0, 4),
+                color: Colors.black.withOpacity(0.4),
+                blurRadius: 4,
+              ),
+            ],
           ),
-          const SizedBox(
-            height: 4,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                PUOverflowTextDetector(
-                  message: item.name!,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Image.network(
+                item.photoUrl!,
+                height: 120,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    Text(
-                      item.name!,
-                      style: selected
-                          ? PuTextStyle.title3Withe
-                          : PuTextStyle.title3,
+                    PUOverflowTextDetector(
+                      message: item.name!,
+                      children: [
+                        Text(
+                          item.name!,
+                          style: selected
+                              ? PuTextStyle.title3Withe
+                              : PuTextStyle.title3,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: PUOverflowTextDetector(
+                            message: item.price!.toString().convertToCorrency(),
+                            children: [
+                              Text(
+                                item.price!.toString().convertToCorrency(),
+                                style: selected
+                                    ? PuTextStyle.title4
+                                    : PuTextStyle.description1,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    onAddCart(item);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: PUOverflowTextDetector(
-                          message: item.price!.toString().convertToCorrency(),
-                          children: [
-                            Text(
-                              item.price!.toString().convertToCorrency(),
-                              style: selected
-                                  ? PuTextStyle.title4
-                                  : PuTextStyle.description1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

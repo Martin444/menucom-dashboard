@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:pickmeup_dashboard/features/home/models/menu_item_model.dart';
+import 'package:pickmeup_dashboard/core/config.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_item_tile.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
@@ -48,8 +46,34 @@ class _HomePageState extends State<HomePage> {
                 color: PUColors.primaryColor,
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset(PUImages.dashLogo),
+                  Column(
+                    children: [
+                      Image.asset(PUImages.dashLogo),
+                      SizedBox(
+                        height: 40,
+                      ),
+                      ItemDrawMenu(
+                        icon: Icons.home_outlined,
+                        label: 'Inicio',
+                        isSelected: true,
+                        onRoute: () {},
+                      ),
+                      ItemDrawMenu(
+                        icon: Icons.attach_money_outlined,
+                        label: 'Ventas',
+                        onRoute: () {},
+                      ),
+                    ],
+                  ),
+                  ItemDrawMenu(
+                    icon: Icons.exit_to_app_outlined,
+                    label: 'Cerrar sesión',
+                    onRoute: () {
+                      dinning.closeSesion();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -85,8 +109,9 @@ class _HomePageState extends State<HomePage> {
                                             child: ButtonPrimary(
                                               title: 'Agrega un plato',
                                               onPressed: () {
-                                                Get.toNamed(PURoutes
-                                                    .REGISTER_ITEM_MENU);
+                                                Get.toNamed(
+                                                  PURoutes.REGISTER_ITEM_MENU,
+                                                );
                                               },
                                               load: false,
                                             ),
@@ -116,7 +141,9 @@ class _HomePageState extends State<HomePage> {
                                                   selected: _.menusList[0]
                                                           .items![index] ==
                                                       _.menusToEdit,
-                                                  onAddCart: (p0) {},
+                                                  onAddCart: (menu) {
+                                                    _.setDataToEditItem(menu);
+                                                  },
                                                 );
                                               },
                                             ),
@@ -188,8 +215,10 @@ class _HomePageState extends State<HomePage> {
                                           children: [
                                             ButtonPrimary(
                                               title: 'Guardar cambios',
-                                              onPressed: () {},
-                                              load: false,
+                                              onPressed: () {
+                                                _.editItemMenu();
+                                              },
+                                              load: _.isEditProcess,
                                             ),
                                           ],
                                         )
@@ -209,5 +238,55 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     });
+  }
+}
+
+class ItemDrawMenu extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool? isSelected;
+  final Function onRoute;
+  const ItemDrawMenu({
+    super.key,
+    required this.icon,
+    this.isSelected,
+    required this.label,
+    required this.onRoute,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {
+          onRoute();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          decoration: BoxDecoration(
+            color: isSelected ?? false
+                ? PUColors.secundaryBackground
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: PUColors.primaryBackground,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                label,
+                style: PuTextStyle.title3Withe,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

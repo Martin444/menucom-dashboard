@@ -41,7 +41,8 @@ class LoginController extends GetxController {
       } else {
         Get.toNamed(PURoutes.HOME);
       }
-
+      emailController.clear();
+      passwordController.clear();
       update();
     } on ApiException catch (e) {
       isLogging.value = false;

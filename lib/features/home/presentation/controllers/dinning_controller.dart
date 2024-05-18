@@ -1,5 +1,6 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart' as dio;
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +10,10 @@ import 'package:pickmeup_dashboard/features/home/data/usescases/post_menu_item_u
 import 'package:pickmeup_dashboard/features/home/data/usescases/upload_file_usescases.dart';
 import 'package:pickmeup_dashboard/features/home/models/dinning_model.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../core/config.dart';
+import '../../data/usescases/put_menu_item_usescases.dart';
 import '../../models/menu_item_model.dart';
 import '../../models/menu_model.dart';
 
@@ -20,9 +24,13 @@ class DinningController extends GetxController {
     try {
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
-      getmenuByDining(dinningLogin.id ?? '');
       update();
-    } catch (e) {}
+      menusToEdit = await getmenuByDining();
+      setDataToEditItem(menusToEdit);
+      update();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   List<MenuModel> menusList = <MenuModel>[];
@@ -38,17 +46,50 @@ class DinningController extends GetxController {
     priceController.text = menu.price!.toString();
     deliveryController.text = menu.deliveryTime!.toString();
     photoController = menu.photoUrl!;
+    menusToEdit = menu;
     update();
   }
 
-  void getmenuByDining(String dinnin) async {
+  bool isEditProcess = false;
+
+  void editItemMenu() async {
     try {
-      var respMenu = await GetMenuUseCase().execute(dinnin);
-      menusList.assignAll(respMenu);
-      menusToEdit = menusList[0].items![0];
-      setDataToEditItem(menusToEdit);
+      isEditProcess = true;
       update();
-    } catch (e) {}
+      var newItem = MenuItemModel(
+        id: menusToEdit.id,
+        name: nameController.text,
+        photoUrl: photoController,
+        deliveryTime: int.tryParse(deliveryController.text),
+        price: int.tryParse(priceController.text),
+      );
+      var item = await PutMenuItemUsesCases().execute(
+        newItem,
+      );
+      isEditProcess = false;
+
+      await getmenuByDining();
+      update();
+      var detectItem = menusList.first.items!
+          .where((item) => item.id == menusToEdit.id)
+          .toList();
+      setDataToEditItem(detectItem.first);
+    } catch (e) {
+      print('Error creando Item $e');
+      setDataToEditItem(menusToEdit);
+    }
+  }
+
+  Future<MenuItemModel> getmenuByDining() async {
+    try {
+      var respMenu = await GetMenuUseCase().execute(dinningLogin.id!);
+      menusList.assignAll(respMenu);
+      var firstMenuItem = menusList.first.items!.first;
+      update();
+      return firstMenuItem;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   TextEditingController newNameController = TextEditingController();
@@ -113,5 +154,14 @@ class DinningController extends GetxController {
     } catch (e) {
       print('Error creando Item $e');
     }
+  }
+
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  void closeSesion() async {
+    var sesion = await _prefs;
+    await sesion.clear();
+    ACCESS_TOKEN = '';
+    Get.toNamed(PURoutes.LOGIN);
+    update();
   }
 }
