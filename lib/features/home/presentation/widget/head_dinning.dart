@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinning_controller.dart';
 import 'package:pu_material/pu_material.dart';
@@ -24,6 +26,30 @@ class HeadDinning extends StatelessWidget {
                 Text(
                   '${_.dinningLogin.name}',
                   style: PuTextStyle.title3,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () {
+                      Clipboard.setData(
+                        ClipboardData(
+                          text: 'www.pickmeup.com/${_.dinningLogin.id}',
+                        ),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          dismissDirection: DismissDirection.up,
+                          content: Text('Se copió la URL correctamente'),
+                        ),
+                      );
+                    },
+                    child: const Icon(
+                      Icons.copy_all_outlined,
+                    ),
+                  ),
                 ),
                 const SizedBox(
                   width: 10,

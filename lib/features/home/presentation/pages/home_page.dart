@@ -186,21 +186,15 @@ class _HomePageState extends State<HomePage> {
                                             fit: BoxFit.cover,
                                           ),
                                           const SizedBox(
-                                            height: 20,
+                                            height: 0,
                                           ),
                                           PUInput(
                                             labelText: 'Nombre del plato',
                                             controller: _.nameController,
                                           ),
-                                          const SizedBox(
-                                            height: 20,
-                                          ),
                                           PUInput(
                                             labelText: 'Precio',
                                             controller: _.priceController,
-                                          ),
-                                          const SizedBox(
-                                            height: 20,
                                           ),
                                           PUInput(
                                             labelText:

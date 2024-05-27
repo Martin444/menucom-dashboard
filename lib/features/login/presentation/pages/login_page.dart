@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
                             : _.errorTextEmail!.value,
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 0,
                       ),
                       PUInput(
                         labelText: 'Contraseña',

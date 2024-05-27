@@ -85,6 +85,7 @@ class DinningController extends GetxController {
       update();
       return firstMenuItem;
     } catch (e) {
+      Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
       rethrow;
     }
   }
@@ -141,8 +142,9 @@ class DinningController extends GetxController {
         deliveryTime: int.tryParse(newdeliveryController.text),
         price: int.tryParse(newpriceController.text),
       );
+
       await PostMenuItemUsesCases().execute(
-        menusList[0].id ?? '',
+        menusList.isEmpty ? '' : menusList[0].id ?? '',
         newItem,
       );
       Get.toNamed(PURoutes.HOME);
