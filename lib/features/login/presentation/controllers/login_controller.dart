@@ -42,6 +42,8 @@ class LoginController extends GetxController {
       }
       emailController.clear();
       passwordController.clear();
+      errorTextEmail?.value = '';
+      errorTextPassword.value = '';
       update();
     } on ApiException catch (e) {
       isLogging.value = false;
