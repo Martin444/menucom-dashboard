@@ -26,6 +26,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Container(
                   alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   constraints: const BoxConstraints(
                     maxWidth: 400,
                   ),
@@ -34,11 +35,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Menu com v.$VERSION_APP',
-                        style: PuTextStyle.title1,
-                      ),
-                      Text(
-                        'API.$URL_PICKME_API',
+                        'Menu com',
                         style: PuTextStyle.title1,
                       ),
                       const SizedBox(
@@ -73,6 +70,13 @@ class _LoginPageState extends State<LoginPage> {
                           _.loginWithEmailandPassword();
                         },
                         load: _.isLogging.value,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Version: $VERSION_APP',
+                        style: PuTextStyle.title1,
                       ),
                     ],
                   ),
