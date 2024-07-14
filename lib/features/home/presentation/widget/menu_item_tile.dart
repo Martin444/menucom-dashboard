@@ -32,16 +32,16 @@ class MenuItemTile extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: selected
-                ? PUColors.secundaryBackground
-                : PUColors.primaryBackground,
+                ? PUColors.selectedItem.withOpacity(0.5)
+                : PUColors.bgItem.withOpacity(0.3),
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                offset: const Offset(0, 4),
-                color: Colors.black.withOpacity(0.4),
-                blurRadius: 4,
-              ),
-            ],
+            // boxShadow: [
+            //   BoxShadow(
+            //     offset: const Offset(0, 4),
+            //     color: Colors.black.withOpacity(0.2),
+            //     blurRadius: 21,
+            //   ),
+            // ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,9 +68,7 @@ class MenuItemTile extends StatelessWidget {
                       children: [
                         Text(
                           item.name!,
-                          style: selected
-                              ? PuTextStyle.title3Withe
-                              : PuTextStyle.title3,
+                          style: PuTextStyle.title3,
                         ),
                       ],
                     ),
@@ -87,9 +85,7 @@ class MenuItemTile extends StatelessWidget {
                             children: [
                               Text(
                                 item.price!.toString().convertToCorrency(),
-                                style: selected
-                                    ? PuTextStyle.title4
-                                    : PuTextStyle.description1,
+                                style: PuTextStyle.description1,
                               ),
                             ],
                           ),

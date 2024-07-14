@@ -34,6 +34,10 @@ class MyApp extends StatelessWidget {
       title: 'Pickme Up Dashboard',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        drawerTheme: DrawerThemeData(
+          elevation: 0,
+          shadowColor: Colors.transparent,
+        ),
         colorScheme: ColorScheme.fromSeed(
           seedColor: PUColors.primaryColor,
         ),
