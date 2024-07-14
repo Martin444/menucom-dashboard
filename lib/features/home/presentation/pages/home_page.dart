@@ -4,7 +4,6 @@ import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinnin
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_item_tile.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 
 import '../widget/head_dinning.dart';

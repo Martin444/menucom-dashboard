@@ -25,6 +25,7 @@ class LoginController extends GetxController {
     try {
       isLogging.value = true;
       update();
+      print(URL_PICKME_API);
 
       var responseLogin = await LoginUserUseCase().execute(
         emailController.text,
