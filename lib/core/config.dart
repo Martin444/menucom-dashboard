@@ -6,3 +6,4 @@ const String URL_PICKME_API = String.fromEnvironment(
 );
 
 String ACCESS_TOKEN = '';
+String VERSION_APP = '';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pickmeup_dashboard/core/config.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/controllers/login_controller.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
@@ -33,7 +34,11 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Menu com',
+                        'Menu com v.$VERSION_APP',
+                        style: PuTextStyle.title1,
+                      ),
+                      Text(
+                        'API.$URL_PICKME_API',
                         style: PuTextStyle.title1,
                       ),
                       const SizedBox(

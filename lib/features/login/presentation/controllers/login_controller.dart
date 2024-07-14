@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/features/login/data/usecase/change_password_usescase.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
@@ -20,6 +21,17 @@ class LoginController extends GetxController {
 
   RxBool isLogging = false.obs;
   RxBool isValidInit = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    _initVersion();
+  }
+
+  _initVersion() async {
+    VERSION_APP = await McFunctions.getReleaseVersion();
+  }
 
   Future<void> loginWithEmailandPassword() async {
     try {
