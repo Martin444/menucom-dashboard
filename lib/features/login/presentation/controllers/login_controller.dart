@@ -24,13 +24,13 @@ class LoginController extends GetxController {
 
   @override
   void onInit() {
-    super.onInit();
-
     _initVersion();
+    super.onInit();
   }
 
   _initVersion() async {
     VERSION_APP = await McFunctions.getReleaseVersion();
+    update();
   }
 
   Future<void> loginWithEmailandPassword() async {
