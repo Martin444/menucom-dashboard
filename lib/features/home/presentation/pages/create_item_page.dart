@@ -73,9 +73,14 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                           borderRadius:
                                               BorderRadius.circular(10),
                                         ),
-                                        child: Icon(
-                                          Icons.camera_enhance,
-                                          color: PUColors.textColor1,
+                                        child: Column(
+                                          children: [
+                                            Icon(
+                                              Icons.camera_enhance,
+                                              color: PUColors.textColor1,
+                                            ),
+                                            Text('Carga una imagen'),
+                                          ],
                                         ),
                                       )
                                     : ClipRRect(
@@ -93,7 +98,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                               height: 20,
                             ),
                             PUInput(
-                              labelText: 'Nombre del plato',
+                              labelText: 'Nombre',
                               controller: _.newNameController,
                             ),
                             const SizedBox(
@@ -117,7 +122,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                         Column(
                           children: [
                             ButtonPrimary(
-                              title: 'Crear plato',
+                              title: 'Crear',
                               onPressed: () {
                                 _.createMenuItemInServer();
                               },

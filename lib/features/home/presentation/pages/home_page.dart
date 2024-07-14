@@ -49,7 +49,10 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Column(
                     children: [
-                      Image.asset(PUImages.dashLogo),
+                      Text(
+                        'Menu com',
+                        style: PuTextStyle.title1,
+                      ),
                       const SizedBox(
                         height: 40,
                       ),
@@ -57,6 +60,16 @@ class _HomePageState extends State<HomePage> {
                         icon: Icons.home_outlined,
                         label: 'Inicio',
                         isSelected: true,
+                        onRoute: () {},
+                      ),
+                      ItemDrawMenu(
+                        icon: Icons.attach_money_outlined,
+                        label: 'Ordenes',
+                        onRoute: () {},
+                      ),
+                      ItemDrawMenu(
+                        icon: Icons.attach_money_outlined,
+                        label: 'Usuarios',
                         onRoute: () {},
                       ),
                       ItemDrawMenu(

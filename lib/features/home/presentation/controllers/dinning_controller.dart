@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pickmeup_dashboard/core/exceptions/api_exception.dart';
 import 'package:pickmeup_dashboard/features/home/data/usescases/get_dinning_usescases.dart';
 import 'package:pickmeup_dashboard/features/home/data/usescases/get_menu_dinning.dart';
 import 'package:pickmeup_dashboard/features/home/data/usescases/post_menu_item_usescases.dart';
 import 'package:pickmeup_dashboard/features/home/data/usescases/upload_file_usescases.dart';
 import 'package:pickmeup_dashboard/features/home/models/dinning_model.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
+import 'package:pu_material/utils/pu_colors.dart';
+import 'package:pu_material/utils/style/pu_style_fonts.dart';
+import 'package:pu_material/widgets/dialogs/warning_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/config.dart';
@@ -26,9 +30,7 @@ class DinningController extends GetxController {
       menusToEdit = await getmenuByDining();
       setDataToEditItem(menusToEdit);
       update();
-    } catch (e) {
-      rethrow;
-    }
+    } catch (e) {}
   }
 
   List<MenuModel> menusList = <MenuModel>[];
@@ -84,8 +86,11 @@ class DinningController extends GetxController {
       var firstMenuItem = menusList.first.items!.first;
       update();
       return firstMenuItem;
-    } catch (e) {
-      Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
+    } on ApiException catch (e) {
+      if (e.statusCode == 404) {
+        Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
+        Get.dialog(const WarningDialog());
+      }
       rethrow;
     }
   }
