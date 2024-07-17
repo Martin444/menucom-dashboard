@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinning_controller.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/share_link_menu_dialog.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 
 class HeadDinning extends StatelessWidget {
@@ -27,7 +27,7 @@ class HeadDinning extends StatelessWidget {
                       onTap: () {
                         Scaffold.of(context).openDrawer();
                       },
-                      child: Icon(Icons.menu_rounded),
+                      child: const Icon(Icons.menu_rounded),
                     ),
                   ],
                 ),
@@ -49,20 +49,15 @@ class HeadDinning extends StatelessWidget {
                       cursor: SystemMouseCursors.click,
                       child: GestureDetector(
                         onTap: () {
-                          Clipboard.setData(
-                            ClipboardData(
-                              text: 'www.pickmeup.com/${_.dinningLogin.id}',
-                            ),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              dismissDirection: DismissDirection.up,
-                              content: Text('Se copió la URL correctamente'),
+                          Get.dialog(
+                            ShareLinkMenuDialog(
+                              idMenu: _.dinningLogin.id ?? '',
                             ),
                           );
                         },
                         child: const Icon(
-                          Icons.copy_all_outlined,
+                          Icons.share_rounded,
+                          // Icons.copy_all_outlined,
                         ),
                       ),
                     ),

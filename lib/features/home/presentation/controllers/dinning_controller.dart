@@ -9,8 +9,6 @@ import 'package:pickmeup_dashboard/features/home/data/usescases/post_menu_item_u
 import 'package:pickmeup_dashboard/features/home/data/usescases/upload_file_usescases.dart';
 import 'package:pickmeup_dashboard/features/home/models/dinning_model.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
-import 'package:pu_material/utils/pu_colors.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/widgets/dialogs/warning_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -47,6 +45,9 @@ class DinningController extends GetxController {
     deliveryController.text = menu.deliveryTime!.toString();
     photoController = menu.photoUrl!;
     menusToEdit = menu;
+    if (Get.width < 700) {
+      Get.back();
+    }
     update();
   }
 

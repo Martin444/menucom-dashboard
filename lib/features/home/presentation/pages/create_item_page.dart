@@ -26,6 +26,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                 Expanded(
                   child: Container(
                     constraints: const BoxConstraints(maxWidth: 500),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -126,7 +127,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                               onPressed: () {
                                 _.createMenuItemInServer();
                               },
-                              load: false,
+                              load: _.isLoadMenuItem,
                             ),
                             const SizedBox(
                               height: 20,

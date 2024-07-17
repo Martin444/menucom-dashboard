@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinning_controller.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/form_edit_side.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_item_tile.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
@@ -28,6 +29,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var isMobile = Get.width < 700;
     return GetBuilder<DinningController>(builder: (dinning) {
       if (dinning.menusList.isEmpty) {
         return const Center(
@@ -65,22 +67,30 @@ class _HomePageState extends State<HomePage> {
                         icon: Icons.home_outlined,
                         label: 'Inicio',
                         isSelected: true,
-                        onRoute: () {},
+                        onRoute: () {
+                          Get.back();
+                        },
                       ),
                       ItemDrawMenu(
-                        icon: Icons.attach_money_outlined,
+                        icon: Icons.menu_book_rounded,
                         label: 'Ordenes',
-                        onRoute: () {},
+                        onRoute: () {
+                          Get.back();
+                        },
                       ),
                       ItemDrawMenu(
                         icon: Icons.attach_money_outlined,
                         label: 'Usuarios',
-                        onRoute: () {},
+                        onRoute: () {
+                          Get.back();
+                        },
                       ),
                       ItemDrawMenu(
                         icon: Icons.attach_money_outlined,
                         label: 'Ventas',
-                        onRoute: () {},
+                        onRoute: () {
+                          Get.back();
+                        },
                       ),
                     ],
                   ),
@@ -155,8 +165,9 @@ class _HomePageState extends State<HomePage> {
                                                           .items?.length ??
                                                       0,
                                                   gridDelegate:
-                                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 3,
+                                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount:
+                                                        isMobile ? 2 : 3,
                                                     mainAxisExtent: 200,
                                                     childAspectRatio: 0.3,
                                                     crossAxisSpacing: 20,
@@ -172,7 +183,17 @@ class _HomePageState extends State<HomePage> {
                                                           _.menusToEdit,
                                                       onAddCart: (menu) {
                                                         _.setDataToEditItem(
-                                                            menu);
+                                                          menu,
+                                                        );
+
+                                                        if (isMobile) {
+                                                          Get.dialog(
+                                                            const Scaffold(
+                                                              body:
+                                                                  FormEditSide(),
+                                                            ),
+                                                          );
+                                                        }
                                                       },
                                                     );
                                                   },
@@ -185,79 +206,11 @@ class _HomePageState extends State<HomePage> {
                                     },
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-
-                                // FOrmulario de edicion
-                                Expanded(
-                                  flex: 1,
-                                  child: GetBuilder<DinningController>(
-                                    builder: (_) {
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                          vertical: 20,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color:
-                                              PUColors.bgItem.withOpacity(0.2),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  'Edita tu plato en el menu del dia',
-                                                  style: PuTextStyle.title3,
-                                                ),
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Image.network(
-                                                  _.photoController,
-                                                  width: double.infinity,
-                                                  height: 150,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                                const SizedBox(
-                                                  height: 0,
-                                                ),
-                                                PUInput(
-                                                  labelText: 'Nombre del plato',
-                                                  controller: _.nameController,
-                                                ),
-                                                PUInput(
-                                                  labelText: 'Precio',
-                                                  controller: _.priceController,
-                                                ),
-                                                PUInput(
-                                                  labelText:
-                                                      'Tiempo de preparación (en minutos)',
-                                                  controller:
-                                                      _.deliveryController,
-                                                ),
-                                              ],
-                                            ),
-                                            Column(
-                                              children: [
-                                                ButtonPrimary(
-                                                  title: 'Guardar cambios',
-                                                  onPressed: () {
-                                                    _.editItemMenu();
-                                                  },
-                                                  load: _.isEditProcess,
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    },
+                                Visibility(
+                                  visible: Get.width > 700,
+                                  child: const Expanded(
+                                    flex: 1,
+                                    child: FormEditSide(),
                                   ),
                                 ),
                               ],

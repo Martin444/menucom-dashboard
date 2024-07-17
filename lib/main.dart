@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Pickme Up Dashboard',
+      title: 'MenuCom Dashboard',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         drawerTheme: DrawerThemeData(

@@ -35,13 +35,6 @@ class MenuItemTile extends StatelessWidget {
                 ? PUColors.selectedItem.withOpacity(0.5)
                 : PUColors.bgItem.withOpacity(0.3),
             borderRadius: BorderRadius.circular(10),
-            // boxShadow: [
-            //   BoxShadow(
-            //     offset: const Offset(0, 4),
-            //     color: Colors.black.withOpacity(0.2),
-            //     blurRadius: 21,
-            //   ),
-            // ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
