@@ -7,3 +7,4 @@ const String URL_PICKME_API = String.fromEnvironment(
 
 String ACCESS_TOKEN = '';
 var VERSION_APP = '';
+String URL_MENU_ORIGIN = 'https://menu-comerce.netlify.app';

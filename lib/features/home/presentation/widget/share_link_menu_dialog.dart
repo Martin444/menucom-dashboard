@@ -7,6 +7,8 @@ import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/config.dart';
+
 class ShareLinkMenuDialog extends StatelessWidget {
   final String idMenu;
   const ShareLinkMenuDialog({
@@ -40,9 +42,9 @@ class ShareLinkMenuDialog extends StatelessWidget {
             ),
             Center(
               child: QrImageView(
-                data: 'www.menucom.com/$idMenu',
+                data: '$URL_MENU_ORIGIN/$idMenu',
                 version: QrVersions.auto,
-                semanticsLabel: 'www.menucom.com/$idMenu',
+                semanticsLabel: '$URL_MENU_ORIGIN/$idMenu',
                 size: 200.0,
               ),
             ),
@@ -102,7 +104,7 @@ class ShareLinkMenuDialog extends StatelessWidget {
               onTap: () {
                 Clipboard.setData(
                   ClipboardData(
-                    text: 'www.menucom.com/$idMenu',
+                    text: '$URL_MENU_ORIGIN/$idMenu',
                   ),
                 );
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -117,7 +119,7 @@ class ShareLinkMenuDialog extends StatelessWidget {
                 child: PUInput(
                   labelText: 'Haz click para copiar el enlace',
                   controller: TextEditingController(
-                    text: 'www.menucom.com/$idMenu',
+                    text: '$URL_MENU_ORIGIN/$idMenu',
                   ),
                 ),
               ),
