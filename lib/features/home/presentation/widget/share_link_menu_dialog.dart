@@ -4,6 +4,7 @@ import 'package:pickmeup_dashboard/widgets/button_logo.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ShareLinkMenuDialog extends StatelessWidget {
@@ -17,10 +18,10 @@ class ShareLinkMenuDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       child: Container(
-        constraints: BoxConstraints(
+        constraints: const BoxConstraints(
           maxWidth: 400,
         ),
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: 20,
           vertical: 20,
         ),
@@ -36,6 +37,14 @@ class ShareLinkMenuDialog extends StatelessWidget {
             ),
             const SizedBox(
               height: 10,
+            ),
+            Center(
+              child: QrImageView(
+                data: 'www.menucom.com/$idMenu',
+                version: QrVersions.auto,
+                semanticsLabel: 'www.menucom.com/$idMenu',
+                size: 200.0,
+              ),
             ),
             Container(
               child: Row(
@@ -70,6 +79,22 @@ class ShareLinkMenuDialog extends StatelessWidget {
                       }
                     },
                   ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  LogoButton(
+                    pathIcon: PUIcons.iconDownload,
+                    colorBackground: Colors.transparent,
+                    onTap: () async {
+                      final url =
+                          'https://mail.google.com/mail/?view=cm&to=alejandrofarel62@gmail.com&su=${Uri.encodeComponent('Adjunto')}&body=${Uri.encodeComponent('Mensaje')}';
+                      if (await canLaunchUrl(Uri.parse(url))) {
+                        await launchUrl(Uri.parse(url));
+                      } else {
+                        print('No se pudo abrir Gmail.');
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
@@ -77,7 +102,7 @@ class ShareLinkMenuDialog extends StatelessWidget {
               onTap: () {
                 Clipboard.setData(
                   ClipboardData(
-                    text: 'www.menucom.com/${idMenu}',
+                    text: 'www.menucom.com/$idMenu',
                   ),
                 );
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -92,7 +117,7 @@ class ShareLinkMenuDialog extends StatelessWidget {
                 child: PUInput(
                   labelText: 'Haz click para copiar el enlace',
                   controller: TextEditingController(
-                    text: 'www.menucom.com/${idMenu}',
+                    text: 'www.menucom.com/$idMenu',
                   ),
                 ),
               ),
