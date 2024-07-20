@@ -177,6 +177,8 @@ class LoginController extends GetxController {
 
       isLogging.value = false;
       ACCESS_TOKEN = responseCommerce.accessToken;
+      var sharedToken = await _prefs;
+      sharedToken.setString('acccesstoken', ACCESS_TOKEN);
       update();
       Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
       newpasswordController.clear();

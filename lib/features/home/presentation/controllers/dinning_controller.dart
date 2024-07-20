@@ -28,7 +28,9 @@ class DinningController extends GetxController {
       menusToEdit = await getmenuByDining(true);
       setDataToEditItem(menusToEdit);
       update();
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 
   List<MenuModel> menusList = <MenuModel>[];
@@ -129,8 +131,9 @@ class DinningController extends GetxController {
     update();
 
     newphotoController = await uploadImage(toSend);
-    createItem();
+    await createItem();
 
+    isLoadMenuItem = false;
     update();
   }
 
@@ -143,7 +146,7 @@ class DinningController extends GetxController {
     }
   }
 
-  void createItem() async {
+  Future<void> createItem() async {
     try {
       var newItem = MenuItemModel(
         name: newNameController.text,
@@ -156,8 +159,17 @@ class DinningController extends GetxController {
         menusList.isEmpty ? '' : menusList[0].id ?? '',
         newItem,
       );
+
       Get.toNamed(PURoutes.HOME);
+      newNameController.clear();
+      newphotoController = '';
+      toSend = Uint8List(1);
+      fileTaked = null;
+      newdeliveryController.clear();
+      newpriceController.clear();
+      return;
     } catch (e) {
+      print(e);
       rethrow;
     }
   }
