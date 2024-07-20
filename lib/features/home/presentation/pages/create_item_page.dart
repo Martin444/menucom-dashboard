@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinning_controller.dart';
+import 'package:pickmeup_dashboard/features/login/presentation/controllers/login_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
@@ -57,43 +60,13 @@ class _CreateItemPageState extends State<CreateItemPage> {
                             const SizedBox(
                               height: 20,
                             ),
-                            MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              child: GestureDetector(
-                                onTap: () {
-                                  _.pickImageDirectory();
-                                },
-                                child: _.fileTaked == null
-                                    ? Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 60,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: PUColors.bgHeader,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Icon(
-                                              Icons.camera_enhance,
-                                              color: PUColors.textColor1,
-                                            ),
-                                            Text('Carga una imagen'),
-                                          ],
-                                        ),
-                                      )
-                                    : ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Image.memory(
-                                          _.fileTaked!,
-                                          height: 130,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                              ),
+                            CardTakePhoto(
+                              onTaka: () {
+                                _.pickImageDirectory();
+                              },
+                              isTaked: _.fileTaked != null,
+                              photoInBytes: _.fileTaked,
+                              isLogo: true,
                             ),
                             const SizedBox(
                               height: 20,
@@ -144,5 +117,62 @@ class _CreateItemPageState extends State<CreateItemPage> {
         );
       },
     );
+  }
+}
+
+class CardTakePhoto extends StatelessWidget {
+  final void Function()? onTaka;
+  final bool? isTaked;
+  final bool? isLogo;
+  final Uint8List? photoInBytes;
+  const CardTakePhoto({
+    super.key,
+    this.onTaka,
+    this.photoInBytes,
+    this.isTaked,
+    this.isLogo,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<LoginController>(builder: (_) {
+      return MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () {
+            onTaka!();
+          },
+          child: !isTaked!
+              ? Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 60,
+                  ),
+                  decoration: BoxDecoration(
+                    color: PUColors.bgHeader,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.camera_enhance,
+                        color: PUColors.textColor1,
+                      ),
+                      Text('Carga una imagen (.jpg, .png)'),
+                    ],
+                  ),
+                )
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.memory(
+                    photoInBytes!,
+                    height: 130,
+                    width: double.infinity,
+                    fit: isLogo! ? BoxFit.contain : BoxFit.cover,
+                  ),
+                ),
+        ),
+      );
+    });
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:pickmeup_dashboard/features/login/data/repository/login_repository.dart';
+import 'package:pickmeup_dashboard/features/login/data/repository/register_commerce_respository.dart';
 import 'package:pickmeup_dashboard/features/login/model/user_succes_model.dart';
 
 import '../../../../core/config.dart';
@@ -8,26 +8,36 @@ import 'package:http/http.dart' as http;
 
 import '../../../../core/exceptions/api_exception.dart';
 
-class LoginProvider extends LoginRepository {
+class RegisterCommerceProvider extends RegisterCommerceRespository {
   @override
-  Future<UserSuccess> loginCommerce({
+  Future<UserSuccess> registerCommerce({
+    required String photo,
     required String email,
+    required String name,
+    required String phone,
     required String password,
   }) async {
     try {
-      Uri loginURl = Uri.parse('$URL_PICKME_API/auth/login');
+      Uri loginURl = Uri.parse('$URL_PICKME_API/auth/register');
       var login = await http.post(
         loginURl,
-        body: {
-          "email": email,
-          "password": password,
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
         },
+        body: jsonEncode({
+          "photoURL": photo,
+          "email": email,
+          "name": name,
+          "phone": phone,
+          "password": password,
+          "role": "dining",
+          "needToChangepassword": false,
+        }),
       );
-      print(login.statusCode);
       var respJson = jsonDecode(login.body);
       if (respJson['access_token'] == null) {
         throw ApiException(
-          respJson['statusCode'],
+          respJson['statusCode'] ?? 32,
           respJson['message'],
         );
       }

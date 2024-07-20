@@ -2,20 +2,21 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/config.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/pages/create_item_page.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/controllers/login_controller.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 
 import '../../../../routes/routes.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterCommerce extends StatefulWidget {
+  const RegisterCommerce({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterCommerce> createState() => _RegisterCommerceState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterCommerceState extends State<RegisterCommerce> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,10 +50,20 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(
                             height: 20,
                           ),
+                          CardTakePhoto(
+                            onTaka: () {
+                              _.pickImageDirectory();
+                            },
+                            isTaked: _.fileTaked != null,
+                            photoInBytes: _.fileTaked,
+                            isLogo: true,
+                          ),
                           PUInput(
                             labelText: 'Email',
-                            hintText: 'Escribe el email',
-                            controller: _.emailController,
+                            hintText: 'Nuevo email',
+                            textInputAction: TextInputAction.next,
+                            textInputType: TextInputType.emailAddress,
+                            controller: _.newemailController,
                             errorText: _.errorTextEmail?.value.isEmpty ?? false
                                 ? null
                                 : _.errorTextEmail!.value,
@@ -61,13 +72,44 @@ class _LoginPageState extends State<LoginPage> {
                             height: 0,
                           ),
                           PUInput(
-                            labelText: 'Contraseña',
-                            hintText: 'Contraseña',
-                            isPassword: true,
+                            labelText: 'Nombre',
+                            hintText:
+                                'Nombre con el que identifican tu empresa',
+                            isPassword: false,
+                            textInputAction: TextInputAction.next,
+                            textInputType: TextInputType.name,
                             errorText: _.errorTextPassword.value.isEmpty
                                 ? null
                                 : _.errorTextPassword.value,
-                            controller: _.passwordController,
+                            controller: _.newnameController,
+                          ),
+                          const SizedBox(
+                            height: 0,
+                          ),
+                          PUInput(
+                            labelText: 'Número de teléfono',
+                            hintText: 'Como sale en Whatsapp',
+                            isPassword: false,
+                            textInputAction: TextInputAction.next,
+                            textInputType: TextInputType.phone,
+                            errorText: _.errorTextPassword.value.isEmpty
+                                ? null
+                                : _.errorTextPassword.value,
+                            controller: _.newphoneController,
+                          ),
+                          const SizedBox(
+                            height: 0,
+                          ),
+                          PUInput(
+                            labelText: 'Contraseña',
+                            hintText: 'Contraseña',
+                            isPassword: true,
+                            textInputAction: TextInputAction.done,
+                            textInputType: TextInputType.visiblePassword,
+                            errorText: _.errorTextPassword.value.isEmpty
+                                ? null
+                                : _.errorTextPassword.value,
+                            controller: _.newpasswordController,
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -80,15 +122,16 @@ class _LoginPageState extends State<LoginPage> {
                                   text: TextSpan(
                                     children: [
                                       const TextSpan(
-                                        text: '¿Aún no tenés cuenta? ',
+                                        text: '¿Ya tenés cuenta? ',
                                       ),
                                       TextSpan(
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () {
                                             Get.toNamed(
-                                                PURoutes.REGISTER_COMMERCE);
+                                              PURoutes.LOGIN,
+                                            );
                                           },
-                                        text: 'Registrate',
+                                        text: 'Inicia sesión',
                                         style: PuTextStyle.redirectLink,
                                       ),
                                     ],
@@ -101,9 +144,9 @@ class _LoginPageState extends State<LoginPage> {
                             height: 30,
                           ),
                           ButtonPrimary(
-                            title: 'Inicia sesión',
+                            title: 'Registrate',
                             onPressed: () {
-                              _.loginWithEmailandPassword();
+                              _.registerCommerce();
                             },
                             load: _.isLogging.value,
                           ),

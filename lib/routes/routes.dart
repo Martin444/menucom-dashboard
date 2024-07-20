@@ -3,6 +3,7 @@
 class PURoutes {
   static String HOME = '/';
   static String LOGIN = '/login';
+  static String REGISTER_COMMERCE = '/registrate';
   static String CHANGE_PASSWORD = '/change-password';
   static String REGISTER_ITEM_MENU = '/create-menu-item';
   static String USER_PROFILE = '/perfil/:idUsuario';

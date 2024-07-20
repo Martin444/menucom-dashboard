@@ -1,13 +1,19 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/features/login/data/usecase/change_password_usescase.dart';
+import 'package:pickmeup_dashboard/features/login/data/usecase/register_commerce_usescase.dart';
+import 'package:pickmeup_dashboard/features/login/model/user_succes_model.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/config.dart';
 import '../../../../core/exceptions/api_exception.dart';
+import '../../../home/data/usescases/upload_file_usescases.dart';
 import '../../data/usecase/login_usescase.dart';
 
 class LoginController extends GetxController {
@@ -37,7 +43,6 @@ class LoginController extends GetxController {
     try {
       isLogging.value = true;
       update();
-      print(URL_PICKME_API);
 
       var responseLogin = await LoginUserUseCase().execute(
         emailController.text,
@@ -59,6 +64,7 @@ class LoginController extends GetxController {
       errorTextPassword.value = '';
       update();
     } on ApiException catch (e) {
+      print(e);
       isLogging.value = false;
       if (e.statusCode == 401) {
         errorTextEmail?.value = '';
@@ -127,6 +133,57 @@ class LoginController extends GetxController {
         Get.toNamed(PURoutes.LOGIN);
       }
       return;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Uint8List? fileTaked;
+  Uint8List toSend = Uint8List(1);
+
+  void pickImageDirectory() async {
+    final ImagePicker pickerImage = ImagePicker();
+
+    final result = await pickerImage.pickImage(source: ImageSource.gallery);
+
+    if (result != null) {
+      Uint8List newFile = await result.readAsBytes();
+      toSend = newFile;
+      // Upload file
+      fileTaked = await result.readAsBytes();
+      update();
+    }
+  }
+
+  //REgister comerce
+
+  TextEditingController newemailController = TextEditingController();
+  TextEditingController newnameController = TextEditingController();
+  TextEditingController newphoneController = TextEditingController();
+  TextEditingController newpasswordController = TextEditingController();
+
+  Future<UserSuccess> registerCommerce() async {
+    try {
+      isLogging.value = true;
+      update();
+      var urlPhoto = await UploadFileUsesCase().execute(toSend);
+      var responseCommerce = await RegisterCommerceUsescase().execute(
+        photo: urlPhoto,
+        email: newemailController.text,
+        name: newnameController.text,
+        phone: newphoneController.text,
+        password: newpasswordController.text,
+      );
+
+      isLogging.value = false;
+      ACCESS_TOKEN = responseCommerce.accessToken;
+      update();
+      Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
+      newpasswordController.clear();
+      newemailController.clear();
+      newnameController.clear();
+      newphoneController.clear();
+      return responseCommerce;
     } catch (e) {
       rethrow;
     }

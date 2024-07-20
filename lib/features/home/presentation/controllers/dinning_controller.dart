@@ -25,7 +25,7 @@ class DinningController extends GetxController {
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
       update();
-      menusToEdit = await getmenuByDining();
+      menusToEdit = await getmenuByDining(true);
       setDataToEditItem(menusToEdit);
       update();
     } catch (e) {}
@@ -69,7 +69,7 @@ class DinningController extends GetxController {
       );
       isEditProcess = false;
 
-      await getmenuByDining();
+      await getmenuByDining(false);
       update();
       var detectItem = menusList.first.items!
           .where((item) => item.id == menusToEdit.id)
@@ -80,7 +80,7 @@ class DinningController extends GetxController {
     }
   }
 
-  Future<MenuItemModel> getmenuByDining() async {
+  Future<MenuItemModel> getmenuByDining(bool isFirstTime) async {
     try {
       var respMenu = await GetMenuUseCase().execute(dinningLogin.id!);
       menusList.assignAll(respMenu);
@@ -90,6 +90,9 @@ class DinningController extends GetxController {
     } on ApiException catch (e) {
       if (e.statusCode == 404) {
         Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
+        if (isFirstTime) {
+          rethrow;
+        }
         Get.dialog(const WarningDialog());
       }
       rethrow;
