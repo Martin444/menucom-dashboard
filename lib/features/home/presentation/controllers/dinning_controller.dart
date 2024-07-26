@@ -30,6 +30,7 @@ class DinningController extends GetxController {
       update();
     } catch (e) {
       print(e);
+      closeSesion();
     }
   }
 
@@ -91,10 +92,10 @@ class DinningController extends GetxController {
       return firstMenuItem;
     } on ApiException catch (e) {
       if (e.statusCode == 404) {
-        Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
         if (isFirstTime) {
           rethrow;
         }
+        Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
         Get.dialog(const WarningDialog());
       }
       rethrow;

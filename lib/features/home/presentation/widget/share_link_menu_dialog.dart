@@ -5,16 +5,24 @@ import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config.dart';
 
-class ShareLinkMenuDialog extends StatelessWidget {
+class ShareLinkMenuDialog extends StatefulWidget {
   final String idMenu;
   const ShareLinkMenuDialog({
     super.key,
     required this.idMenu,
   });
+
+  @override
+  State<ShareLinkMenuDialog> createState() => _ShareLinkMenuDialogState();
+}
+
+class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
+  ScreenshotController screenshotController = ScreenshotController();
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +48,15 @@ class ShareLinkMenuDialog extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            Center(
-              child: QrImageView(
-                data: '$URL_MENU_ORIGIN/$idMenu',
-                version: QrVersions.auto,
-                semanticsLabel: '$URL_MENU_ORIGIN/$idMenu',
-                size: 200.0,
+            Screenshot(
+              controller: screenshotController,
+              child: Center(
+                child: QrImageView(
+                  data: '$URL_MENU_ORIGIN/${widget.idMenu}',
+                  version: QrVersions.auto,
+                  semanticsLabel: '$URL_MENU_ORIGIN/${widget.idMenu}',
+                  size: 200.0,
+                ),
               ),
             ),
             Container(
@@ -57,7 +68,7 @@ class ShareLinkMenuDialog extends StatelessWidget {
                     colorBackground: PUColors.bgSucces.withOpacity(0.3),
                     onTap: () async {
                       final url =
-                          'https://wa.me/${3873413199}?text=${Uri.encodeComponent('Hola este es un mensaje')}';
+                          'https://wa.me/${''}?text=${Uri.encodeComponent('$URL_MENU_ORIGIN/${widget.idMenu}')}';
                       if (await canLaunchUrl(Uri.parse(url))) {
                         await launchUrl(Uri.parse(url));
                       } else {
@@ -73,7 +84,7 @@ class ShareLinkMenuDialog extends StatelessWidget {
                     colorBackground: PUColors.bgError.withOpacity(0.3),
                     onTap: () async {
                       final url =
-                          'https://mail.google.com/mail/?view=cm&to=alejandrofarel62@gmail.com&su=${Uri.encodeComponent('Adjunto')}&body=${Uri.encodeComponent('Mensaje')}';
+                          'https://mail.google.com/mail/?view=cm&to=alejandrofarel62@gmail.com&su=${Uri.encodeComponent('Adjunto')}&body=${Uri.encodeComponent('$URL_MENU_ORIGIN/${widget.idMenu}')}';
                       if (await canLaunchUrl(Uri.parse(url))) {
                         await launchUrl(Uri.parse(url));
                       } else {
@@ -89,9 +100,10 @@ class ShareLinkMenuDialog extends StatelessWidget {
                     colorBackground: Colors.transparent,
                     onTap: () async {
                       final url =
-                          'https://mail.google.com/mail/?view=cm&to=alejandrofarel62@gmail.com&su=${Uri.encodeComponent('Adjunto')}&body=${Uri.encodeComponent('Mensaje')}';
+                          'https://mail.google.com/mail/?view=cm&to=alejandrofarel62@gmail.com&su=${Uri.encodeComponent('Adjunto')}&body=${Uri.encodeComponent('$URL_MENU_ORIGIN/${widget.idMenu}')}';
                       if (await canLaunchUrl(Uri.parse(url))) {
-                        await launchUrl(Uri.parse(url));
+                        screenshotController.capture();
+                        // await launchUrl(Uri.parse(url));
                       } else {
                         print('No se pudo abrir Gmail.');
                       }
@@ -104,7 +116,7 @@ class ShareLinkMenuDialog extends StatelessWidget {
               onTap: () {
                 Clipboard.setData(
                   ClipboardData(
-                    text: '$URL_MENU_ORIGIN/$idMenu',
+                    text: '$URL_MENU_ORIGIN/${widget.idMenu}',
                   ),
                 );
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -119,7 +131,7 @@ class ShareLinkMenuDialog extends StatelessWidget {
                 child: PUInput(
                   labelText: 'Haz click para copiar el enlace',
                   controller: TextEditingController(
-                    text: '$URL_MENU_ORIGIN/$idMenu',
+                    text: '$URL_MENU_ORIGIN/${widget.idMenu}',
                   ),
                 ),
               ),
