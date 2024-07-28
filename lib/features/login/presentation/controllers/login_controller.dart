@@ -180,7 +180,7 @@ class LoginController extends GetxController {
       var sharedToken = await _prefs;
       sharedToken.setString('acccesstoken', ACCESS_TOKEN);
       update();
-      Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
+      Get.toNamed(PURoutes.LOGIN);
       newpasswordController.clear();
       newemailController.clear();
       newnameController.clear();

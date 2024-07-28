@@ -9,7 +9,6 @@ import 'package:pickmeup_dashboard/features/home/data/usescases/post_menu_item_u
 import 'package:pickmeup_dashboard/features/home/data/usescases/upload_file_usescases.dart';
 import 'package:pickmeup_dashboard/features/home/models/dinning_model.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
-import 'package:pu_material/widgets/dialogs/warning_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/config.dart';
@@ -25,12 +24,11 @@ class DinningController extends GetxController {
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
       update();
-      menusToEdit = await getmenuByDining(true);
+      menusToEdit = await getmenuByDining();
       setDataToEditItem(menusToEdit);
       update();
     } catch (e) {
       print(e);
-      closeSesion();
     }
   }
 
@@ -72,7 +70,7 @@ class DinningController extends GetxController {
       );
       isEditProcess = false;
 
-      await getmenuByDining(false);
+      await getmenuByDining();
       update();
       var detectItem = menusList.first.items!
           .where((item) => item.id == menusToEdit.id)
@@ -83,7 +81,7 @@ class DinningController extends GetxController {
     }
   }
 
-  Future<MenuItemModel> getmenuByDining(bool isFirstTime) async {
+  Future<MenuItemModel> getmenuByDining() async {
     try {
       var respMenu = await GetMenuUseCase().execute(dinningLogin.id!);
       menusList.assignAll(respMenu);
@@ -92,11 +90,7 @@ class DinningController extends GetxController {
       return firstMenuItem;
     } on ApiException catch (e) {
       if (e.statusCode == 404) {
-        if (isFirstTime) {
-          rethrow;
-        }
         Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
-        Get.dialog(const WarningDialog());
       }
       rethrow;
     }
