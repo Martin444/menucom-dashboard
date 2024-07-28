@@ -64,7 +64,6 @@ class LoginController extends GetxController {
       errorTextPassword.value = '';
       update();
     } on ApiException catch (e) {
-      print(e);
       isLogging.value = false;
       if (e.statusCode == 401) {
         errorTextEmail?.value = '';

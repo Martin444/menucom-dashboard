@@ -8,8 +8,6 @@ class AuthMiddleware extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
     if (ACCESS_TOKEN.isEmpty) {
-      print('Ruuta');
-      print(route);
       return RouteSettings(name: PURoutes.LOGIN);
     }
     return null;

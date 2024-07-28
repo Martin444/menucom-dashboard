@@ -28,7 +28,7 @@ class DinningController extends GetxController {
       setDataToEditItem(menusToEdit);
       update();
     } catch (e) {
-      print(e);
+      rethrow;
     }
   }
 
@@ -164,7 +164,6 @@ class DinningController extends GetxController {
       newpriceController.clear();
       return;
     } catch (e) {
-      print(e);
       rethrow;
     }
   }

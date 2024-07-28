@@ -23,7 +23,6 @@ class LoginProvider extends LoginRepository {
           "password": password,
         },
       );
-      print(login.statusCode);
       var respJson = jsonDecode(login.body);
       if (respJson['access_token'] == null) {
         throw ApiException(

@@ -59,58 +59,56 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
                 ),
               ),
             ),
-            Container(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  LogoButton(
-                    pathIcon: PUIcons.iconWhatsapp,
-                    colorBackground: PUColors.bgSucces.withOpacity(0.3),
-                    onTap: () async {
-                      final url =
-                          'https://wa.me/${''}?text=${Uri.encodeComponent('$URL_MENU_ORIGIN/${widget.idMenu}')}';
-                      if (await canLaunchUrl(Uri.parse(url))) {
-                        await launchUrl(Uri.parse(url));
-                      } else {
-                        print('No se pudo abrir WhatsApp.');
-                      }
-                    },
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  LogoButton(
-                    pathIcon: PUIcons.iconGmail,
-                    colorBackground: PUColors.bgError.withOpacity(0.3),
-                    onTap: () async {
-                      final url =
-                          'https://mail.google.com/mail/?view=cm&to=alejandrofarel62@gmail.com&su=${Uri.encodeComponent('Adjunto')}&body=${Uri.encodeComponent('$URL_MENU_ORIGIN/${widget.idMenu}')}';
-                      if (await canLaunchUrl(Uri.parse(url))) {
-                        await launchUrl(Uri.parse(url));
-                      } else {
-                        print('No se pudo abrir Gmail.');
-                      }
-                    },
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  LogoButton(
-                    pathIcon: PUIcons.iconDownload,
-                    colorBackground: Colors.transparent,
-                    onTap: () async {
-                      final url =
-                          'https://mail.google.com/mail/?view=cm&to=alejandrofarel62@gmail.com&su=${Uri.encodeComponent('Adjunto')}&body=${Uri.encodeComponent('$URL_MENU_ORIGIN/${widget.idMenu}')}';
-                      if (await canLaunchUrl(Uri.parse(url))) {
-                        screenshotController.capture();
-                        // await launchUrl(Uri.parse(url));
-                      } else {
-                        print('No se pudo abrir Gmail.');
-                      }
-                    },
-                  ),
-                ],
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LogoButton(
+                  pathIcon: PUIcons.iconWhatsapp,
+                  colorBackground: PUColors.bgSucces.withOpacity(0.3),
+                  onTap: () async {
+                    final url =
+                        'https://wa.me/${''}?text=${Uri.encodeComponent('$URL_MENU_ORIGIN/${widget.idMenu}')}';
+                    if (await canLaunchUrl(Uri.parse(url))) {
+                      await launchUrl(Uri.parse(url));
+                    } else {
+                      print('No se pudo abrir WhatsApp.');
+                    }
+                  },
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                LogoButton(
+                  pathIcon: PUIcons.iconGmail,
+                  colorBackground: PUColors.bgError.withOpacity(0.3),
+                  onTap: () async {
+                    final url =
+                        'https://mail.google.com/mail/?view=cm&to=alejandrofarel62@gmail.com&su=${Uri.encodeComponent('Adjunto')}&body=${Uri.encodeComponent('$URL_MENU_ORIGIN/${widget.idMenu}')}';
+                    if (await canLaunchUrl(Uri.parse(url))) {
+                      await launchUrl(Uri.parse(url));
+                    } else {
+                      print('No se pudo abrir Gmail.');
+                    }
+                  },
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                LogoButton(
+                  pathIcon: PUIcons.iconDownload,
+                  colorBackground: Colors.transparent,
+                  onTap: () async {
+                    final url =
+                        'https://mail.google.com/mail/?view=cm&to=alejandrofarel62@gmail.com&su=${Uri.encodeComponent('Adjunto')}&body=${Uri.encodeComponent('$URL_MENU_ORIGIN/${widget.idMenu}')}';
+                    if (await canLaunchUrl(Uri.parse(url))) {
+                      screenshotController.capture();
+                      // await launchUrl(Uri.parse(url));
+                    } else {
+                      print('No se pudo abrir Gmail.');
+                    }
+                  },
+                ),
+              ],
             ),
             GestureDetector(
               onTap: () {

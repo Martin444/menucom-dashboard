@@ -29,7 +29,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                 Expanded(
                   child: Container(
                     constraints: const BoxConstraints(maxWidth: 500),
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -158,7 +158,7 @@ class CardTakePhoto extends StatelessWidget {
                         Icons.camera_enhance,
                         color: PUColors.textColor1,
                       ),
-                      Text('Carga una imagen (.jpg, .png)'),
+                      const Text('Carga una imagen (.jpg, .png)'),
                     ],
                   ),
                 )
