@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/config.dart';
+import 'package:pickmeup_dashboard/features/login/presentation/pages/succes_register_page.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

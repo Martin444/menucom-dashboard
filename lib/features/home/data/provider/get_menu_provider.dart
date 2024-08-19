@@ -16,15 +16,14 @@ class GetMenuProvider extends GetMenuRespository {
       var response = await http.get(
         userURl,
       );
-      var respJson = jsonDecode(response.body);
-
-      if (respJson[0] == null) {
+      if (response.statusCode != 201 || response.statusCode != 200) {
         throw ApiException(
-          respJson['statusCode'],
-          respJson['message'],
+          response.statusCode,
+          response.body,
         );
       }
 
+      var respJson = jsonDecode(response.body);
       respJson.forEach((e) {
         listItemsMenu.add(MenuModel.fromJson(e));
       });

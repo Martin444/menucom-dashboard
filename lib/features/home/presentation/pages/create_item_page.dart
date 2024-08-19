@@ -146,10 +146,10 @@ class CardTakePhoto extends StatelessWidget {
               ? Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
-                    vertical: 60,
+                    vertical: 30,
                   ),
                   decoration: BoxDecoration(
-                    color: PUColors.bgHeader,
+                    color: PUColors.bgInput,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
@@ -158,7 +158,7 @@ class CardTakePhoto extends StatelessWidget {
                         Icons.camera_enhance,
                         color: PUColors.textColor1,
                       ),
-                      const Text('Carga una imagen (.jpg, .png)'),
+                      const Text('Cargá tu logo (.jpg, .png)'),
                     ],
                   ),
                 )

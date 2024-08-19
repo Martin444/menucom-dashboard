@@ -15,6 +15,7 @@ class RegisterCommerceProvider extends RegisterCommerceRespository {
     required String email,
     required String name,
     required String phone,
+    required String role,
     required String password,
   }) async {
     try {

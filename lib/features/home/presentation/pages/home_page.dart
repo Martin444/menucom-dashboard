@@ -7,7 +7,9 @@ import 'package:pickmeup_dashboard/features/home/presentation/widget/form_edit_s
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_item_tile.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
+import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
+import 'package:svg_flutter/svg.dart';
 
 import '../widget/head_dinning.dart';
 
@@ -30,16 +32,182 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     var isMobile = Get.width < 700;
-    return GetBuilder<DinningController>(builder: (dinning) {
-      if (dinning.menusList.isEmpty) {
-        return const Center(
-          child: CircularProgressIndicator(),
+    return GetBuilder<DinningController>(
+      builder: (dinning) {
+        if (dinning.isLoaginDataUser) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return PopScope(
+          canPop: false,
+          child: Scaffold(
+            backgroundColor: PUColors.primaryBackground,
+            drawerScrimColor: Colors.transparent,
+            body: Row(
+              children: [
+                MenuSIde(),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          // Header
+                          const HeadDinning(),
+
+                          Container(
+                            // height: 40,
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  width: 1,
+                                  color: Color(0xFFBCBCBC),
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      dinning.dinningLogin.name ?? '',
+                                      style: PuTextStyle.title1,
+                                    ),
+                                    SvgPicture.asset(
+                                      PUIcons.iconLink,
+                                      colorFilter: ColorFilter.mode(
+                                        PUColors.iconColor,
+                                        BlendMode.src,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: 200,
+                                  child: ButtonPrimary(
+                                    title: 'Nuevo menú',
+                                    onPressed: () {
+                                      Get.toNamed(
+                                        PURoutes.REGISTER_ITEM_MENU,
+                                      );
+                                    },
+                                    load: false,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Seccion de items del menú
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 20,
+                              ),
+                              child: Row(
+                                children: [
+                                  // items
+                                  dinning.menusList.isNotEmpty
+                                      ? Expanded(
+                                          flex: 2,
+                                          child: GetBuilder<DinningController>(
+                                            builder: (_) {
+                                              return LayoutBuilder(
+                                                builder: (context, constrains) {
+                                                  return Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 300,
+                                                        child: ButtonPrimary(
+                                                          title: 'Agrega un plato',
+                                                          onPressed: () {
+                                                            Get.toNamed(
+                                                              PURoutes.REGISTER_ITEM_MENU,
+                                                            );
+                                                          },
+                                                          load: false,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      SizedBox(
+                                                        height: constrains.maxHeight - 80,
+                                                        child: GridView.builder(
+                                                          scrollDirection: Axis.vertical,
+                                                          itemCount: _.menusList[0].items?.length ?? 0,
+                                                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount: isMobile ? 2 : 3,
+                                                            mainAxisExtent: 200,
+                                                            childAspectRatio: 0.3,
+                                                            crossAxisSpacing: 20,
+                                                            mainAxisSpacing: 20,
+                                                          ),
+                                                          itemBuilder: (context, index) {
+                                                            return MenuItemTile(
+                                                              item: _.menusList[0].items![index],
+                                                              selected: _.menusList[0].items![index] == _.menusToEdit,
+                                                              onAddCart: (menu) {
+                                                                _.setDataToEditItem(
+                                                                  menu,
+                                                                );
+
+                                                                if (isMobile) {
+                                                                  Get.dialog(
+                                                                    const Scaffold(
+                                                                      body: FormEditSide(),
+                                                                    ),
+                                                                  );
+                                                                }
+                                                              },
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          ),
+                                        )
+                                      : const Expanded(
+                                          child: Center(
+                                            child: Text('No hay items aún'),
+                                          ),
+                                        ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
-      }
-      return Scaffold(
-        backgroundColor: PUColors.primaryBackground,
-        drawerScrimColor: Colors.transparent,
-        drawer: Drawer(
+      },
+    );
+  }
+}
+
+class MenuSIde extends StatelessWidget {
+  const MenuSIde({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<DinningController>(
+      builder: (_) {
+        return Drawer(
           backgroundColor: PUColors.bgItem.withOpacity(0.3),
           elevation: 0,
           child: BackdropFilter(
@@ -50,186 +218,75 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: 20,
+                vertical: 20,
+              ),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  width: 1,
+                  color: Color(0xFFBCBCBC),
+                ),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     children: [
-                      Text(
-                        'Menu com',
-                        style: PuTextStyle.title1,
+                      Image.network(
+                        _.dinningLogin.photoURL!,
+                        height: 100,
+                        scale: 0.2,
                       ),
                       const SizedBox(
                         height: 40,
                       ),
                       ItemDrawMenu(
-                        icon: Icons.home_outlined,
+                        icon: PUIcons.iconHomeMenu,
                         label: 'Inicio',
-                        isSelected: true,
-                        onRoute: () {
-                          Get.back();
-                        },
+                        isSelected: false,
+                        onRoute: () {},
                       ),
                       ItemDrawMenu(
-                        icon: Icons.menu_book_rounded,
+                        icon: PUIcons.iconOrderMenu,
                         label: 'Ordenes',
-                        onRoute: () {
-                          Get.back();
-                        },
+                        isSelected: true,
+                        onRoute: () {},
                       ),
                       ItemDrawMenu(
-                        icon: Icons.attach_money_outlined,
-                        label: 'Usuarios',
-                        onRoute: () {
-                          Get.back();
-                        },
-                      ),
-                      ItemDrawMenu(
-                        icon: Icons.attach_money_outlined,
+                        icon: PUIcons.iconSalesMenu,
                         label: 'Ventas',
-                        onRoute: () {
-                          Get.back();
-                        },
+                        onRoute: () {},
+                      ),
+                      ItemDrawMenu(
+                        icon: PUIcons.iconClientsMenu,
+                        label: 'Clientes',
+                        onRoute: () {},
+                      ),
+                      ItemDrawMenu(
+                        icon: PUIcons.iconProveeMenu,
+                        label: 'Proveedores',
+                        onRoute: () {},
                       ),
                     ],
                   ),
                   ItemDrawMenu(
-                    icon: Icons.exit_to_app_outlined,
+                    icon: PUIcons.iconExitMenu,
                     label: 'Cerrar sesión',
                     onRoute: () {
-                      dinning.closeSesion();
+                      _.closeSesion();
                     },
                   ),
                 ],
               ),
             ),
           ),
-        ),
-        body: Row(
-          children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  const BackgroundCircles(
-                    withBlur: true,
-                  ),
-                  Column(
-                    children: [
-                      // Header
-                      const HeadDinning(),
-
-                      // Seccion de items del menú
-                      Expanded(
-                        child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 20,
-                            ),
-                            child: Row(
-                              children: [
-                                // items
-                                Expanded(
-                                  flex: 2,
-                                  child: GetBuilder<DinningController>(
-                                    builder: (_) {
-                                      return LayoutBuilder(
-                                        builder: (context, constrains) {
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              SizedBox(
-                                                width: 300,
-                                                child: ButtonPrimary(
-                                                  title: 'Agrega un plato',
-                                                  onPressed: () {
-                                                    Get.toNamed(
-                                                      PURoutes
-                                                          .REGISTER_ITEM_MENU,
-                                                    );
-                                                  },
-                                                  load: false,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                              SizedBox(
-                                                height:
-                                                    constrains.maxHeight - 80,
-                                                child: GridView.builder(
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  itemCount: _.menusList[0]
-                                                          .items?.length ??
-                                                      0,
-                                                  gridDelegate:
-                                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount:
-                                                        isMobile ? 2 : 3,
-                                                    mainAxisExtent: 200,
-                                                    childAspectRatio: 0.3,
-                                                    crossAxisSpacing: 20,
-                                                    mainAxisSpacing: 20,
-                                                  ),
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return MenuItemTile(
-                                                      item: _.menusList[0]
-                                                          .items![index],
-                                                      selected: _.menusList[0]
-                                                              .items![index] ==
-                                                          _.menusToEdit,
-                                                      onAddCart: (menu) {
-                                                        _.setDataToEditItem(
-                                                          menu,
-                                                        );
-
-                                                        if (isMobile) {
-                                                          Get.dialog(
-                                                            const Scaffold(
-                                                              body:
-                                                                  FormEditSide(),
-                                                            ),
-                                                          );
-                                                        }
-                                                      },
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: Get.width > 700,
-                                  child: const Expanded(
-                                    flex: 1,
-                                    child: FormEditSide(),
-                                  ),
-                                ),
-                              ],
-                            )),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }
 
 class ItemDrawMenu extends StatelessWidget {
-  final IconData icon;
+  final String icon;
   final String label;
   final bool? isSelected;
   final Function onRoute;
@@ -252,17 +309,12 @@ class ItemDrawMenu extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           decoration: BoxDecoration(
-            color: isSelected ?? false
-                ? PUColors.secundaryBackground
-                : Colors.transparent,
+            color: isSelected ?? false ? PUColors.bgItemMenuSelected : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             children: [
-              Icon(
-                icon,
-                color: PUColors.primaryBackground,
-              ),
+              SvgPicture.asset(icon),
               const SizedBox(
                 width: 10,
               ),

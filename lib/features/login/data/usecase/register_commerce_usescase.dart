@@ -10,6 +10,7 @@ class RegisterCommerceUsescase {
     required String email,
     required String name,
     required String phone,
+    required String role,
     required String password,
   }) async {
     try {
@@ -18,6 +19,7 @@ class RegisterCommerceUsescase {
         email: email,
         name: name,
         password: password,
+        role: role,
         phone: phone,
       );
       return response;

@@ -14,6 +14,7 @@ class PUPages {
     GetPage(
       name: PURoutes.LOGIN,
       page: () => const LoginPage(),
+      transition: Transition.fadeIn,
       bindings: [
         LoginBinding(),
       ],
@@ -21,6 +22,7 @@ class PUPages {
     GetPage(
       name: PURoutes.REGISTER_COMMERCE,
       page: () => const RegisterCommerce(),
+      transition: Transition.fadeIn,
       bindings: [
         LoginBinding(),
       ],
@@ -28,6 +30,7 @@ class PUPages {
     GetPage(
       name: PURoutes.CHANGE_PASSWORD,
       page: () => const ChangePasswordPage(),
+      transition: Transition.fadeIn,
       bindings: [
         LoginBinding(),
       ],

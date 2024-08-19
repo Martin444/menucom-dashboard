@@ -2,11 +2,17 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/features/login/data/usecase/change_password_usescase.dart';
 import 'package:pickmeup_dashboard/features/login/data/usecase/register_commerce_usescase.dart';
+import 'package:pickmeup_dashboard/features/login/model/change_password_params.dart';
+import 'package:pickmeup_dashboard/features/login/model/type_comerce_model.dart';
 import 'package:pickmeup_dashboard/features/login/model/user_succes_model.dart';
+import 'package:pickmeup_dashboard/features/login/presentation/controllers/handles/handle_login.dart';
+import 'package:pickmeup_dashboard/features/login/presentation/controllers/handles/handle_register.dart';
+import 'package:pickmeup_dashboard/features/login/presentation/pages/succes_register_page.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,11 +49,18 @@ class LoginController extends GetxController {
     try {
       isLogging.value = true;
       update();
+      if (emailController.text.isEmpty) {
+        throw ApiException(
+          111,
+          'El email no puede estar vacío',
+        );
+      }
 
       var responseLogin = await LoginUserUseCase().execute(
         emailController.text,
         passwordController.text,
       );
+
       ACCESS_TOKEN = responseLogin.accessToken;
 
       var sharedToken = await _prefs;
@@ -63,15 +76,22 @@ class LoginController extends GetxController {
       errorTextEmail?.value = '';
       errorTextPassword.value = '';
       update();
-    } on ApiException catch (e) {
+    } catch (e) {
       isLogging.value = false;
-      if (e.statusCode == 401) {
-        errorTextEmail?.value = '';
-        errorTextPassword.value = e.message;
-        errorTextPassword.refresh();
-      } else if (e.statusCode == 404) {
-        errorTextEmail?.value = e.message;
-        errorTextEmail?.refresh();
+      if (e.runtimeType == ApiException) {
+        var err = (e as ApiException);
+        if (err.statusCode == 401) {
+          errorTextEmail?.value = '';
+          errorTextPassword.value = e.message;
+          errorTextPassword.refresh();
+        } else if (e.statusCode == 404) {
+          errorTextEmail?.value = e.message;
+          errorTextEmail?.refresh();
+        }
+      }
+      if (e.runtimeType == ClientException) {
+        // var nerr = (e as ClientException);
+        HandleLogin.handleLoginError();
       }
       update();
     }
@@ -85,9 +105,7 @@ class LoginController extends GetxController {
       errorTextEmail?.value = '';
     }
 
-    var validateItems =
-        (emailController.text.isNotEmpty && passwordController.text.isNotEmpty)
-            .obs;
+    var validateItems = (emailController.text.isNotEmpty && passwordController.text.isNotEmpty).obs;
 
     isValidInit = validateItems;
     update();
@@ -122,21 +140,6 @@ class LoginController extends GetxController {
     }
   }
 
-  Future<void> changePasswordCommerce() async {
-    try {
-      var responsePass = await ChangePasswordUseCase().execute(
-        newPassRepitController.text,
-      );
-      if (responsePass) {
-        errorRepitPass?.value = '';
-        Get.toNamed(PURoutes.LOGIN);
-      }
-      return;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Uint8List? fileTaked;
   Uint8List toSend = Uint8List(1);
 
@@ -161,7 +164,27 @@ class LoginController extends GetxController {
   TextEditingController newphoneController = TextEditingController();
   TextEditingController newpasswordController = TextEditingController();
 
-  Future<UserSuccess> registerCommerce() async {
+  List<TypeComerceModel> listCommerceAvilable = [
+    TypeComerceModel(
+      id: '1',
+      code: 'clothes',
+      description: 'Venta de ropa',
+    ),
+    TypeComerceModel(
+      id: '2',
+      code: 'dinning',
+      description: 'Venta de comida',
+    ),
+  ];
+
+  TypeComerceModel? comerceModelSelected;
+
+  void selectTypeComerce(TypeComerceModel model) {
+    comerceModelSelected = model;
+    update();
+  }
+
+  Future<UserSuccess?> registerCommerce() async {
     try {
       isLogging.value = true;
       update();
@@ -172,21 +195,108 @@ class LoginController extends GetxController {
         name: newnameController.text,
         phone: newphoneController.text,
         password: newpasswordController.text,
+        role: comerceModelSelected!.code,
       );
 
       isLogging.value = false;
-      ACCESS_TOKEN = responseCommerce.accessToken;
-      var sharedToken = await _prefs;
-      sharedToken.setString('acccesstoken', ACCESS_TOKEN);
+      // ACCESS_TOKEN = responseCommerce.accessToken;
+      // var sharedToken = await _prefs;
+      // sharedToken.setString('acccesstoken', ACCESS_TOKEN);
       update();
-      Get.toNamed(PURoutes.LOGIN);
+      Get.dialog(
+        SuccesRegisterPage(),
+        barrierDismissible: false,
+      );
       newpasswordController.clear();
       newemailController.clear();
       newnameController.clear();
       newphoneController.clear();
       return responseCommerce;
     } catch (e) {
-      rethrow;
+      isLogging.value = false;
+      update();
+      HandleRegister.registerError(e.toString());
     }
+    return null;
+  }
+
+  //Change password
+
+  TextEditingController emailRecoveryController = TextEditingController();
+  String errorEmailRecovery = '';
+  TextEditingController codeRecoveryController = TextEditingController();
+  String errorCodeRecovery = '';
+  TextEditingController newPassRecoveryController = TextEditingController();
+  String errorPasswordRecovery = '';
+  TextEditingController repeatPassRecoveryController = TextEditingController();
+
+  int pageValidation = 0;
+
+  void verifyEmailUser() async {
+    try {
+      await ChangePasswordUseCase().execute(
+        ChangePasswordParams(
+          emailRecovery: emailRecoveryController.text,
+        ),
+      );
+      errorEmailRecovery = '';
+      pageValidation = 1;
+      update();
+    } catch (e) {
+      if (e.runtimeType == ApiException) {
+        var err = (e as ApiException);
+        if (err.statusCode == 404) {
+          errorEmailRecovery = 'Este usuario no se encuentra registrado';
+        }
+      }
+      update();
+    }
+  }
+
+  void validateCodeOtp() async {
+    try {
+      await ChangePasswordUseCase().execute(
+        ChangePasswordParams(
+          emailRecovery: emailRecoveryController.text,
+          code: int.tryParse(codeRecoveryController.text),
+        ),
+      );
+      pageValidation = 2;
+      update();
+    } catch (e) {
+      if (e.runtimeType == ApiException) {
+        var err = (e as ApiException);
+        if (err.statusCode == 409) {
+          errorCodeRecovery = 'Código invalido';
+        }
+      }
+      update();
+    }
+  }
+
+  void changePassword() async {
+    try {
+      await ChangePasswordUseCase().execute(
+        ChangePasswordParams(
+          emailRecovery: emailRecoveryController.text,
+          code: int.tryParse(codeRecoveryController.text),
+          newPassword: newPassRecoveryController.text,
+        ),
+      );
+      emailRecoveryController.clear();
+      codeRecoveryController.clear();
+      newPassRecoveryController.clear();
+      pageValidation = 0;
+      errorEmailRecovery = '';
+      errorCodeRecovery = '';
+      Get.dialog(
+        const SuccesRegisterPage(
+          title: '¡Tu contraseña se cambió con exito!',
+          message: '',
+          postData: 'Regresa siempre que olvides tu contraseña',
+        ),
+        barrierDismissible: false,
+      );
+    } catch (e) {}
   }
 }

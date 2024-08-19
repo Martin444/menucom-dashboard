@@ -19,15 +19,23 @@ import '../../models/menu_model.dart';
 class DinningController extends GetxController {
   DinningModel dinningLogin = DinningModel();
 
+  bool isLoaginDataUser = false;
+
   void getMyDinningInfo() async {
     try {
+      isLoaginDataUser = true;
+      update();
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
+      isLoaginDataUser = false;
       update();
-      menusToEdit = await getmenuByDining();
-      setDataToEditItem(menusToEdit);
+
+      await getmenuByDining();
+      // setDataToEditItem(menusToEdit);
       update();
     } catch (e) {
+      isLoaginDataUser = false;
+      update();
       rethrow;
     }
   }
@@ -72,16 +80,14 @@ class DinningController extends GetxController {
 
       await getmenuByDining();
       update();
-      var detectItem = menusList.first.items!
-          .where((item) => item.id == menusToEdit.id)
-          .toList();
+      var detectItem = menusList.first.items!.where((item) => item.id == menusToEdit.id).toList();
       setDataToEditItem(detectItem.first);
     } catch (e) {
       setDataToEditItem(menusToEdit);
     }
   }
 
-  Future<MenuItemModel> getmenuByDining() async {
+  Future<MenuItemModel?> getmenuByDining() async {
     try {
       var respMenu = await GetMenuUseCase().execute(dinningLogin.id!);
       menusList.assignAll(respMenu);
@@ -90,7 +96,7 @@ class DinningController extends GetxController {
       return firstMenuItem;
     } on ApiException catch (e) {
       if (e.statusCode == 404) {
-        Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
+        return null;
       }
       rethrow;
     }

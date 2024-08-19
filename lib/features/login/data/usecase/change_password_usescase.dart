@@ -1,14 +1,15 @@
 import 'package:pickmeup_dashboard/features/login/data/provider/change_password_provider.dart';
+import 'package:pickmeup_dashboard/features/login/model/change_password_params.dart';
 
 class ChangePasswordUseCase {
   ChangePasswordUseCase();
 
-  Future<bool> execute(
-    String newPass,
+  Future<dynamic> execute(
+    ChangePasswordParams newPass,
   ) async {
     try {
       var response = await ChangePasswordProvider().changePassword(
-        newPass: newPass,
+        params: newPass,
       );
       return response;
     } catch (e) {
