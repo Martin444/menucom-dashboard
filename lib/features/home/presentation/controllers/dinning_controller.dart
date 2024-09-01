@@ -8,6 +8,8 @@ import 'package:pickmeup_dashboard/features/home/data/usescases/get_menu_dinning
 import 'package:pickmeup_dashboard/features/home/data/usescases/post_menu_item_usescases.dart';
 import 'package:pickmeup_dashboard/features/home/data/usescases/upload_file_usescases.dart';
 import 'package:pickmeup_dashboard/features/home/models/dinning_model.dart';
+import 'package:pickmeup_dashboard/features/wardrobes/data/usecases/get_wardrobe_usecase.dart';
+import 'package:pickmeup_dashboard/features/wardrobes/model/wardrobe_model.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,10 +29,13 @@ class DinningController extends GetxController {
       update();
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
+      if (dinningLogin.role == 'dining') {
+        await getmenuByDining();
+      } else {
+        await getWardrobebyDining();
+      }
       isLoaginDataUser = false;
       update();
-
-      await getmenuByDining();
       // setDataToEditItem(menusToEdit);
       update();
     } catch (e) {
@@ -40,7 +45,21 @@ class DinningController extends GetxController {
     }
   }
 
+  Future<List<WardrobeModel>> getWardrobebyDining() async {
+    try {
+      wardList = [];
+      final responseWar = await GetWardrobeUsecase.execute();
+      for (var e in responseWar) {
+        wardList.add(e);
+      }
+      return wardList;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   List<MenuModel> menusList = <MenuModel>[];
+  List<WardrobeModel> wardList = <WardrobeModel>[];
   MenuItemModel menusToEdit = MenuItemModel();
 
   TextEditingController nameController = TextEditingController();

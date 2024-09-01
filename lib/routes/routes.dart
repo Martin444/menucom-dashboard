@@ -8,4 +8,6 @@ class PURoutes {
   static String REGISTER_ITEM_MENU = '/create-menu-item';
   static String USER_PROFILE = '/perfil/:idUsuario';
   static String REGISTER_PURCHACE = '/registrar-venta';
+  static String REGISTER_WARDROBES = '/nuevo-guardarropas';
+  static String EDIT_WARDROBES = '/edita-tu-guardarropas';
 }

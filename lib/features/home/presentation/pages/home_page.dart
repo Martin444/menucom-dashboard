@@ -1,13 +1,14 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinning_controller.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/widget/form_edit_side.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_item_tile.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/head_actions.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/item_category_tile.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
+import 'package:pickmeup_dashboard/features/wardrobes/presentation/getx/wardrobes_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
+import 'package:pu_material/utils/style/pu_style_containers.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:svg_flutter/svg.dart';
 
@@ -46,7 +47,7 @@ class _HomePageState extends State<HomePage> {
             drawerScrimColor: Colors.transparent,
             body: Row(
               children: [
-                MenuSIde(),
+                const MenuSIde(),
                 Expanded(
                   child: Stack(
                     children: [
@@ -55,50 +56,7 @@ class _HomePageState extends State<HomePage> {
                           // Header
                           const HeadDinning(),
 
-                          Container(
-                            // height: 40,
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  width: 1,
-                                  color: Color(0xFFBCBCBC),
-                                ),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      dinning.dinningLogin.name ?? '',
-                                      style: PuTextStyle.title1,
-                                    ),
-                                    SvgPicture.asset(
-                                      PUIcons.iconLink,
-                                      colorFilter: ColorFilter.mode(
-                                        PUColors.iconColor,
-                                        BlendMode.src,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 200,
-                                  child: ButtonPrimary(
-                                    title: 'Nuevo menú',
-                                    onPressed: () {
-                                      Get.toNamed(
-                                        PURoutes.REGISTER_ITEM_MENU,
-                                      );
-                                    },
-                                    load: false,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          const HeadActions(),
 
                           // Seccion de items del menú
                           Expanded(
@@ -110,74 +68,48 @@ class _HomePageState extends State<HomePage> {
                               child: Row(
                                 children: [
                                   // items
-                                  dinning.menusList.isNotEmpty
-                                      ? Expanded(
-                                          flex: 2,
-                                          child: GetBuilder<DinningController>(
-                                            builder: (_) {
-                                              return LayoutBuilder(
-                                                builder: (context, constrains) {
-                                                  return Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 300,
-                                                        child: ButtonPrimary(
-                                                          title: 'Agrega un plato',
-                                                          onPressed: () {
-                                                            Get.toNamed(
-                                                              PURoutes.REGISTER_ITEM_MENU,
-                                                            );
-                                                          },
-                                                          load: false,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                      SizedBox(
-                                                        height: constrains.maxHeight - 80,
-                                                        child: GridView.builder(
-                                                          scrollDirection: Axis.vertical,
-                                                          itemCount: _.menusList[0].items?.length ?? 0,
-                                                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                                            crossAxisCount: isMobile ? 2 : 3,
-                                                            mainAxisExtent: 200,
-                                                            childAspectRatio: 0.3,
-                                                            crossAxisSpacing: 20,
-                                                            mainAxisSpacing: 20,
-                                                          ),
-                                                          itemBuilder: (context, index) {
-                                                            return MenuItemTile(
-                                                              item: _.menusList[0].items![index],
-                                                              selected: _.menusList[0].items![index] == _.menusToEdit,
-                                                              onAddCart: (menu) {
-                                                                _.setDataToEditItem(
-                                                                  menu,
-                                                                );
-
-                                                                if (isMobile) {
-                                                                  Get.dialog(
-                                                                    const Scaffold(
-                                                                      body: FormEditSide(),
-                                                                    ),
-                                                                  );
-                                                                }
-                                                              },
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            },
-                                          ),
+                                  dinning.wardList.isNotEmpty
+                                      ? Flexible(
+                                          child: WardsHomeView(isMobile: isMobile),
                                         )
-                                      : const Expanded(
-                                          child: Center(
-                                            child: Text('No hay items aún'),
+                                      : Expanded(
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    PUImages.noDataImageSvg,
+                                                    height: 140,
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  Center(
+                                                    child: Text(
+                                                      'Registrá tus prendas en guardarropas flexibles',
+                                                      textAlign: TextAlign.center,
+                                                      style: PuTextStyle.title5,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 70,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 300,
+                                                    child: ButtonPrimary(
+                                                      title: 'Comenzar',
+                                                      onPressed: () {
+                                                        Get.toNamed(PURoutes.REGISTER_WARDROBES);
+                                                      },
+                                                      load: false,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                 ],
@@ -198,134 +130,96 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class MenuSIde extends StatelessWidget {
-  const MenuSIde({
+class WardsHomeView extends StatefulWidget {
+  const WardsHomeView({
     super.key,
+    required this.isMobile,
   });
+
+  final bool isMobile;
+
+  @override
+  State<WardsHomeView> createState() => _WardsHomeViewState();
+}
+
+class _WardsHomeViewState extends State<WardsHomeView> {
+  var wardController = Get.find<WardrobesController>();
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DinningController>(
       builder: (_) {
-        return Drawer(
-          backgroundColor: PUColors.bgItem.withOpacity(0.3),
-          elevation: 0,
-          child: BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 60,
-              sigmaY: 60,
-            ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 20,
-              ),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 1,
-                  color: Color(0xFFBCBCBC),
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return LayoutBuilder(
+          builder: (context, constrains) {
+            return SizedBox(
+              height: constrains.maxHeight,
+              child: Row(
                 children: [
-                  Column(
-                    children: [
-                      Image.network(
-                        _.dinningLogin.photoURL!,
-                        height: 100,
-                        scale: 0.2,
+                  Flexible(
+                    flex: 8,
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                        right: 20,
                       ),
-                      const SizedBox(
-                        height: 40,
+                      child: GridView.builder(
+                        itemCount: 5,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: widget.isMobile ? 2 : 4,
+                          // mainAxisExtent: 300,
+                          mainAxisSpacing: 20,
+                          childAspectRatio: 1.2,
+                          crossAxisSpacing: 20,
+                        ),
+                        itemBuilder: (context, index) {
+                          return Container(
+                            color: Colors.red,
+                          );
+                        },
                       ),
-                      ItemDrawMenu(
-                        icon: PUIcons.iconHomeMenu,
-                        label: 'Inicio',
-                        isSelected: false,
-                        onRoute: () {},
-                      ),
-                      ItemDrawMenu(
-                        icon: PUIcons.iconOrderMenu,
-                        label: 'Ordenes',
-                        isSelected: true,
-                        onRoute: () {},
-                      ),
-                      ItemDrawMenu(
-                        icon: PUIcons.iconSalesMenu,
-                        label: 'Ventas',
-                        onRoute: () {},
-                      ),
-                      ItemDrawMenu(
-                        icon: PUIcons.iconClientsMenu,
-                        label: 'Clientes',
-                        onRoute: () {},
-                      ),
-                      ItemDrawMenu(
-                        icon: PUIcons.iconProveeMenu,
-                        label: 'Proveedores',
-                        onRoute: () {},
-                      ),
-                    ],
+                    ),
                   ),
-                  ItemDrawMenu(
-                    icon: PUIcons.iconExitMenu,
-                    label: 'Cerrar sesión',
-                    onRoute: () {
-                      _.closeSesion();
-                    },
-                  ),
+                  Flexible(
+                    flex: 2,
+                    child: Container(
+                      height: constrains.maxHeight,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                      decoration: PuStyleContainers.borderLeftContainer,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Mis guardarropas',
+                            style: PuTextStyle.title1,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          ..._.wardList.map(
+                            (element) {
+                              return ItemCategoryTile(
+                                item: element,
+                                descriptionBuilder: (ward) {
+                                  return ward.description!;
+                                },
+                                onDelete: (ward) {},
+                                onEdit: (ward) {
+                                  wardController.gotoEditWardrobe(ward);
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                 ],
               ),
-            ),
-          ),
+            );
+          },
         );
       },
-    );
-  }
-}
-
-class ItemDrawMenu extends StatelessWidget {
-  final String icon;
-  final String label;
-  final bool? isSelected;
-  final Function onRoute;
-  const ItemDrawMenu({
-    super.key,
-    required this.icon,
-    this.isSelected,
-    required this.label,
-    required this.onRoute,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () {
-          onRoute();
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          decoration: BoxDecoration(
-            color: isSelected ?? false ? PUColors.bgItemMenuSelected : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Row(
-            children: [
-              SvgPicture.asset(icon),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                label,
-                style: PuTextStyle.title3,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

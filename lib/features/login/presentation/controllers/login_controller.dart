@@ -204,7 +204,7 @@ class LoginController extends GetxController {
       // sharedToken.setString('acccesstoken', ACCESS_TOKEN);
       update();
       Get.dialog(
-        SuccesRegisterPage(),
+        const SuccesRegisterPage(),
         barrierDismissible: false,
       );
       newpasswordController.clear();
@@ -297,6 +297,8 @@ class LoginController extends GetxController {
         ),
         barrierDismissible: false,
       );
-    } catch (e) {}
+    } catch (e) {
+      rethrow;
+    }
   }
 }

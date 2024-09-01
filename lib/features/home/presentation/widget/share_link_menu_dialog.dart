@@ -66,13 +66,10 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
                   pathIcon: PUIcons.iconWhatsapp,
                   colorBackground: PUColors.bgSucces.withOpacity(0.3),
                   onTap: () async {
-                    final url =
-                        'https://wa.me/${''}?text=${Uri.encodeComponent('$URL_MENU_ORIGIN/${widget.idMenu}')}';
+                    final url = 'https://wa.me/${''}?text=${Uri.encodeComponent('$URL_MENU_ORIGIN/${widget.idMenu}')}';
                     if (await canLaunchUrl(Uri.parse(url))) {
                       await launchUrl(Uri.parse(url));
-                    } else {
-                      print('No se pudo abrir WhatsApp.');
-                    }
+                    } else {}
                   },
                 ),
                 const SizedBox(
@@ -86,9 +83,7 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
                         'https://mail.google.com/mail/?view=cm&to=alejandrofarel62@gmail.com&su=${Uri.encodeComponent('Adjunto')}&body=${Uri.encodeComponent('$URL_MENU_ORIGIN/${widget.idMenu}')}';
                     if (await canLaunchUrl(Uri.parse(url))) {
                       await launchUrl(Uri.parse(url));
-                    } else {
-                      print('No se pudo abrir Gmail.');
-                    }
+                    } else {}
                   },
                 ),
                 const SizedBox(
@@ -103,9 +98,7 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
                     if (await canLaunchUrl(Uri.parse(url))) {
                       screenshotController.capture();
                       // await launchUrl(Uri.parse(url));
-                    } else {
-                      print('No se pudo abrir Gmail.');
-                    }
+                    } else {}
                   },
                 ),
               ],
