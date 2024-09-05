@@ -68,7 +68,9 @@ class PUPages {
     GetPage(
       name: PURoutes.EDIT_WARDROBES,
       transition: Transition.fadeIn,
-      page: () => const CreateWardPage(),
+      page: () => const CreateWardPage(
+        isEditPage: true,
+      ),
       bindings: [
         WardrobesBinding(),
       ],

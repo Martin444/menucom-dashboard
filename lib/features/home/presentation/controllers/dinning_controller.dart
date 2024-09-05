@@ -52,6 +52,8 @@ class DinningController extends GetxController {
       for (var e in responseWar) {
         wardList.add(e);
       }
+      wardSelected = wardList.first;
+      update();
       return wardList;
     } catch (e) {
       throw e;
@@ -60,6 +62,17 @@ class DinningController extends GetxController {
 
   List<MenuModel> menusList = <MenuModel>[];
   List<WardrobeModel> wardList = <WardrobeModel>[];
+  WardrobeModel wardSelected = WardrobeModel(
+    id: '',
+    idOwner: '',
+    items: [],
+  );
+
+  void chageWardSelected(WardrobeModel select) {
+    wardSelected = select;
+    update();
+  }
+
   MenuItemModel menusToEdit = MenuItemModel();
 
   TextEditingController nameController = TextEditingController();
@@ -198,7 +211,7 @@ class DinningController extends GetxController {
     var sesion = await _prefs;
     await sesion.clear();
     ACCESS_TOKEN = '';
-    Get.toNamed(PURoutes.LOGIN);
+    Get.offAllNamed(PURoutes.LOGIN);
     update();
   }
 }

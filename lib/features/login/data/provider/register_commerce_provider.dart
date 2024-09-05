@@ -31,7 +31,7 @@ class RegisterCommerceProvider extends RegisterCommerceRespository {
           "name": name,
           "phone": phone,
           "password": password,
-          "role": "dining",
+          "role": role,
           "needToChangepassword": false,
         }),
       );

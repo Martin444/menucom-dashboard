@@ -4,13 +4,12 @@ import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinnin
 import 'package:pickmeup_dashboard/features/home/presentation/widget/head_actions.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/item_category_tile.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/starter_banner.dart';
+import 'package:pickmeup_dashboard/features/wardrobes/model/wardrobe_model.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/getx/wardrobes_controller.dart';
-import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
-import 'package:svg_flutter/svg.dart';
 
 import '../widget/head_dinning.dart';
 
@@ -73,43 +72,8 @@ class _HomePageState extends State<HomePage> {
                                           child: WardsHomeView(isMobile: isMobile),
                                         )
                                       : Expanded(
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    PUImages.noDataImageSvg,
-                                                    height: 140,
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  Center(
-                                                    child: Text(
-                                                      'Registrá tus prendas en guardarropas flexibles',
-                                                      textAlign: TextAlign.center,
-                                                      style: PuTextStyle.title5,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 70,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 300,
-                                                    child: ButtonPrimary(
-                                                      title: 'Comenzar',
-                                                      onPressed: () {
-                                                        Get.toNamed(PURoutes.REGISTER_WARDROBES);
-                                                      },
-                                                      load: false,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                          child: StarterBanner(
+                                            user: dinninController.dinningLogin,
                                           ),
                                         ),
                                 ],
@@ -153,67 +117,114 @@ class _WardsHomeViewState extends State<WardsHomeView> {
           builder: (context, constrains) {
             return SizedBox(
               height: constrains.maxHeight,
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Flexible(
-                    flex: 8,
+                  Visibility(
+                    visible: constrains.maxWidth < 1200,
                     child: Container(
-                      padding: const EdgeInsets.only(
-                        right: 20,
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 5,
+                        horizontal: 10,
                       ),
-                      child: GridView.builder(
-                        itemCount: 5,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: widget.isMobile ? 2 : 4,
-                          // mainAxisExtent: 300,
-                          mainAxisSpacing: 20,
-                          childAspectRatio: 1.2,
-                          crossAxisSpacing: 20,
+                      decoration: BoxDecoration(
+                        color: PUColors.bgCategorySelected,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<WardrobeModel>(
+                          value: _.wardSelected,
+                          items: _.wardList.map((WardrobeModel item) {
+                            return DropdownMenuItem<WardrobeModel>(
+                              value: item,
+                              child: Text(item.description!),
+                            );
+                          }).toList(),
+                          onChanged: (WardrobeModel? value) {
+                            _.chageWardSelected(value!);
+                          },
                         ),
-                        itemBuilder: (context, index) {
-                          return Container(
-                            color: Colors.red,
-                          );
-                        },
                       ),
                     ),
                   ),
-                  Flexible(
-                    flex: 2,
-                    child: Container(
-                      height: constrains.maxHeight,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                      ),
-                      decoration: PuStyleContainers.borderLeftContainer,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Mis guardarropas',
-                            style: PuTextStyle.title1,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Flexible(
+                          flex: 8,
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                              right: 20,
+                            ),
+                            child: GridView.builder(
+                              itemCount: 5,
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: widget.isMobile ? 2 : 4,
+                                // mainAxisExtent: 300,
+                                mainAxisSpacing: 20,
+                                childAspectRatio: 1.2,
+                                crossAxisSpacing: 20,
+                              ),
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  color: Colors.red,
+                                );
+                              },
+                            ),
                           ),
-                          const SizedBox(
-                            height: 20,
+                        ),
+                        Visibility(
+                          visible: constrains.maxWidth > 1200,
+                          child: Flexible(
+                            flex: 2,
+                            child: Container(
+                              height: constrains.maxHeight,
+                              padding: const EdgeInsets.only(
+                                left: 20,
+                              ),
+                              decoration: PuStyleContainers.borderLeftContainer,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Mis guardarropas',
+                                    style: PuTextStyle.title1,
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  ..._.wardList.map(
+                                    (element) {
+                                      return ItemCategoryTile(
+                                        item: element,
+                                        isSelected: _.wardSelected == element,
+                                        descriptionBuilder: (ward) {
+                                          return ward.description!;
+                                        },
+                                        onSelect: (ward) {
+                                          _.chageWardSelected(ward);
+                                        },
+                                        onDelete: (ward) async {
+                                          _.chageWardSelected(ward);
+                                          await wardController.deleteWardrobe(ward);
+                                          _.getWardrobebyDining();
+                                        },
+                                        onEdit: (ward) {
+                                          _.chageWardSelected(ward);
+                                          wardController.gotoEditWardrobe(ward);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          ..._.wardList.map(
-                            (element) {
-                              return ItemCategoryTile(
-                                item: element,
-                                descriptionBuilder: (ward) {
-                                  return ward.description!;
-                                },
-                                onDelete: (ward) {},
-                                onEdit: (ward) {
-                                  wardController.gotoEditWardrobe(ward);
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                        )
+                      ],
                     ),
-                  )
+                  ),
                 ],
               ),
             );

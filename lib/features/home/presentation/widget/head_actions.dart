@@ -9,6 +9,8 @@ import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/widgets/buttons/button_primary.dart';
 import 'package:svg_flutter/svg.dart';
 
+import '../../models/roles_users.dart';
+
 class HeadActions extends StatelessWidget {
   const HeadActions({
     super.key,
@@ -50,8 +52,10 @@ class HeadActions extends StatelessWidget {
 }
 
 Widget getActionPrincipalByRole(String role) {
-  switch (role) {
-    case 'dining':
+  final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(role);
+
+  switch (roleByRoleUser) {
+    case RolesUsers.dining:
       return ButtonPrimary(
         title: 'Nuevo Menú',
         onPressed: () {
@@ -61,7 +65,7 @@ Widget getActionPrincipalByRole(String role) {
         },
         load: false,
       );
-    case 'clothes':
+    case RolesUsers.clothes:
       return ButtonPrimary(
         title: 'Nuevo guardarropas',
         onPressed: () {
