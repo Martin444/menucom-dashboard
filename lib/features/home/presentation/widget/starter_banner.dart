@@ -65,7 +65,16 @@ class _StarterBannerState extends State<StarterBanner> {
               child: ButtonPrimary(
                 title: 'Comenzar',
                 onPressed: () {
-                  Get.toNamed(PURoutes.REGISTER_WARDROBES);
+                  final role = RolesFuncionts.getTypeRoleByRoleString(widget.user.role!);
+                  switch (role) {
+                    case RolesUsers.dining:
+                      Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY);
+                      break;
+                    case RolesUsers.clothes:
+                      Get.toNamed(PURoutes.REGISTER_WARDROBES);
+                      break;
+                    default:
+                  }
                 },
                 load: false,
               ),

@@ -16,7 +16,7 @@ class GetMenuProvider extends GetMenuRespository {
       var response = await http.get(
         userURl,
       );
-      if (response.statusCode != 201 || response.statusCode != 200) {
+      if (response.statusCode != 200) {
         throw ApiException(
           response.statusCode,
           response.body,

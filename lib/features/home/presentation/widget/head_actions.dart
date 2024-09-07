@@ -60,7 +60,7 @@ Widget getActionPrincipalByRole(String role) {
         title: 'Nuevo Menú',
         onPressed: () {
           Get.toNamed(
-            PURoutes.REGISTER_ITEM_MENU,
+            PURoutes.REGISTER_MENU_CATEGORY,
           );
         },
         load: false,
@@ -76,11 +76,7 @@ Widget getActionPrincipalByRole(String role) {
     default:
       return ButtonPrimary(
         title: 'Nuevo',
-        onPressed: () {
-          Get.toNamed(
-            PURoutes.REGISTER_ITEM_MENU,
-          );
-        },
+        onPressed: () {},
         load: false,
       );
   }

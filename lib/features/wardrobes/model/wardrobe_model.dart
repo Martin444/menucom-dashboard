@@ -5,7 +5,7 @@ class WardrobeModel {
   final String? idOwner;
   final String? description;
   final int? capacity;
-  final List<ClothingItemModel> items;
+  final List<ClothingItemModel>? items;
 
   WardrobeModel({
     required this.id,
@@ -21,7 +21,7 @@ class WardrobeModel {
       idOwner: json['idOwner'] as String?,
       description: json['description'] as String?,
       capacity: json['capacity'] as int?,
-      items: (json['items'] as List<dynamic>).map((itemJson) => ClothingItemModel.fromJson(itemJson)).toList(),
+      items: (json['items'] as List<dynamic>?)?.map((itemJson) => ClothingItemModel.fromJson(itemJson)).toList(),
     );
   }
 
@@ -31,7 +31,7 @@ class WardrobeModel {
       'idOwner': idOwner,
       'description': description,
       'capacity': capacity,
-      'items': items.map((item) => item.toJson()).toList(),
+      'items': items?.map((item) => item.toJson()).toList(),
     };
   }
 }

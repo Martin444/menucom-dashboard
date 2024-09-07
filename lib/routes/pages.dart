@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/middlewares/auth_middleware.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinning_binding.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/pages/create_item_page.dart';
+import 'package:pickmeup_dashboard/features/menu/presentation/get/menu_binding.dart';
+import 'package:pickmeup_dashboard/features/menu/presentation/views/create_menu_page.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/getx/wardrobes_binding.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/views/create_ward_page.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/pages/home_page.dart';
@@ -47,6 +49,7 @@ class PUPages {
       bindings: [
         DinningBinding(),
         WardrobesBinding(),
+        MenuBinding(),
       ],
     ),
     GetPage(
@@ -73,6 +76,24 @@ class PUPages {
       ),
       bindings: [
         WardrobesBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.REGISTER_MENU_CATEGORY,
+      transition: Transition.fadeIn,
+      page: () => const CreateMenuPage(),
+      bindings: [
+        MenuBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.EDIT_MENU_CATEGORY,
+      transition: Transition.fadeIn,
+      page: () => const CreateMenuPage(
+        isEditPage: true,
+      ),
+      bindings: [
+        MenuBinding(),
       ],
     ),
   ];

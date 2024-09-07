@@ -29,7 +29,7 @@ class DinningController extends GetxController {
       update();
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
-      if (dinningLogin.role == 'dining') {
+      if (dinningLogin.role == "dining") {
         await getmenuByDining();
       } else {
         await getWardrobebyDining();
@@ -45,7 +45,7 @@ class DinningController extends GetxController {
     }
   }
 
-  Future<List<WardrobeModel>> getWardrobebyDining() async {
+  Future<List<WardrobeModel>?> getWardrobebyDining() async {
     try {
       wardList = [];
       final responseWar = await GetWardrobeUsecase.execute();
@@ -55,12 +55,19 @@ class DinningController extends GetxController {
       wardSelected = wardList.first;
       update();
       return wardList;
-    } catch (e) {
-      throw e;
+    } on ApiException catch (e) {
+      everyListEmpty = false;
+      update();
+      if (e.statusCode == 404) {
+        return null;
+      }
+      return null;
     }
   }
 
   List<MenuModel> menusList = <MenuModel>[];
+  MenuModel menuSelected = MenuModel();
+  bool everyListEmpty = true;
   List<WardrobeModel> wardList = <WardrobeModel>[];
   WardrobeModel wardSelected = WardrobeModel(
     id: '',
@@ -70,6 +77,11 @@ class DinningController extends GetxController {
 
   void chageWardSelected(WardrobeModel select) {
     wardSelected = select;
+    update();
+  }
+
+  void chageMenuSelected(MenuModel select) {
+    menuSelected = select;
     update();
   }
 
@@ -119,15 +131,19 @@ class DinningController extends GetxController {
     }
   }
 
-  Future<MenuItemModel?> getmenuByDining() async {
+  Future<List<MenuModel>?> getmenuByDining() async {
     try {
       var respMenu = await GetMenuUseCase().execute(dinningLogin.id!);
+
       menusList.assignAll(respMenu);
-      var firstMenuItem = menusList.first.items!.first;
+      menuSelected = menusList.first;
+      everyListEmpty = true;
       update();
-      return firstMenuItem;
+      return menusList;
     } on ApiException catch (e) {
+      update();
       if (e.statusCode == 404) {
+        everyListEmpty = false;
         return null;
       }
       rethrow;
