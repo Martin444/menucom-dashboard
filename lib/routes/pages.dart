@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/middlewares/auth_middleware.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinning_binding.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/pages/create_item_page.dart';
+import 'package:pickmeup_dashboard/features/menu/presentation/views/create_item_page.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/get/menu_binding.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/views/create_menu_page.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/getx/wardrobes_binding.dart';
@@ -58,6 +58,7 @@ class PUPages {
       page: () => const CreateItemPage(),
       bindings: [
         DinningBinding(),
+        MenuBinding(),
       ],
     ),
     GetPage(

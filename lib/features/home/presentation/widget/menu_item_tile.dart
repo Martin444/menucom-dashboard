@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/formaters/currency_converter.dart';
 import 'package:pu_material/utils/overflow_text.dart';
+import 'package:pu_material/utils/style/pu_style_containers.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 
 import '../../models/menu_item_model.dart';
@@ -30,12 +30,7 @@ class MenuItemTile extends StatelessWidget {
             vertical: 5,
             horizontal: 10,
           ),
-          decoration: BoxDecoration(
-            color: selected
-                ? PUColors.selectedItem.withOpacity(0.5)
-                : PUColors.bgItem.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(10),
-          ),
+          decoration: PuStyleContainers.borderAllContainer,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,7 +38,7 @@ class MenuItemTile extends StatelessWidget {
             children: [
               Image.network(
                 item.photoUrl!,
-                height: 120,
+                height: 220,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
@@ -57,11 +52,20 @@ class MenuItemTile extends StatelessWidget {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     PUOverflowTextDetector(
+                      message: item.ingredients!.join(','),
+                      children: [
+                        Text(
+                          item.ingredients!.join(','),
+                          style: PuTextStyle.title2,
+                        ),
+                      ],
+                    ),
+                    PUOverflowTextDetector(
                       message: item.name!,
                       children: [
                         Text(
                           item.name!,
-                          style: PuTextStyle.title3,
+                          style: PuTextStyle.title2,
                         ),
                       ],
                     ),

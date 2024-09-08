@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/models/menu_model.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/item_category_tile.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_item_tile.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/get/menu_controller.dart';
-import 'package:pu_material/utils/pu_colors.dart';
+import 'package:pickmeup_dashboard/routes/routes.dart';
+import 'package:pu_material/pu_material.dart';
+import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
+import 'package:svg_flutter/svg.dart';
 
 import '../controllers/dinning_controller.dart';
 
@@ -53,7 +57,7 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                           items: _.menusList.map((MenuModel item) {
                             return DropdownMenuItem<MenuModel>(
                               value: item,
-                              child: Text(item.description!),
+                              child: Text(item.description ?? ''),
                             );
                           }).toList(),
                           onChanged: (MenuModel? value) {},
@@ -64,27 +68,64 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                   Expanded(
                     child: Row(
                       children: [
-                        Flexible(
+                        Expanded(
                           flex: 8,
                           child: Container(
                             padding: const EdgeInsets.only(
                               right: 20,
                             ),
-                            child: GridView.builder(
-                              itemCount: 5,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: widget.isMobile ? 2 : 4,
-                                // mainAxisExtent: 300,
-                                mainAxisSpacing: 20,
-                                childAspectRatio: 1.2,
-                                crossAxisSpacing: 20,
-                              ),
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  color: Colors.red,
-                                );
-                              },
-                            ),
+                            child: _.menuSelected.items?.isNotEmpty ?? false
+                                ? GridView.builder(
+                                    itemCount: _.menuSelected.items?.length,
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: widget.isMobile ? 2 : 4,
+                                      mainAxisExtent: 400,
+                                      mainAxisSpacing: 20,
+                                      childAspectRatio: 1.0,
+                                      crossAxisSpacing: 20,
+                                    ),
+                                    itemBuilder: (context, index) {
+                                      return MenuItemTile(
+                                        item: _.menuSelected.items![index],
+                                        selected: false,
+                                        onAddCart: (val) {},
+                                      );
+                                    },
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        PUImages.noDataImageSvg,
+                                        height: 140,
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      Center(
+                                        child: Text(
+                                          'No hay ningun plato cargado para ${_.menuSelected.description ?? '-'}',
+                                          style: PuTextStyle.description1,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      Container(
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 300,
+                                        ),
+                                        child: ButtonPrimary(
+                                          title: 'Cargar primer plato',
+                                          onPressed: () {
+                                            Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
+                                          },
+                                          load: false,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                           ),
                         ),
                         Visibility(
@@ -101,7 +142,7 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Mis menus',
+                                    'Mis menús',
                                     style: PuTextStyle.title1,
                                   ),
                                   const SizedBox(
@@ -113,7 +154,7 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                         item: element,
                                         isSelected: _.menuSelected == element,
                                         descriptionBuilder: (menu) {
-                                          return menu.description!;
+                                          return menu.description ?? '';
                                         },
                                         onSelect: (menu) {
                                           _.chageMenuSelected(menu);

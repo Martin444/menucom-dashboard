@@ -1,3 +1,5 @@
+import 'package:pickmeup_dashboard/features/home/models/menu_item_model.dart';
+
 abstract class PostMenuItemRepository {
-  Future<dynamic> postMenuItemFromUser(String menuId, dynamic item);
+  Future<MenuItemModel> postMenuItemFromUser(String menuId, MenuItemModel item);
 }

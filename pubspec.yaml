@@ -22,10 +22,10 @@ dependencies:
   screenshot: ^3.0.0
   shared_preferences: ^2.2.3
   svg_flutter: ^0.0.1
+  textfield_tags: ^3.0.1
   url_launcher: ^6.3.0
 
 dev_dependencies:
-
   flutter_lints: ^3.0.0
   flutter_test:
     sdk: flutter

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:pickmeup_dashboard/core/exceptions/api_exception.dart';
 import 'package:pickmeup_dashboard/features/home/data/usescases/get_dinning_usescases.dart';
 import 'package:pickmeup_dashboard/features/home/data/usescases/get_menu_dinning.dart';
-import 'package:pickmeup_dashboard/features/home/data/usescases/post_menu_item_usescases.dart';
-import 'package:pickmeup_dashboard/features/home/data/usescases/upload_file_usescases.dart';
 import 'package:pickmeup_dashboard/features/home/models/dinning_model.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/data/usecases/get_wardrobe_usecase.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/model/wardrobe_model.dart';
@@ -144,80 +140,10 @@ class DinningController extends GetxController {
       update();
       if (e.statusCode == 404) {
         everyListEmpty = false;
+        menusList.clear();
+        update();
         return null;
       }
-      rethrow;
-    }
-  }
-
-  TextEditingController newNameController = TextEditingController();
-  TextEditingController newpriceController = TextEditingController();
-  TextEditingController newdeliveryController = TextEditingController();
-  String newphotoController = '';
-
-  Uint8List? fileTaked;
-  Uint8List toSend = Uint8List(1);
-
-  void pickImageDirectory() async {
-    final ImagePicker pickerImage = ImagePicker();
-
-    final result = await pickerImage.pickImage(source: ImageSource.gallery);
-
-    if (result != null) {
-      Uint8List newFile = await result.readAsBytes();
-      toSend = newFile;
-      // Upload file
-      fileTaked = await result.readAsBytes();
-      update();
-    }
-  }
-
-  bool isLoadMenuItem = false;
-
-  void createMenuItemInServer() async {
-    // Primero obtenemos el link de la imagen
-    isLoadMenuItem = true;
-    update();
-
-    newphotoController = await uploadImage(toSend);
-    await createItem();
-
-    isLoadMenuItem = false;
-    update();
-  }
-
-  Future<String> uploadImage(Uint8List file) async {
-    try {
-      var responUrl = await UploadFileUsesCase().execute(file);
-      return responUrl;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> createItem() async {
-    try {
-      var newItem = MenuItemModel(
-        name: newNameController.text,
-        photoUrl: newphotoController,
-        deliveryTime: int.tryParse(newdeliveryController.text),
-        price: int.tryParse(newpriceController.text),
-      );
-
-      await PostMenuItemUsesCases().execute(
-        menusList.isEmpty ? '' : menusList[0].id ?? '',
-        newItem,
-      );
-
-      Get.toNamed(PURoutes.HOME);
-      newNameController.clear();
-      newphotoController = '';
-      toSend = Uint8List(1);
-      fileTaked = null;
-      newdeliveryController.clear();
-      newpriceController.clear();
-      return;
-    } catch (e) {
       rethrow;
     }
   }

@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/config.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/pages/create_item_page.dart';
+import 'package:pickmeup_dashboard/features/menu/presentation/views/create_item_page.dart';
 import 'package:pickmeup_dashboard/features/login/model/type_comerce_model.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/controllers/login_controller.dart';
 import 'package:pu_material/pu_material.dart';

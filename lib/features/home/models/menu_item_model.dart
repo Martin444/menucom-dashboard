@@ -3,6 +3,7 @@ class MenuItemModel {
   String? photoUrl;
   String? name;
   int? price;
+  List<String>? ingredients;
   int? deliveryTime;
 
   MenuItemModel({
@@ -10,6 +11,7 @@ class MenuItemModel {
     this.photoUrl,
     this.name,
     this.price,
+    this.ingredients,
     this.deliveryTime,
   });
 
@@ -20,6 +22,7 @@ class MenuItemModel {
       photoUrl: json['photoURL'] as String?,
       name: json['name'] as String?,
       price: json['price'] as int?,
+      ingredients: List<String>.from(json['ingredients']),
       deliveryTime: json['deliveryTime'] as int?,
     );
   }
