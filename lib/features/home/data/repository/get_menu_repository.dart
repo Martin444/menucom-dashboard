@@ -1,5 +1,5 @@
-import '../../models/menu_model.dart';
+import '../../models/menu_response.dart';
 
 abstract class GetMenuRespository {
-  Future<List<MenuModel>> getmenuByDining(String idDining);
+  Future<MenuResponse> getmenuByDining(String idDining);
 }

@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinning_controller.dart';
 import 'package:pu_material/pu_material.dart';
+import 'package:pu_material/utils/style/pu_style_fonts.dart';
+
+import 'share_link_menu_dialog.dart';
 
 class HeadDinning extends StatelessWidget {
+  final bool? isMobile;
   const HeadDinning({
     super.key,
+    this.isMobile,
   });
 
   @override
@@ -30,25 +35,77 @@ class HeadDinning extends StatelessWidget {
                 flex: 5,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     MouseRegion(
                       cursor: SystemMouseCursors.click,
                       child: GestureDetector(
                         onTap: () {
-                          // Get.dialog(
-                          //   ShareLinkMenuDialog(
-                          //     idMenu: _.dinningLogin.id ?? '',
-                          //   ),
-                          // );
+                          Scaffold.of(context).openDrawer();
                         },
                         child: Icon(
-                          Icons.notifications,
+                          Icons.menu,
                           color: PUColors.iconColor,
                           // Icons.copy_all_outlined,
                         ),
                       ),
                     ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 5,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    isMobile ?? true
+                        ? const SizedBox()
+                        : GestureDetector(
+                            onTap: () {
+                              Get.dialog(
+                                ShareLinkMenuDialog(
+                                  idMenu: _.dinningLogin.id ?? '',
+                                ),
+                              );
+                            },
+                            child: Text(
+                              _.dinningLogin.name!,
+                              style: PuTextStyle.title1,
+                            ),
+                          ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 5,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    isMobile ?? true
+                        ? MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: Icon(
+                                Icons.notifications,
+                                color: PUColors.iconColor,
+                                // Icons.copy_all_outlined,
+                              ),
+                            ),
+                          )
+                        : Image.network(
+                            _.dinningLogin.photoURL!,
+                            height: 100,
+                            scale: 0.2,
+                          ),
                     const SizedBox(
                       width: 10,
                     ),

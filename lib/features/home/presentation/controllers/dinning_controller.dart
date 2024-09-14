@@ -131,7 +131,7 @@ class DinningController extends GetxController {
     try {
       var respMenu = await GetMenuUseCase().execute(dinningLogin.id!);
 
-      menusList.assignAll(respMenu);
+      menusList.assignAll(respMenu.listmenus!);
       menuSelected = menusList.first;
       everyListEmpty = true;
       update();

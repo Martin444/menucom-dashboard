@@ -40,7 +40,7 @@ class MenuItemTile extends StatelessWidget {
                 item.photoUrl!,
                 height: 220,
                 width: double.infinity,
-                fit: BoxFit.cover,
+                fit: BoxFit.fitHeight,
               ),
               const SizedBox(
                 height: 4,

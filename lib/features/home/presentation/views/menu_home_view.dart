@@ -71,18 +71,22 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                         Expanded(
                           flex: 8,
                           child: Container(
-                            padding: const EdgeInsets.only(
-                              right: 20,
+                            padding: EdgeInsets.only(
+                              right: constrains.maxWidth > 1200 ? 20 : 0,
                             ),
                             child: _.menuSelected.items?.isNotEmpty ?? false
                                 ? GridView.builder(
                                     itemCount: _.menuSelected.items?.length,
                                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: widget.isMobile ? 2 : 4,
-                                      mainAxisExtent: 400,
-                                      mainAxisSpacing: 20,
+                                      crossAxisCount: constrains.maxWidth < 800
+                                          ? constrains.maxWidth > 600
+                                              ? 3
+                                              : 2
+                                          : 4,
+                                      mainAxisExtent: 330,
+                                      mainAxisSpacing: 0,
                                       childAspectRatio: 1.0,
-                                      crossAxisSpacing: 20,
+                                      crossAxisSpacing: 0,
                                     ),
                                     itemBuilder: (context, index) {
                                       return MenuItemTile(
