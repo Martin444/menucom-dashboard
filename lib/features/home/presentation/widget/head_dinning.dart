@@ -74,12 +74,9 @@ class HeadDinning extends StatelessWidget {
                             },
                             child: Text(
                               _.dinningLogin.name!,
-                              style: PuTextStyle.title1,
+                              style: PuTextStyle.title3,
                             ),
                           ),
-                    const SizedBox(
-                      width: 10,
-                    ),
                   ],
                 ),
               ),
