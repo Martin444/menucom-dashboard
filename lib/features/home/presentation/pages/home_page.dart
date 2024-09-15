@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getViewByRole(bool isMobile) {
-    var role = RolesFuncionts.getTypeRoleByRoleString(dinninController.dinningLogin.role!);
+    var role = RolesFuncionts.getTypeRoleByRoleString(dinninController.dinningLogin.role ?? '');
 
     switch (role) {
       case RolesUsers.clothes:
