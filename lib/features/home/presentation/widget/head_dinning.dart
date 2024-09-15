@@ -37,22 +37,21 @@ class HeadDinning extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: GestureDetector(
-                        onTap: () {
-                          Scaffold.of(context).openDrawer();
-                        },
-                        child: Icon(
-                          Icons.menu,
-                          color: PUColors.iconColor,
-                          // Icons.copy_all_outlined,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
+                    isMobile ?? true
+                        ? const SizedBox()
+                        : MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap: () {
+                                Scaffold.of(context).openDrawer();
+                              },
+                              child: Icon(
+                                Icons.menu,
+                                color: PUColors.iconColor,
+                                // Icons.copy_all_outlined,
+                              ),
+                            ),
+                          ),
                   ],
                 ),
               ),

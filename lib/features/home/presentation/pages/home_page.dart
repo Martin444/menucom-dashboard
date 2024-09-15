@@ -106,10 +106,15 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ],
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                            decoration: BoxDecoration(color: Colors.white),
-                            child: getActionPrincipalByRole(dinning),
+                          Visibility(
+                            visible: !isMobile,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                              decoration: BoxDecoration(
+                                color: PUColors.primaryBackground,
+                              ),
+                              child: getActionPrincipalByRole(dinning),
+                            ),
                           )
                         ],
                       ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/pu_colors.dart';
+import 'package:pu_material/utils/style/pu_style_containers.dart';
 import 'package:pu_material/widgets/menu/items/itemdraw.dart';
 
 import '../controllers/dinning_controller.dart';
@@ -31,11 +32,8 @@ class MenuSIde extends StatelessWidget {
                   horizontal: 20,
                   vertical: 20,
                 ),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 1,
-                    color: const Color(0xFFBCBCBC),
-                  ),
+                decoration: PuStyleContainers.borderLeftContainer.copyWith(
+                  color: PUColors.primaryBackground,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
