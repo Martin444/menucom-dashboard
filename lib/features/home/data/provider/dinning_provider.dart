@@ -13,10 +13,7 @@ class DinningProvider extends DinningRepository {
     try {
       Uri userURl = Uri.parse('$URL_PICKME_API/user/me');
       var response = await http.get(
-        headers: {
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRpbmluZyIsInN1YiI6ImIyM2Q0MmM2LTNjNjMtNGQ2ZC1iMTMwLTUwYjIxOGM4ODAzYSIsImlhdCI6MTcyMTE4NTQzMSwiZXhwIjoxNzIxMjcxODMxfQ.AQJAqwNJnd2_PrbzSyJOF4uEP7d0ML01BmSXBfht79Y'
-        },
+        headers: {'Authorization': 'Bearer $ACCESS_TOKEN'},
         userURl,
       );
       if (response.statusCode != 200) {
