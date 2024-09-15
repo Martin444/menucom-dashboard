@@ -35,10 +35,9 @@ class DinningController extends GetxController {
       // setDataToEditItem(menusToEdit);
       update();
     } catch (e) {
+      closeSesion();
       isLoaginDataUser = false;
       update();
-      closeSesion();
-      rethrow;
     }
   }
 
