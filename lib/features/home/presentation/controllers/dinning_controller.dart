@@ -37,6 +37,7 @@ class DinningController extends GetxController {
     } catch (e) {
       isLoaginDataUser = false;
       update();
+      closeSesion();
       rethrow;
     }
   }
