@@ -16,14 +16,14 @@ class DinningProvider extends DinningRepository {
         headers: {'Authorization': 'Bearer $ACCESS_TOKEN'},
         userURl,
       );
-      var respJson = jsonDecode(response.body);
-
-      if (respJson['id'] == null) {
+      if (response.statusCode != 200) {
         throw ApiException(
-          respJson['statusCode'],
-          respJson['message'],
+          response.statusCode,
+          response.body,
         );
       }
+      var respJson = jsonDecode(response.body);
+
       return DinningModel.fromJson(respJson);
     } catch (e) {
       rethrow;
