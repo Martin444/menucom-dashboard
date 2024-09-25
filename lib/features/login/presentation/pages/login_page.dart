@@ -91,6 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                                         labelText: 'Email',
                                         hintText: 'Email',
                                         controller: _.emailController,
+                                        textInputAction: TextInputAction.next,
                                         errorText:
                                             _.errorTextEmail?.value.isEmpty ?? false ? null : _.errorTextEmail!.value,
                                       ),
@@ -103,6 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                                         isPassword: true,
                                         errorText: _.errorTextPassword.value.isEmpty ? null : _.errorTextPassword.value,
                                         controller: _.passwordController,
+                                        textInputAction: TextInputAction.done,
                                         onSubmited: (value) {
                                           _.loginWithEmailandPassword();
                                         },

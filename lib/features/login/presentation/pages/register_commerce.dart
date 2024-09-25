@@ -187,6 +187,12 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                               errorText:
                                                   _.errorTextPassword.value.isEmpty ? null : _.errorTextPassword.value,
                                               controller: _.newpasswordController,
+                                              onSubmited: (p0) {
+                                                var validRegister = _formRegisterKey.currentState?.validate();
+                                                if (validRegister ?? false) {
+                                                  _.registerCommerce();
+                                                }
+                                              },
                                             ),
                                             const SizedBox(
                                               height: 30,
