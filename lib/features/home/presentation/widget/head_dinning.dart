@@ -64,22 +64,24 @@ class HeadDinning extends StatelessWidget {
                   children: [
                     isMobile ?? true
                         ? const SizedBox()
-                        : GestureDetector(
-                            onTap: () {
-                              Get.dialog(
-                                ShareLinkMenuDialog(
-                                  idMenu: _.dinningLogin.id ?? '',
-                                ),
-                              );
-                            },
-                            child: PUOverflowTextDetector(
-                              message: _.dinningLogin.name!,
-                              children: [
-                                Text(
-                                  _.dinningLogin.name!,
-                                  style: PuTextStyle.title3,
-                                ),
-                              ],
+                        : Flexible(
+                            child: GestureDetector(
+                              onTap: () {
+                                Get.dialog(
+                                  ShareLinkMenuDialog(
+                                    idMenu: _.dinningLogin.id ?? '',
+                                  ),
+                                );
+                              },
+                              child: PUOverflowTextDetector(
+                                message: _.dinningLogin.name!,
+                                children: [
+                                  Text(
+                                    _.dinningLogin.name!,
+                                    style: PuTextStyle.title3,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                   ],
