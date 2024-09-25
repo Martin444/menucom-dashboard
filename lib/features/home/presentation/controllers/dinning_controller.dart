@@ -13,6 +13,7 @@ import '../../../../core/config.dart';
 import '../../data/usescases/put_menu_item_usescases.dart';
 import '../../models/menu_item_model.dart';
 import '../../models/menu_model.dart';
+import '../../models/roles_users.dart';
 
 class DinningController extends GetxController {
   DinningModel dinningLogin = DinningModel();
@@ -25,11 +26,18 @@ class DinningController extends GetxController {
       update();
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
-      if (dinningLogin.role == "dining") {
-        await getmenuByDining();
-      } else {
-        await getWardrobebyDining();
+      final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(dinningLogin.role!);
+      switch (roleByRoleUser) {
+        case RolesUsers.dinning:
+          await getmenuByDining();
+          break;
+        case RolesUsers.clothes:
+          await getWardrobebyDining();
+          break;
+        default:
+          closeSesion();
       }
+
       isLoaginDataUser = false;
       update();
       // setDataToEditItem(menusToEdit);
