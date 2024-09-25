@@ -28,7 +28,7 @@ class _StarterBannerState extends State<StarterBanner> {
       case RolesUsers.dining:
         return "Registrá tus platos en menús irresistibles";
       case RolesUsers.clothes:
-        return 'Registrá tus prendas\b en guardarropas flexibles';
+        return 'Registrá tus prendas en guardarropas flexibles';
       default:
         return '';
     }
@@ -52,7 +52,7 @@ class _StarterBannerState extends State<StarterBanner> {
                 height: 20,
               ),
               Center(
-                child: Flexible(
+                child: Center(
                   child: Text(
                     getTitleByRole(),
                     textAlign: TextAlign.center,
