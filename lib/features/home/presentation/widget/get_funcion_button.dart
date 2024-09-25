@@ -52,16 +52,37 @@ Widget getActionPrincipalByRole(DinningController role) {
         ],
       );
     case RolesUsers.clothes:
-      return ButtonPrimary(
-        title: 'Nuevo guardarropas',
-        onPressed: () {
-          Get.toNamed(PURoutes.REGISTER_WARDROBES);
-        },
-        load: false,
+      return Row(
+        children: [
+          Flexible(
+            child: ButtonSecundary(
+              title: 'Nueva prenda',
+              onPressed: () {
+                Get.toNamed(
+                  PURoutes.REGISTER_ITEM_WARDROBES,
+                );
+              },
+              load: false,
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Flexible(
+            child: ButtonPrimary(
+              title: 'Nuevo guardarropas',
+              onPressed: () {
+                Get.toNamed(PURoutes.REGISTER_WARDROBES);
+              },
+              load: false,
+            ),
+          ),
+        ],
       );
+
     default:
       return ButtonPrimary(
-        title: 'Nuevo',
+        title: 'Error en el rol $role',
         onPressed: () {},
         load: false,
       );

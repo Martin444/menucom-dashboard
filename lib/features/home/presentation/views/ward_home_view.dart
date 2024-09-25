@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/item_category_tile.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/ward_item_tile.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/getx/wardrobes_controller.dart';
+import 'package:pickmeup_dashboard/routes/routes.dart';
+import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/pu_colors.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
+import 'package:pu_material/widgets/buttons/button_primary.dart';
+import 'package:svg_flutter/svg.dart';
 
 import '../../../wardrobes/model/wardrobe_model.dart';
 import '../controllers/dinning_controller.dart';
@@ -72,21 +77,62 @@ class _WardsHomeViewState extends State<WardsHomeView> {
                             padding: const EdgeInsets.only(
                               right: 20,
                             ),
-                            child: GridView.builder(
-                              itemCount: 5,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: widget.isMobile ? 2 : 4,
-                                // mainAxisExtent: 300,
-                                mainAxisSpacing: 20,
-                                childAspectRatio: 1.2,
-                                crossAxisSpacing: 20,
-                              ),
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  color: Colors.red,
-                                );
-                              },
-                            ),
+                            child: _.wardSelected.items?.isNotEmpty ?? false
+                                ? GridView.builder(
+                                    itemCount: _.wardSelected.items?.length,
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: constrains.maxWidth < 800
+                                          ? constrains.maxWidth > 600
+                                              ? 3
+                                              : 2
+                                          : 4,
+                                      mainAxisExtent: 330,
+                                      mainAxisSpacing: 0,
+                                      childAspectRatio: 1.0,
+                                      crossAxisSpacing: 0,
+                                    ),
+                                    itemBuilder: (context, index) {
+                                      return WardItemTile(
+                                        item: _.wardSelected.items![index],
+                                        selected: false,
+                                        onAddCart: (val) {},
+                                      );
+                                    },
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        PUImages.noDataImageSvg,
+                                        height: 140,
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      Center(
+                                        child: Text(
+                                          'No hay prendas cargadas para ${_.wardSelected.description ?? '-'}',
+                                          style: PuTextStyle.description1,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      Container(
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 300,
+                                        ),
+                                        child: ButtonPrimary(
+                                          title: 'Cargar primera prenda',
+                                          onPressed: () {
+                                            Get.toNamed(PURoutes.REGISTER_ITEM_WARDROBES);
+                                          },
+                                          load: false,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                           ),
                         ),
                         Visibility(

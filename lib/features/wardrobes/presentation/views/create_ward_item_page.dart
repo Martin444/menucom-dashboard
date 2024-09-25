@@ -5,39 +5,39 @@ import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/controllers/login_controller.dart';
-import 'package:pickmeup_dashboard/features/menu/presentation/get/menu_controller.dart';
+import 'package:pickmeup_dashboard/features/wardrobes/presentation/getx/wardrobes_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/widgets/inputs/pu_input_tags.dart';
 
-class CreateItemPage extends StatefulWidget {
+class CreateWardItemPage extends StatefulWidget {
   final bool? isEditPage;
 
-  const CreateItemPage({
+  const CreateWardItemPage({
     super.key,
     this.isEditPage,
   });
   @override
-  State<CreateItemPage> createState() => _CreateItemPageState();
+  State<CreateWardItemPage> createState() => _CreateItemPageState();
 }
 
-class _CreateItemPageState extends State<CreateItemPage> {
+class _CreateItemPageState extends State<CreateWardItemPage> {
   var keyFormCreateItem = GlobalKey<FormState>();
   var dinning = Get.find<DinningController>();
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<MenusController>(
+    return GetBuilder<WardrobesController>(
       builder: (_) {
-        _.menuSelected = dinning.menuSelected;
+        _.wardSelected = dinning.wardSelected;
         return Scaffold(
           body: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Expanded(
+                Center(
                   child: Container(
                     constraints: const BoxConstraints(maxWidth: 500),
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -83,12 +83,12 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        widget.isEditPage ?? false ? 'Editá tu menú' : 'Creá tu nuevo plato',
+                                        widget.isEditPage ?? false ? 'Editá tu menú' : 'Creá tu prenda',
                                         textAlign: TextAlign.start,
                                         style: PuTextStyle.title1,
                                       ),
                                       Text(
-                                        widget.isEditPage ?? false ? 'Renová tus ideas' : 'Deleitá a tus clientes',
+                                        widget.isEditPage ?? false ? 'Renová tus ideas' : 'y cautivá a tus clientes',
                                         textAlign: TextAlign.start,
                                         style: PuTextStyle.title2,
                                       ),
@@ -100,7 +100,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                 height: 20,
                               ),
                               CardTakePhoto(
-                                title: 'Cargá la foto de tu platillo (jpg, png)',
+                                title: 'Cargá la foto de tu prenda (jpg, png)',
                                 onTaka: () {
                                   _.pickImageDirectory();
                                 },
@@ -112,8 +112,23 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                 height: 20,
                               ),
                               PUInput(
-                                hintText: 'Nombre',
-                                controller: _.newNameController,
+                                hintText: 'Marca',
+                                controller: _.brandWardController,
+                                textInputAction: TextInputAction.next,
+                                validator: (name) {
+                                  if (name?.isEmpty ?? false) {
+                                    return 'Campo obligatorio';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              PUInput(
+                                hintText: 'Descripción',
+                                controller: _.nameWardController,
+                                textInputAction: TextInputAction.next,
                                 validator: (name) {
                                   if (name?.isEmpty ?? false) {
                                     return 'Campo obligatorio';
@@ -126,8 +141,9 @@ class _CreateItemPageState extends State<CreateItemPage> {
                               ),
                               PUInput(
                                 hintText: 'Precio',
-                                controller: _.newpriceController,
+                                controller: _.priceWardController,
                                 textInputType: TextInputType.number,
+                                textInputAction: TextInputAction.next,
                                 validator: (price) {
                                   if (price?.isEmpty ?? false) {
                                     return 'Campo obligatorio';
@@ -139,9 +155,10 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                 height: 20,
                               ),
                               PUInput(
-                                hintText: 'Tiempo de preparación (en minutos)',
-                                controller: _.newdeliveryController,
+                                hintText: 'Disponibles en Stock (por defecto es 1)',
+                                controller: _.stockWardController,
                                 textInputType: TextInputType.number,
+                                textInputAction: TextInputAction.next,
                                 validator: (time) {
                                   if (time?.isEmpty ?? false) {
                                     return 'Campo obligatorio';
@@ -153,8 +170,8 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                 height: 20,
                               ),
                               PuInputTags(
-                                hintText: 'Agrega los ingredientes',
-                                controller: _.tagIngredientsController,
+                                hintText: 'Agrega las tallas disponibles',
+                                controller: _.sizedWardController,
                                 onSubmitTag: (tags) {
                                   _.updateIngredientsSelected(tags: tags);
                                 },
@@ -164,20 +181,23 @@ class _CreateItemPageState extends State<CreateItemPage> {
                         ),
                         Column(
                           children: [
+                            const SizedBox(
+                              height: 20,
+                            ),
                             ButtonPrimary(
                               title: 'Crear',
                               onPressed: () async {
                                 if (keyFormCreateItem.currentState?.validate() ?? false) {
                                   if (_.fileTaked == null) {
                                     GlobalDialogsHandles.snackbarError(
-                                      title: 'Logo obligatorio',
+                                      title: 'La foto de la prenda es obligatoria',
                                       message: 'Preferentemente PNG',
                                     );
                                     return;
                                   }
-                                  _.menuSelected = dinning.menuSelected;
+                                  _.wardSelected = dinning.wardSelected;
                                   _.update();
-                                  await _.createMenuItemInServer();
+                                  await _.createWardItemInServer();
                                   await dinning.getmenuByDining();
                                   Get.offAllNamed(PURoutes.HOME);
                                   return;

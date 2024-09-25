@@ -4,7 +4,7 @@ import 'package:pickmeup_dashboard/core/exceptions/api_exception.dart';
 import 'package:pickmeup_dashboard/features/home/data/usescases/get_dinning_usescases.dart';
 import 'package:pickmeup_dashboard/features/home/data/usescases/get_menu_dinning.dart';
 import 'package:pickmeup_dashboard/features/home/models/dinning_model.dart';
-import 'package:pickmeup_dashboard/features/wardrobes/data/usecases/get_wardrobe_usecase.dart';
+import 'package:pickmeup_dashboard/features/wardrobes/data/usecases/get_clothing_user_usescase.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/model/wardrobe_model.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,11 +41,13 @@ class DinningController extends GetxController {
     }
   }
 
+  //Wardrobes
+
   Future<List<WardrobeModel>?> getWardrobebyDining() async {
     try {
       wardList = [];
-      final responseWar = await GetWardrobeUsecase.execute();
-      for (var e in responseWar) {
+      final responseWar = await GetClothingUserUsescase().execute(dinningLogin.id!);
+      for (var e in responseWar.listClothing!) {
         wardList.add(e);
       }
       wardSelected = wardList.first;

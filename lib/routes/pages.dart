@@ -5,6 +5,7 @@ import 'package:pickmeup_dashboard/features/menu/presentation/views/create_item_
 import 'package:pickmeup_dashboard/features/menu/presentation/get/menu_binding.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/views/create_menu_page.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/getx/wardrobes_binding.dart';
+import 'package:pickmeup_dashboard/features/wardrobes/presentation/views/create_ward_item_page.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/views/create_ward_page.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/pages/home_page.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/controllers/login_bindings.dart';
@@ -95,6 +96,17 @@ class PUPages {
       ),
       bindings: [
         MenuBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.REGISTER_ITEM_WARDROBES,
+      transition: Transition.fadeIn,
+      page: () => const CreateWardItemPage(
+        isEditPage: false,
+      ),
+      bindings: [
+        MenuBinding(),
+        WardrobesBinding(),
       ],
     ),
   ];

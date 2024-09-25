@@ -1,30 +1,37 @@
-import 'package:pickmeup_dashboard/features/wardrobes/model/wardrobe_model.dart';
-
 class ClothingItemModel {
-  final int id;
-  final String name;
-  final List<String> sizes;
-  final String color;
-  final double price;
-  final WardrobeModel wardrobe; // Relación con la entidad WardrobeModel
+  String? id;
+  String? name;
+  String? brand;
+  List<String>? sizes;
+  String? color;
+  double? price;
+  int? quantity;
+  int? wardrobeId;
+  String? photoURL;
 
   ClothingItemModel({
-    required this.id,
-    required this.name,
-    required this.sizes,
-    required this.color,
-    required this.price,
-    required this.wardrobe,
+    this.id,
+    this.name,
+    this.brand,
+    this.sizes,
+    this.color,
+    this.price,
+    this.quantity,
+    this.wardrobeId,
+    this.photoURL,
   });
 
   factory ClothingItemModel.fromJson(Map<String, dynamic> json) {
     return ClothingItemModel(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      sizes: (json['sizes'] as List<dynamic>).cast<String>(),
-      color: json['color'] as String,
-      price: json['price'] as double,
-      wardrobe: WardrobeModel.fromJson(json['wardrobe'] as Map<String, dynamic>),
+      id: json['id'] as String?,
+      name: json['name'] as String?,
+      brand: json['brand'] as String?,
+      sizes: (json['sizes'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      color: json['color'] as String?,
+      price: double.tryParse(json['price'].toString()),
+      quantity: json['quantity'] as int?,
+      wardrobeId: json['wardrobeId'] as int?,
+      photoURL: json['photoURL'] as String?,
     );
   }
 
@@ -32,10 +39,13 @@ class ClothingItemModel {
     return {
       'id': id,
       'name': name,
+      'brand': brand,
       'sizes': sizes,
       'color': color,
       'price': price,
-      'wardrobe': wardrobe.toJson(),
+      'quantity': quantity,
+      'wardrobeId': wardrobeId,
+      'photoURL': photoURL,
     };
   }
 }
