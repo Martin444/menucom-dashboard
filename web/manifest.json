@@ -1,6 +1,6 @@
 {
-    "name": "pickmeup_dashboard",
-    "short_name": "pickmeup_dashboard",
+    "name": "Menu com",
+    "short_name": "Menu com",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
