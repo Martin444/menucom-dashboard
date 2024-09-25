@@ -28,7 +28,7 @@ class _StarterBannerState extends State<StarterBanner> {
       case RolesUsers.dining:
         return "Registrá tus platos en menús irresistibles";
       case RolesUsers.clothes:
-        return 'Registrá tus prendas en guardarropas flexibles';
+        return 'Registrá tus prendas\b en guardarropas flexibles';
       default:
         return '';
     }
@@ -39,47 +39,52 @@ class _StarterBannerState extends State<StarterBanner> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              PUImages.noDataImageSvg,
-              height: 140,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: Text(
-                getTitleByRole(),
-                textAlign: TextAlign.center,
-                style: PuTextStyle.title5,
+        Flexible(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                PUImages.noDataImageSvg,
+                height: 140,
               ),
-            ),
-            const SizedBox(
-              height: 70,
-            ),
-            SizedBox(
-              width: 300,
-              child: ButtonPrimary(
-                title: 'Comenzar',
-                onPressed: () {
-                  final role = RolesFuncionts.getTypeRoleByRoleString(widget.user.role!);
-                  switch (role) {
-                    case RolesUsers.dining:
-                      Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY);
-                      break;
-                    case RolesUsers.clothes:
-                      Get.toNamed(PURoutes.REGISTER_WARDROBES);
-                      break;
-                    default:
-                  }
-                },
-                load: false,
+              const SizedBox(
+                height: 20,
               ),
-            ),
-          ],
+              Center(
+                child: Flexible(
+                  child: Text(
+                    getTitleByRole(),
+                    textAlign: TextAlign.center,
+                    style: PuTextStyle.title5,
+                    softWrap: true,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 70,
+              ),
+              SizedBox(
+                width: 300,
+                child: ButtonPrimary(
+                  title: 'Comenzar',
+                  onPressed: () {
+                    final role = RolesFuncionts.getTypeRoleByRoleString(widget.user.role!);
+                    switch (role) {
+                      case RolesUsers.dining:
+                        Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY);
+                        break;
+                      case RolesUsers.clothes:
+                        Get.toNamed(PURoutes.REGISTER_WARDROBES);
+                        break;
+                      default:
+                    }
+                  },
+                  load: false,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );

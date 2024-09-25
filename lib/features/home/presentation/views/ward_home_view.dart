@@ -114,6 +114,7 @@ class _WardsHomeViewState extends State<WardsHomeView> {
                                         child: Text(
                                           'No hay prendas cargadas para ${_.wardSelected.description ?? '-'}',
                                           style: PuTextStyle.description1,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
                                       const SizedBox(
