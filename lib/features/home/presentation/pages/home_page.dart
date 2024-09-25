@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     switch (role) {
       case RolesUsers.clothes:
         return WardsHomeView(isMobile: isMobile);
-      case RolesUsers.dining:
+      case RolesUsers.dinning:
         return MenuHomeView(isMobile: isMobile);
       default:
         return WardsHomeView(isMobile: isMobile);

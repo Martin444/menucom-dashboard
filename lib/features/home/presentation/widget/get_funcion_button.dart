@@ -10,7 +10,7 @@ Widget getActionPrincipalByRole(DinningController role) {
   final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(role.dinningLogin.role!);
 
   switch (roleByRoleUser) {
-    case RolesUsers.dining:
+    case RolesUsers.dinning:
       if (role.menusList.isEmpty) {
         return ButtonPrimary(
           title: 'Nuevo Menú',
@@ -82,7 +82,7 @@ Widget getActionPrincipalByRole(DinningController role) {
 
     default:
       return ButtonPrimary(
-        title: 'Error en el rol $role',
+        title: 'Error en el rol $roleByRoleUser',
         onPressed: () {},
         load: false,
       );

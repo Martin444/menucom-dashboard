@@ -25,7 +25,7 @@ class _StarterBannerState extends State<StarterBanner> {
     final role = RolesFuncionts.getTypeRoleByRoleString(widget.user.role!);
 
     switch (role) {
-      case RolesUsers.dining:
+      case RolesUsers.dinning:
         return "Registrá tus platos en menús irresistibles";
       case RolesUsers.clothes:
         return 'Registrá tus prendas en guardarropas flexibles';
@@ -71,7 +71,7 @@ class _StarterBannerState extends State<StarterBanner> {
                   onPressed: () {
                     final role = RolesFuncionts.getTypeRoleByRoleString(widget.user.role!);
                     switch (role) {
-                      case RolesUsers.dining:
+                      case RolesUsers.dinning:
                         Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY);
                         break;
                       case RolesUsers.clothes:
