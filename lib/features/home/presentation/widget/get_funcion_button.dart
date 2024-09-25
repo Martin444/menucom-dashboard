@@ -52,6 +52,15 @@ Widget getActionPrincipalByRole(DinningController role) {
         ],
       );
     case RolesUsers.clothes:
+      if (role.wardList.isEmpty) {
+        return ButtonPrimary(
+          title: 'Nuevo guardarropas',
+          onPressed: () {
+            Get.toNamed(PURoutes.REGISTER_WARDROBES);
+          },
+          load: false,
+        );
+      }
       return Row(
         children: [
           Flexible(
