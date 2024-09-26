@@ -48,20 +48,59 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                         horizontal: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: PUColors.bgCategorySelected,
+                        color: PUColors.bgItem,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<MenuModel>(
-                          value: _.menuSelected,
-                          items: _.menusList.map((MenuModel item) {
-                            return DropdownMenuItem<MenuModel>(
-                              value: item,
-                              child: Text(item.description ?? ''),
-                            );
-                          }).toList(),
-                          onChanged: (MenuModel? value) {},
-                        ),
+                      child: Row(
+                        children: [
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton<MenuModel>(
+                              value: _.menuSelected,
+                              items: _.menusList.map((MenuModel item) {
+                                return DropdownMenuItem<MenuModel>(
+                                  value: item,
+                                  child: Text(item.description ?? ''),
+                                );
+                              }).toList(),
+                              onChanged: (MenuModel? value) {
+                                _.chageMenuSelected(value!);
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Row(
+                            children: [
+                              MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    menusController.gotoEditMenu(_.menuSelected);
+                                  },
+                                  child: SvgPicture.asset(
+                                    PUIcons.iconEdit,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await menusController.deleteMenus(_.menuSelected);
+                                    _.getmenuByDining();
+                                  },
+                                  child: SvgPicture.asset(
+                                    PUIcons.iconDelete,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),

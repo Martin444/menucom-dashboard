@@ -35,7 +35,7 @@ class DinningController extends GetxController {
           await getWardrobebyDining();
           break;
         default:
-          closeSesion();
+        // closeSesion();
       }
 
       isLoaginDataUser = false;
