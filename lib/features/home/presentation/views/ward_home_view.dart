@@ -5,7 +5,6 @@ import 'package:pickmeup_dashboard/features/home/presentation/widget/ward_item_t
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/getx/wardrobes_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/utils/pu_assets.dart';
-import 'package:pu_material/utils/pu_colors.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/widgets/buttons/button_primary.dart';
@@ -48,23 +47,56 @@ class _WardsHomeViewState extends State<WardsHomeView> {
                         vertical: 5,
                         horizontal: 10,
                       ),
-                      decoration: BoxDecoration(
-                        color: PUColors.bgCategorySelected,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<WardrobeModel>(
-                          value: _.wardSelected,
-                          items: _.wardList.map((WardrobeModel item) {
-                            return DropdownMenuItem<WardrobeModel>(
-                              value: item,
-                              child: Text(item.description!),
-                            );
-                          }).toList(),
-                          onChanged: (WardrobeModel? value) {
-                            _.chageWardSelected(value!);
-                          },
-                        ),
+                      child: Row(
+                        children: [
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton<WardrobeModel>(
+                              value: _.wardSelected,
+                              items: _.wardList.map((WardrobeModel item) {
+                                return DropdownMenuItem<WardrobeModel>(
+                                  value: item,
+                                  child: Text(item.description!),
+                                );
+                              }).toList(),
+                              onChanged: (WardrobeModel? value) {
+                                _.chageWardSelected(value!);
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Row(
+                            children: [
+                              MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    wardController.gotoEditWardrobe(_.wardSelected);
+                                  },
+                                  child: SvgPicture.asset(
+                                    PUIcons.iconEdit,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await wardController.deleteWardrobe(_.wardSelected);
+                                    _.getmenuByDining();
+                                  },
+                                  child: SvgPicture.asset(
+                                    PUIcons.iconDelete,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),

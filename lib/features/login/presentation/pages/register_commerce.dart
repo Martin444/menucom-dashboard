@@ -248,9 +248,14 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                 ),
                               ),
                             ),
-                            Text(
-                              'Version: $VERSION_APP',
-                              style: PuTextStyle.title3,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: Center(
+                                child: Text(
+                                  'Version: $VERSION_APP',
+                                  style: PuTextStyle.description1,
+                                ),
+                              ),
                             ),
                           ],
                         ),

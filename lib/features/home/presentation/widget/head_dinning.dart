@@ -66,13 +66,7 @@ class HeadDinning extends StatelessWidget {
                         ? const SizedBox()
                         : Flexible(
                             child: GestureDetector(
-                              onTap: () {
-                                Get.dialog(
-                                  ShareLinkMenuDialog(
-                                    idMenu: _.dinningLogin.id ?? '',
-                                  ),
-                                );
-                              },
+                              onTap: () {},
                               child: PUOverflowTextDetector(
                                 message: _.dinningLogin.name!,
                                 children: [
@@ -105,10 +99,22 @@ class HeadDinning extends StatelessWidget {
                               ),
                             ),
                           )
-                        : Image.network(
-                            _.dinningLogin.photoURL!,
-                            height: 100,
-                            scale: 0.2,
+                        : MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap: () {
+                                Get.dialog(
+                                  ShareLinkMenuDialog(
+                                    idMenu: _.dinningLogin.id ?? '',
+                                  ),
+                                );
+                              },
+                              child: Icon(
+                                Icons.share_rounded,
+                                color: PUColors.iconColor,
+                                // Icons.copy_all_outlined,
+                              ),
+                            ),
                           ),
                     const SizedBox(
                       width: 10,

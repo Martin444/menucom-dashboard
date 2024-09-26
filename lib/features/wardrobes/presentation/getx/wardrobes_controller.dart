@@ -142,6 +142,7 @@ class WardrobesController extends GetxController {
       var newItemMenu = await createItem();
 
       isLoadMenuItem = false;
+      fileTaked = null;
       update();
       return newItemMenu;
     } catch (e) {
