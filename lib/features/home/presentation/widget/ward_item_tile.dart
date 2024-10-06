@@ -55,7 +55,7 @@ class WardItemTile extends StatelessWidget {
                       children: [
                         Text(
                           item.sizes!.join(','),
-                          style: PuTextStyle.title2,
+                          style: PuTextStyle.brandHeadStyle,
                         ),
                       ],
                     ),
@@ -64,7 +64,7 @@ class WardItemTile extends StatelessWidget {
                       children: [
                         Text(
                           item.name!,
-                          style: PuTextStyle.title2,
+                          style: PuTextStyle.nameProductStyle,
                         ),
                       ],
                     ),
@@ -81,7 +81,7 @@ class WardItemTile extends StatelessWidget {
                             children: [
                               Text(
                                 item.price!.toString().convertToCorrency(),
-                                style: PuTextStyle.description1,
+                                style: PuTextStyle.nameProductStyle,
                               ),
                             ],
                           ),

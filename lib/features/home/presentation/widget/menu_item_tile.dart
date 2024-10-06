@@ -43,7 +43,7 @@ class MenuItemTile extends StatelessWidget {
                 fit: BoxFit.fitHeight,
               ),
               const SizedBox(
-                height: 4,
+                height: 14,
               ),
               Expanded(
                 child: Column(
@@ -56,16 +56,19 @@ class MenuItemTile extends StatelessWidget {
                       children: [
                         Text(
                           item.ingredients!.join(','),
-                          style: PuTextStyle.title2,
+                          style: PuTextStyle.brandHeadStyle,
                         ),
                       ],
+                    ),
+                    const SizedBox(
+                      height: 10,
                     ),
                     PUOverflowTextDetector(
                       message: item.name!,
                       children: [
                         Text(
                           item.name!,
-                          style: PuTextStyle.title2,
+                          style: PuTextStyle.nameProductStyle,
                         ),
                       ],
                     ),
@@ -82,7 +85,7 @@ class MenuItemTile extends StatelessWidget {
                             children: [
                               Text(
                                 item.price!.toString().convertToCorrency(),
-                                style: PuTextStyle.description1,
+                                style: PuTextStyle.nameProductStyle,
                               ),
                             ],
                           ),
