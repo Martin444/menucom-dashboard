@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_item_model.dart';
 import 'package:pickmeup_dashboard/features/home/data/repository/post_menu_item_repository.dart';
-import 'package:pickmeup_dashboard/features/home/models/menu_item_model.dart';
 
 import '../../../../core/config.dart';
 import 'package:http/http.dart' as http;

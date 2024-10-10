@@ -3,9 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_item_model.dart';
+import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_model.dart';
 import 'package:pickmeup_dashboard/features/home/data/usescases/post_menu_item_usescases.dart';
 import 'package:pickmeup_dashboard/features/home/data/usescases/upload_file_usescases.dart';
-import 'package:pickmeup_dashboard/features/home/models/menu_model.dart';
 import 'package:pickmeup_dashboard/features/menu/data/params/menu_params.dart';
 import 'package:pickmeup_dashboard/features/menu/data/usecase/delete_menu_usecase.dart';
 import 'package:pickmeup_dashboard/features/menu/data/usecase/post_menu_usecase.dart';
@@ -13,7 +14,6 @@ import 'package:pickmeup_dashboard/features/menu/data/usecase/put_menu_usecase.d
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
 import '../../../../core/handles/global_handle_dialogs.dart';
-import '../../../home/models/menu_item_model.dart';
 
 class MenusController extends GetxController {
   TextEditingController nameMenu = TextEditingController();

@@ -5,7 +5,7 @@ import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 
-import '../controllers/login_controller.dart';
+import '../../controllers/login_controller.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
