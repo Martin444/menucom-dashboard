@@ -7,13 +7,13 @@ import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_item
 import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_model.dart';
 import 'package:menu_dart_api/by_feature/menu/post_menu_item/data/usescase/post_menu_item_usescases.dart';
 import 'package:menu_dart_api/by_feature/upload_images/data/usescases/upload_file_usescases.dart';
-import 'package:pickmeup_dashboard/features/menu/data/params/menu_params.dart';
-import 'package:pickmeup_dashboard/features/menu/data/usecase/delete_menu_usecase.dart';
-import 'package:pickmeup_dashboard/features/menu/data/usecase/post_menu_usecase.dart';
-import 'package:pickmeup_dashboard/features/menu/data/usecase/put_menu_usecase.dart';
+import 'package:menu_dart_api/by_feature/menu/post_menu/model/menu_params.dart';
+import 'package:menu_dart_api/by_feature/menu/delete_menu/data/usescase/delete_menu_usecase.dart';
+import 'package:menu_dart_api/by_feature/menu/post_menu/data/usescase/post_menu_usecase.dart';
+import 'package:menu_dart_api/by_feature/menu/put_menu/data/usecase/put_menu_usecase.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
-import '../../../../core/handles/global_handle_dialogs.dart';
+import '../../../core/handles/global_handle_dialogs.dart';
 
 class MenusController extends GetxController {
   TextEditingController nameMenu = TextEditingController();

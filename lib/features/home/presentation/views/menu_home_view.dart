@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_model.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/item_category_tile.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_item_tile.dart';
-import 'package:pickmeup_dashboard/features/menu/presentation/get/menu_controller.dart';
+import 'package:pickmeup_dashboard/features/menu/get/menu_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';

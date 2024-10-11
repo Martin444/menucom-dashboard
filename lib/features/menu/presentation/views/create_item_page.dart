@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/login/controllers/login_controller.dart';
-import 'package:pickmeup_dashboard/features/menu/presentation/get/menu_controller.dart';
+import 'package:pickmeup_dashboard/features/menu/get/menu_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
