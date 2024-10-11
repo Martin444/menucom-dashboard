@@ -5,7 +5,7 @@ import 'package:pu_material/utils/pu_colors.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
 import 'package:pu_material/widgets/menu/items/itemdraw.dart';
 
-import '../controllers/dinning_controller.dart';
+import '../../controllers/dinning_controller.dart';
 
 class MenuSIde extends StatelessWidget {
   final bool? isMobile;

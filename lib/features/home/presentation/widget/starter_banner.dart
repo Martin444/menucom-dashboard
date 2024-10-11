@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pickmeup_dashboard/features/home/models/dinning_model.dart';
-import 'package:pickmeup_dashboard/features/home/models/roles_users.dart';
+import 'package:menu_dart_api/by_feature/user/get_me_profile/model/dinning_model.dart';
+import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
 import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/widgets/buttons/button_primary.dart';

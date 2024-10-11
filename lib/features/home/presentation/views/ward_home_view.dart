@@ -11,7 +11,7 @@ import 'package:pu_material/widgets/buttons/button_primary.dart';
 import 'package:svg_flutter/svg.dart';
 
 import '../../../wardrobes/model/wardrobe_model.dart';
-import '../controllers/dinning_controller.dart';
+import '../../controllers/dinning_controller.dart';
 
 class WardsHomeView extends StatefulWidget {
   const WardsHomeView({

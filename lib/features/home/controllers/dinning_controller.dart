@@ -3,17 +3,17 @@ import 'package:get/get.dart';
 import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/data/usescase/get_menu_usecases.dart';
 import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_item_model.dart';
 import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_model.dart';
+import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
 import 'package:pickmeup_dashboard/core/exceptions/api_exception.dart';
-import 'package:pickmeup_dashboard/features/home/data/usescases/get_dinning_usescases.dart';
-import 'package:pickmeup_dashboard/features/home/models/dinning_model.dart';
+import 'package:menu_dart_api/by_feature/user/get_me_profile/data/usescase/get_dinning_usescases.dart';
+import 'package:menu_dart_api/by_feature/user/get_me_profile/model/dinning_model.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/data/usecases/get_clothing_user_usescase.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/model/wardrobe_model.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:menu_dart_api/by_feature/menu/put_menu_item/data/usescase/put_menu_item_usescases.dart';
 
-import '../../../../core/config.dart';
-import '../../data/usescases/put_menu_item_usescases.dart';
-import '../../models/roles_users.dart';
+import '../../../core/config.dart';
 
 class DinningController extends GetxController {
   DinningModel dinningLogin = DinningModel();

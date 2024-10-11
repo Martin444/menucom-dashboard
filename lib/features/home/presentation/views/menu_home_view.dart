@@ -11,7 +11,7 @@ import 'package:pu_material/utils/style/pu_style_containers.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:svg_flutter/svg.dart';
 
-import '../controllers/dinning_controller.dart';
+import '../../controllers/dinning_controller.dart';
 
 class MenuHomeView extends StatefulWidget {
   const MenuHomeView({

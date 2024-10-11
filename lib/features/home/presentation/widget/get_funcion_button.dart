@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pickmeup_dashboard/features/home/models/roles_users.dart';
+import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
 import 'package:pu_material/pu_material.dart';
 
 import '../../../../routes/routes.dart';
-import '../controllers/dinning_controller.dart';
+import '../../controllers/dinning_controller.dart';
 
 Widget getActionPrincipalByRole(DinningController role) {
   final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(role.dinningLogin.role!);

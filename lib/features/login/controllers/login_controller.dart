@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:menu_dart_api/by_feature/auth/login/data/usescase/login_usescase.dart';
+import 'package:menu_dart_api/by_feature/upload_images/data/usescases/upload_file_usescases.dart';
 import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:menu_dart_api/by_feature/user/change_password/data/usecase/change_password_usescase.dart';
 import 'package:menu_dart_api/by_feature/auth/register/data/usescase/register_commerce_usescase.dart';
@@ -20,7 +21,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/config.dart';
 import '../../../core/exceptions/api_exception.dart';
-import '../../home/data/usescases/upload_file_usescases.dart';
 
 class LoginController extends GetxController {
   TextEditingController emailController = TextEditingController();
