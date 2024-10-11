@@ -5,13 +5,13 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:menu_dart_api/by_feature/upload_images/data/usescases/upload_file_usescases.dart';
-import 'package:pickmeup_dashboard/features/wardrobes/data/params/post_ward_params.dart';
-import 'package:pickmeup_dashboard/features/wardrobes/data/usecases/delete_wardrobe_usecase.dart';
-import 'package:pickmeup_dashboard/features/wardrobes/data/usecases/post_ward_item_usescases.dart';
-import 'package:pickmeup_dashboard/features/wardrobes/data/usecases/post_wardrobe_usecase.dart';
-import 'package:pickmeup_dashboard/features/wardrobes/data/usecases/put_wardrobe_usecase.dart';
-import 'package:pickmeup_dashboard/features/wardrobes/model/clothing_item_model.dart';
-import 'package:pickmeup_dashboard/features/wardrobes/model/wardrobe_model.dart';
+import 'package:menu_dart_api/by_feature/wardrobe/post_wardrobe/model/post_ward_params.dart';
+import 'package:menu_dart_api/by_feature/wardrobe/delete_wardrobe/data/usescase/delete_wardrobe_usecase.dart';
+import 'package:menu_dart_api/by_feature/wardrobe/post_clothing/data/usescase/post_ward_item_usescases.dart';
+import 'package:menu_dart_api/by_feature/wardrobe/post_wardrobe/data/usescase/post_wardrobe_usecase.dart';
+import 'package:menu_dart_api/by_feature/wardrobe/put_wardrobe/data/usescase/put_wardrobe_usecase.dart';
+import 'package:menu_dart_api/by_feature/wardrobe/get_me_wardrobe/model/clothing_item_model.dart';
+import 'package:menu_dart_api/by_feature/wardrobe/get_me_wardrobe/model/wardrobe_model.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
 class WardrobesController extends GetxController {

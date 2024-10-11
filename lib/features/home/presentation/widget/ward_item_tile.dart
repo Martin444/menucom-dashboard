@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pickmeup_dashboard/features/wardrobes/model/clothing_item_model.dart';
+import 'package:menu_dart_api/by_feature/wardrobe/get_me_wardrobe/model/clothing_item_model.dart';
 import 'package:pu_material/utils/formaters/currency_converter.dart';
 import 'package:pu_material/utils/overflow_text.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';

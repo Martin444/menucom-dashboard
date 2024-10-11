@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:menu_dart_api/by_feature/wardrobe/get_me_wardrobe/model/wardrobe_model.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/item_category_tile.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/ward_item_tile.dart';
-import 'package:pickmeup_dashboard/features/wardrobes/presentation/getx/wardrobes_controller.dart';
+import 'package:pickmeup_dashboard/features/wardrobes/getx/wardrobes_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
@@ -10,7 +11,6 @@ import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/widgets/buttons/button_primary.dart';
 import 'package:svg_flutter/svg.dart';
 
-import '../../../wardrobes/model/wardrobe_model.dart';
 import '../../controllers/dinning_controller.dart';
 
 class WardsHomeView extends StatefulWidget {
