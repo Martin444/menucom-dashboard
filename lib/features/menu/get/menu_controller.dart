@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_item_model.dart';
 import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_model.dart';
 import 'package:menu_dart_api/by_feature/menu/post_menu_item/data/usescase/post_menu_item_usescases.dart';
+import 'package:menu_dart_api/by_feature/menu/put_menu_item/data/usescase/put_menu_item_usescases.dart';
 import 'package:menu_dart_api/by_feature/upload_images/data/usescases/upload_file_usescases.dart';
 import 'package:menu_dart_api/by_feature/menu/post_menu/model/menu_params.dart';
 import 'package:menu_dart_api/by_feature/menu/delete_menu/data/usescase/delete_menu_usecase.dart';
@@ -105,9 +107,68 @@ class MenusController extends GetxController {
   TextEditingController tagIngredientsController = TextEditingController();
   List<String> ingredientsTags = [];
   String newphotoController = '';
+  MenuItemModel menuItemToEdit = MenuItemModel();
 
   Uint8List? fileTaked;
   Uint8List toSend = Uint8List(1);
+
+  Future<Uint8List> fetchImageAsUint8List(String url) async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      String? contentType = response.headers['content-type'];
+      if (contentType != null && contentType.startsWith('image/')) {
+        return response.bodyBytes;
+      } else {
+        throw Exception('La URL no contiene una imagen');
+      }
+    } else {
+      throw Exception('Failed to load image');
+    }
+  }
+
+  void gotoEditItemMenu(MenuItemModel menu) async {
+    try {
+      newNameController.text = menu.name!;
+      newpriceController.text = menu.price!.toString();
+      newdeliveryController.text = menu.deliveryTime!.toString();
+      newphotoController = menu.photoUrl!;
+      ingredientsTags = menu.ingredients!;
+      menuItemToEdit = menu;
+      var resultIamge = await fetchImageAsUint8List(newphotoController);
+      fileTaked = resultIamge;
+      toSend = fileTaked!;
+      update();
+      Get.toNamed(PURoutes.EDIT_ITEM_MENU);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  bool isEditProcess = false;
+
+  void editItemMenu() async {
+    try {
+      isEditProcess = true;
+      update();
+      var newItem = MenuItemModel(
+        id: menuItemToEdit.id,
+        name: newNameController.text,
+        photoUrl: newphotoController,
+        deliveryTime: int.tryParse(newdeliveryController.text),
+        ingredients: ingredientsTags,
+        price: int.tryParse(newpriceController.text),
+      );
+      await PutMenuItemUsesCases().execute(
+        newItem,
+      );
+      isEditProcess = false;
+      update();
+    } catch (e) {
+      isEditProcess = false;
+      update();
+      rethrow;
+    }
+  }
 
   void updateIngredientsSelected({required List<String> tags}) {
     ingredientsTags = tags;

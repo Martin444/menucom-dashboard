@@ -87,10 +87,8 @@ class FormEditSide extends StatelessWidget {
                 children: [
                   ButtonPrimary(
                     title: 'Guardar cambios',
-                    onPressed: () {
-                      _.editItemMenu();
-                    },
-                    load: _.isEditProcess,
+                    onPressed: () {},
+                    load: false,
                   ),
                 ],
               )

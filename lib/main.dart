@@ -29,6 +29,7 @@ Future<String?> getToken() async {
   var token = prefs.getString('acccesstoken');
   if (token != null) {
     ACCESS_TOKEN = token;
+    API.setAccessToken(ACCESS_TOKEN);
   }
   return token;
 }

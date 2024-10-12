@@ -110,33 +110,6 @@ class DinningController extends GetxController {
     update();
   }
 
-  bool isEditProcess = false;
-
-  void editItemMenu() async {
-    try {
-      isEditProcess = true;
-      update();
-      var newItem = MenuItemModel(
-        id: menusToEdit.id,
-        name: nameController.text,
-        photoUrl: photoController,
-        deliveryTime: int.tryParse(deliveryController.text),
-        price: int.tryParse(priceController.text),
-      );
-      await PutMenuItemUsesCases().execute(
-        newItem,
-      );
-      isEditProcess = false;
-
-      await getmenuByDining();
-      update();
-      var detectItem = menusList.first.items!.where((item) => item.id == menusToEdit.id).toList();
-      setDataToEditItem(detectItem.first);
-    } catch (e) {
-      setDataToEditItem(menusToEdit);
-    }
-  }
-
   Future<List<MenuModel>?> getmenuByDining() async {
     try {
       var respMenu = await GetMenuUseCase().execute(dinningLogin.id!);

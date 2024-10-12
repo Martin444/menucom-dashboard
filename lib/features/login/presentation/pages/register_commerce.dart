@@ -99,7 +99,7 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                 _.pickImageDirectory();
                                               },
                                               isTaked: _.fileTaked != null,
-                                              photoInBytes: _.fileTaked,
+                                              photoInBytes: _.fileTaked!,
                                               isLogo: true,
                                             ),
                                             const SizedBox(

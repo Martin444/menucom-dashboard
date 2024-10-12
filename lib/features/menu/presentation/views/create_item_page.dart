@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
-import 'package:pickmeup_dashboard/features/login/controllers/login_controller.dart';
 import 'package:pickmeup_dashboard/features/menu/get/menu_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
@@ -107,10 +106,10 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                 CardTakePhoto(
                                   title: 'Cargá la foto de tu platillo (jpg, png)',
                                   onTaka: () {
-                                    _.pickImageDirectory();
+                                    // _.pickImageDirectory();
                                   },
                                   isTaked: _.fileTaked != null,
-                                  photoInBytes: _.fileTaked,
+                                  photoInBytes: _.fileTaked ?? Uint8List(3),
                                   isLogo: true,
                                 ),
                                 const SizedBox(
@@ -160,6 +159,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                 PuInputTags(
                                   hintText: 'Agrega los ingredientes',
                                   controller: _.tagIngredientsController,
+                                  initTags: _.ingredientsTags,
                                   onSubmitTag: (tags) {
                                     _.updateIngredientsSelected(tags: tags);
                                   },
@@ -173,8 +173,14 @@ class _CreateItemPageState extends State<CreateItemPage> {
                           Column(
                             children: [
                               ButtonPrimary(
-                                title: 'Crear',
+                                title: widget.isEditPage ?? false ? 'Guardar' : 'Crear',
                                 onPressed: () async {
+                                  if (widget.isEditPage ?? false) {
+                                    _.editItemMenu();
+                                    await dinning.getmenuByDining();
+                                    Get.offAllNamed(PURoutes.HOME);
+                                    return;
+                                  }
                                   if (keyFormCreateItem.currentState?.validate() ?? false) {
                                     if (_.fileTaked == null) {
                                       GlobalDialogsHandles.snackbarError(
@@ -191,7 +197,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                     return;
                                   }
                                 },
-                                load: _.isLoadMenuItem,
+                                load: _.isLoadMenuItem || _.isEditProcess,
                               ),
                               const SizedBox(
                                 height: 20,
@@ -213,15 +219,15 @@ class _CreateItemPageState extends State<CreateItemPage> {
 }
 
 class CardTakePhoto extends StatelessWidget {
-  final void Function()? onTaka;
+  final void Function() onTaka;
   final bool? isTaked;
   final String? title;
   final bool? isLogo;
-  final Uint8List? photoInBytes;
+  final Uint8List photoInBytes;
   const CardTakePhoto({
     super.key,
-    this.onTaka,
-    this.photoInBytes,
+    required this.onTaka,
+    required this.photoInBytes,
     this.isTaked,
     this.title,
     this.isLogo,
@@ -229,47 +235,45 @@ class CardTakePhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<LoginController>(builder: (_) {
-      return MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: () {
-            onTaka!();
-          },
-          child: isTaked ?? false
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.memory(
-                    photoInBytes!,
-                    height: 130,
-                    width: double.infinity,
-                    fit: isLogo! ? BoxFit.contain : BoxFit.cover,
-                  ),
-                )
-              : Container(
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {
+          onTaka();
+        },
+        child: isTaked ?? false
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.memory(
+                  photoInBytes,
+                  height: 130,
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 30,
-                  ),
-                  decoration: BoxDecoration(
-                    color: PUColors.bgInput,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.camera_enhance,
-                        color: PUColors.textColor1,
-                      ),
-                      Text(
-                        title ?? 'Cargá tu logo (.jpg, .png)',
-                        style: PuTextStyle.textLabelMenu,
-                      ),
-                    ],
-                  ),
+                  fit: isLogo ?? false ? BoxFit.contain : BoxFit.cover,
                 ),
-        ),
-      );
-    });
+              )
+            : Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 30,
+                ),
+                decoration: BoxDecoration(
+                  color: PUColors.bgInput,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.camera_enhance,
+                      color: PUColors.textColor1,
+                    ),
+                    Text(
+                      title ?? 'Cargá tu logo (.jpg, .png)',
+                      style: PuTextStyle.textLabelMenu,
+                    ),
+                  ],
+                ),
+              ),
+      ),
+    );
   }
 }

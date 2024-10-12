@@ -63,6 +63,17 @@ class PUPages {
       ],
     ),
     GetPage(
+      name: PURoutes.EDIT_ITEM_MENU,
+      transition: Transition.fadeIn,
+      page: () => const CreateItemPage(
+        isEditPage: true,
+      ),
+      bindings: [
+        DinningBinding(),
+        MenuBinding(),
+      ],
+    ),
+    GetPage(
       name: PURoutes.REGISTER_WARDROBES,
       transition: Transition.fadeIn,
       page: () => const CreateWardPage(),

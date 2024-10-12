@@ -15,8 +15,7 @@ class PURoutes {
   static String REGISTER_MENU_CATEGORY = '/nuevo-menu';
   static String REGISTER_ITEM_MENU = '/create-menu-item';
   static String EDIT_MENU_CATEGORY = '/edita-tu-menu';
-
-  //TODO: Falta editar item del menu
+  static String EDIT_ITEM_MENU = '/edit-menu-item';
 
   //wardrobe
   static String REGISTER_WARDROBES = '/nuevo-guardarropas';
