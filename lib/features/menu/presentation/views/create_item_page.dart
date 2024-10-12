@@ -106,7 +106,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                 CardTakePhoto(
                                   title: 'Cargá la foto de tu platillo (jpg, png)',
                                   onTaka: () {
-                                    // _.pickImageDirectory();
+                                    _.pickImageDirectory();
                                   },
                                   isTaked: _.fileTaked != null,
                                   photoInBytes: _.fileTaked ?? Uint8List(3),
@@ -193,7 +193,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                     _.update();
                                     await _.createMenuItemInServer();
                                     await dinning.getmenuByDining();
-                                    Get.offAllNamed(PURoutes.HOME);
+                                    Get.offNamed(PURoutes.HOME);
                                     return;
                                   }
                                 },

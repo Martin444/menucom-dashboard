@@ -11,7 +11,6 @@ import 'package:menu_dart_api/by_feature/user/get_me_profile/model/dinning_model
 import 'package:menu_dart_api/by_feature/wardrobe/get_me_wardrobe/model/wardrobe_model.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:menu_dart_api/by_feature/menu/put_menu_item/data/usescase/put_menu_item_usescases.dart';
 
 import '../../../core/config.dart';
 
@@ -23,7 +22,7 @@ class DinningController extends GetxController {
   void getMyDinningInfo() async {
     try {
       isLoaginDataUser = true;
-      update();
+      // update();
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
       final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(dinningLogin.role!);
@@ -45,7 +44,7 @@ class DinningController extends GetxController {
     } catch (e) {
       closeSesion();
       isLoaginDataUser = false;
-      update();
+      // update();
     }
   }
 
@@ -97,18 +96,6 @@ class DinningController extends GetxController {
   TextEditingController priceController = TextEditingController();
   TextEditingController deliveryController = TextEditingController();
   String photoController = '';
-
-  void setDataToEditItem(MenuItemModel menu) {
-    nameController.text = menu.name!;
-    priceController.text = menu.price!.toString();
-    deliveryController.text = menu.deliveryTime!.toString();
-    photoController = menu.photoUrl!;
-    menusToEdit = menu;
-    if (Get.width < 700) {
-      Get.back();
-    }
-    update();
-  }
 
   Future<List<MenuModel>?> getmenuByDining() async {
     try {

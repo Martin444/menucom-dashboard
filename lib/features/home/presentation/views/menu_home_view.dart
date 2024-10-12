@@ -132,11 +132,12 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                         item: _.menuSelected.items![index],
                                         selected: false,
                                         onAddCart: (val) {},
-                                        actionSelected: (value, action) {
+                                        actionSelected: (value, action) async {
                                           if (action == 'edit') {
                                             menusController.gotoEditItemMenu(value);
                                           } else if (action == 'delete') {
-                                            //TODO: ELiminar item
+                                            await menusController.deleteItemMenu(value);
+                                            _.getmenuByDining();
                                           }
                                         },
                                       );

@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:menu_dart_api/by_feature/menu/delete_menu_item/data/usescase/delete_menu_item_usescases.dart';
 import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_item_model.dart';
 import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_model.dart';
 import 'package:menu_dart_api/by_feature/menu/post_menu_item/data/usescase/post_menu_item_usescases.dart';
@@ -167,6 +168,27 @@ class MenusController extends GetxController {
       isEditProcess = false;
       update();
       rethrow;
+    }
+  }
+
+  Future<void> deleteItemMenu(MenuItemModel menuItem) async {
+    try {
+      var isComfirm = await GlobalDialogsHandles.dialogConfirm(
+        title: '¿Seguro desea eliminar ${menuItem.name}?',
+        // message: '',
+      );
+      if (isComfirm) {
+        await DeleteMenuItemUsesCases().execute(menuItem);
+        GlobalDialogsHandles.snackbarSuccess(
+          title: '¡Perfecto!',
+          message: 'Se eliminó ${menuItem.name} con éxito.',
+        );
+      }
+    } catch (e) {
+      GlobalDialogsHandles.snackbarError(
+        title: '¡Ups!',
+        message: 'No se pudo eliminar ${menuItem.name}, vuelve a intentarlo mas tarde.',
+      );
     }
   }
 
