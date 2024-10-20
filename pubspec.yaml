@@ -2,7 +2,7 @@ name: pickmeup_dashboard
 description: "Administracion para Menu com"
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.58
+version: 1.0.59
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
@@ -23,6 +23,7 @@ dependencies:
   qr_flutter: ^4.1.0
   screenshot: ^3.0.0
   shared_preferences: ^2.2.3
+  flutter_keyboard_visibility: ^6.0.0
   svg_flutter: ^0.0.1
   textfield_tags: ^3.0.1
   url_launcher: ^6.3.0

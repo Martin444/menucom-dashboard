@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/config.dart';
 import 'package:pickmeup_dashboard/features/login/controllers/login_controller.dart';
@@ -202,17 +203,26 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              Container(
-                height: 60,
-                color: PUColors.primaryBackground,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Center(
-                    child: Text(
-                      'Version: $VERSION_APP',
-                      style: PuTextStyle.description1,
-                    ),
-                  ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: KeyboardVisibilityBuilder(
+                  builder: (context, isKeyboardVisible) {
+                    return isKeyboardVisible
+                        ? Container() // No mostrar el widget cuando el teclado esté visible
+                        : Container(
+                            height: 60,
+                            color: PUColors.primaryBackground,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: Center(
+                                child: Text(
+                                  'Version: $VERSION_APP',
+                                  style: PuTextStyle.description1,
+                                ),
+                              ),
+                            ),
+                          );
+                  },
                 ),
               ),
             ],
