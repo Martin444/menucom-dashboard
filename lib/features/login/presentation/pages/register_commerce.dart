@@ -1,11 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/config.dart';
-import 'package:pickmeup_dashboard/features/menu/presentation/views/create_item_page.dart';
 import 'package:menu_dart_api/core/type_comerce_model.dart';
 import 'package:pickmeup_dashboard/features/login/controllers/login_controller.dart';
+import 'package:pickmeup_dashboard/features/menu/presentation/widgets/card_take_photo.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
@@ -99,7 +101,7 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                 _.pickImageDirectory();
                                               },
                                               isTaked: _.fileTaked != null,
-                                              photoInBytes: _.fileTaked!,
+                                              photoInBytes: _.fileTaked ?? Uint8List(2),
                                               isLogo: true,
                                             ),
                                             const SizedBox(

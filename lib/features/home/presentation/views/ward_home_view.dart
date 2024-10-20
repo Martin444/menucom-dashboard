@@ -128,6 +128,16 @@ class _WardsHomeViewState extends State<WardsHomeView> {
                                         item: _.wardSelected.items![index],
                                         selected: false,
                                         onAddCart: (val) {},
+                                        actionSelected: (item, action) async {
+                                          if (action == 'delete') {
+                                            await wardController.deleteItemClothing(item);
+                                            _.getWardrobebyDining();
+                                          }
+
+                                          if (action == 'edit') {
+                                            wardController.goToEditClothing(item);
+                                          }
+                                        },
                                       );
                                     },
                                   )

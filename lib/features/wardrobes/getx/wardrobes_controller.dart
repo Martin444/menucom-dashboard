@@ -3,15 +3,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
-import 'package:menu_dart_api/by_feature/upload_images/data/usescases/upload_file_usescases.dart';
-import 'package:menu_dart_api/by_feature/wardrobe/post_wardrobe/model/post_ward_params.dart';
-import 'package:menu_dart_api/by_feature/wardrobe/delete_wardrobe/data/usescase/delete_wardrobe_usecase.dart';
-import 'package:menu_dart_api/by_feature/wardrobe/post_clothing/data/usescase/post_ward_item_usescases.dart';
-import 'package:menu_dart_api/by_feature/wardrobe/post_wardrobe/data/usescase/post_wardrobe_usecase.dart';
-import 'package:menu_dart_api/by_feature/wardrobe/put_wardrobe/data/usescase/put_wardrobe_usecase.dart';
-import 'package:menu_dart_api/by_feature/wardrobe/get_me_wardrobe/model/clothing_item_model.dart';
-import 'package:menu_dart_api/by_feature/wardrobe/get_me_wardrobe/model/wardrobe_model.dart';
+import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
 class WardrobesController extends GetxController {
@@ -22,16 +16,15 @@ class WardrobesController extends GetxController {
     try {
       isLoadWard = true;
       update();
-      final response = await PostWardrobeUsecase.execute(
+      await PostWardrobeUsecase.execute(
         PostWardParams(
           description: nameWard.text,
         ),
       );
-      print(response);
       isLoadWard = false;
       update();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -69,17 +62,16 @@ class WardrobesController extends GetxController {
     try {
       isLoadWard = true;
       update();
-      final response = await PutWardrobeUsecase.execute(
+      await PutWardrobeUsecase.execute(
         PostWardParams(
           id: wardSelected.id,
           description: nameWard.text,
         ),
       );
-      print(response);
       isLoadWard = false;
       update();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -111,7 +103,7 @@ class WardrobesController extends GetxController {
         title: '¡Ups!',
         message: 'No se pudo eliminar ${select.description}, vuelve a intentarlo mas tarde.',
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -188,7 +180,6 @@ class WardrobesController extends GetxController {
       brandWardController.clear();
       priceWardController.clear();
       stockWardController.clear();
-      print(respItem);
       return respItem;
     } catch (e) {
       GlobalDialogsHandles.snackbarError(
@@ -196,6 +187,78 @@ class WardrobesController extends GetxController {
         message: '$e',
       );
       rethrow;
+    }
+  }
+
+  Future<void> deleteItemClothing(ClothingItemModel wardItem) async {
+    try {
+      var isComfirm = await GlobalDialogsHandles.dialogConfirm(
+        title: '¿Seguro desea eliminar ${wardItem.name}?',
+        // message: '',
+      );
+      if (isComfirm) {
+        await DeleteClothingItemUsesCases().execute(wardItem);
+        GlobalDialogsHandles.snackbarSuccess(
+          title: '¡Perfecto!',
+          message: 'Se eliminó ${wardItem.name} con éxito.',
+        );
+      }
+    } catch (e) {
+      GlobalDialogsHandles.snackbarError(
+        title: '¡Ups!',
+        message: 'No se pudo eliminar ${wardItem.name}, vuelve a intentarlo mas tarde.',
+      );
+    }
+  }
+
+  //Editar clothing
+
+  ClothingItemModel clothingToEdit = ClothingItemModel();
+
+  Future<void> goToEditClothing(ClothingItemModel wardItem) async {
+    try {
+      nameWardController.text = wardItem.name ?? '-';
+      brandWardController.text = wardItem.brand ?? '-';
+      priceWardController.text = wardItem.price?.toString() ?? '-';
+      stockWardController.text = wardItem.quantity?.toString() ?? '-';
+      sizesTags = wardItem.sizes ?? [];
+      clothingToEdit = wardItem;
+      newphotoController = wardItem.photoURL!;
+      var resultIamge = await McFunctions().fetchImageAsUint8List(newphotoController);
+      fileTaked = resultIamge;
+      toSend = fileTaked!;
+      Get.toNamed(PURoutes.EDIT_ITEM_WARDROBES);
+    } catch (e) {
+      GlobalDialogsHandles.snackbarError(
+        title: '¡Ups!',
+        message: 'No se pudo completar la acción, vuelve a intentarlo mas tarde.',
+      );
+    }
+  }
+
+  Future<void> editClothingWardrobe() async {
+    try {
+      isLoadMenuItem = true;
+      update();
+      newphotoController = await uploadImage(toSend);
+      var newItem = ClothingItemModel(
+        id: clothingToEdit.id,
+        name: nameWardController.text,
+        brand: brandWardController.text,
+        photoURL: newphotoController,
+        quantity: int.tryParse(stockWardController.text) ?? 1,
+        sizes: sizesTags,
+        price: double.tryParse(priceWardController.text),
+      );
+
+      await PutClothingItemUsesCases().execute(newItem);
+      isLoadMenuItem = false;
+      update();
+    } catch (e) {
+      GlobalDialogsHandles.snackbarError(
+        title: '¡Ups!',
+        message: 'No se pudo Guardar ${nameWardController.text}, vuelve a intentarlo mas tarde.',
+      );
     }
   }
 }

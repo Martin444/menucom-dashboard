@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:menu_dart_api/by_feature/menu/delete_menu_item/data/usescase/delete_menu_item_usescases.dart';
-import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_item_model.dart';
-import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_model.dart';
-import 'package:menu_dart_api/by_feature/menu/post_menu_item/data/usescase/post_menu_item_usescases.dart';
-import 'package:menu_dart_api/by_feature/menu/put_menu_item/data/usescase/put_menu_item_usescases.dart';
-import 'package:menu_dart_api/by_feature/upload_images/data/usescases/upload_file_usescases.dart';
-import 'package:menu_dart_api/by_feature/menu/post_menu/model/menu_params.dart';
-import 'package:menu_dart_api/by_feature/menu/delete_menu/data/usescase/delete_menu_usecase.dart';
-import 'package:menu_dart_api/by_feature/menu/post_menu/data/usescase/post_menu_usecase.dart';
-import 'package:menu_dart_api/by_feature/menu/put_menu/data/usecase/put_menu_usecase.dart';
+import 'package:menu_dart_api/menu_com_api.dart';
+import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
 import '../../../core/handles/global_handle_dialogs.dart';
@@ -113,20 +104,6 @@ class MenusController extends GetxController {
   Uint8List? fileTaked;
   Uint8List toSend = Uint8List(1);
 
-  Future<Uint8List> fetchImageAsUint8List(String url) async {
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      String? contentType = response.headers['content-type'];
-      if (contentType != null && contentType.startsWith('image/')) {
-        return response.bodyBytes;
-      } else {
-        throw Exception('La URL no contiene una imagen');
-      }
-    } else {
-      throw Exception('Failed to load image');
-    }
-  }
-
   void gotoEditItemMenu(MenuItemModel menu) async {
     try {
       newNameController.text = menu.name!;
@@ -135,13 +112,16 @@ class MenusController extends GetxController {
       newphotoController = menu.photoUrl!;
       ingredientsTags = menu.ingredients!;
       menuItemToEdit = menu;
-      var resultIamge = await fetchImageAsUint8List(newphotoController);
+      var resultIamge = await McFunctions().fetchImageAsUint8List(newphotoController);
       fileTaked = resultIamge;
       toSend = fileTaked!;
       update();
       Get.toNamed(PURoutes.EDIT_ITEM_MENU);
     } catch (e) {
-      print(e);
+      GlobalDialogsHandles.snackbarError(
+        title: '¡Ups!',
+        message: 'No se pudo completar la acción, vuelve a intentarlo mas tarde.',
+      );
     }
   }
 
@@ -151,6 +131,7 @@ class MenusController extends GetxController {
     try {
       isEditProcess = true;
       update();
+      newphotoController = await uploadImage(toSend);
       var newItem = MenuItemModel(
         id: menuItemToEdit.id,
         name: newNameController.text,

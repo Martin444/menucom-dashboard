@@ -120,5 +120,17 @@ class PUPages {
         WardrobesBinding(),
       ],
     ),
+    GetPage(
+      name: PURoutes.EDIT_ITEM_WARDROBES,
+      transition: Transition.fadeIn,
+      page: () => const CreateWardItemPage(
+        isEditPage: true,
+      ),
+      bindings: [
+        DinningBinding(),
+        MenuBinding(),
+        WardrobesBinding(),
+      ],
+    ),
   ];
 }

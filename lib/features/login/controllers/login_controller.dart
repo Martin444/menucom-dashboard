@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:menu_dart_api/by_feature/auth/login/data/usescase/login_usescase.dart';
 import 'package:menu_dart_api/by_feature/upload_images/data/usescases/upload_file_usescases.dart';
+import 'package:menu_dart_api/core/exeptions/api_exception.dart';
 import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:menu_dart_api/by_feature/user/change_password/data/usecase/change_password_usescase.dart';
 import 'package:menu_dart_api/by_feature/auth/register/data/usescase/register_commerce_usescase.dart';
@@ -20,7 +21,6 @@ import 'package:pu_material/pu_material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/config.dart';
-import '../../../core/exceptions/api_exception.dart';
 
 class LoginController extends GetxController {
   TextEditingController emailController = TextEditingController();
@@ -56,6 +56,13 @@ class LoginController extends GetxController {
         );
       }
 
+      if (passwordController.text.isEmpty) {
+        throw ApiException(
+          102,
+          'La contraseña no puede estar vacia',
+        );
+      }
+
       var responseLogin = await LoginUserUseCase().execute(
         emailController.text,
         passwordController.text,
@@ -76,24 +83,31 @@ class LoginController extends GetxController {
       errorTextEmail?.value = '';
       errorTextPassword.value = '';
       update();
-    } catch (e) {
+    } on ApiException catch (e) {
       isLogging.value = false;
-      if (e.runtimeType == ApiException) {
-        var err = (e as ApiException);
-        if (err.statusCode == 401) {
-          errorTextEmail?.value = '';
-          errorTextPassword.value = e.message;
-          errorTextPassword.refresh();
-        } else if (e.statusCode == 404) {
-          errorTextEmail?.value = e.message;
-          errorTextEmail?.refresh();
-        }
+      var err = e;
+      if (err.statusCode == 102) {
+        errorTextEmail?.value = '';
+        errorTextEmail?.refresh();
+        errorTextPassword.value = e.message;
+        errorTextPassword.refresh();
       }
-      if (e.runtimeType == ClientException) {
-        // var nerr = (e as ClientException);
-        HandleLogin.handleLoginError();
+      if (err.statusCode == 401) {
+        errorTextEmail?.value = '';
+        errorTextPassword.value = e.message;
+        errorTextPassword.refresh();
+      } else if (e.statusCode == 404) {
+        errorTextPassword.value = '';
+
+        errorTextEmail?.value = e.message;
+        errorTextEmail?.refresh();
+      } else if (e.statusCode == 111) {
+        errorTextEmail?.value = e.message;
+        errorTextEmail?.refresh();
       }
       update();
+    } on ClientException catch (w) {
+      HandleLogin.handleLoginError(w);
     }
   }
 

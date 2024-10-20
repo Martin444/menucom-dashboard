@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
-import 'package:pickmeup_dashboard/features/login/controllers/login_controller.dart';
-import 'package:pickmeup_dashboard/features/menu/presentation/views/create_item_page.dart';
+import 'package:pickmeup_dashboard/features/menu/presentation/widgets/card_take_photo.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/getx/wardrobes_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
@@ -111,7 +110,7 @@ class _CreateItemPageState extends State<CreateWardItemPage> {
                                       _.pickImageDirectory();
                                     },
                                     isTaked: _.fileTaked != null,
-                                    photoInBytes: _.fileTaked!,
+                                    photoInBytes: _.fileTaked ?? Uint8List(2),
                                     isLogo: false,
                                   ),
                                   const SizedBox(
@@ -178,6 +177,7 @@ class _CreateItemPageState extends State<CreateWardItemPage> {
                                   PuInputTags(
                                     hintText: 'Agrega las tallas disponibles',
                                     controller: _.sizedWardController,
+                                    initTags: _.sizesTags,
                                     onSubmitTag: (tags) {
                                       _.updateIngredientsSelected(tags: tags);
                                     },
@@ -191,7 +191,7 @@ class _CreateItemPageState extends State<CreateWardItemPage> {
                                   height: 20,
                                 ),
                                 ButtonPrimary(
-                                  title: 'Crear',
+                                  title: widget.isEditPage ?? false ? 'Guardar' : 'Crear',
                                   onPressed: () async {
                                     if (keyFormCreateItem.currentState?.validate() ?? false) {
                                       if (_.fileTaked == null) {
@@ -199,6 +199,12 @@ class _CreateItemPageState extends State<CreateWardItemPage> {
                                           title: 'La foto de la prenda es obligatoria',
                                           message: 'Preferentemente PNG',
                                         );
+                                        return;
+                                      }
+                                      if (widget.isEditPage ?? false) {
+                                        _.editClothingWardrobe();
+                                        await dinning.getmenuByDining();
+                                        Get.offAllNamed(PURoutes.HOME);
                                         return;
                                       }
                                       _.wardSelected = dinning.wardSelected;
