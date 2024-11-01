@@ -120,7 +120,7 @@ class MenusController extends GetxController {
     } catch (e) {
       GlobalDialogsHandles.snackbarError(
         title: '¡Ups!',
-        message: 'No se pudo completar la acción, vuelve a intentarlo mas tarde.',
+        message: 'No se pudo completar la acción, $e.',
       );
     }
   }
