@@ -177,10 +177,17 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                 title: widget.isEditPage ?? false ? 'Guardar' : 'Crear',
                                 onPressed: () async {
                                   if (widget.isEditPage ?? false) {
-                                    _.editItemMenu();
-                                    await dinning.getmenuByDining();
-                                    Get.offAllNamed(PURoutes.HOME);
-                                    return;
+                                    try {
+                                      await _.editItemMenu();
+                                      await dinning.getmenuByDining();
+                                      Get.offAllNamed(PURoutes.HOME);
+                                      return;
+                                    } catch (e) {
+                                      GlobalDialogsHandles.snackbarError(
+                                        title: 'Hubo un error',
+                                        message: '$e',
+                                      );
+                                    }
                                   }
                                   if (keyFormCreateItem.currentState?.validate() ?? false) {
                                     if (_.fileTaked == null) {

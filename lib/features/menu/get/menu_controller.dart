@@ -127,7 +127,7 @@ class MenusController extends GetxController {
 
   bool isEditProcess = false;
 
-  void editItemMenu() async {
+  Future<void> editItemMenu() async {
     try {
       isEditProcess = true;
       update();

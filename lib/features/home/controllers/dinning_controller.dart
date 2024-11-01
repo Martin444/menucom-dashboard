@@ -103,6 +103,7 @@ class DinningController extends GetxController {
       if (e.statusCode == 404) {
         everyListEmpty = false;
         menusList.clear();
+
         update();
         return null;
       }

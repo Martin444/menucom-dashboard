@@ -202,7 +202,7 @@ class _CreateItemPageState extends State<CreateWardItemPage> {
                                         return;
                                       }
                                       if (widget.isEditPage ?? false) {
-                                        _.editClothingWardrobe();
+                                        await _.editClothingWardrobe();
                                         await dinning.getmenuByDining();
                                         Get.offAllNamed(PURoutes.HOME);
                                         return;
