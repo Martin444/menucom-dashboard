@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
+import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/overflow_text.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
@@ -66,7 +67,19 @@ class HeadDinning extends StatelessWidget {
                         ? const SizedBox()
                         : Flexible(
                             child: GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                try {
+                                  var newRoutProfile = PURoutes.USER_PROFILE.replaceFirst(
+                                    ':idUsuario',
+                                    _.dinningLogin.name!.toLowerCase().split(' ').join('-'),
+                                  );
+                                  Get.toNamed(
+                                    newRoutProfile,
+                                  );
+                                } catch (e) {
+                                  print(e);
+                                }
+                              },
                               child: PUOverflowTextDetector(
                                 message: _.dinningLogin.name!,
                                 children: [

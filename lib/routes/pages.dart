@@ -4,6 +4,7 @@ import 'package:pickmeup_dashboard/features/home/controllers/dinning_binding.dar
 import 'package:pickmeup_dashboard/features/menu/presentation/views/create_item_page.dart';
 import 'package:pickmeup_dashboard/features/menu/get/menu_binding.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/views/create_menu_page.dart';
+import 'package:pickmeup_dashboard/features/profile/presentation/views/profile_page.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/getx/wardrobes_binding.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/views/create_ward_item_page.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/views/create_ward_page.dart';
@@ -131,6 +132,12 @@ class PUPages {
         MenuBinding(),
         WardrobesBinding(),
       ],
+    ),
+    GetPage(
+      name: PURoutes.USER_PROFILE,
+      transition: Transition.rightToLeft,
+      page: () => const ProfilePage(),
+      bindings: [DinningBinding()],
     ),
   ];
 }

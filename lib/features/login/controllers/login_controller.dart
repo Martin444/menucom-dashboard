@@ -73,11 +73,11 @@ class LoginController extends GetxController {
       var sharedToken = await _prefs;
       sharedToken.setString('acccesstoken', ACCESS_TOKEN);
       isLogging.value = false;
-      if (responseLogin.needToChangePassword) {
-        Get.toNamed(PURoutes.CHANGE_PASSWORD);
-      } else {
-        Get.toNamed(PURoutes.HOME);
-      }
+      Get.toNamed(PURoutes.HOME);
+      // if (responseLogin.needToChangePassword) {
+      //   Get.toNamed(PURoutes.CHANGE_PASSWORD);
+      // } else {
+      // }
       emailController.clear();
       passwordController.clear();
       errorTextEmail?.value = '';

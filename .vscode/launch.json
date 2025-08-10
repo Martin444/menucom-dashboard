@@ -27,7 +27,7 @@
                 "html",
                 //"--web-port=52245",
                 //"--no-sound-null-safety",
-                "--dart-define=API_URL=https://menucom-api-88f8abeaad4f.herokuapp.com",
+                "--dart-define=API_URL=https://menucom-api-60e608ae2f99.herokuapp.com",
             ]
         },
         {

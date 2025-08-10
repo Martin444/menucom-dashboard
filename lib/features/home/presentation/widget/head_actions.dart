@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/get_funcion_button.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/share_link_menu_dialog.dart';
+import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/pu_colors.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
@@ -31,9 +32,14 @@ class _HeadActionsState extends State<HeadActions> {
             children: [
               Row(
                 children: [
-                  Text(
-                    dinning.dinningLogin.name ?? '',
-                    style: PuTextStyle.title1,
+                  GestureDetector(
+                    onTap: () {
+                      Get.toNamed(PURoutes.USER_PROFILE);
+                    },
+                    child: Text(
+                      dinning.dinningLogin.name ?? '',
+                      style: PuTextStyle.title1,
+                    ),
                   ),
                   GestureDetector(
                     onTap: () {
