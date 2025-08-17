@@ -17,128 +17,225 @@ class HeadDinning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<DinningController>(
-      builder: (_) {
-        return Container(
-          height: 60,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                width: 1,
-                color: Color(0xFFBCBCBC),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isSmallScreen = constraints.maxWidth < 768;
+        final isLargeScreen = constraints.maxWidth >= 1024;
+
+        // Determine if we should use mobile layout
+        final useMobileLayout = isMobile ?? isSmallScreen;
+
+        return GetBuilder<DinningController>(
+          builder: (_) {
+            return Container(
+              height: 60,
+              padding: EdgeInsets.symmetric(
+                horizontal: useMobileLayout ? 12 : 20,
               ),
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    width: 1,
+                    color: Color(0xFFBCBCBC),
+                  ),
+                ),
+              ),
+              child: useMobileLayout ? _buildMobileLayout(_, context) : _buildDesktopLayout(_, context, isLargeScreen),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildMobileLayout(DinningController controller, BuildContext context) {
+    return Row(
+      children: [
+        // Menu icon for mobile drawer
+        MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: () {
+              Scaffold.of(context).openDrawer();
+            },
+            child: Icon(
+              Icons.menu,
+              color: PUColors.iconColor,
+              size: 24,
             ),
           ),
+        ),
+
+        // Spacer to push content to center and right
+        Expanded(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                flex: 5,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    isMobile ?? true
-                        ? const SizedBox()
-                        : MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: GestureDetector(
-                              onTap: () {
-                                Scaffold.of(context).openDrawer();
-                              },
-                              child: Icon(
-                                Icons.menu,
-                                color: PUColors.iconColor,
-                                // Icons.copy_all_outlined,
-                              ),
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 5,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    isMobile ?? true
-                        ? const SizedBox()
-                        : Flexible(
-                            child: GestureDetector(
-                              onTap: () {
-                                try {
-                                  var newRoutProfile = PURoutes.USER_PROFILE.replaceFirst(
-                                    ':idUsuario',
-                                    _.dinningLogin.name!.toLowerCase().split(' ').join('-'),
-                                  );
-                                  Get.toNamed(
-                                    newRoutProfile,
-                                  );
-                                } catch (e) {
-                                  print(e);
-                                }
-                              },
-                              child: PUOverflowTextDetector(
-                                message: _.dinningLogin.name!,
-                                children: [
-                                  Text(
-                                    _.dinningLogin.name!,
-                                    style: PuTextStyle.title3,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 5,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    isMobile ?? true
-                        ? MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: Icon(
-                                Icons.notifications,
-                                color: PUColors.iconColor,
-                                // Icons.copy_all_outlined,
-                              ),
-                            ),
-                          )
-                        : MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: GestureDetector(
-                              onTap: () {
-                                Get.dialog(
-                                  ShareLinkMenuDialog(
-                                    idMenu: _.dinningLogin.id ?? '',
-                                  ),
-                                );
-                              },
-                              child: Icon(
-                                Icons.share_rounded,
-                                color: PUColors.iconColor,
-                                // Icons.copy_all_outlined,
-                              ),
-                            ),
-                          ),
-                    const SizedBox(
-                      width: 10,
+              // Restaurant name - truncated for mobile
+              Flexible(
+                child: GestureDetector(
+                  onTap: () => _navigateToProfile(controller),
+                  child: Text(
+                    controller.dinningLogin.name ?? '',
+                    style: PuTextStyle.title3.copyWith(
+                      fontSize: 16, // Slightly smaller for mobile
                     ),
-                  ],
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
               ),
             ],
           ),
-        );
-      },
+        ),
+
+        // Right actions for mobile
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Notifications
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () {
+                  // Add notification handling
+                },
+                child: Icon(
+                  Icons.notifications_outlined,
+                  color: PUColors.iconColor,
+                  size: 22,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Share menu (simplified for mobile)
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () {
+                  Get.dialog(
+                    ShareLinkMenuDialog(
+                      idMenu: controller.dinningLogin.id ?? '',
+                    ),
+                  );
+                },
+                child: Icon(
+                  Icons.share_outlined,
+                  color: PUColors.iconColor,
+                  size: 22,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
+  }
+
+  Widget _buildDesktopLayout(DinningController controller, BuildContext context, bool isLargeScreen) {
+    return Row(
+      children: [
+        // Left section - Menu button (hidden on desktop since we have sidebar)
+        const Expanded(
+          flex: 2,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              // Empty space or logo could go here
+              SizedBox(),
+            ],
+          ),
+        ),
+
+        // Center section - Restaurant name
+        Expanded(
+          flex: 6,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: GestureDetector(
+                  onTap: () => _navigateToProfile(controller),
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: PUOverflowTextDetector(
+                      message: controller.dinningLogin.name ?? '',
+                      children: [
+                        Text(
+                          controller.dinningLogin.name ?? '',
+                          style: PuTextStyle.title3,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Right section - Actions
+        Expanded(
+          flex: 3,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              // Notifications
+              MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () {
+                    // Add notification handling
+                  },
+                  child: Icon(
+                    Icons.notifications_outlined,
+                    color: PUColors.iconColor,
+                    size: 24,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+
+              // Share menu
+              MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () {
+                    Get.dialog(
+                      ShareLinkMenuDialog(
+                        idMenu: controller.dinningLogin.id ?? '',
+                      ),
+                    );
+                  },
+                  child: Icon(
+                    Icons.share_rounded,
+                    color: PUColors.iconColor,
+                    size: 24,
+                  ),
+                ),
+              ),
+
+              if (isLargeScreen) ...[
+                const SizedBox(width: 16),
+                // Additional actions for large screens could go here
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _navigateToProfile(DinningController controller) {
+    try {
+      var newRoutProfile = PURoutes.USER_PROFILE.replaceFirst(
+        ':idUsuario',
+        controller.dinningLogin.name!.toLowerCase().split(' ').join('-'),
+      );
+      Get.toNamed(newRoutProfile);
+    } catch (e) {
+      print(e);
+    }
   }
 }

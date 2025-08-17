@@ -42,7 +42,6 @@ class _OrdersPageState extends State<OrdersPage> {
         final screenWidth = constraints.maxWidth;
         final isMobile = screenWidth < 768;
         final isTablet = screenWidth >= 768 && screenWidth < 1024;
-        final isDesktop = screenWidth >= 1024;
 
         if (isMobile) {
           // Layout móvil: MenuSide como drawer + contenido full width
