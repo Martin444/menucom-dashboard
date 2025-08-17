@@ -32,66 +32,115 @@ class MenuSide extends StatelessWidget {
             final mainItems = menuItems.where((item) => !MenuNavigationItem.actionItems.contains(item)).toList();
             final actionItems = menuItems.where((item) => MenuNavigationItem.actionItems.contains(item)).toList();
 
-            return Visibility(
-              visible: isMobile ?? true,
-              child: Drawer(
+            if (isMobile ?? false) {
+              // Versión móvil como Drawer
+              return Drawer(
                 backgroundColor: PUColors.bgItem.withOpacity(0.3),
                 elevation: 0,
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 20,
-                    ),
-                    decoration: PuStyleContainers.borderLeftContainer.copyWith(
-                      color: PUColors.primaryBackground,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Sección principal del menú
-                        Column(
-                          children: [
-                            // Avatar del usuario
-                            _buildUserAvatar(dinningController),
-
-                            const SizedBox(height: 40),
-
-                            // Items principales del menú
-                            ...mainItems.map((item) => EnhancedMenuDrawItem(
-                                  item: item,
-                                  showBadge: _shouldShowBadge(item),
-                                  badgeText: _getBadgeText(item),
-                                )),
-                          ],
-                        ),
-
-                        // Sección de acciones (logout, etc.)
-                        Column(
-                          children: [
-                            // Divider si hay items de acción
-                            if (actionItems.isNotEmpty) ...[
-                              Container(
-                                height: 1,
-                                margin: const EdgeInsets.symmetric(vertical: 20),
-                                decoration: BoxDecoration(
-                                  color: PUColors.iconColor.withOpacity(0.2),
-                                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 20,
+                  ),
+                  decoration: PuStyleContainers.borderLeftContainer.copyWith(
+                    color: PUColors.primaryBackground,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Sección principal del menú
+                      Column(
+                        children: [
+                          // Avatar del usuario - versión compacta para móvil
+                          _buildUserAvatar(dinningController, true),
+                          const SizedBox(height: 24),
+                          // Items principales del menú
+                          ...mainItems.map((item) => EnhancedMenuDrawItem(
+                                item: item,
+                                showBadge: _shouldShowBadge(item),
+                                badgeText: _getBadgeText(item),
+                              )),
+                        ],
+                      ),
+                      // Sección de acciones (logout, etc.)
+                      Column(
+                        children: [
+                          // Divider si hay items de acción
+                          if (actionItems.isNotEmpty) ...[
+                            Container(
+                              height: 1,
+                              margin: const EdgeInsets.symmetric(vertical: 16),
+                              decoration: BoxDecoration(
+                                color: PUColors.iconColor.withOpacity(0.2),
                               ),
-                            ],
-
-                            // Items de acción
-                            ...actionItems.map((item) => EnhancedMenuDrawItem(
-                                  item: item,
-                                )),
+                            ),
                           ],
-                        ),
-                      ],
+                          // Items de acción
+                          ...actionItems.map((item) => EnhancedMenuDrawItem(
+                                item: item,
+                              )),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              // Versión desktop como panel lateral fijo
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
+                ),
+                decoration: PuStyleContainers.borderLeftContainer.copyWith(
+                  color: PUColors.primaryBackground,
+                  border: Border(
+                    right: BorderSide(
+                      color: PUColors.iconColor.withOpacity(0.1),
+                      width: 1,
                     ),
                   ),
                 ),
-              ),
-            );
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Sección principal del menú
+                    Column(
+                      children: [
+                        // Avatar del usuario - versión desktop
+                        _buildUserAvatar(dinningController, false),
+                        const SizedBox(height: 32),
+                        // Items principales del menú
+                        ...mainItems.map((item) => EnhancedMenuDrawItem(
+                              item: item,
+                              showBadge: _shouldShowBadge(item),
+                              badgeText: _getBadgeText(item),
+                            )),
+                      ],
+                    ),
+                    // Sección de acciones (logout, etc.)
+                    Column(
+                      children: [
+                        // Divider si hay items de acción
+                        if (actionItems.isNotEmpty) ...[
+                          Container(
+                            height: 1,
+                            margin: const EdgeInsets.symmetric(vertical: 20),
+                            decoration: BoxDecoration(
+                              color: PUColors.iconColor.withOpacity(0.2),
+                            ),
+                          ),
+                        ],
+                        // Items de acción
+                        ...actionItems.map((item) => EnhancedMenuDrawItem(
+                              item: item,
+                            )),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }
           },
         );
       },
@@ -99,7 +148,11 @@ class MenuSide extends StatelessWidget {
   }
 
   /// Construye el avatar del usuario con información
-  Widget _buildUserAvatar(DinningController dinningController) {
+  Widget _buildUserAvatar(DinningController dinningController, [bool isMobile = false]) {
+    final avatarSize = isMobile ? 80.0 : 100.0;
+    final titleFontSize = isMobile ? 14.0 : 16.0;
+    final roleFontSize = isMobile ? 10.0 : 12.0;
+
     return Column(
       children: [
         // Avatar circular
@@ -114,14 +167,14 @@ class MenuSide extends StatelessWidget {
           child: ClipOval(
             child: PuRobustNetworkImage(
               imageUrl: dinningController.dinningLogin.photoURL ?? '',
-              height: 100,
-              width: 100,
+              height: avatarSize,
+              width: avatarSize,
               fit: BoxFit.cover,
             ),
           ),
         ),
 
-        const SizedBox(height: 16),
+        SizedBox(height: isMobile ? 12 : 16),
 
         // Nombre del usuario
         if (dinningController.dinningLogin.name != null) ...[
@@ -130,6 +183,7 @@ class MenuSide extends StatelessWidget {
             style: PuTextStyle.title3.copyWith(
               fontWeight: FontWeight.w600,
               color: PUColors.iconColor,
+              fontSize: titleFontSize,
             ),
             textAlign: TextAlign.center,
             maxLines: 2,
@@ -141,7 +195,10 @@ class MenuSide extends StatelessWidget {
         // Rol del usuario
         if (dinningController.dinningLogin.role != null) ...[
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? 8 : 12,
+              vertical: isMobile ? 2 : 4,
+            ),
             decoration: BoxDecoration(
               color: PUColors.primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
@@ -150,7 +207,7 @@ class MenuSide extends StatelessWidget {
               _formatUserRole(dinningController.dinningLogin.role!),
               style: PuTextStyle.description1.copyWith(
                 color: PUColors.primaryColor,
-                fontSize: 12,
+                fontSize: roleFontSize,
                 fontWeight: FontWeight.w500,
               ),
             ),
