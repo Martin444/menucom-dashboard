@@ -16,6 +16,7 @@ dependencies:
   get: ^4.6.6
   http: ^1.2.1
   image_picker: ^1.1.1
+  intl: ^0.19.0
   pu_material:
     path: ./pu_material
   menu_dart_api:

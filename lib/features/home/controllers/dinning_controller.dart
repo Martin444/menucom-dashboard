@@ -5,8 +5,9 @@ import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/config.dart';
+import '../../../core/mixins/navigation_state_mixin.dart';
 
-class DinningController extends GetxController {
+class DinningController extends GetxController with NavigationStateMixin {
   DinningModel dinningLogin = DinningModel();
 
   bool isLoaginDataUser = false;
@@ -112,11 +113,19 @@ class DinningController extends GetxController {
   }
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   void closeSesion() async {
     var sesion = await _prefs;
     await sesion.clear();
     ACCESS_TOKEN = '';
     Get.offAllNamed(PURoutes.LOGIN);
     update();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    // Sincronizar el estado de navegación cuando el controlador esté listo
+    syncNavigationState();
   }
 }

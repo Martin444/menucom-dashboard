@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/middlewares/auth_middleware.dart';
+import 'package:pickmeup_dashboard/core/bindings/menu_navigation_binding.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_binding.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/views/create_item_page.dart';
 import 'package:pickmeup_dashboard/features/menu/get/menu_binding.dart';
@@ -14,6 +15,8 @@ import 'package:pickmeup_dashboard/features/login/presentation/pages/change_pass
 import 'package:pickmeup_dashboard/features/login/presentation/pages/login_page.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/pages/register_commerce.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
+
+import '../features/orders/presentation/pages/orders_page.dart';
 
 class PUPages {
   static final List<GetPage> listPages = [
@@ -49,6 +52,7 @@ class PUPages {
       page: () => const HomePage(),
       transition: Transition.fadeIn,
       bindings: [
+        MenuNavigationBinding(),
         DinningBinding(),
         WardrobesBinding(),
         MenuBinding(),
@@ -119,6 +123,17 @@ class PUPages {
       bindings: [
         MenuBinding(),
         WardrobesBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.ORDERS_PAGES,
+      transition: Transition.fadeIn,
+      page: () => const OrdersPage(),
+      bindings: [
+        MenuNavigationBinding(),
+        MenuBinding(),
+        WardrobesBinding(),
+        DinningBinding(),
       ],
     ),
     GetPage(

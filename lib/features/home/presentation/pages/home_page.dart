@@ -59,10 +59,10 @@ class _HomePageState extends State<HomePage> {
               child: Scaffold(
                 backgroundColor: PUColors.primaryBackground,
                 drawerScrimColor: Colors.transparent,
-                drawer: const MenuSIde(),
+                drawer: const MenuSide(),
                 body: Row(
                   children: [
-                    MenuSIde(
+                    MenuSide(
                       isMobile: isMobile,
                     ),
                     Expanded(

@@ -24,4 +24,6 @@ class PURoutes {
   static String EDIT_ITEM_WARDROBES = '/editar-prenda';
 
   static String REGISTER_PURCHACE = '/registrar-venta';
+
+  static String ORDERS_PAGES = '/ordenes';
 }
