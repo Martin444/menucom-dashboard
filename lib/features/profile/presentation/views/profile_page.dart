@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
+import 'package:pu_material/pu_material.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -53,10 +54,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                   ),
-                  Image.network(
-                    _.dinningLogin.photoURL!,
+                  PuRobustNetworkImage(
+                    imageUrl: _.dinningLogin.photoURL!,
                     height: 100,
-                    scale: 0.2,
+                    width: 100,
+                    fit: BoxFit.cover,
                   ),
                   Text(
                     _.dinningLogin.name!,

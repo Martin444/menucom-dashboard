@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pu_material/utils/pu_assets.dart';
-import 'package:pu_material/utils/pu_colors.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
-import 'package:pu_material/widgets/menu/items/itemdraw.dart';
+import 'package:pu_material/pu_material.dart';
 
 import '../../controllers/dinning_controller.dart';
 
@@ -38,10 +37,11 @@ class MenuSIde extends StatelessWidget {
                   children: [
                     Column(
                       children: [
-                        Image.network(
-                          _.dinningLogin.photoURL!,
+                        PuRobustNetworkImage(
+                          imageUrl: _.dinningLogin.photoURL!,
                           height: 100,
-                          scale: 0.2,
+                          width: 100,
+                          fit: BoxFit.cover,
                         ),
                         const SizedBox(
                           height: 40,

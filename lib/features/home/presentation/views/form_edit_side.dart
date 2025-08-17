@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
-import 'package:pu_material/utils/pu_colors.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
-import 'package:pu_material/widgets/buttons/button_primary.dart';
-import 'package:pu_material/widgets/inputs/pu_input.dart';
+import 'package:pu_material/pu_material.dart';
 
 class FormEditSide extends StatelessWidget {
   const FormEditSide({
@@ -60,8 +58,8 @@ class FormEditSide extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  Image.network(
-                    _.photoController,
+                  PuRobustNetworkImage(
+                    imageUrl: _.photoController,
                     width: double.infinity,
                     height: 150,
                     fit: BoxFit.cover,

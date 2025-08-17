@@ -4,7 +4,7 @@ import 'package:pu_material/utils/formaters/currency_converter.dart';
 import 'package:pu_material/utils/overflow_text.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
-import 'package:pu_material/widgets/buttons/mc_option_buttons_tile.dart';
+import 'package:pu_material/pu_material.dart';
 
 class WardItemTile extends StatelessWidget {
   final ClothingItemModel item;
@@ -40,8 +40,8 @@ class WardItemTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Image.network(
-                    item.photoURL!,
+                  PuRobustNetworkImage(
+                    imageUrl: item.photoURL!,
                     height: 220,
                     width: double.infinity,
                     fit: BoxFit.fitHeight,

@@ -40,8 +40,8 @@ class MenuItemTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Image.network(
-                    item.photoUrl!,
+                  PuRobustNetworkImage(
+                    imageUrl: item.photoUrl!,
                     height: 220,
                     width: double.infinity,
                     fit: BoxFit.fitHeight,
