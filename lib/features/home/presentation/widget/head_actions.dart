@@ -46,7 +46,7 @@ class _HeadActionsState extends State<HeadActions> {
                       Get.dialog(
                         MPOAuthGateWidget(
                           idMenu: dinning.dinningLogin.id ?? '',
-                          redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/oauth/callback',
+                          redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
                         ),
                       );
                     },
