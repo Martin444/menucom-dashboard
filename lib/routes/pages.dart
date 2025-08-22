@@ -16,6 +16,8 @@ import 'package:pickmeup_dashboard/features/login/presentation/pages/login_page.
 import 'package:pickmeup_dashboard/features/login/presentation/pages/register_commerce.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
+import 'package:pickmeup_dashboard/features/home/presentation/pages/mp_oauth_callback_page.dart';
+
 import '../features/orders/presentation/pages/orders_page.dart';
 
 class PUPages {
@@ -153,6 +155,11 @@ class PUPages {
       transition: Transition.rightToLeft,
       page: () => const ProfilePage(),
       bindings: [DinningBinding()],
+    ),
+    GetPage(
+      name: PURoutes.MP_OAUTH_CALLBACK,
+      page: () => const MPOAuthCallbackPage(),
+      transition: Transition.fadeIn,
     ),
   ];
 }

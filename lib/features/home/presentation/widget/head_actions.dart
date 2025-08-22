@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/get_funcion_button.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/widget/share_link_menu_dialog.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/mp_oauth_gate_widget.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/pu_colors.dart';
@@ -44,8 +44,9 @@ class _HeadActionsState extends State<HeadActions> {
                   GestureDetector(
                     onTap: () {
                       Get.dialog(
-                        ShareLinkMenuDialog(
+                        MPOAuthGateWidget(
                           idMenu: dinning.dinningLogin.id ?? '',
+                          redirectUri: 'https://menu-comerce.netlify.app/oauth/callback',
                         ),
                       );
                     },

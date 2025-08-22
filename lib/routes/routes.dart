@@ -26,4 +26,7 @@ class PURoutes {
   static String REGISTER_PURCHACE = '/registrar-venta';
 
   static String ORDERS_PAGES = '/ordenes';
+
+  // OAuth Mercado Pago
+  static String MP_OAUTH_CALLBACK = '/oauth/callback';
 }

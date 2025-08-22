@@ -6,7 +6,7 @@ import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/overflow_text.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 
-import 'share_link_menu_dialog.dart';
+import 'mp_oauth_gate_widget.dart';
 
 class HeadDinning extends StatelessWidget {
   final bool? isMobile;
@@ -114,8 +114,9 @@ class HeadDinning extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   Get.dialog(
-                    ShareLinkMenuDialog(
+                    MPOAuthGateWidget(
                       idMenu: controller.dinningLogin.id ?? '',
+                      redirectUri: 'https://menu-comerce.netlify.app/oauth/callback',
                     ),
                   );
                 },
@@ -203,8 +204,9 @@ class HeadDinning extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     Get.dialog(
-                      ShareLinkMenuDialog(
+                      MPOAuthGateWidget(
                         idMenu: controller.dinningLogin.id ?? '',
+                        redirectUri: 'https://menu-comerce.netlify.app/oauth/callback',
                       ),
                     );
                   },

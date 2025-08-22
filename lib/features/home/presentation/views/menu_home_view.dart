@@ -97,7 +97,7 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                             ],
                           ),
                           const SizedBox(height: 12),
-                          
+
                           // Menu Tags Grid
                           Wrap(
                             spacing: constrains.maxWidth < 600 ? 6 : 8,
@@ -105,7 +105,7 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                             children: _.menusList.map((menu) {
                               final isSelected = _.menuSelected == menu;
                               final isSmallScreen = constrains.maxWidth < 600;
-                              
+
                               return MouseRegion(
                                 cursor: SystemMouseCursors.click,
                                 child: GestureDetector(
@@ -119,31 +119,29 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                       vertical: isSmallScreen ? 8 : 10,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: isSelected 
-                                        ? PUColors.primaryColor
-                                        : Colors.white,
+                                      color: isSelected ? PUColors.primaryColor : Colors.white,
                                       borderRadius: BorderRadius.circular(20),
                                       border: Border.all(
-                                        color: isSelected 
-                                          ? PUColors.primaryColor
-                                          : PUColors.borderInputColor.withOpacity(0.5),
+                                        color: isSelected
+                                            ? PUColors.primaryColor
+                                            : PUColors.borderInputColor.withOpacity(0.5),
                                         width: 1.5,
                                       ),
-                                      boxShadow: isSelected 
-                                        ? [
-                                            BoxShadow(
-                                              color: PUColors.primaryColor.withOpacity(0.25),
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ]
-                                        : [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(0.05),
-                                              blurRadius: 4,
-                                              offset: const Offset(0, 1),
-                                            ),
-                                          ],
+                                      boxShadow: isSelected
+                                          ? [
+                                              BoxShadow(
+                                                color: PUColors.primaryColor.withOpacity(0.25),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ]
+                                          : [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(0.05),
+                                                blurRadius: 4,
+                                                offset: const Offset(0, 1),
+                                              ),
+                                            ],
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -152,30 +150,24 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                         Icon(
                                           Icons.restaurant_menu,
                                           size: isSmallScreen ? 14 : 16,
-                                          color: isSelected 
-                                            ? Colors.white
-                                            : PUColors.iconColor,
+                                          color: isSelected ? Colors.white : PUColors.iconColor,
                                         ),
                                         const SizedBox(width: 6),
-                                        
+
                                         // Menu name
                                         Flexible(
                                           child: Text(
                                             menu.description ?? 'Sin nombre',
                                             style: PuTextStyle.description1.copyWith(
                                               fontSize: isSmallScreen ? 12 : 14,
-                                              fontWeight: isSelected 
-                                                ? FontWeight.w600 
-                                                : FontWeight.w500,
-                                              color: isSelected 
-                                                ? Colors.white
-                                                : PUColors.textColor3,
+                                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                              color: isSelected ? Colors.white : PUColors.textColor3,
                                             ),
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
                                           ),
                                         ),
-                                        
+
                                         // Item count badge
                                         if ((menu.items?.length ?? 0) > 0) ...[
                                           const SizedBox(width: 6),
@@ -185,9 +177,9 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                               vertical: 2,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: isSelected 
-                                                ? Colors.white.withOpacity(0.2)
-                                                : PUColors.primaryColor.withOpacity(0.1),
+                                              color: isSelected
+                                                  ? Colors.white.withOpacity(0.2)
+                                                  : PUColors.primaryColor.withOpacity(0.1),
                                               borderRadius: BorderRadius.circular(10),
                                             ),
                                             child: Text(
@@ -195,9 +187,7 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                               style: TextStyle(
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.w600,
-                                                color: isSelected 
-                                                  ? Colors.white
-                                                  : PUColors.primaryColor,
+                                                color: isSelected ? Colors.white : PUColors.primaryColor,
                                               ),
                                             ),
                                           ),
