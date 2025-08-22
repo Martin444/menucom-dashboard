@@ -116,7 +116,7 @@ class HeadDinning extends StatelessWidget {
                   Get.dialog(
                     MPOAuthGateWidget(
                       idMenu: controller.dinningLogin.id ?? '',
-                      redirectUri: 'https://menu-comerce.netlify.app/oauth/callback',
+                      redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/oauth/callback',
                     ),
                   );
                 },
@@ -206,7 +206,7 @@ class HeadDinning extends StatelessWidget {
                     Get.dialog(
                       MPOAuthGateWidget(
                         idMenu: controller.dinningLogin.id ?? '',
-                        redirectUri: 'https://menu-comerce.netlify.app/oauth/callback',
+                        redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/oauth/callback',
                       ),
                     );
                   },
