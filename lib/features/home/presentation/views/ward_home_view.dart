@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/by_feature/wardrobe/get_me_wardrobe/model/wardrobe_model.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/category_tags_section.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/item_category_tile.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/ward_item_tile.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/getx/wardrobes_controller.dart';
@@ -41,63 +42,21 @@ class _WardsHomeViewState extends State<WardsHomeView> {
                 children: [
                   Visibility(
                     visible: constrains.maxWidth < 1200,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 5,
-                        horizontal: 10,
-                      ),
-                      child: Row(
-                        children: [
-                          DropdownButtonHideUnderline(
-                            child: DropdownButton<WardrobeModel>(
-                              value: _.wardSelected,
-                              items: _.wardList.map((WardrobeModel item) {
-                                return DropdownMenuItem<WardrobeModel>(
-                                  value: item,
-                                  child: Text(item.description!),
-                                );
-                              }).toList(),
-                              onChanged: (WardrobeModel? value) {
-                                _.chageWardSelected(value!);
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Row(
-                            children: [
-                              MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    wardController.gotoEditWardrobe(_.wardSelected);
-                                  },
-                                  child: SvgPicture.asset(
-                                    PUIcons.iconEdit,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    await wardController.deleteWardrobe(_.wardSelected);
-                                    _.getmenuByDining();
-                                  },
-                                  child: SvgPicture.asset(
-                                    PUIcons.iconDelete,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                    child: CategoryTagsSection<WardrobeModel>(
+                      title: 'Mis Guardarropas',
+                      items: _.wardList,
+                      selectedItem: _.wardSelected,
+                      onItemSelected: (wardrobe) => _.chageWardSelected(wardrobe),
+                      descriptionBuilder: (wardrobe) => wardrobe.description ?? 'Sin nombre',
+                      itemCountBuilder: (wardrobe) => wardrobe.items?.length ?? 0,
+                      constrains: constrains,
+                      icon: Icons.checkroom,
+                      onEditSelected: () => wardController.gotoEditWardrobe(_.wardSelected),
+                      onDeleteSelected: () async {
+                        await wardController.deleteWardrobe(_.wardSelected);
+                        _.getmenuByDining();
+                      },
+                      emptyMessage: 'No hay guardarropas disponibles',
                     ),
                   ),
                   Expanded(
