@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:pu_material/utils/pu_assets.dart';
-import 'package:svg_flutter/svg_flutter.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class LogoButton extends StatelessWidget {
-  final String? pathIcon;
+  final IconData? icon;
   final Color? colorBackground;
+  final Color? iconColor;
+  final double? iconSize;
   final void Function()? onTap;
+
   const LogoButton({
     super.key,
-    this.pathIcon,
+    this.icon,
     this.colorBackground,
+    this.iconColor,
+    this.iconSize,
     required this.onTap,
   });
 
@@ -28,8 +32,10 @@ class LogoButton extends StatelessWidget {
             color: colorBackground,
             shape: BoxShape.circle,
           ),
-          child: SvgPicture.asset(
-            pathIcon ?? PUIcons.iconCart,
+          child: Icon(
+            icon ?? FluentIcons.shopping_bag_24_regular,
+            color: iconColor,
+            size: iconSize ?? 24,
           ),
         ),
       ),

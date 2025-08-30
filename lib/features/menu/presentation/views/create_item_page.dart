@@ -10,6 +10,7 @@ import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/widgets/inputs/pu_input_tags.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class CreateItemPage extends StatefulWidget {
   final bool? isEditPage;
@@ -65,7 +66,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                               child: Row(
                                 children: [
                                   const Icon(
-                                    Icons.arrow_back_ios,
+                                    FluentIcons.arrow_left_24_regular,
                                   ),
                                   Text(
                                     'Volver',

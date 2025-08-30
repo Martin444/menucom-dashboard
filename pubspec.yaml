@@ -26,6 +26,7 @@ dependencies:
   screenshot: ^3.0.0
   shared_preferences: ^2.2.3
   flutter_keyboard_visibility: ^6.0.0
+  fluentui_system_icons: ^1.1.273
   svg_flutter: ^0.0.1
   textfield_tags: ^3.0.1
   universal_html: ^2.2.4

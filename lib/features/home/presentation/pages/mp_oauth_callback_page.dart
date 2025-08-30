@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 /// Página de callback para manejar la respuesta de OAuth de Mercado Pago
 class MPOAuthCallbackPage extends StatefulWidget {
@@ -151,10 +152,10 @@ class _MPOAuthCallbackPageState extends State<MPOAuthCallbackPage> {
                 ),
                 child: Icon(
                   _isProcessing
-                      ? Icons.sync
+                      ? FluentIcons.arrow_sync_24_regular
                       : _isSuccess
-                          ? Icons.check_circle
-                          : Icons.error_outline,
+                          ? FluentIcons.checkmark_circle_24_regular
+                          : FluentIcons.error_circle_24_regular,
                   size: 40,
                   color: _isProcessing
                       ? PUColors.bgButton
@@ -194,7 +195,7 @@ class _MPOAuthCallbackPageState extends State<MPOAuthCallbackPage> {
                 ),
               ] else if (_isSuccess && _successMessage != null) ...[
                 Icon(
-                  Icons.account_balance_wallet,
+                  FluentIcons.wallet_24_regular,
                   size: 48,
                   color: PUColors.bgSucces,
                 ),

@@ -6,6 +6,7 @@ import 'package:pickmeup_dashboard/features/menu/presentation/views/create_item_
 import 'package:pickmeup_dashboard/features/menu/get/menu_binding.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/views/create_menu_page.dart';
 import 'package:pickmeup_dashboard/features/profile/presentation/views/profile_page.dart';
+import 'package:pickmeup_dashboard/features/profile/presentation/views/payment_methods_page.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/getx/wardrobes_binding.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/views/create_ward_item_page.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/views/create_ward_page.dart';
@@ -62,6 +63,9 @@ class PUPages {
     ),
     GetPage(
       name: PURoutes.REGISTER_ITEM_MENU,
+      middlewares: [
+        AuthMiddleware(),
+      ],
       transition: Transition.fadeIn,
       page: () => const CreateItemPage(),
       bindings: [
@@ -71,6 +75,9 @@ class PUPages {
     ),
     GetPage(
       name: PURoutes.EDIT_ITEM_MENU,
+      middlewares: [
+        AuthMiddleware(),
+      ],
       transition: Transition.fadeIn,
       page: () => const CreateItemPage(
         isEditPage: true,
@@ -82,6 +89,9 @@ class PUPages {
     ),
     GetPage(
       name: PURoutes.REGISTER_WARDROBES,
+      middlewares: [
+        AuthMiddleware(),
+      ],
       transition: Transition.fadeIn,
       page: () => const CreateWardPage(),
       bindings: [
@@ -90,6 +100,9 @@ class PUPages {
     ),
     GetPage(
       name: PURoutes.EDIT_WARDROBES,
+      middlewares: [
+        AuthMiddleware(),
+      ],
       transition: Transition.fadeIn,
       page: () => const CreateWardPage(
         isEditPage: true,
@@ -100,6 +113,9 @@ class PUPages {
     ),
     GetPage(
       name: PURoutes.REGISTER_MENU_CATEGORY,
+      middlewares: [
+        AuthMiddleware(),
+      ],
       transition: Transition.fadeIn,
       page: () => const CreateMenuPage(),
       bindings: [
@@ -108,6 +124,9 @@ class PUPages {
     ),
     GetPage(
       name: PURoutes.EDIT_MENU_CATEGORY,
+      middlewares: [
+        AuthMiddleware(),
+      ],
       transition: Transition.fadeIn,
       page: () => const CreateMenuPage(
         isEditPage: true,
@@ -118,6 +137,9 @@ class PUPages {
     ),
     GetPage(
       name: PURoutes.REGISTER_ITEM_WARDROBES,
+      middlewares: [
+        AuthMiddleware(),
+      ],
       transition: Transition.fadeIn,
       page: () => const CreateWardItemPage(
         isEditPage: false,
@@ -129,6 +151,9 @@ class PUPages {
     ),
     GetPage(
       name: PURoutes.ORDERS_PAGES,
+      middlewares: [
+        AuthMiddleware(),
+      ],
       transition: Transition.fadeIn,
       page: () => const OrdersPage(),
       bindings: [
@@ -140,6 +165,9 @@ class PUPages {
     ),
     GetPage(
       name: PURoutes.EDIT_ITEM_WARDROBES,
+      middlewares: [
+        AuthMiddleware(),
+      ],
       transition: Transition.fadeIn,
       page: () => const CreateWardItemPage(
         isEditPage: true,
@@ -152,6 +180,9 @@ class PUPages {
     ),
     GetPage(
       name: PURoutes.USER_PROFILE,
+      middlewares: [
+        AuthMiddleware(),
+      ],
       transition: Transition.rightToLeft,
       page: () => const ProfilePage(),
       bindings: [DinningBinding()],
@@ -160,6 +191,15 @@ class PUPages {
       name: PURoutes.MP_OAUTH_CALLBACK,
       page: () => const MPOAuthCallbackPage(),
       transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: PURoutes.PAYMENT_METHODS,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+      page: () => const PaymentMethodsPage(),
+      transition: Transition.rightToLeft,
+      bindings: [DinningBinding()],
     ),
   ];
 }

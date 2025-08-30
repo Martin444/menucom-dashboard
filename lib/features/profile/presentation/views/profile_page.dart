@@ -4,6 +4,7 @@ import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/pu_material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -44,7 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Row(
                         children: [
                           const Icon(
-                            Icons.arrow_back_ios,
+                            FluentIcons.arrow_left_24_regular,
                           ),
                           Text(
                             'Volver',
@@ -72,12 +73,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     _.dinningLogin.phone!,
                     style: PuTextStyle.title2,
                   ),
-                  const ListTile(
-                    title: Text('Métodos de pago'),
-                    subtitle: Text('Elige con que querés cobrar'),
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                    ),
+                  ListTile(
+                    title: const Text('Métodos de pago'),
+                    subtitle: const Text('Elige con que querés cobrar'),
+                    trailing: const Icon(FluentIcons.arrow_right_24_regular),
+                    onTap: () {
+                      Get.toNamed(PURoutes.PAYMENT_METHODS);
+                    },
                   ),
                 ],
               ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:pu_material/utils/pu_colors.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
-import 'package:svg_flutter/svg.dart';
 import '../../core/navigation/menu_navigation_items.dart';
 import '../../core/navigation/menu_navigation_controller.dart';
 
@@ -53,12 +53,10 @@ class EnhancedMenuDrawItem extends StatelessWidget {
                   // Icono principal
                   Stack(
                     children: [
-                      SvgPicture.asset(
+                      Icon(
                         config.icon,
-                        colorFilter: ColorFilter.mode(
-                          _getIconColor(isSelected, isComingSoon),
-                          BlendMode.src,
-                        ),
+                        color: _getIconColor(isSelected, isComingSoon),
+                        size: 24,
                       ),
                       // Badge si es necesario
                       if (showBadge && badgeText != null)

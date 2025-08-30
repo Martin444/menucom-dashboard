@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/get_funcion_button.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/mp_oauth_gate_widget.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
-import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/pu_colors.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
-import 'package:svg_flutter/svg.dart';
 
 class HeadActions extends StatefulWidget {
   const HeadActions({
@@ -52,12 +51,10 @@ class _HeadActionsState extends State<HeadActions> {
                     },
                     child: MouseRegion(
                       cursor: SystemMouseCursors.click,
-                      child: SvgPicture.asset(
-                        PUIcons.iconLink,
-                        colorFilter: ColorFilter.mode(
-                          PUColors.iconColor,
-                          BlendMode.src,
-                        ),
+                      child: Icon(
+                        FluentIcons.link_24_regular,
+                        color: PUColors.iconColor,
+                        size: 24,
                       ),
                     ),
                   ),

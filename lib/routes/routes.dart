@@ -27,6 +27,9 @@ class PURoutes {
 
   static String ORDERS_PAGES = '/ordenes';
 
+  // Payment methods
+  static String PAYMENT_METHODS = '/metodos-de-pago';
+
   // OAuth Mercado Pago
   static String MP_OAUTH_CALLBACK = '/oauth/callback';
 }

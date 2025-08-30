@@ -11,6 +11,7 @@ import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:svg_flutter/svg.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 import '../../controllers/dinning_controller.dart';
 
@@ -51,7 +52,7 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                       descriptionBuilder: (menu) => menu.description ?? 'Sin nombre',
                       itemCountBuilder: (menu) => menu.items?.length ?? 0,
                       constrains: constrains,
-                      icon: Icons.restaurant_menu,
+                      icon: FluentIcons.food_24_regular,
                       onEditSelected: () => menusController.gotoEditMenu(_.menuSelected),
                       emptyMessage: 'No hay menús disponibles',
                     ),

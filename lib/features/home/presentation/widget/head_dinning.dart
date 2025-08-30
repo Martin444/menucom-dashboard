@@ -5,6 +5,7 @@ import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/overflow_text.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 import 'mp_oauth_gate_widget.dart';
 
@@ -59,7 +60,7 @@ class HeadDinning extends StatelessWidget {
               Scaffold.of(context).openDrawer();
             },
             child: Icon(
-              Icons.menu,
+              FluentIcons.line_horizontal_3_24_regular,
               color: PUColors.iconColor,
               size: 24,
             ),
@@ -101,7 +102,7 @@ class HeadDinning extends StatelessWidget {
                   // Add notification handling
                 },
                 child: Icon(
-                  Icons.notifications_outlined,
+                  FluentIcons.alert_24_regular,
                   color: PUColors.iconColor,
                   size: 22,
                 ),
@@ -121,7 +122,7 @@ class HeadDinning extends StatelessWidget {
                   );
                 },
                 child: Icon(
-                  Icons.share_outlined,
+                  FluentIcons.share_24_regular,
                   color: PUColors.iconColor,
                   size: 22,
                 ),
@@ -190,7 +191,7 @@ class HeadDinning extends StatelessWidget {
                     // Add notification handling
                   },
                   child: Icon(
-                    Icons.notifications_outlined,
+                    FluentIcons.alert_24_regular,
                     color: PUColors.iconColor,
                     size: 24,
                   ),
@@ -211,7 +212,7 @@ class HeadDinning extends StatelessWidget {
                     );
                   },
                   child: Icon(
-                    Icons.share_rounded,
+                    FluentIcons.share_24_regular,
                     color: PUColors.iconColor,
                     size: 24,
                   ),

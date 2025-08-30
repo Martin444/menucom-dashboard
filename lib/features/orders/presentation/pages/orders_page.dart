@@ -5,6 +5,7 @@ import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.
 import 'package:pickmeup_dashboard/features/orders/getx/orders_controller.dart';
 import 'package:pickmeup_dashboard/features/orders/presentation/widgets/orders_metrics_widget.dart';
 import 'package:pu_material/pu_material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
@@ -25,7 +26,9 @@ class _OrdersPageState extends State<OrdersPage> {
     dinningController = Get.find<DinningController>();
 
     // Cargar órdenes al inicializar
-    _loadOrders();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadOrders();
+    });
   }
 
   Future<void> _loadOrders() async {
@@ -53,14 +56,14 @@ class _OrdersPageState extends State<OrdersPage> {
               elevation: 0,
               leading: Builder(
                 builder: (context) => IconButton(
-                  icon: const Icon(Icons.menu),
+                  icon: const Icon(FluentIcons.line_horizontal_3_24_regular),
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),
               actions: [
                 IconButton(
                   onPressed: _loadOrders,
-                  icon: const Icon(Icons.refresh),
+                  icon: const Icon(FluentIcons.arrow_sync_24_regular),
                   tooltip: 'Actualizar órdenes',
                 ),
               ],
@@ -129,7 +132,7 @@ class _OrdersPageState extends State<OrdersPage> {
               ),
               IconButton(
                 onPressed: _loadOrders,
-                icon: const Icon(Icons.refresh),
+                icon: const Icon(FluentIcons.arrow_sync_24_regular),
                 tooltip: 'Actualizar órdenes',
                 iconSize: isTablet ? 20 : 24,
               ),
@@ -163,7 +166,7 @@ class _OrdersPageState extends State<OrdersPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.error_outline,
+                  FluentIcons.error_circle_24_regular,
                   size: 64,
                   color: Colors.red.shade400,
                 ),
@@ -194,7 +197,7 @@ class _OrdersPageState extends State<OrdersPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.receipt_long_outlined,
+                  FluentIcons.receipt_24_regular,
                   size: 64,
                   color: Colors.grey.shade400,
                 ),

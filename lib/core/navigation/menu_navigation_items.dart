@@ -1,4 +1,5 @@
-import 'package:pu_material/utils/pu_assets.dart';
+import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 import '../../routes/routes.dart';
 
@@ -17,21 +18,21 @@ enum MenuNavigationItem {
     switch (this) {
       case MenuNavigationItem.home:
         return MenuItemConfig(
-          icon: PUIcons.iconHomeMenu,
+          icon: FluentIcons.home_24_regular,
           label: 'Inicio',
           route: PURoutes.HOME,
           isNavigationRoute: true,
         );
       case MenuNavigationItem.orders:
         return MenuItemConfig(
-          icon: PUIcons.iconOrderMenu,
+          icon: FluentIcons.clipboard_task_list_ltr_24_regular,
           label: 'Ordenes',
           route: PURoutes.ORDERS_PAGES,
           isNavigationRoute: true,
         );
       case MenuNavigationItem.sales:
         return MenuItemConfig(
-          icon: PUIcons.iconSalesMenu,
+          icon: FluentIcons.money_24_regular,
           label: 'Ventas',
           route: null, // No implementado aún
           isNavigationRoute: false,
@@ -39,7 +40,7 @@ enum MenuNavigationItem {
         );
       case MenuNavigationItem.clients:
         return MenuItemConfig(
-          icon: PUIcons.iconClientsMenu,
+          icon: FluentIcons.people_24_regular,
           label: 'Clientes',
           route: null, // No implementado aún
           isNavigationRoute: false,
@@ -47,7 +48,7 @@ enum MenuNavigationItem {
         );
       case MenuNavigationItem.suppliers:
         return MenuItemConfig(
-          icon: PUIcons.iconProveeMenu,
+          icon: FluentIcons.building_24_regular,
           label: 'Proveedores',
           route: null, // No implementado aún
           isNavigationRoute: false,
@@ -55,7 +56,7 @@ enum MenuNavigationItem {
         );
       case MenuNavigationItem.profile:
         return MenuItemConfig(
-          icon: PUIcons.iconProveeMenu, // Cambiar por icono de perfil
+          icon: FluentIcons.person_24_regular,
           label: 'Perfil',
           route: PURoutes.USER_PROFILE,
           isNavigationRoute: true,
@@ -63,7 +64,7 @@ enum MenuNavigationItem {
         );
       case MenuNavigationItem.logout:
         return MenuItemConfig(
-          icon: PUIcons.iconExitMenu,
+          icon: FluentIcons.sign_out_24_regular,
           label: 'Cerrar sesión',
           route: null,
           isNavigationRoute: false,
@@ -95,7 +96,7 @@ enum MenuNavigationItem {
       case 'dinning':
         return [home, orders, sales, ...actionItems];
       case 'clothes':
-        return [home, ...actionItems];
+        return [home, orders, sales, ...actionItems];
       default:
         return [home, ...actionItems];
     }
@@ -104,7 +105,7 @@ enum MenuNavigationItem {
 
 /// Configuración de un item del menú
 class MenuItemConfig {
-  final String icon;
+  final IconData icon;
   final String label;
   final String? route;
   final bool isNavigationRoute;

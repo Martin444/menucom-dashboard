@@ -12,6 +12,12 @@ class DinningController extends GetxController with NavigationStateMixin {
 
   bool isLoaginDataUser = false;
 
+  @override
+  void onInit() {
+    super.onInit();
+    getMyDinningInfo();
+  }
+
   void getMyDinningInfo() async {
     try {
       isLoaginDataUser = true;

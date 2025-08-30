@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/pu_material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class FormEditSide extends StatelessWidget {
   const FormEditSide({
@@ -40,7 +41,7 @@ class FormEditSide extends StatelessWidget {
                         child: Row(
                           children: [
                             const Icon(
-                              Icons.arrow_back_ios,
+                              FluentIcons.arrow_left_24_regular,
                             ),
                             Text(
                               'Volver',

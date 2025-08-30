@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
-import 'package:svg_flutter/svg.dart';
 
 class ItemCategoryTile<T> extends StatelessWidget {
   final T? item;
@@ -53,22 +52,27 @@ class ItemCategoryTile<T> extends StatelessWidget {
                     onTap: () {
                       onEdit!(item as T);
                     },
-                    child: SvgPicture.asset(
-                      PUIcons.iconEdit,
+                    child: Icon(
+                      FluentIcons.edit_24_regular,
+                      size: 20,
+                      color: PUColors.primaryColor,
                     ),
                   ),
                 ),
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () {
-                      onDelete!(item as T);
-                    },
-                    child: SvgPicture.asset(
-                      PUIcons.iconDelete,
-                    ),
-                  ),
-                ),
+                //El boton de borrar solo se debe mostrar si el usuario tiene permisos
+                // MouseRegion(
+                //   cursor: SystemMouseCursors.click,
+                //   child: GestureDetector(
+                //     onTap: () {
+                //       onDelete!(item as T);
+                //     },
+                //     child: Icon(
+                //       FluentIcons.delete_24_regular,
+                //       size: 20,
+                //       color: Colors.red,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ],

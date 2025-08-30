@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
-import 'package:svg_flutter/svg.dart';
 
 /// Widget reutilizable para mostrar una sección de tags/categorías con funcionalidad
 /// de selección, edición y otras acciones.
@@ -105,10 +104,10 @@ class CategoryTagsSection<T> extends StatelessWidget {
                             color: PUColors.primaryColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
-                          child: SvgPicture.asset(
-                            PUIcons.iconEdit,
-                            width: 16,
-                            height: 16,
+                          child: Icon(
+                            FluentIcons.edit_24_regular,
+                            size: 16,
+                            color: PUColors.primaryColor,
                           ),
                         ),
                       ),
@@ -128,10 +127,10 @@ class CategoryTagsSection<T> extends StatelessWidget {
                             color: Colors.red.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
-                          child: SvgPicture.asset(
-                            PUIcons.iconDelete,
-                            width: 16,
-                            height: 16,
+                          child: Icon(
+                            FluentIcons.delete_24_regular,
+                            size: 16,
+                            color: Colors.red,
                           ),
                         ),
                       ),

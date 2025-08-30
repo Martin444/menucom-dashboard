@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pickmeup_dashboard/widgets/button_logo.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 import '../../../../core/config.dart';
 
@@ -237,7 +237,7 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
                     const SnackBar(content: Text('Se copió la URL correctamente')),
                   );
                 },
-                icon: const Icon(Icons.copy, size: 18),
+                icon: const Icon(FluentIcons.copy_24_regular, size: 18),
                 label: const Text('Copiar enlace'),
                 style: TextButton.styleFrom(
                   foregroundColor: PUColors.bgButton,
@@ -249,8 +249,9 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
             Row(
               children: [
                 LogoButton(
-                  pathIcon: PUIcons.iconWhatsapp,
+                  icon: FluentIcons.chat_24_regular,
                   colorBackground: PUColors.bgSucces.withOpacity(0.3),
+                  iconColor: Colors.green,
                   onTap: () {
                     setState(() {
                       showEmailInput = false;
@@ -260,8 +261,9 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
                 ),
                 const SizedBox(width: 10),
                 LogoButton(
-                  pathIcon: PUIcons.iconGmail,
+                  icon: FluentIcons.mail_24_regular,
                   colorBackground: PUColors.bgError.withOpacity(0.3),
+                  iconColor: Colors.red,
                   onTap: () {
                     setState(() {
                       showWhatsappInput = false;
@@ -271,8 +273,9 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
                 ),
                 const SizedBox(width: 10),
                 LogoButton(
-                  pathIcon: PUIcons.iconDownload,
+                  icon: FluentIcons.arrow_download_24_regular,
                   colorBackground: isDownloading ? Colors.grey.withOpacity(0.3) : Colors.transparent,
+                  iconColor: isDownloading ? Colors.grey : null,
                   onTap: isDownloading
                       ? null
                       : () async {

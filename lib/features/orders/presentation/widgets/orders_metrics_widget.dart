@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import '../../getx/orders_controller.dart';
 
 /// Widget que muestra estadísticas y métricas de las órdenes
@@ -82,7 +83,7 @@ class OrdersMetricsWidget extends StatelessWidget {
                     child: Row(
                       children: [
                         Icon(
-                          Icons.attach_money,
+                          FluentIcons.money_24_regular,
                           color: Colors.green[700],
                           size: isMobile ? 18 : 20,
                         ),
@@ -126,7 +127,7 @@ class OrdersMetricsWidget extends StatelessWidget {
                 context,
                 'Total',
                 totalOrders.toString(),
-                Icons.receipt_long,
+                FluentIcons.receipt_24_regular,
                 Colors.blue,
                 true, // isMobile
               ),
@@ -137,7 +138,7 @@ class OrdersMetricsWidget extends StatelessWidget {
                 context,
                 'Pendientes',
                 pendingOrders.toString(),
-                Icons.hourglass_empty,
+                FluentIcons.hourglass_24_regular,
                 Colors.orange,
                 true, // isMobile
               ),
@@ -152,7 +153,7 @@ class OrdersMetricsWidget extends StatelessWidget {
                 context,
                 'En Curso',
                 inProgressOrders.toString(),
-                Icons.autorenew,
+                FluentIcons.arrow_sync_24_regular,
                 Colors.purple,
                 true, // isMobile
               ),
@@ -163,7 +164,7 @@ class OrdersMetricsWidget extends StatelessWidget {
                 context,
                 'Completadas',
                 completedOrders.toString(),
-                Icons.check_circle,
+                FluentIcons.checkmark_circle_24_regular,
                 Colors.green,
                 true, // isMobile
               ),
@@ -190,7 +191,7 @@ class OrdersMetricsWidget extends StatelessWidget {
             context,
             'Total',
             totalOrders.toString(),
-            Icons.receipt_long,
+            FluentIcons.receipt_24_regular,
             Colors.blue,
             false, // not mobile
           ),
@@ -201,7 +202,7 @@ class OrdersMetricsWidget extends StatelessWidget {
             context,
             'Pendientes',
             pendingOrders.toString(),
-            Icons.hourglass_empty,
+            FluentIcons.hourglass_24_regular,
             Colors.orange,
             false, // not mobile
           ),
@@ -212,7 +213,7 @@ class OrdersMetricsWidget extends StatelessWidget {
             context,
             'En Curso',
             inProgressOrders.toString(),
-            Icons.autorenew,
+            FluentIcons.arrow_sync_24_regular,
             Colors.purple,
             false, // not mobile
           ),
@@ -223,7 +224,7 @@ class OrdersMetricsWidget extends StatelessWidget {
             context,
             'Completadas',
             completedOrders.toString(),
-            Icons.check_circle,
+            FluentIcons.checkmark_circle_24_regular,
             Colors.green,
             false, // not mobile
           ),

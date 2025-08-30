@@ -7,6 +7,7 @@ import 'package:pu_material/utils/pu_colors.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/widgets/buttons/button_primary.dart';
 import 'package:pu_material/widgets/inputs/pu_input.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class CreateWardPage extends StatefulWidget {
   final bool? isEditPage;
@@ -61,7 +62,7 @@ class _CreateWardPageState extends State<CreateWardPage> {
                                 child: Row(
                                   children: [
                                     Icon(
-                                      Icons.arrow_back_ios,
+                                      FluentIcons.arrow_left_24_regular,
                                       color: PUColors.primaryColor,
                                     ),
                                     Text(
