@@ -31,8 +31,20 @@ class _WardsHomeViewState extends State<WardsHomeView> {
   Widget build(BuildContext context) {
     return GetBuilder<DinningController>(
       builder: (_) {
+        // Debug: Verificar la lista de guardarropas
+        debugPrint('=== DEBUG WardsHomeView ===');
+        debugPrint('wardList length: ${_.wardList.length}');
+        for (int i = 0; i < _.wardList.length; i++) {
+          debugPrint('Ward $i: ${_.wardList[i].description} (ID: ${_.wardList[i].id})');
+        }
+        debugPrint('wardSelected: ${_.wardSelected.description} (ID: ${_.wardSelected.id})');
+
         return LayoutBuilder(
           builder: (context, constrains) {
+            // Debug: Verificar las dimensiones
+            debugPrint('Screen width: ${constrains.maxWidth}');
+            debugPrint('Will show CategoryTagsSection: ${constrains.maxWidth < 1200}');
+            debugPrint('Will show CategorySidebar: ${constrains.maxWidth > 1200}');
             return WardsHomeOrganism<WardrobeModel, dynamic>(
               constraints: constrains,
               isMobile: widget.isMobile,

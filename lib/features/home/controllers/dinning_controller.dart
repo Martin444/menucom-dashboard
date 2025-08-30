@@ -50,22 +50,53 @@ class DinningController extends GetxController with NavigationStateMixin {
   //Wardrobes
 
   Future<List<WardrobeModel>?> getWardrobebyDining() async {
+    if (_isLoadingWardrobes) {
+      debugPrint('=== getWardrobebyDining already in progress, skipping ===');
+      return wardList;
+    }
+
     try {
+      _isLoadingWardrobes = true;
+      debugPrint('=== DEBUG getWardrobebyDining CALLED ===');
+      debugPrint('Current wardList length before clear: ${wardList.length}');
       wardList = [];
+      debugPrint('wardList cleared, length: ${wardList.length}');
+
       final responseWar = await GetClothingUserUsescase().execute(dinningLogin.id!);
-      for (var e in responseWar.listClothing!) {
-        wardList.add(e);
+      debugPrint('=== DEBUG DinningController.getWardrobebyDining ===');
+      debugPrint('API response wardrobes count: ${responseWar.listClothing?.length ?? 0}');
+
+      // Debug: Verificar cada elemento de la respuesta
+      if (responseWar.listClothing != null) {
+        for (int i = 0; i < responseWar.listClothing!.length; i++) {
+          debugPrint(
+              'API Response Item $i: ${responseWar.listClothing![i].description} (ID: ${responseWar.listClothing![i].id})');
+        }
       }
+
+      for (var e in responseWar.listClothing!) {
+        debugPrint('Adding wardrobe: ${e.description} (ID: ${e.id})');
+        wardList.add(e);
+        debugPrint('wardList length after adding: ${wardList.length}');
+      }
+
+      debugPrint('Final wardList length: ${wardList.length}');
       wardSelected = wardList.first;
+      debugPrint('Selected wardrobe: ${wardSelected.description}');
       update();
+      _isLoadingWardrobes = false;
       return wardList;
     } on ApiException catch (e) {
+      _isLoadingWardrobes = false;
       everyListEmpty = false;
       update();
       if (e.statusCode == 404) {
         return null;
       }
       return null;
+    } catch (e) {
+      _isLoadingWardrobes = false;
+      rethrow;
     }
   }
 
@@ -78,6 +109,8 @@ class DinningController extends GetxController with NavigationStateMixin {
     idOwner: '',
     items: [],
   );
+
+  bool _isLoadingWardrobes = false; // Flag para evitar llamadas concurrentes
 
   void chageWardSelected(WardrobeModel select) {
     wardSelected = select;

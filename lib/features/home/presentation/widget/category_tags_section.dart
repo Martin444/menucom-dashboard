@@ -63,6 +63,15 @@ class CategoryTagsSection<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Debug: Verificar los items recibidos
+    debugPrint('=== DEBUG CategoryTagsSection ===');
+    debugPrint('Title: $title');
+    debugPrint('Items length: ${items.length}');
+    for (int i = 0; i < items.length; i++) {
+      debugPrint('Item $i: ${descriptionBuilder(items[i])}');
+    }
+    debugPrint('Selected item: ${descriptionBuilder(selectedItem)}');
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
