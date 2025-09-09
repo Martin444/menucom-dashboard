@@ -19,6 +19,9 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Administracion para Menu com">
+  
+  <!-- Google Sign-In Configuration -->
+  <meta name="google-signin-client_id" content="1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,6 +36,32 @@
 
   <title>Menucom dashboard</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  
+  <!-- Google APIs -->
+  <script src="https://apis.google.com/js/api.js"></script>
+  
+  <!-- Firebase Configuration -->
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAEWpBCNon00zwt1eWfqSDiYMhH0xxLMwk",
+      authDomain: "menucom-ff087.firebaseapp.com",
+      projectId: "menucom-ff087",
+      storageBucket: "menucom-ff087.firebasestorage.app",
+      messagingSenderId: "1053737382833",
+      appId: "1:1053737382833:web:d4173f40d6b88a52900390",
+      measurementId: "G-D5ZC2VB6GR"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
 <!-- 
   <script>
     // The value below is injected by flutter build, do not touch.

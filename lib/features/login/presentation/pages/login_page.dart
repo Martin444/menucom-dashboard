@@ -155,6 +155,17 @@ class _LoginPageState extends State<LoginPage> {
                                             load: _.isLogging.value,
                                           ),
                                           const SizedBox(
+                                            height: 15,
+                                          ),
+                                          // Botón de Google Sign-In
+                                          ButtonSecundary(
+                                            title: 'Continuar con Google',
+                                            onPressed: () {
+                                              _.loginWithGoogle();
+                                            },
+                                            load: _.isLogging.value,
+                                          ),
+                                          const SizedBox(
                                             height: 10,
                                           ),
                                           Container(

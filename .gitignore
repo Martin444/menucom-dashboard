@@ -42,3 +42,13 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .qodo
+
+# Environment variables - DO NOT COMMIT
+.env
+.env.local
+.env.production
+.env.development
+
+# Firebase configuration files with sensitive data
+# google-services.json
+# GoogleService-Info.plist
