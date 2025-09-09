@@ -1,5 +1,6 @@
 import '../entities/authenticated_user.dart';
 import '../repositories/auth_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'login_with_credentials_usecase.dart';
 
 /// Caso de uso para obtener el usuario autenticado actual.
@@ -29,7 +30,7 @@ class GetCurrentUserUseCase {
       final isAuthenticated = await _authRepository.isUserAuthenticated();
 
       if (!isAuthenticated) {
-        print('No hay usuario autenticado actualmente');
+        debugPrint('No hay usuario autenticado actualmente');
         return null;
       }
 
@@ -37,19 +38,19 @@ class GetCurrentUserUseCase {
       final user = await _authRepository.getCurrentUser();
 
       if (user != null) {
-        print('Usuario actual obtenido: ${user.email}');
+        debugPrint('Usuario actual obtenido: ${user.email}');
         return user;
       } else {
-        print('No se encontró usuario en almacenamiento local');
+        debugPrint('No se encontró usuario en almacenamiento local');
         return null;
       }
     } catch (e) {
       if (e is AuthException) {
         // Si hay error de autenticación, el usuario probablemente no está autenticado
-        print('Error de autenticación al obtener usuario actual: ${e.message}');
+        debugPrint('Error de autenticación al obtener usuario actual: ${e.message}');
         return null;
       } else {
-        throw AuthException('Error inesperado al obtener usuario actual');
+        throw const AuthException('Error inesperado al obtener usuario actual');
       }
     }
   }
@@ -77,19 +78,19 @@ class GetCurrentUserUseCase {
       // Intentar refrescar token si es necesario
       try {
         final refreshedUser = await _authRepository.refreshToken();
-        print('Token refrescado para usuario: ${refreshedUser.email}');
+        debugPrint('Token refrescado para usuario: ${refreshedUser.email}');
         return refreshedUser;
       } catch (refreshError) {
         // Si no se puede refrescar, retornar el usuario original
         // (el token aún puede ser válido)
-        print('No se pudo refrescar el token, usando token actual');
+        debugPrint('No se pudo refrescar el token, usando token actual');
         return user;
       }
     } catch (e) {
       if (e is AuthException) {
         return null;
       } else {
-        throw AuthException('Error al obtener usuario con refresco de token');
+        throw const AuthException('Error al obtener usuario con refresco de token');
       }
     }
   }
@@ -107,7 +108,7 @@ class GetCurrentUserUseCase {
       return await _authRepository.isUserAuthenticated();
     } catch (e) {
       // En caso de error, asumir que no está autenticado
-      print('Error al verificar autenticación: $e');
+      debugPrint('Error al verificar autenticación: $e');
       return false;
     }
   }

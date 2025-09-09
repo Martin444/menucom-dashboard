@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:menu_dart_api/by_feature/auth/login/data/usescase/login_usescase.dart';
 import 'package:menu_dart_api/by_feature/upload_images/data/usescases/upload_file_usescases.dart';
+import 'package:menu_dart_api/by_feature/auth/social_login/data/usecase/social_login_usecase.dart';
 import 'package:menu_dart_api/core/exeptions/api_exception.dart';
 import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/features/auth/config/firebase_config.dart';
@@ -357,22 +358,67 @@ class LoginController extends GetxController {
         final String? firebaseToken = await user.getIdToken();
 
         if (firebaseToken != null) {
-          // Aquí puedes usar el token de Firebase para autenticar con tu API backend
-          // Por ahora, guardamos el token y navegamos al dashboard
-          ACCESS_TOKEN = firebaseToken;
+          try {
+            debugPrint('🔐 Iniciando autenticación social con backend...');
 
-          var sharedToken = await _prefs;
-          sharedToken.setString('acccesstoken', ACCESS_TOKEN);
+            // Usar SocialLoginUseCase para autenticar con el backend
+            final socialLoginUseCase = SocialLoginUseCase();
+            final socialLoginResponse = await socialLoginUseCase.execute(
+              firebaseIdToken: firebaseToken,
+              additionalData: {
+                'email': user.email,
+                'name': user.displayName,
+                'photoURL': user.photoURL,
+                'provider': 'google',
+              },
+            );
 
+            debugPrint('✅ Autenticación social exitosa');
+            debugPrint('📧 Usuario: ${user.email}');
+
+            // Usar el token de acceso del backend (no el de Firebase)
+            ACCESS_TOKEN = socialLoginResponse.accessToken;
+
+            var sharedToken = await _prefs;
+            sharedToken.setString('acccesstoken', ACCESS_TOKEN);
+
+            isLogging.value = false;
+            Get.toNamed(PURoutes.HOME);
+            update();
+          } catch (e) {
+            isLogging.value = false;
+            update();
+            debugPrint('❌ Error en autenticación con backend: $e');
+
+            String errorMessage = 'Error al autenticar con el servidor.';
+            if (e is ApiException) {
+              errorMessage = e.message;
+            }
+
+            Get.snackbar(
+              'Error de Autenticación',
+              '$errorMessage Inténtalo de nuevo.',
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+              duration: const Duration(seconds: 4),
+            );
+          }
+        } else {
           isLogging.value = false;
-          Get.toNamed(PURoutes.HOME);
           update();
+          debugPrint('❌ No se pudo obtener el token de Firebase');
+          Get.snackbar(
+            'Error',
+            'No se pudo obtener el token de autenticación.',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
         }
       }
     } catch (e) {
       isLogging.value = false;
       update();
-      print('Error en login con Google: $e');
+      debugPrint('Error en login con Google: $e');
       // Aquí puedes manejar el error según tus necesidades
       Get.snackbar(
         'Error',

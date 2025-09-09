@@ -4,7 +4,6 @@ import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/overflow_text.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 import 'mp_oauth_gate_widget.dart';
@@ -238,7 +237,7 @@ class HeadDinning extends StatelessWidget {
       );
       Get.toNamed(newRoutProfile);
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 }

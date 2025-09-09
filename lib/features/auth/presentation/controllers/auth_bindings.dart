@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import 'auth_controller.dart';
 
 /// Bindings para inyectar dependencias del módulo de autenticación.
@@ -15,7 +16,7 @@ class AuthBindings extends Bindings {
       permanent: true, // No se elimina automáticamente
     );
 
-    print('AuthController registrado como singleton');
+    debugPrint('AuthController registrado como singleton');
   }
 }
 
@@ -31,9 +32,9 @@ class LoginBindings extends Bindings {
         AuthController(),
         permanent: true,
       );
-      print('AuthController creado desde LoginBindings');
+      debugPrint('AuthController creado desde LoginBindings');
     } else {
-      print('AuthController ya existe - reutilizando instancia');
+      debugPrint('AuthController ya existe - reutilizando instancia');
     }
   }
 }
@@ -53,7 +54,7 @@ class AuthenticatedBindings extends Bindings {
     // Aquí se pueden registrar otros controladores que requieren autenticación
     // Por ejemplo: DashboardController, ProfileController, etc.
 
-    print('Dependencias para páginas autenticadas verificadas');
+    debugPrint('Dependencias para páginas autenticadas verificadas');
   }
 }
 
@@ -64,7 +65,7 @@ class AuthInitializer {
     // Registrar bindings globales de autenticación
     AuthBindings().dependencies();
 
-    print('Sistema de autenticación inicializado globalmente');
+    debugPrint('Sistema de autenticación inicializado globalmente');
   }
 
   /// Verifica si el sistema de autenticación está inicializado

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import 'package:menu_dart_api/menu_com_api.dart' as api;
 import 'package:pu_material/pu_material.dart' as ui;
 
@@ -34,7 +35,7 @@ class OrdersController extends GetxController {
     } catch (e) {
       hasError.value = true;
       errorMessage.value = 'Error al cargar órdenes: $e';
-      print('Error fetching orders: $e');
+      debugPrint('Error fetching orders: $e');
     } finally {
       isLoading.value = false;
     }

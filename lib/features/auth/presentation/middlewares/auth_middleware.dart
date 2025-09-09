@@ -14,7 +14,7 @@ class AuthMiddleware extends GetMiddleware {
   RouteSettings? redirect(String? route) {
     // Verificar si el AuthController está disponible
     if (!Get.isRegistered<AuthController>()) {
-      print('AuthController no registrado - redirigiendo a login');
+      debugPrint('AuthController no registrado - redirigiendo a login');
       return const RouteSettings(name: '/login');
     }
 
@@ -22,12 +22,12 @@ class AuthMiddleware extends GetMiddleware {
 
     // Si el usuario no está autenticado, redirigir a login
     if (!authController.isAuthenticated) {
-      print('Usuario no autenticado - redirigiendo a login desde: $route');
+      debugPrint('Usuario no autenticado - redirigiendo a login desde: $route');
       return const RouteSettings(name: '/login');
     }
 
     // Si el usuario está autenticado, permitir acceso
-    print('Usuario autenticado - permitiendo acceso a: $route');
+    debugPrint('Usuario autenticado - permitiendo acceso a: $route');
     return null;
   }
 }
@@ -52,7 +52,7 @@ class GuestMiddleware extends GetMiddleware {
 
     // Si el usuario ya está autenticado, redirigir al dashboard
     if (authController.isAuthenticated) {
-      print('Usuario ya autenticado - redirigiendo a dashboard desde: $route');
+      debugPrint('Usuario ya autenticado - redirigiendo a dashboard desde: $route');
       return const RouteSettings(name: '/dashboard');
     }
 
@@ -88,9 +88,9 @@ class RoleMiddleware extends GetMiddleware {
 
     // Verificar roles
     if (!authController.hasAnyRole(requiredRoles)) {
-      print('Usuario sin permisos para acceder a: $route');
-      print('Roles requeridos: $requiredRoles');
-      print('Rol del usuario: ${authController.currentUser?.role}');
+      debugPrint('Usuario sin permisos para acceder a: $route');
+      debugPrint('Roles requeridos: $requiredRoles');
+      debugPrint('Rol del usuario: ${authController.currentUser?.role}');
 
       // Redirigir a página de acceso denegado o dashboard principal
       return const RouteSettings(name: '/access-denied');

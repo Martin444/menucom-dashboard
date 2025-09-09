@@ -31,7 +31,7 @@ enum MenuNavigationItem {
           isNavigationRoute: true,
         );
       case MenuNavigationItem.sales:
-        return MenuItemConfig(
+        return const MenuItemConfig(
           icon: FluentIcons.money_24_regular,
           label: 'Ventas',
           route: null, // No implementado aún
@@ -39,7 +39,7 @@ enum MenuNavigationItem {
           isComingSoon: true,
         );
       case MenuNavigationItem.clients:
-        return MenuItemConfig(
+        return const MenuItemConfig(
           icon: FluentIcons.people_24_regular,
           label: 'Clientes',
           route: null, // No implementado aún
@@ -47,7 +47,7 @@ enum MenuNavigationItem {
           isComingSoon: true,
         );
       case MenuNavigationItem.suppliers:
-        return MenuItemConfig(
+        return const MenuItemConfig(
           icon: FluentIcons.building_24_regular,
           label: 'Proveedores',
           route: null, // No implementado aún
@@ -63,7 +63,7 @@ enum MenuNavigationItem {
           isDynamic: true,
         );
       case MenuNavigationItem.logout:
-        return MenuItemConfig(
+        return const MenuItemConfig(
           icon: FluentIcons.sign_out_24_regular,
           label: 'Cerrar sesión',
           route: null,

@@ -41,13 +41,18 @@ class AuthFirebaseDataSourceImpl implements AuthFirebaseDataSource {
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         _googleSignIn = googleSignIn ??
             GoogleSignIn(
-              clientId: FirebaseConfig.googleSignInClientId,
+              clientId: kIsWeb
+                  ? '1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com'
+                  : FirebaseConfig.googleSignInClientId,
             ) {
     // Debug: Verificar que el clientId se esté pasando correctamente
     if (kDebugMode) {
       debugPrint('=== GoogleSignIn Debug ===');
+      debugPrint('Platform: ${kIsWeb ? 'Web' : 'Native'}');
       debugPrint('Client ID from config: ${FirebaseConfig.googleSignInClientId}');
       debugPrint('GoogleSignIn clientId: ${_googleSignIn.clientId}');
+      debugPrint('Firebase app: ${_firebaseAuth.app.name}');
+      debugPrint('Firebase project: ${_firebaseAuth.app.options.projectId}');
       debugPrint('========================');
     }
   }
@@ -55,11 +60,14 @@ class AuthFirebaseDataSourceImpl implements AuthFirebaseDataSource {
   @override
   Future<String> signInWithGoogle() async {
     try {
-      print('Iniciando Google Sign-In...');
+      debugPrint('=== Iniciando Google Sign-In Debug ===');
+      debugPrint('Firebase Auth inicializado: ${_firebaseAuth.app.name}');
+      debugPrint('GoogleSignIn clientId: ${_googleSignIn.clientId}');
+      debugPrint('kIsWeb: $kIsWeb');
 
       // Verificar si Google Sign-In está disponible
       if (!await _googleSignIn.isSignedIn()) {
-        print('Usuario no está autenticado con Google, iniciando flujo...');
+        debugPrint('Usuario no está autenticado con Google, iniciando flujo...');
       }
 
       // Iniciar el flujo de autenticación con Google
@@ -67,17 +75,20 @@ class AuthFirebaseDataSourceImpl implements AuthFirebaseDataSource {
 
       if (googleUser == null) {
         // El usuario canceló el proceso
-        throw AuthException('El usuario canceló la autenticación', code: 'sign_in_canceled');
+        throw const AuthException('El usuario canceló la autenticación', code: 'sign_in_canceled');
       }
 
-      print('Usuario de Google obtenido: ${googleUser.email}');
+      debugPrint('Usuario de Google obtenido: ${googleUser.email}');
 
       // Obtener los detalles de autenticación de la solicitud
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
-        throw AuthException('No se pudieron obtener las credenciales de Google');
+        throw const AuthException('No se pudieron obtener las credenciales de Google');
       }
+
+      debugPrint(
+          'Tokens obtenidos - AccessToken: ${googleAuth.accessToken != null}, IdToken: ${googleAuth.idToken != null}');
 
       // Crear credenciales de Firebase
       final credential = GoogleAuthProvider.credential(
@@ -85,64 +96,83 @@ class AuthFirebaseDataSourceImpl implements AuthFirebaseDataSource {
         idToken: googleAuth.idToken,
       );
 
+      debugPrint('Credenciales de Firebase creadas, intentando autenticación...');
+      debugPrint('Access Token: ${googleAuth.accessToken?.substring(0, 20)}...');
+      debugPrint('ID Token: ${googleAuth.idToken?.substring(0, 20)}...');
+
       // Autenticar con Firebase usando las credenciales de Google
       final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
 
       if (userCredential.user == null) {
-        throw AuthException('No se pudo autenticar con Firebase');
+        throw const AuthException('No se pudo autenticar con Firebase');
       }
+
+      debugPrint('Autenticación exitosa con Firebase para: ${userCredential.user!.email}');
 
       // Obtener el token de ID de Firebase
       final idToken = await userCredential.user!.getIdToken(true);
 
       if (idToken == null) {
-        throw AuthException('No se pudo obtener el token de autenticación');
+        throw const AuthException('No se pudo obtener el token de autenticación');
       }
 
-      print('Google Sign-In exitoso para: ${userCredential.user!.email}');
+      debugPrint('Token de Firebase obtenido exitosamente');
+      debugPrint('=== Google Sign-In Completado ===');
 
       return idToken;
     } on FirebaseAuthException catch (e) {
-      print('Error de Firebase Auth: ${e.code} - ${e.message}');
+      debugPrint('=== Error de Firebase Auth ===');
+      debugPrint('Código de error: ${e.code}');
+      debugPrint('Mensaje: ${e.message}');
+      debugPrint('Plugin: ${e.plugin}');
+      debugPrint('Stack trace: ${e.stackTrace}');
 
       switch (e.code) {
         case 'account-exists-with-different-credential':
-          throw AuthException('Ya existe una cuenta con este email usando un método de autenticación diferente');
+          throw const AuthException('Ya existe una cuenta con este email usando un método de autenticación diferente');
         case 'invalid-credential':
-          throw AuthException('Las credenciales de Google no son válidas');
+          throw const AuthException('Las credenciales de Google no son válidas');
         case 'operation-not-allowed':
-          throw AuthException('Google Sign-In no está habilitado en este proyecto');
+          throw const AuthException('Google Sign-In no está habilitado en este proyecto');
         case 'user-disabled':
-          throw AuthException('Esta cuenta ha sido deshabilitada');
+          throw const AuthException('Esta cuenta ha sido deshabilitada');
         case 'user-not-found':
-          throw AuthException('No se encontró una cuenta con estas credenciales');
+          throw const AuthException('No se encontró una cuenta con estas credenciales');
         case 'wrong-password':
-          throw AuthException('Credenciales incorrectas');
+          throw const AuthException('Credenciales incorrectas');
+        case 'configuration-not-found':
+          throw const AuthException(
+              'Configuración de Firebase no encontrada. Verifica la configuración del proyecto Firebase y los Client IDs de Google Sign-In.');
+        case 'network-request-failed':
+          throw const AuthException('Error de red. Verifica tu conexión a internet.');
+        case 'too-many-requests':
+          throw const AuthException('Demasiados intentos de autenticación. Intenta más tarde.');
         default:
-          throw AuthException('Error de autenticación: ${e.message}', code: e.code);
+          throw AuthException('Error de autenticación Firebase: ${e.message} (código: ${e.code})', code: e.code);
       }
     } catch (e) {
       if (e is AuthException) {
         rethrow;
       }
-      print('Error inesperado durante Google Sign-In: $e');
-      throw AuthException('Error inesperado durante la autenticación con Google');
+      debugPrint('Error inesperado durante Google Sign-In: $e');
+      debugPrint('Tipo de error: ${e.runtimeType}');
+      throw const AuthException('Error inesperado durante la autenticación con Google');
     }
   }
 
   @override
   Future<String> signInWithApple() async {
     try {
-      print('Iniciando Apple Sign-In...');
+      debugPrint('Iniciando Apple Sign-In...');
 
       // Verificar disponibilidad de Apple Sign-In
       if (!kIsWeb && !Platform.isIOS && !Platform.isMacOS) {
-        throw AuthException('Apple Sign-In no está disponible en esta plataforma');
+        throw const AuthException('Apple Sign-In no está disponible en esta plataforma');
       }
 
       // Verificar disponibilidad específica
       if (!await SignInWithApple.isAvailable()) {
-        throw AuthException('Apple Sign-In no está disponible en este dispositivo');
+        throw const AuthException('Apple Sign-In no está disponible en este dispositivo');
       }
 
       // Solicitar credenciales de Apple
@@ -159,7 +189,7 @@ class AuthFirebaseDataSourceImpl implements AuthFirebaseDataSource {
             : null,
       );
 
-      print('Credenciales de Apple obtenidas para: ${appleCredential.email ?? 'email no disponible'}');
+      debugPrint('Credenciales de Apple obtenidas para: ${appleCredential.email ?? 'email no disponible'}');
 
       // Crear credenciales de Firebase para Apple
       final oauthCredential = OAuthProvider("apple.com").credential(
@@ -171,45 +201,45 @@ class AuthFirebaseDataSourceImpl implements AuthFirebaseDataSource {
       final UserCredential userCredential = await _firebaseAuth.signInWithCredential(oauthCredential);
 
       if (userCredential.user == null) {
-        throw AuthException('No se pudo autenticar con Firebase usando Apple');
+        throw const AuthException('No se pudo autenticar con Firebase usando Apple');
       }
 
       // Obtener el token de ID de Firebase
       final idToken = await userCredential.user!.getIdToken(true);
 
       if (idToken == null) {
-        throw AuthException('No se pudo obtener el token de autenticación de Apple');
+        throw const AuthException('No se pudo obtener el token de autenticación de Apple');
       }
 
-      print('Apple Sign-In exitoso para: ${userCredential.user!.email ?? 'email no disponible'}');
+      debugPrint('Apple Sign-In exitoso para: ${userCredential.user!.email ?? 'email no disponible'}');
 
       return idToken;
     } on SignInWithAppleAuthorizationException catch (e) {
-      print('Error de Apple Sign-In: ${e.code} - ${e.message}');
+      debugPrint('Error de Apple Sign-In: ${e.code} - ${e.message}');
 
       switch (e.code) {
         case AuthorizationErrorCode.canceled:
-          throw AuthException('El usuario canceló la autenticación', code: 'sign_in_canceled');
+          throw const AuthException('El usuario canceló la autenticación', code: 'sign_in_canceled');
         case AuthorizationErrorCode.failed:
-          throw AuthException('Error durante la autenticación con Apple');
+          throw const AuthException('Error durante la autenticación con Apple');
         case AuthorizationErrorCode.invalidResponse:
-          throw AuthException('Respuesta inválida de Apple Sign-In');
+          throw const AuthException('Respuesta inválida de Apple Sign-In');
         case AuthorizationErrorCode.notHandled:
-          throw AuthException('Apple Sign-In no pudo ser procesado');
+          throw const AuthException('Apple Sign-In no pudo ser procesado');
         case AuthorizationErrorCode.unknown:
-          throw AuthException('Error desconocido durante Apple Sign-In');
+          throw const AuthException('Error desconocido durante Apple Sign-In');
         default:
           throw AuthException('Error de Apple Sign-In: ${e.message}');
       }
     } on FirebaseAuthException catch (e) {
-      print('Error de Firebase Auth con Apple: ${e.code} - ${e.message}');
+      debugPrint('Error de Firebase Auth con Apple: ${e.code} - ${e.message}');
       throw AuthException('Error de autenticación con Firebase: ${e.message}', code: e.code);
     } catch (e) {
       if (e is AuthException) {
         rethrow;
       }
-      print('Error inesperado durante Apple Sign-In: $e');
-      throw AuthException('Error inesperado durante la autenticación con Apple');
+      debugPrint('Error inesperado durante Apple Sign-In: $e');
+      throw const AuthException('Error inesperado durante la autenticación con Apple');
     }
   }
 
@@ -224,9 +254,9 @@ class AuthFirebaseDataSourceImpl implements AuthFirebaseDataSource {
         await _googleSignIn.signOut();
       }
 
-      print('Sesión cerrada en Firebase y servicios asociados');
+      debugPrint('Sesión cerrada en Firebase y servicios asociados');
     } catch (e) {
-      print('Error durante signOut: $e');
+      debugPrint('Error durante signOut: $e');
       throw AuthException('Error al cerrar sesión: $e');
     }
   }
@@ -241,7 +271,7 @@ class AuthFirebaseDataSourceImpl implements AuthFirebaseDataSource {
 
       return await user.getIdToken(false);
     } catch (e) {
-      print('Error al obtener token ID actual: $e');
+      debugPrint('Error al obtener token ID actual: $e');
       return null;
     }
   }
@@ -267,7 +297,7 @@ class AuthFirebaseDataSourceImpl implements AuthFirebaseDataSource {
       // Forzar actualización del token
       return await user.getIdToken(true);
     } catch (e) {
-      print('Error al refrescar token ID: $e');
+      debugPrint('Error al refrescar token ID: $e');
       throw AuthException('Error al refrescar token de Firebase: $e');
     }
   }

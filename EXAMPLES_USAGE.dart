@@ -96,12 +96,12 @@
     
 //     // Verificar si un item está seleccionado
 //     if (navController.isItemSelected(MenuNavigationItem.home)) {
-//       print('Estamos en la página de inicio');
+//       debugPrint('Estamos en la página de inicio');
 //     }
     
 //     // Obtener items disponibles para el usuario actual
 //     final availableItems = navController.getMenuItems();
-//     print('Items disponibles: ${availableItems.length}');
+//     debugPrint('Items disponibles: ${availableItems.length}');
 //   }
 // }
 

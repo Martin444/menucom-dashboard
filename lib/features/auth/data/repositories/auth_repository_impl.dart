@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../../domain/entities/authenticated_user.dart';
 import '../../domain/entities/auth_params.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -29,7 +30,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<AuthenticatedUser> loginWithCredentials(LoginCredentials credentials) async {
     try {
-      print('Iniciando login tradicional para: ${credentials.email}');
+      debugPrint('Iniciando login tradicional para: ${credentials.email}');
 
       // Convertir parámetros de dominio a modelo de request
       final request = LoginRequestModel.fromDomain(credentials);
@@ -54,10 +55,10 @@ class AuthRepositoryImpl implements AuthRepository {
       // Guardar usuario en almacenamiento local
       await _localDataSource.saveAuthenticatedUser(user);
 
-      print('Login tradicional exitoso para: ${user.email}');
+      debugPrint('Login tradicional exitoso para: ${user.email}');
       return user;
     } catch (e) {
-      print('Error durante login tradicional: $e');
+      debugPrint('Error durante login tradicional: $e');
       rethrow;
     }
   }
@@ -65,7 +66,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<AuthenticatedUser> loginWithSocial(SocialAuthParams params) async {
     try {
-      print('Iniciando login social con token...');
+      debugPrint('Iniciando login social con token...');
 
       // Convertir parámetros de dominio a modelo de request
       final request = SocialAuthRequestModel.fromDomain(params);
@@ -90,10 +91,10 @@ class AuthRepositoryImpl implements AuthRepository {
       // Guardar usuario en almacenamiento local
       await _localDataSource.saveAuthenticatedUser(user);
 
-      print('Login social exitoso para: ${user.email}');
+      debugPrint('Login social exitoso para: ${user.email}');
       return user;
     } catch (e) {
-      print('Error durante login social: $e');
+      debugPrint('Error durante login social: $e');
       rethrow;
     }
   }
@@ -101,7 +102,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<AuthenticatedUser> registerUser(RegistrationParams params) async {
     try {
-      print('Iniciando registro tradicional para: ${params.email}');
+      debugPrint('Iniciando registro tradicional para: ${params.email}');
 
       // Convertir parámetros de dominio a modelo de request
       final request = RegisterRequestModel.fromDomain(params);
@@ -126,10 +127,10 @@ class AuthRepositoryImpl implements AuthRepository {
       // Guardar usuario en almacenamiento local
       await _localDataSource.saveAuthenticatedUser(user);
 
-      print('Registro tradicional exitoso para: ${user.email}');
+      debugPrint('Registro tradicional exitoso para: ${user.email}');
       return user;
     } catch (e) {
-      print('Error durante registro tradicional: $e');
+      debugPrint('Error durante registro tradicional: $e');
       rethrow;
     }
   }
@@ -137,7 +138,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<AuthenticatedUser> registerWithSocial(SocialAuthParams params) async {
     try {
-      print('Iniciando registro social...');
+      debugPrint('Iniciando registro social...');
 
       // Convertir parámetros de dominio a modelo de request
       final request = SocialAuthRequestModel.fromDomain(params);
@@ -162,10 +163,10 @@ class AuthRepositoryImpl implements AuthRepository {
       // Guardar usuario en almacenamiento local
       await _localDataSource.saveAuthenticatedUser(user);
 
-      print('Registro social exitoso para: ${user.email}');
+      debugPrint('Registro social exitoso para: ${user.email}');
       return user;
     } catch (e) {
-      print('Error durante registro social: $e');
+      debugPrint('Error durante registro social: $e');
       rethrow;
     }
   }
@@ -173,10 +174,10 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<String> signInWithGoogle() async {
     try {
-      print('Ejecutando Google Sign-In...');
+      debugPrint('Ejecutando Google Sign-In...');
       return await _firebaseDataSource.signInWithGoogle();
     } catch (e) {
-      print('Error durante Google Sign-In: $e');
+      debugPrint('Error durante Google Sign-In: $e');
       rethrow;
     }
   }
@@ -184,10 +185,10 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<String> signInWithApple() async {
     try {
-      print('Ejecutando Apple Sign-In...');
+      debugPrint('Ejecutando Apple Sign-In...');
       return await _firebaseDataSource.signInWithApple();
     } catch (e) {
-      print('Error durante Apple Sign-In: $e');
+      debugPrint('Error durante Apple Sign-In: $e');
       rethrow;
     }
   }
@@ -195,28 +196,28 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> signOut() async {
     try {
-      print('Iniciando proceso de logout...');
+      debugPrint('Iniciando proceso de logout...');
 
       // Cerrar sesión en Firebase (si aplica)
       if (_firebaseDataSource.isUserSignedIn()) {
         await _firebaseDataSource.signOut();
-        print('Sesión cerrada en Firebase');
+        debugPrint('Sesión cerrada en Firebase');
       }
 
       // Limpiar datos locales
       await _localDataSource.clearAuthData();
-      print('Datos locales limpiados');
+      debugPrint('Datos locales limpiados');
 
-      print('Logout completado exitosamente');
+      debugPrint('Logout completado exitosamente');
     } catch (e) {
-      print('Error durante logout: $e');
+      debugPrint('Error durante logout: $e');
 
       // Intentar limpiar datos locales aunque Firebase falle
       try {
         await _localDataSource.clearAuthData();
-        print('Datos locales limpiados después de error en Firebase');
+        debugPrint('Datos locales limpiados después de error en Firebase');
       } catch (localError) {
-        print('Error al limpiar datos locales: $localError');
+        debugPrint('Error al limpiar datos locales: $localError');
       }
 
       rethrow;
@@ -228,7 +229,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       return await _localDataSource.getAuthenticatedUser();
     } catch (e) {
-      print('Error al obtener usuario actual: $e');
+      debugPrint('Error al obtener usuario actual: $e');
       return null;
     }
   }
@@ -238,7 +239,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       return await _localDataSource.isUserAuthenticated();
     } catch (e) {
-      print('Error al verificar autenticación: $e');
+      debugPrint('Error al verificar autenticación: $e');
       return false;
     }
   }
@@ -246,12 +247,12 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<AuthenticatedUser> refreshToken() async {
     try {
-      print('Refrescando token de autenticación...');
+      debugPrint('Refrescando token de autenticación...');
 
       // Obtener token actual
       final currentToken = await _localDataSource.getAccessToken();
       if (currentToken == null) {
-        throw AuthException('No hay token disponible para refrescar');
+        throw const AuthException('No hay token disponible para refrescar');
       }
 
       // Intentar refrescar con la API
@@ -260,7 +261,7 @@ class AuthRepositoryImpl implements AuthRepository {
       // Obtener usuario actual para preservar datos
       final currentUser = await _localDataSource.getAuthenticatedUser();
       if (currentUser == null) {
-        throw AuthException('No hay usuario autenticado para actualizar');
+        throw const AuthException('No hay usuario autenticado para actualizar');
       }
 
       // Crear usuario actualizado con nuevo token
@@ -272,10 +273,10 @@ class AuthRepositoryImpl implements AuthRepository {
       // Guardar usuario actualizado
       await _localDataSource.saveAuthenticatedUser(updatedUser);
 
-      print('Token refrescado exitosamente');
+      debugPrint('Token refrescado exitosamente');
       return updatedUser;
     } catch (e) {
-      print('Error al refrescar token: $e');
+      debugPrint('Error al refrescar token: $e');
       rethrow;
     }
   }
@@ -284,9 +285,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> clearAuthData() async {
     try {
       await _localDataSource.clearAuthData();
-      print('Datos de autenticación limpiados');
+      debugPrint('Datos de autenticación limpiados');
     } catch (e) {
-      print('Error al limpiar datos de autenticación: $e');
+      debugPrint('Error al limpiar datos de autenticación: $e');
       // No re-lanzar la excepción para permitir que el logout continúe
     }
   }

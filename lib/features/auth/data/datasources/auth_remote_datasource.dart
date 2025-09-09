@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 import '../models/auth_request_model.dart';
 import '../models/auth_response_model.dart';
 import '../../../../core/config.dart';
@@ -116,7 +117,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   /// Maneja la respuesta HTTP y convierte errores
   AuthResponseModel _handleResponse(http.Response response, String operation) {
-    print('${operation.toUpperCase()} - Status: ${response.statusCode}');
+    debugPrint('${operation.toUpperCase()} - Status: ${response.statusCode}');
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       try {
@@ -144,7 +145,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       errorCode = errorData['code'];
     } catch (e) {
       // Si no se puede parsear el error, usar mensaje genérico
-      print('No se pudo parsear error response para $operation: $e');
+      debugPrint('No se pudo parsear error response para $operation: $e');
     }
 
     switch (response.statusCode) {
@@ -153,21 +154,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       case 401:
         throw AuthException(errorMessage, code: errorCode ?? 'unauthorized');
       case 403:
-        throw AuthException('Acceso denegado', code: 'forbidden');
+        throw const AuthException('Acceso denegado', code: 'forbidden');
       case 404:
-        throw AuthException('Recurso no encontrado', code: 'not_found');
+        throw const AuthException('Recurso no encontrado', code: 'not_found');
       case 409:
         throw AuthException(errorMessage, code: errorCode ?? 'conflict');
       case 422:
         throw ValidationException(errorMessage);
       case 429:
-        throw AuthException('Demasiadas solicitudes. Intenta más tarde', code: 'rate_limit');
+        throw const AuthException('Demasiadas solicitudes. Intenta más tarde', code: 'rate_limit');
       case 500:
-        throw NetworkException('Error interno del servidor', statusCode: 500);
+        throw const NetworkException('Error interno del servidor', statusCode: 500);
       case 502:
-        throw NetworkException('Servidor no disponible', statusCode: 502);
+        throw const NetworkException('Servidor no disponible', statusCode: 502);
       case 503:
-        throw NetworkException('Servicio no disponible', statusCode: 503);
+        throw const NetworkException('Servicio no disponible', statusCode: 503);
       default:
         throw NetworkException(
           'Error HTTP ${response.statusCode}: $errorMessage',

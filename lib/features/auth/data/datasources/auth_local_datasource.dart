@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/authenticated_user.dart';
 import '../../domain/usecases/login_with_credentials_usecase.dart';
@@ -56,7 +57,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       final expiryTime = DateTime.now().add(const Duration(hours: 24));
       await sharedPreferences.setInt(_tokenExpiryKey, expiryTime.millisecondsSinceEpoch);
 
-      print('Usuario guardado localmente: ${user.email}');
+      debugPrint('Usuario guardado localmente: ${user.email}');
     } catch (e) {
       throw AuthException('Error al guardar datos del usuario localmente: $e');
     }
@@ -74,7 +75,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       final userMap = json.decode(userJsonString) as Map<String, dynamic>;
       return AuthenticatedUser.fromMap(userMap);
     } catch (e) {
-      print('Error al obtener usuario guardado: $e');
+      debugPrint('Error al obtener usuario guardado: $e');
       // Si hay error, limpiar datos corruptos
       await clearAuthData();
       return null;
@@ -103,7 +104,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
       return true;
     } catch (e) {
-      print('Error al verificar autenticación: $e');
+      debugPrint('Error al verificar autenticación: $e');
       return false;
     }
   }
@@ -113,7 +114,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     try {
       return sharedPreferences.getString(_tokenKey);
     } catch (e) {
-      print('Error al obtener token de acceso: $e');
+      debugPrint('Error al obtener token de acceso: $e');
       return null;
     }
   }
@@ -127,7 +128,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       final expiryTime = DateTime.now().add(const Duration(hours: 24));
       await sharedPreferences.setInt(_tokenExpiryKey, expiryTime.millisecondsSinceEpoch);
 
-      print('Token de acceso guardado localmente');
+      debugPrint('Token de acceso guardado localmente');
     } catch (e) {
       throw AuthException('Error al guardar token de acceso: $e');
     }
@@ -142,9 +143,9 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
         sharedPreferences.remove(_tokenExpiryKey),
       ]);
 
-      print('Datos de autenticación limpiados localmente');
+      debugPrint('Datos de autenticación limpiados localmente');
     } catch (e) {
-      print('Error al limpiar datos de autenticación: $e');
+      debugPrint('Error al limpiar datos de autenticación: $e');
       // No lanzar excepción aquí para evitar bloquear el logout
     }
   }
@@ -155,7 +156,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       // Obtener usuario actual
       final user = await getAuthenticatedUser();
       if (user == null) {
-        throw AuthException('No hay usuario autenticado para actualizar token');
+        throw const AuthException('No hay usuario autenticado para actualizar token');
       }
 
       // Crear usuario actualizado con nuevo token
@@ -164,7 +165,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       // Guardar usuario actualizado
       await saveAuthenticatedUser(updatedUser);
 
-      print('Token actualizado para usuario: ${user.email}');
+      debugPrint('Token actualizado para usuario: ${user.email}');
     } catch (e) {
       throw AuthException('Error al actualizar token: $e');
     }
@@ -185,7 +186,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
       return now.isAfter(expiryTime);
     } catch (e) {
-      print('Error al verificar expiración del token: $e');
+      debugPrint('Error al verificar expiración del token: $e');
       // En caso de error, asumir que no ha expirado
       return false;
     }

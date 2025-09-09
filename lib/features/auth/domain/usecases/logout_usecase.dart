@@ -1,4 +1,5 @@
 import '../repositories/auth_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'login_with_credentials_usecase.dart';
 
 /// Caso de uso para cerrar la sesión del usuario.
@@ -31,9 +32,9 @@ class LogoutUseCase {
 
       // Log exitoso
       if (currentUser != null) {
-        print('Logout exitoso para usuario: ${currentUser.email}');
+        debugPrint('Logout exitoso para usuario: ${currentUser.email}');
       } else {
-        print('Logout ejecutado (no había usuario autenticado)');
+        debugPrint('Logout ejecutado (no había usuario autenticado)');
       }
     } catch (e) {
       // Manejar errores de logout
@@ -50,7 +51,7 @@ class LogoutUseCase {
         // En caso de error de red, al menos limpiar datos locales
         try {
           await _authRepository.clearAuthData();
-          print('Datos locales limpiados debido a error de red en logout');
+          debugPrint('Datos locales limpiados debido a error de red en logout');
         } catch (_) {
           // Silenciar errores de limpieza local
         }
@@ -64,7 +65,7 @@ class LogoutUseCase {
           // Silenciar errores de limpieza local
         }
 
-        throw AuthException('Error inesperado durante el logout');
+        throw const AuthException('Error inesperado durante el logout');
       }
     }
   }
@@ -82,10 +83,10 @@ class LogoutUseCase {
       // Solo limpiar datos locales
       await _authRepository.clearAuthData();
 
-      print('Logout forzado completado - datos locales limpiados');
+      debugPrint('Logout forzado completado - datos locales limpiados');
     } catch (e) {
       // Silenciar errores en logout forzado
-      print('Warning: Error durante logout forzado: $e');
+      debugPrint('Warning: Error durante logout forzado: $e');
     }
   }
 }

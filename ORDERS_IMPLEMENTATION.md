@@ -212,8 +212,8 @@ Para probar la implementación:
 ### Debug
 ```dart
 // Logs automáticos en controller
-print('Error fetching orders: $e');
-print('Found ${orders.length} orders');
+debugPrint('Error fetching orders: $e');
+debugPrint('Found ${orders.length} orders');
 ```
 
 La implementación está completa y lista para uso en producción. ¡Las órdenes del business owner ahora se cargan y muestran correctamente en la tabla!

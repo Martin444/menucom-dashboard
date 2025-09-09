@@ -33,28 +33,28 @@ void main() async {
 /// Inicializa Firebase para la aplicación
 Future<void> initializeFirebase() async {
   try {
-    print('Iniciando configuración de Firebase...');
-    print('Configuración a usar: ${FirebaseConfig.currentPlatform}');
+    debugPrint('Iniciando configuración de Firebase...');
+    debugPrint('Configuración a usar: ${FirebaseConfig.currentPlatform}');
 
     await Firebase.initializeApp(
       options: FirebaseConfig.currentPlatform,
     );
 
-    print('Firebase inicializado correctamente para ${Firebase.app().name}');
-    print('Proyecto ID: ${Firebase.app().options.projectId}');
-    print('Auth Domain: ${Firebase.app().options.authDomain}');
+    debugPrint('Firebase inicializado correctamente para ${Firebase.app().name}');
+    debugPrint('Proyecto ID: ${Firebase.app().options.projectId}');
+    debugPrint('Auth Domain: ${Firebase.app().options.authDomain}');
 
     // Solo configurar emuladores en desarrollo si está habilitado
     // Comentado temporalmente para debugging
     // FirebaseDevConfig.configureEmulators();
   } catch (e) {
-    print('Error al inicializar Firebase: $e');
-    print('Stack trace: ${StackTrace.current}');
+    debugPrint('Error al inicializar Firebase: $e');
+    debugPrint('Stack trace: ${StackTrace.current}');
 
     // En desarrollo, continuar sin Firebase para no bloquear la app
     // TODO: En producción, considera mostrar un error al usuario o usar valores por defecto
 
-    print('Continuando sin Firebase - funcionalidad social deshabilitada');
+    debugPrint('Continuando sin Firebase - funcionalidad social deshabilitada');
   }
 }
 

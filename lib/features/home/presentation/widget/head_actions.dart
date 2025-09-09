@@ -23,6 +23,31 @@ class _HeadActionsState extends State<HeadActions> {
   Widget build(BuildContext context) {
     return GetBuilder<DinningController>(
       builder: (dinning) {
+        // Verificar que los datos estén cargados
+        if (dinning.isLoaginDataUser) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: PuStyleContainers.borderBottomContainer,
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        // Verificar que dinningLogin no sea null
+        if (dinning.dinningLogin.name == null || dinning.dinningLogin.id == null) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: PuStyleContainers.borderBottomContainer,
+            child: const Center(
+              child: Text(
+                'Error: No se pudo cargar la información del usuario',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          );
+        }
+
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: PuStyleContainers.borderBottomContainer,
@@ -36,7 +61,7 @@ class _HeadActionsState extends State<HeadActions> {
                       Get.toNamed(PURoutes.USER_PROFILE);
                     },
                     child: Text(
-                      dinning.dinningLogin.name ?? '',
+                      dinning.dinningLogin.name ?? 'Usuario',
                       style: PuTextStyle.title1,
                     ),
                   ),

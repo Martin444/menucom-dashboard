@@ -1,6 +1,7 @@
 import '../entities/authenticated_user.dart';
 import '../entities/auth_params.dart';
 import '../repositories/auth_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'login_with_credentials_usecase.dart';
 
 /// Caso de uso para el registro de nuevos usuarios.
@@ -38,20 +39,20 @@ class RegisterUserUseCase {
       // Ejecutar registro
       final user = await _authRepository.registerUser(params);
 
-      print('Usuario registrado exitosamente: ${user.email}');
+      debugPrint('Usuario registrado exitosamente: ${user.email}');
 
       return user;
     } catch (e) {
       if (e is AuthException) {
         // Manejar errores específicos de registro
         if (e.code == 'email_already_exists') {
-          throw AuthException('Este email ya está registrado en el sistema');
+          throw const AuthException('Este email ya está registrado en el sistema');
         }
         rethrow;
       } else if (e is NetworkException) {
         throw NetworkException('Error de red durante el registro: ${e.message}');
       } else {
-        throw AuthException('Error inesperado durante el registro');
+        throw const AuthException('Error inesperado durante el registro');
       }
     }
   }
@@ -89,17 +90,17 @@ class RegisterUserUseCase {
       // Registrar con el backend
       final user = await _authRepository.registerWithSocial(socialParams);
 
-      print('Usuario registrado con Google exitosamente: ${user.email}');
+      debugPrint('Usuario registrado con Google exitosamente: ${user.email}');
 
       return user;
     } catch (e) {
       if (e is AuthException) {
         if (e.code == 'sign_in_canceled') {
-          throw AuthException('El usuario canceló el proceso de registro');
+          throw const AuthException('El usuario canceló el proceso de registro');
         }
         rethrow;
       } else {
-        throw AuthException('Error durante el registro con Google');
+        throw const AuthException('Error durante el registro con Google');
       }
     }
   }
@@ -134,14 +135,14 @@ class RegisterUserUseCase {
       // Registrar con el backend
       final user = await _authRepository.registerWithSocial(socialParams);
 
-      print('Usuario registrado con Apple exitosamente: ${user.email}');
+      debugPrint('Usuario registrado con Apple exitosamente: ${user.email}');
 
       return user;
     } catch (e) {
       if (e is AuthException) {
         rethrow;
       } else {
-        throw AuthException('Error durante el registro con Apple');
+        throw const AuthException('Error durante el registro con Apple');
       }
     }
   }
@@ -150,43 +151,44 @@ class RegisterUserUseCase {
   void _validateRegistrationParams(RegistrationParams params) {
     // Validar email
     if (!_isValidEmail(params.email)) {
-      throw ValidationException('El formato del email no es válido');
+      throw const ValidationException('El formato del email no es válido');
     }
 
     // Validar nombre
     if (params.name.trim().isEmpty) {
-      throw ValidationException('El nombre no puede estar vacío');
+      throw const ValidationException('El nombre no puede estar vacío');
     }
 
     if (params.name.trim().length < 2) {
-      throw ValidationException('El nombre debe tener al menos 2 caracteres');
+      throw const ValidationException('El nombre debe tener al menos 2 caracteres');
     }
 
     // Validar contraseña (si es registro tradicional)
     if (params.password != null) {
       if (params.password!.isEmpty) {
-        throw ValidationException('La contraseña no puede estar vacía');
+        throw const ValidationException('La contraseña no puede estar vacía');
       }
 
       if (params.password!.length < 6) {
-        throw ValidationException('La contraseña debe tener al menos 6 caracteres');
+        throw const ValidationException('La contraseña debe tener al menos 6 caracteres');
       }
 
       if (!_isStrongPassword(params.password!)) {
-        throw ValidationException('La contraseña debe contener al menos una mayúscula, una minúscula y un número');
+        throw const ValidationException(
+            'La contraseña debe contener al menos una mayúscula, una minúscula y un número');
       }
     }
 
     // Validar teléfono (si se proporciona)
     if (params.phone != null && params.phone!.isNotEmpty) {
       if (!_isValidPhone(params.phone!)) {
-        throw ValidationException('El formato del teléfono no es válido');
+        throw const ValidationException('El formato del teléfono no es válido');
       }
     }
 
     // Validar rol
     if (!_isValidRole(params.role)) {
-      throw ValidationException('El rol especificado no es válido');
+      throw const ValidationException('El rol especificado no es válido');
     }
   }
 

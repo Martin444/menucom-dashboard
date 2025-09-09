@@ -1,4 +1,8 @@
 import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../domain/entities/authenticated_user.dart';
 import '../../domain/entities/auth_params.dart';
 import '../../domain/usecases/login_with_credentials_usecase.dart';
@@ -6,6 +10,8 @@ import '../../domain/usecases/login_with_social_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/get_current_user_usecase.dart';
 import '../../data/repositories/auth_repository_impl.dart';
+import '../../config/firebase_config.dart';
+import '../../../../core/config.dart'; // Para usar ACCESS_TOKEN global
 
 /// Estados posibles de la autenticación
 enum AuthState {
@@ -37,6 +43,9 @@ class AuthController extends GetxController {
   late final LoginWithSocialUseCase _loginWithSocialUseCase;
   late final LogoutUseCase _logoutUseCase;
   late final GetCurrentUserUseCase _getCurrentUserUseCase;
+
+  // SharedPreferences para persistencia de token
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   // Estado reactivo
   final Rx<AuthState> _authState = AuthState.initial.obs;
@@ -71,9 +80,9 @@ class AuthController extends GetxController {
       _logoutUseCase = LogoutUseCase(repository);
       _getCurrentUserUseCase = GetCurrentUserUseCase(repository);
 
-      print('Casos de uso de autenticación inicializados');
+      debugPrint('Casos de uso de autenticación inicializados');
     } catch (e) {
-      print('Error al inicializar casos de uso: $e');
+      debugPrint('Error al inicializar casos de uso: $e');
       _setError('Error al inicializar el sistema de autenticación');
     }
   }
@@ -84,17 +93,20 @@ class AuthController extends GetxController {
       _setCurrentAction(AuthAction.checkingAuth);
       _setLoading(true);
 
+      // Cargar el token guardado de SharedPreferences
+      await _loadSavedToken();
+
       final user = await _getCurrentUserUseCase.executeWithRefresh();
 
       if (user != null) {
         _setAuthenticatedUser(user);
-        print('Usuario autenticado encontrado: ${user.email}');
+        debugPrint('Usuario autenticado encontrado: ${user.email}');
       } else {
         _setUnauthenticated();
-        print('No hay usuario autenticado');
+        debugPrint('No hay usuario autenticado');
       }
     } catch (e) {
-      print('Error al verificar estado de autenticación: $e');
+      debugPrint('Error al verificar estado de autenticación: $e');
       _setUnauthenticated();
     } finally {
       _setLoading(false);
@@ -102,7 +114,7 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Autentica usuario con credenciales tradicionales (email/password)
+  /// Autentica usuario con credenciales tradicionales (email/password) y guarda el token
   Future<void> loginWithCredentials({
     required String email,
     required String password,
@@ -115,13 +127,18 @@ class AuthController extends GetxController {
       final credentials = LoginCredentials(email: email, password: password);
       final user = await _loginWithCredentialsUseCase.execute(credentials);
 
+      // Guardar el ACCESS_TOKEN como lo hace login_controller
+      ACCESS_TOKEN = user.accessToken;
+      var sharedToken = await _prefs;
+      sharedToken.setString('acccesstoken', ACCESS_TOKEN);
+
       _setAuthenticatedUser(user);
-      print('Login tradicional exitoso');
+      debugPrint('Login tradicional exitoso - Token guardado');
 
       // Navegar al dashboard principal
       Get.offAllNamed('/dashboard');
     } catch (e) {
-      print('Error en login tradicional: $e');
+      debugPrint('Error en login tradicional: $e');
       _setError(_getErrorMessage(e));
     } finally {
       _setLoading(false);
@@ -129,22 +146,77 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Autentica usuario con Google Sign-In
+  /// Autentica usuario con Google Sign-In y guarda el token
   Future<void> loginWithGoogle() async {
     try {
       _setCurrentAction(AuthAction.loginGoogle);
       _setLoading(true);
       _clearError();
 
-      final user = await _loginWithSocialUseCase.executeWithGoogle();
+      // Inicializar Google Sign-In con configuración específica
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        clientId: FirebaseConfig.googleSignInClientId,
+      );
 
-      _setAuthenticatedUser(user);
-      print('Login con Google exitoso');
+      // Realizar el sign-in con Google
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        // El usuario canceló el sign-in
+        debugPrint('Login con Google cancelado por el usuario');
+        return;
+      }
 
-      // Navegar al dashboard principal
-      Get.offAllNamed('/dashboard');
+      // Obtener las credenciales de autenticación
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // Crear credenciales para Firebase
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Autenticar con Firebase
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        // Obtener el token de Firebase
+        final String? firebaseToken = await user.getIdToken();
+
+        if (firebaseToken != null) {
+          // TODO: Llamar al endpoint de social login del API aquí
+          // Por ahora, guardamos el token de Firebase como el ACCESS_TOKEN
+          ACCESS_TOKEN = firebaseToken;
+          var sharedToken = await _prefs;
+          sharedToken.setString('acccesstoken', ACCESS_TOKEN);
+
+          // Crear el usuario autenticado con los datos disponibles
+          final authenticatedUser = AuthenticatedUser(
+            id: user.uid,
+            email: user.email ?? '',
+            name: user.displayName ?? '',
+            role: 'user', // Rol por defecto, se actualizará con la respuesta del API
+            accessToken: firebaseToken,
+            needToChangePassword: false,
+            isEmailVerified: user.emailVerified,
+            photoURL: user.photoURL,
+            socialToken: firebaseToken,
+            firebaseProvider: 'google.com',
+          );
+
+          _setAuthenticatedUser(authenticatedUser);
+          debugPrint('Login con Google exitoso - Token guardado');
+
+          // Navegar al dashboard principal
+          Get.offAllNamed('/dashboard');
+        } else {
+          throw Exception('No se pudo obtener el token de Firebase');
+        }
+      } else {
+        throw Exception('No se pudo autenticar con Firebase');
+      }
     } catch (e) {
-      print('Error en login con Google: $e');
+      debugPrint('Error en login con Google: $e');
       _setError(_getErrorMessage(e));
     } finally {
       _setLoading(false);
@@ -162,12 +234,12 @@ class AuthController extends GetxController {
       final user = await _loginWithSocialUseCase.executeWithApple();
 
       _setAuthenticatedUser(user);
-      print('Login con Apple exitoso');
+      debugPrint('Login con Apple exitoso');
 
       // Navegar al dashboard principal
       Get.offAllNamed('/dashboard');
     } catch (e) {
-      print('Error en login con Apple: $e');
+      debugPrint('Error en login con Apple: $e');
       _setError(_getErrorMessage(e));
     } finally {
       _setLoading(false);
@@ -175,7 +247,7 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Cierra la sesión del usuario actual
+  /// Cierra la sesión del usuario actual y limpia los tokens
   Future<void> logout() async {
     try {
       _setCurrentAction(AuthAction.logout);
@@ -184,16 +256,20 @@ class AuthController extends GetxController {
 
       await _logoutUseCase.execute();
 
+      // Limpiar el token guardado
+      await _clearSavedToken();
+
       _setUnauthenticated();
-      print('Logout exitoso');
+      debugPrint('Logout exitoso - Token limpiado');
 
       // Navegar a la pantalla de login
       Get.offAllNamed('/login');
     } catch (e) {
-      print('Error en logout: $e');
+      debugPrint('Error en logout: $e');
 
       // Realizar logout forzado en caso de error
       await _logoutUseCase.executeForced();
+      await _clearSavedToken();
       _setUnauthenticated();
 
       _setError('Sesión cerrada con advertencias');
@@ -215,13 +291,13 @@ class AuthController extends GetxController {
 
       if (refreshedUser != null) {
         _setAuthenticatedUser(refreshedUser);
-        print('Token refrescado exitosamente');
+        debugPrint('Token refrescado exitosamente');
       } else {
         // Si no se puede refrescar, cerrar sesión
         await logout();
       }
     } catch (e) {
-      print('Error al refrescar token: $e');
+      debugPrint('Error al refrescar token: $e');
       // En caso de error, cerrar sesión
       await logout();
     } finally {
@@ -253,6 +329,34 @@ class AuthController extends GetxController {
   /// Obtiene la URL de la foto de perfil o un placeholder
   String get userPhotoUrl {
     return currentUser?.photoURL ?? '';
+  }
+
+  /// Carga el token guardado desde SharedPreferences
+  Future<void> _loadSavedToken() async {
+    try {
+      var sharedPrefs = await _prefs;
+      final savedToken = sharedPrefs.getString('acccesstoken');
+      if (savedToken != null && savedToken.isNotEmpty) {
+        ACCESS_TOKEN = savedToken;
+        debugPrint('Token cargado desde SharedPreferences');
+      } else {
+        debugPrint('No hay token guardado en SharedPreferences');
+      }
+    } catch (e) {
+      debugPrint('Error al cargar token desde SharedPreferences: $e');
+    }
+  }
+
+  /// Limpia el token guardado de SharedPreferences
+  Future<void> _clearSavedToken() async {
+    try {
+      ACCESS_TOKEN = '';
+      var sharedPrefs = await _prefs;
+      await sharedPrefs.remove('acccesstoken');
+      debugPrint('Token limpiado de SharedPreferences');
+    } catch (e) {
+      debugPrint('Error al limpiar token de SharedPreferences: $e');
+    }
   }
 
   // Métodos privados para manejo de estado

@@ -1,6 +1,7 @@
 import '../entities/authenticated_user.dart';
 import '../entities/auth_params.dart';
 import '../repositories/auth_repository.dart';
+import 'package:flutter/foundation.dart';
 
 /// Caso de uso para la autenticación tradicional con email y contraseña.
 ///
@@ -31,16 +32,16 @@ class LoginWithCredentialsUseCase {
   Future<AuthenticatedUser> execute(LoginCredentials credentials) async {
     // Validar email
     if (!_isValidEmail(credentials.email)) {
-      throw ValidationException('El formato del email no es válido');
+      throw const ValidationException('El formato del email no es válido');
     }
 
     // Validar password
     if (credentials.password.isEmpty) {
-      throw ValidationException('La contraseña no puede estar vacía');
+      throw const ValidationException('La contraseña no puede estar vacía');
     }
 
     if (credentials.password.length < 6) {
-      throw ValidationException('La contraseña debe tener al menos 6 caracteres');
+      throw const ValidationException('La contraseña debe tener al menos 6 caracteres');
     }
 
     try {
@@ -48,7 +49,7 @@ class LoginWithCredentialsUseCase {
       final user = await _authRepository.loginWithCredentials(credentials);
 
       // Log exitoso (sin mostrar credenciales sensibles)
-      print('Login exitoso para usuario: ${user.email}');
+      debugPrint('Login exitoso para usuario: ${user.email}');
 
       return user;
     } catch (e) {
@@ -58,7 +59,7 @@ class LoginWithCredentialsUseCase {
       } else if (e is NetworkException) {
         throw NetworkException('Error de red durante el login: ${e.message}');
       } else {
-        throw AuthException('Error inesperado durante el login');
+        throw const AuthException('Error inesperado durante el login');
       }
     }
   }

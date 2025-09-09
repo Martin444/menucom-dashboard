@@ -51,21 +51,22 @@ class FirebaseConfig {
   // Google Sign-In Client IDs
   static const String _googleWebClientId = String.fromEnvironment(
     'GOOGLE_SIGN_IN_WEB_CLIENT_ID',
-    defaultValue: '', // Se debe configurar en producción
+    defaultValue:
+        '1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com', // Web Client ID original del index.html
   );
 
   static const String _googleIosClientId = String.fromEnvironment(
     'GOOGLE_SIGN_IN_IOS_CLIENT_ID',
-    defaultValue: '', // Se debe configurar en producción
+    defaultValue: '1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com', // iOS Client ID
   );
 
   static const String _googleAndroidClientId = String.fromEnvironment(
     'GOOGLE_SIGN_IN_ANDROID_CLIENT_ID',
-    defaultValue: '', // Se debe configurar en producción
+    defaultValue: '1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com', // Android Client ID
   );
 
   /// Opciones de Firebase para la plataforma web
-  static FirebaseOptions get web => FirebaseOptions(
+  static FirebaseOptions get web => const FirebaseOptions(
         apiKey: _apiKey,
         authDomain: _authDomain,
         projectId: _projectId,
@@ -76,7 +77,7 @@ class FirebaseConfig {
       );
 
   /// Opciones de Firebase para Android
-  static FirebaseOptions get android => FirebaseOptions(
+  static FirebaseOptions get android => const FirebaseOptions(
         apiKey: _apiKey,
         appId: _appIdWeb, // Para desarrollo usamos la misma app, en producción debería ser diferente
         messagingSenderId: _messagingSenderId,
@@ -85,7 +86,7 @@ class FirebaseConfig {
       );
 
   /// Opciones de Firebase para iOS
-  static FirebaseOptions get ios => FirebaseOptions(
+  static FirebaseOptions get ios => const FirebaseOptions(
         apiKey: _apiKey,
         appId: _appIdWeb, // Para desarrollo usamos la misma app, en producción debería ser diferente
         messagingSenderId: _messagingSenderId,
@@ -95,7 +96,7 @@ class FirebaseConfig {
       );
 
   /// Opciones de Firebase para macOS
-  static FirebaseOptions get macos => FirebaseOptions(
+  static FirebaseOptions get macos => const FirebaseOptions(
         apiKey: _apiKey,
         appId: _appIdWeb, // Para desarrollo usamos la misma app, en producción debería ser diferente
         messagingSenderId: _messagingSenderId,

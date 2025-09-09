@@ -2,6 +2,7 @@ import '../entities/authenticated_user.dart';
 import '../entities/auth_params.dart';
 import '../repositories/auth_repository.dart';
 import 'login_with_credentials_usecase.dart';
+import 'package:flutter/foundation.dart';
 
 /// Caso de uso para la autenticación social con Firebase/Google.
 ///
@@ -37,18 +38,18 @@ class LoginWithSocialUseCase {
       // Autenticar con el backend
       final user = await _authRepository.loginWithSocial(socialParams);
 
-      print('Login social exitoso para usuario: ${user.email}');
+      debugPrint('Login social exitoso para usuario: ${user.email}');
 
       return user;
     } catch (e) {
       if (e is AuthException) {
         // Si es cancelación del usuario, re-lanzar con mensaje más claro
         if (e.code == 'sign_in_canceled') {
-          throw AuthException('El usuario canceló el proceso de autenticación');
+          throw const AuthException('El usuario canceló el proceso de autenticación');
         }
         rethrow;
       } else {
-        throw AuthException('Error durante la autenticación con Google');
+        throw const AuthException('Error durante la autenticación con Google');
       }
     }
   }
@@ -75,14 +76,14 @@ class LoginWithSocialUseCase {
       // Autenticar con el backend
       final user = await _authRepository.loginWithSocial(socialParams);
 
-      print('Login social con Apple exitoso para usuario: ${user.email}');
+      debugPrint('Login social con Apple exitoso para usuario: ${user.email}');
 
       return user;
     } catch (e) {
       if (e is AuthException) {
         rethrow;
       } else {
-        throw AuthException('Error durante la autenticación con Apple');
+        throw const AuthException('Error durante la autenticación con Apple');
       }
     }
   }
@@ -108,7 +109,7 @@ class LoginWithSocialUseCase {
   Future<AuthenticatedUser> executeWithToken(String idToken) async {
     // Validar token
     if (idToken.isEmpty) {
-      throw ValidationException('El token de Firebase no puede estar vacío');
+      throw const ValidationException('El token de Firebase no puede estar vacío');
     }
 
     try {
@@ -118,14 +119,14 @@ class LoginWithSocialUseCase {
       // Autenticar con el backend
       final user = await _authRepository.loginWithSocial(socialParams);
 
-      print('Login social con token exitoso para usuario: ${user.email}');
+      debugPrint('Login social con token exitoso para usuario: ${user.email}');
 
       return user;
     } catch (e) {
       if (e is AuthException) {
         throw AuthException('Token de Firebase inválido o expirado: ${e.message}');
       } else {
-        throw AuthException('Error durante la validación del token');
+        throw const AuthException('Error durante la validación del token');
       }
     }
   }
