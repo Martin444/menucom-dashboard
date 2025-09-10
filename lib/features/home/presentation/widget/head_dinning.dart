@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
@@ -14,6 +15,18 @@ class HeadDinning extends StatelessWidget {
     super.key,
     this.isMobile,
   });
+
+  /// Obtiene el rol del usuario actual
+  RolesUsers? _getUserRole(String? roleString) {
+    if (roleString == null) return null;
+    return RolesFuncionts.getTypeRoleByRoleString(roleString);
+  }
+
+  /// Verifica si el usuario puede acceder a la vinculación MP OAuth
+  /// Los usuarios con rol 'customer' no tienen acceso a esta funcionalidad
+  bool _canAccessMPOAuth(RolesUsers? userRole) {
+    return userRole != null && userRole != RolesUsers.customer;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,25 +121,29 @@ class HeadDinning extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            // Share menu (simplified for mobile)
-            MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: GestureDetector(
-                onTap: () {
-                  Get.dialog(
-                    MPOAuthGateWidget(
-                      idMenu: controller.dinningLogin.id ?? '',
-                      redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
+            // Share menu (Vinculación MP) - Solo para usuarios NO customer
+            if (_canAccessMPOAuth(_getUserRole(controller.dinningLogin.role)))
+              MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () {
+                    Get.dialog(
+                      MPOAuthGateWidget(
+                        idMenu: controller.dinningLogin.id ?? '',
+                        redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
+                      ),
+                    );
+                  },
+                  child: Tooltip(
+                    message: 'Vincular con Mercado Pago',
+                    child: Icon(
+                      FluentIcons.share_24_regular,
+                      color: PUColors.iconColor,
+                      size: 22,
                     ),
-                  );
-                },
-                child: Icon(
-                  FluentIcons.share_24_regular,
-                  color: PUColors.iconColor,
-                  size: 22,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ],
@@ -198,25 +215,29 @@ class HeadDinning extends StatelessWidget {
               ),
               const SizedBox(width: 16),
 
-              // Share menu
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () {
-                    Get.dialog(
-                      MPOAuthGateWidget(
-                        idMenu: controller.dinningLogin.id ?? '',
-                        redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
+              // Vinculación con Mercado Pago - Solo para usuarios NO customer
+              if (_canAccessMPOAuth(_getUserRole(controller.dinningLogin.role)))
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.dialog(
+                        MPOAuthGateWidget(
+                          idMenu: controller.dinningLogin.id ?? '',
+                          redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
+                        ),
+                      );
+                    },
+                    child: Tooltip(
+                      message: 'Vincular con Mercado Pago',
+                      child: Icon(
+                        FluentIcons.share_24_regular,
+                        color: PUColors.iconColor,
+                        size: 24,
                       ),
-                    );
-                  },
-                  child: Icon(
-                    FluentIcons.share_24_regular,
-                    color: PUColors.iconColor,
-                    size: 24,
+                    ),
                   ),
                 ),
-              ),
 
               if (isLargeScreen) ...[
                 const SizedBox(width: 16),

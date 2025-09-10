@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
+import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/get_funcion_button.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/mp_oauth_gate_widget.dart';
@@ -19,6 +20,18 @@ class HeadActions extends StatefulWidget {
 }
 
 class _HeadActionsState extends State<HeadActions> {
+  /// Obtiene el rol del usuario actual
+  RolesUsers? _getUserRole(String? roleString) {
+    if (roleString == null) return null;
+    return RolesFuncionts.getTypeRoleByRoleString(roleString);
+  }
+
+  /// Verifica si el usuario puede acceder a la vinculación MP OAuth
+  /// Los usuarios con rol 'customer' no tienen acceso a esta funcionalidad
+  bool _canAccessMPOAuth(RolesUsers? userRole) {
+    return userRole != null && userRole != RolesUsers.customer;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DinningController>(
@@ -65,24 +78,32 @@ class _HeadActionsState extends State<HeadActions> {
                       style: PuTextStyle.title1,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Get.dialog(
-                        MPOAuthGateWidget(
-                          idMenu: dinning.dinningLogin.id ?? '',
-                          redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
+                  // Mostrar icono de vinculación solo si el usuario NO es customer
+                  if (_canAccessMPOAuth(_getUserRole(dinning.dinningLogin.role)))
+                    GestureDetector(
+                      onTap: () {
+                        Get.dialog(
+                          MPOAuthGateWidget(
+                            idMenu: dinning.dinningLogin.id ?? '',
+                            redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
+                          ),
+                        );
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Tooltip(
+                          message: 'Vincular con Mercado Pago',
+                          child: Container(
+                            margin: const EdgeInsets.only(left: 12),
+                            child: Icon(
+                              FluentIcons.link_24_regular,
+                              color: PUColors.iconColor,
+                              size: 24,
+                            ),
+                          ),
                         ),
-                      );
-                    },
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: Icon(
-                        FluentIcons.link_24_regular,
-                        color: PUColors.iconColor,
-                        size: 24,
                       ),
                     ),
-                  ),
                 ],
               ),
               SizedBox(

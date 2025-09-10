@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/views/customer_home_view.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/views/menu_home_view.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/views/ward_home_view.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/head_actions.dart';
@@ -249,6 +250,8 @@ class _RoleBasedView extends StatelessWidget {
         return WardsHomeView(isMobile: isMobile);
       case RolesUsers.dinning:
         return MenuHomeView(isMobile: isMobile);
+      case RolesUsers.customer:
+        return CustomerHomeView(isMobile: isMobile);
       default:
         return WardsHomeView(isMobile: isMobile);
     }

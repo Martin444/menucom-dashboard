@@ -97,6 +97,8 @@ enum MenuNavigationItem {
         return [home, orders, sales, ...actionItems];
       case 'clothes':
         return [home, orders, sales, ...actionItems];
+      case 'customer':
+        return [home, orders, ...actionItems];
       default:
         return [home, ...actionItems];
     }
