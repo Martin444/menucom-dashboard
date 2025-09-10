@@ -18,7 +18,12 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="google-signin-client_id" content="1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com">
+  <meta name="referrer" content="no-referrer-when-downgrade">
   <meta name="description" content="Administracion para Menu com">
+
+  <!-- Google Sign-In Platform Library -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,6 +38,32 @@
 
   <title>Menucom dashboard</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Firebase Core JS SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  
+  <!-- Firebase Auth JS SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  
+  <!-- Initialize Firebase -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAEWpBCNon00zwt1eWfqSDiYMhH0xxLMwk",
+      authDomain: "menucom-ff087.firebaseapp.com",
+      projectId: "menucom-ff087",
+      storageBucket: "menucom-ff087.firebasestorage.app",
+      messagingSenderId: "1053737382833",
+      appId: "1:1053737382833:web:d4173f40d6b88a52900390",
+      measurementId: "G-D5ZC2VB6GR"
+    };
+    firebase.initializeApp(firebaseConfig);
+    
+    // Verificar configuración
+    console.log('Firebase initialized with project:', firebaseConfig.projectId);
+    console.log('Firebase app name:', firebase.app().name);
+    console.log('Firebase auth instance:', firebase.auth());
+  </script>
+
 <!-- 
   <script>
     // The value below is injected by flutter build, do not touch.
@@ -41,6 +72,8 @@
   <script src="flutter.js" defer></script>
   <!-- Agregar estilo para el contenedor del loader -->
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
     #loader {
       position: fixed;
       z-index: 9999;
@@ -48,48 +81,279 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #d0d0d0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;  
-      font-size: 14px;
+      font-size: 16px;
       font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+    }
+    
+    /* Animaciones de fondo */
+    #loader::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      animation: rotate 4s linear infinite;
     }
     
     #loader.hidden {
-      display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease-out;
     }
     
-    #loader > div {
-      width: 30px;
-      height: 30px;
+    /* Logo container */
+    .logo-container {
       position: relative;
-      border: 3px solid op_secundary_color;
-      border-top-color: op_primary_color; 
-      border-radius: 50%;
-      animation: spin 2s linear infinite;
-      margin-bottom: 20px;
-    }    
-
-    #loader > span {
-      color: black;
-      
+      margin-bottom: 40px;
+      z-index: 2;
     }
+    
+    .logo-container img {
+      width: 120px;
+      height: 120px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      animation: logoFloat 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(255,255,255,0.3));
+    }
+    
+    /* Spinner mejorado */
+    .spinner-container {
+      position: relative;
+      margin-bottom: 30px;
+      z-index: 2;
+    }
+    
+    #loader .spinner {
+      width: 60px;
+      height: 60px;
+      position: relative;
+      margin: 0 auto;
+    }
+    
+    .spinner::before,
+    .spinner::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      animation-duration: 1.8s;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+    }
+    
+    .spinner::before {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      animation: spinnerPulse 1.8s infinite;
+    }
+    
+    .spinner::after {
+      width: 80%;
+      height: 80%;
+      top: 10%;
+      left: 10%;
+      background: rgba(255,255,255,0.8);
+      animation: spinnerInner 1.8s infinite;
+    }
+    
+    /* Texto del loader */
+    .loader-text {
+      color: white;
+      text-align: center;
+      font-weight: 500;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      max-width: 400px;
+      padding: 0 20px;
+      z-index: 2;
+      position: relative;
+      animation: textGlow 2s ease-in-out infinite alternate;
+    }
+    
+    .loader-text span {
+      transition: opacity 0.3s ease-in-out;
+      display: block;
+    }
+    
+    /* Partículas flotantes */
+    .particle {
+      position: absolute;
+      background: rgba(255,255,255,0.6);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particleFloat 6s infinite linear;
+    }
+    
+    .particle:nth-child(1) { width: 4px; height: 4px; left: 10%; animation-delay: -1s; }
+    .particle:nth-child(2) { width: 6px; height: 6px; left: 20%; animation-delay: -2s; }
+    .particle:nth-child(3) { width: 3px; height: 3px; left: 30%; animation-delay: -3s; }
+    .particle:nth-child(4) { width: 5px; height: 5px; left: 40%; animation-delay: -4s; }
+    .particle:nth-child(5) { width: 4px; height: 4px; left: 50%; animation-delay: -5s; }
+    .particle:nth-child(6) { width: 6px; height: 6px; left: 60%; animation-delay: -1.5s; }
+    .particle:nth-child(7) { width: 3px; height: 3px; left: 70%; animation-delay: -2.5s; }
+    .particle:nth-child(8) { width: 5px; height: 5px; left: 80%; animation-delay: -3.5s; }
+    .particle:nth-child(9) { width: 4px; height: 4px; left: 90%; animation-delay: -4.5s; }
+    
+    /* Animaciones */
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes logoFloat {
+      0%, 100% { 
+        transform: translateY(0px) scale(1);
+      }
+      50% { 
+        transform: translateY(-10px) scale(1.05);
+      }
+    }
+    
+    @keyframes spinnerPulse {
+      0%, 100% {
+        transform: scale(0.8);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes spinnerInner {
+      0%, 100% {
+        transform: scale(1) rotate(0deg);
+      }
+      50% {
+        transform: scale(0.8) rotate(180deg);
+      }
+    }
+    
+    @keyframes textGlow {
+      0% {
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      }
+      100% {
+        text-shadow: 0 2px 20px rgba(255,255,255,0.4), 0 2px 10px rgba(0,0,0,0.3);
+      }
+    }
+    
+    @keyframes particleFloat {
+      0% {
+        transform: translateY(100vh) translateX(0px);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px) translateX(100px);
+        opacity: 0;
+      }
+    }
+    
+    /* Responsivo */
+    @media (max-width: 768px) {
+      .logo-container img {
+        width: 100px;
+        height: 100px;
+      }
       
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+      .loader-text {
+        font-size: 14px;
+      }
+      
+      #loader .spinner {
+        width: 50px;
+        height: 50px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Agregar contenedor para el loader -->
+  <!-- Agregar contenedor para el loader mejorado -->
   <div id="loader">
-    <div></div>
-    <span>Estamos preparando todo para ti, por favor espera un momento... </span>
+    <!-- Partículas flotantes -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="assets/logo/logomenucom.png" alt="MenuCom Logo">
+    </div>
+    
+    <!-- Spinner mejorado -->
+    <div class="spinner-container">
+      <div class="spinner"></div>
+    </div>
+    
+    <!-- Texto del loader -->
+    <div class="loader-text">
+      <span>Estamos preparando todo para ti, por favor espera un momento...</span>
+    </div>
   </div>
   <script>
+    // Agregar efectos adicionales al loader
+    document.addEventListener('DOMContentLoaded', function() {
+      // Crear más partículas dinámicamente
+      const loader = document.getElementById('loader');
+      for (let i = 0; i < 15; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 6 + 's';
+        particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
+        loader.appendChild(particle);
+      }
+      
+      // Mensajes rotativos
+      const messages = [
+        'Estamos preparando todo para ti, por favor espera un momento...',
+        'Cargando la mejor experiencia culinaria... 🍽️',
+        '¡Casi listos! Preparando tu menú perfecto... ⏳',
+        'Conectando con sabores increíbles... 🌟',
+        '¡Un momento más y estaremos listos! 🚀'
+      ];
+      
+      let messageIndex = 0;
+      const textElement = document.querySelector('.loader-text span');
+      
+      const updateMessage = () => {
+        if (textElement) {
+          textElement.style.opacity = '0';
+          setTimeout(() => {
+            textElement.textContent = messages[messageIndex];
+            textElement.style.opacity = '1';
+            messageIndex = (messageIndex + 1) % messages.length;
+          }, 300);
+        }
+      };
+      
+      // Cambiar mensaje cada 3 segundos
+      const messageInterval = setInterval(updateMessage, 3000);
+      
+      // Limpiar intervalo cuando se oculte el loader
+      window.hideLoaderInterval = messageInterval;
+    });
+    
     window.addEventListener('load', function(ev) {
       {{flutter_js}}
       {{flutter_build_config}}
@@ -103,19 +367,50 @@
         entrypointUrl: '/main.dart.js?v=' + serviceWorkerVersion,
         onEntrypointLoaded: function(engineInitializer) {
           engineInitializer.initializeEngine({renderer: "html"}).then(function(appRunner) {
-            var text = document.querySelector("#loader > span");
-          text.innerHTML = "¡A punto de terminar! Un momento por favor.";
+            var textElement = document.querySelector(".loader-text span");
+            if (textElement) {
+              textElement.innerHTML = "¡A punto de terminar! Un momento por favor. ✨";
+            }
             appRunner.runApp();
           }).then(function() {
-          // Agrega un temporizador para eliminar el contenedor del loader después de 2 segundos y actualizar el texto
-          setTimeout(function() {
-          var container = document.getElementById("loader");
-           container.classList.add("hidden");
-          }, 2000); 
-        });
+            // Limpiar intervalo de mensajes
+            if (window.hideLoaderInterval) {
+              clearInterval(window.hideLoaderInterval);
+            }
+            
+            // Ocultar loader con animación suave
+            setTimeout(function() {
+              var container = document.getElementById("loader");
+              if (container) {
+                container.classList.add("hidden");
+                // Remover del DOM después de la animación
+                setTimeout(function() {
+                  container.style.display = "none";
+                }, 500);
+              }
+            }, 1500); 
+          });
         }
       });
     });
+  </script>
+  
+  <!-- Google Sign-In elements -->
+  <div id="g_id_onload"
+     data-client_id="1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse">
+  </div>
+  <script>
+    function handleCredentialResponse(response) {
+      console.log('Google Sign-In response received:', response);
+      if (window.flutter_inappwebview) {
+        window.flutter_inappwebview.callHandler('handleGoogleSignIn', response.credential);
+      }
+      // Para web, podemos usar postMessage o callbacks globales
+      if (window.handleGoogleSignInCallback) {
+        window.handleGoogleSignInCallback(response.credential);
+      }
+    }
   </script>
 </body>
 </html>

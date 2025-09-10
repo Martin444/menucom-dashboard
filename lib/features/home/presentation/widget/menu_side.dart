@@ -226,6 +226,8 @@ class MenuSide extends StatelessWidget {
         return 'Tienda de Ropa';
       case 'admin':
         return 'Administrador';
+      case 'customer':
+        return 'Cliente';
       default:
         return role;
     }

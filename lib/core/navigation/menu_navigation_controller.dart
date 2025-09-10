@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import '../navigation/menu_navigation_items.dart';
 import '../../features/home/controllers/dinning_controller.dart';
+import 'package:flutter/foundation.dart';
 
 /// Controlador para manejar la navegación del menú lateral
 class MenuNavigationController extends GetxController {
@@ -91,7 +92,7 @@ class MenuNavigationController extends GetxController {
 
       return route;
     } catch (e) {
-      print('Error building dynamic route: $e');
+      debugPrint('Error building dynamic route: $e');
       return route;
     }
   }

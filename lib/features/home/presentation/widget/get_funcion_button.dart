@@ -7,6 +7,23 @@ import '../../../../routes/routes.dart';
 import '../../controllers/dinning_controller.dart';
 
 Widget getActionPrincipalByRole(DinningController role) {
+  // Verificar que los datos estén cargados
+  if (role.isLoaginDataUser) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  // Verificar que dinningLogin y role no sean null
+  if (role.dinningLogin.role == null || role.dinningLogin.role!.isEmpty) {
+    return const Center(
+      child: Text(
+        'Error: No se pudo cargar la información del usuario',
+        style: TextStyle(color: Colors.red),
+      ),
+    );
+  }
+
   final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(role.dinningLogin.role!);
 
   switch (roleByRoleUser) {

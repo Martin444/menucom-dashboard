@@ -1,3 +1,48 @@
 [build]
-    command = "flutter build web --release --dart-define=API_URL=https://menucom-api-60e608ae2f99.herokuapp.com"
+    command = "flutter build web --release --dart-define=API_URL=https://menucom-api-60e608ae2f99.herokuapp.com --dart-define=FIREBASE_API_KEY=AIzaSyAEWpBCNon00zwt1eWfqSDiYMhH0xxLMwk --dart-define=FIREBASE_AUTH_DOMAIN=menucom-ff087.firebaseapp.com --dart-define=FIREBASE_PROJECT_ID=menucom-ff087 --dart-define=FIREBASE_STORAGE_BUCKET=menucom-ff087.firebasestorage.app --dart-define=FIREBASE_MESSAGING_SENDER_ID=1053737382833 --dart-define=FIREBASE_APP_ID_WEB=1:1053737382833:web:d4173f40d6b88a52900390 --dart-define=FIREBASE_MEASUREMENT_ID=G-D5ZC2VB6GR --dart-define=GOOGLE_SIGN_IN_WEB_CLIENT_ID=1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com --dart-define=GOOGLE_SIGN_IN_IOS_CLIENT_ID=1053737382833-your-ios-client-id.apps.googleusercontent.com --dart-define=GOOGLE_SIGN_IN_ANDROID_CLIENT_ID=1053737382833-your-android-client-id.apps.googleusercontent.com --dart-define=FIREBASE_IOS_BUNDLE_ID=com.pickmeup.menucomdashboard"
     publish = "build/web"
+
+# Variables de entorno para el despliegue (alternativa para mejor legibilidad)
+[build.environment]
+    # Configuración de la API
+    API_URL = "https://menucom-api-60e608ae2f99.herokuapp.com"
+    
+    # Configuración de Firebase
+    FIREBASE_API_KEY = "AIzaSyAEWpBCNon00zwt1eWfqSDiYMhH0xxLMwk"
+    FIREBASE_AUTH_DOMAIN = "menucom-ff087.firebaseapp.com"
+    FIREBASE_PROJECT_ID = "menucom-ff087"
+    FIREBASE_STORAGE_BUCKET = "menucom-ff087.firebasestorage.app"
+    FIREBASE_MESSAGING_SENDER_ID = "1053737382833"
+    FIREBASE_APP_ID_WEB = "1:1053737382833:web:d4173f40d6b88a52900390"
+    FIREBASE_MEASUREMENT_ID = "G-D5ZC2VB6GR"
+    
+    # Configuración de Google Sign-In
+    GOOGLE_SIGN_IN_WEB_CLIENT_ID = "1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com"
+    GOOGLE_SIGN_IN_IOS_CLIENT_ID = "1053737382833-your-ios-client-id.apps.googleusercontent.com"
+    GOOGLE_SIGN_IN_ANDROID_CLIENT_ID = "1053737382833-your-android-client-id.apps.googleusercontent.com"
+    
+    # Configuración adicional
+    FIREBASE_IOS_BUNDLE_ID = "com.pickmeup.menucomdashboard"
+
+# Configuración para branch-specific deployments
+[context.production]
+    command = "flutter build web --release --dart-define=API_URL=https://hammerhead-app-pouq5.ondigitalocean.app --dart-define=FIREBASE_API_KEY=AIzaSyAEWpBCNon00zwt1eWfqSDiYMhH0xxLMwk --dart-define=FIREBASE_AUTH_DOMAIN=menucom-ff087.firebaseapp.com --dart-define=FIREBASE_PROJECT_ID=menucom-ff087 --dart-define=FIREBASE_STORAGE_BUCKET=menucom-ff087.firebasestorage.app --dart-define=FIREBASE_MESSAGING_SENDER_ID=1053737382833 --dart-define=FIREBASE_APP_ID_WEB=1:1053737382833:web:d4173f40d6b88a52900390 --dart-define=FIREBASE_MEASUREMENT_ID=G-D5ZC2VB6GR --dart-define=GOOGLE_SIGN_IN_WEB_CLIENT_ID=1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com --dart-define=GOOGLE_SIGN_IN_IOS_CLIENT_ID=1053737382833-your-ios-client-id.apps.googleusercontent.com --dart-define=GOOGLE_SIGN_IN_ANDROID_CLIENT_ID=1053737382833-your-android-client-id.apps.googleusercontent.com --dart-define=FIREBASE_IOS_BUNDLE_ID=com.pickmeup.menucomdashboard"
+
+[context.deploy-preview]
+    command = "flutter build web --release --dart-define=API_URL=https://menucom-api-60e608ae2f99.herokuapp.com --dart-define=FIREBASE_API_KEY=AIzaSyAEWpBCNon00zwt1eWfqSDiYMhH0xxLMwk --dart-define=FIREBASE_AUTH_DOMAIN=menucom-ff087.firebaseapp.com --dart-define=FIREBASE_PROJECT_ID=menucom-ff087 --dart-define=FIREBASE_STORAGE_BUCKET=menucom-ff087.firebasestorage.app --dart-define=FIREBASE_MESSAGING_SENDER_ID=1053737382833 --dart-define=FIREBASE_APP_ID_WEB=1:1053737382833:web:d4173f40d6b88a52900390 --dart-define=FIREBASE_MEASUREMENT_ID=G-D5ZC2VB6GR --dart-define=GOOGLE_SIGN_IN_WEB_CLIENT_ID=1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com --dart-define=GOOGLE_SIGN_IN_IOS_CLIENT_ID=1053737382833-your-ios-client-id.apps.googleusercontent.com --dart-define=GOOGLE_SIGN_IN_ANDROID_CLIENT_ID=1053737382833-your-android-client-id.apps.googleusercontent.com --dart-define=FIREBASE_IOS_BUNDLE_ID=com.pickmeup.menucomdashboard"
+
+# Headers de seguridad para aplicaciones web
+[[headers]]
+    for = "/*"
+    [headers.values]
+        X-Frame-Options = "DENY"
+        X-XSS-Protection = "1; mode=block"
+        X-Content-Type-Options = "nosniff"
+        Referrer-Policy = "strict-origin-when-cross-origin"
+        Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://accounts.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://menucom-api-60e608ae2f99.herokuapp.com https://hammerhead-app-pouq5.ondigitalocean.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com; frame-src https://accounts.google.com;"
+
+# Redirects para SPA
+[[redirects]]
+    from = "/*"
+    to = "/index.html"
+    status = 200

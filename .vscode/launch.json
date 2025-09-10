@@ -1,5 +1,5 @@
 {
-    // Use IntelliSense to learn about possible attributes.
+    // Use IntelliSens                "--dart-define=GOOGLE_SIGN_IN_WEB_CLIENT_ID=1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com", to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
@@ -15,6 +15,17 @@
                 //"--web-port=52245",
                 //"--no-sound-null-safety",
                 "--dart-define=API_URL=http://localhost:3001",
+                "--dart-define=FIREBASE_API_KEY=AIzaSyAEWpBCNon00zwt1eWfqSDiYMhH0xxLMwk",
+                "--dart-define=FIREBASE_AUTH_DOMAIN=menucom-ff087.firebaseapp.com",
+                "--dart-define=FIREBASE_PROJECT_ID=menucom-ff087",
+                "--dart-define=FIREBASE_STORAGE_BUCKET=menucom-ff087.firebasestorage.app",
+                "--dart-define=FIREBASE_MESSAGING_SENDER_ID=1053737382833",
+                "--dart-define=FIREBASE_APP_ID_WEB=1:1053737382833:web:d4173f40d6b88a52900390",
+                "--dart-define=FIREBASE_MEASUREMENT_ID=G-D5ZC2VB6GR",
+                "--dart-define=GOOGLE_SIGN_IN_WEB_CLIENT_ID=1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com",
+                "--dart-define=GOOGLE_SIGN_IN_IOS_CLIENT_ID=1053737382833-your-ios-client-id.apps.googleusercontent.com",
+                "--dart-define=GOOGLE_SIGN_IN_ANDROID_CLIENT_ID=1053737382833-your-android-client-id.apps.googleusercontent.com",
+                "--dart-define=FIREBASE_IOS_BUNDLE_ID=com.pickmeup.menucomdashboard"
             ]
         },
         {
@@ -28,6 +39,17 @@
                 //"--web-port=52245",
                 //"--no-sound-null-safety",
                 "--dart-define=API_URL=https://menucom-api-60e608ae2f99.herokuapp.com",
+                "--dart-define=FIREBASE_API_KEY=AIzaSyAEWpBCNon00zwt1eWfqSDiYMhH0xxLMwk",
+                "--dart-define=FIREBASE_AUTH_DOMAIN=menucom-ff087.firebaseapp.com",
+                "--dart-define=FIREBASE_PROJECT_ID=menucom-ff087",
+                "--dart-define=FIREBASE_STORAGE_BUCKET=menucom-ff087.firebasestorage.app",
+                "--dart-define=FIREBASE_MESSAGING_SENDER_ID=1053737382833",
+                "--dart-define=FIREBASE_APP_ID_WEB=1:1053737382833:web:d4173f40d6b88a52900390",
+                "--dart-define=FIREBASE_MEASUREMENT_ID=G-D5ZC2VB6GR",
+                "--dart-define=GOOGLE_SIGN_IN_WEB_CLIENT_ID=1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com",
+                "--dart-define=GOOGLE_SIGN_IN_IOS_CLIENT_ID=1053737382833-your-ios-client-id.apps.googleusercontent.com",
+                "--dart-define=GOOGLE_SIGN_IN_ANDROID_CLIENT_ID=1053737382833-your-android-client-id.apps.googleusercontent.com",
+                "--dart-define=FIREBASE_IOS_BUNDLE_ID=com.pickmeup.menucomdashboard"
             ]
         },
         {
@@ -41,6 +63,17 @@
                 //"--web-port=52245",
                 //"--no-sound-null-safety",
                 "--dart-define=API_URL=https://hammerhead-app-pouq5.ondigitalocean.app",
+                "--dart-define=FIREBASE_API_KEY=AIzaSyAEWpBCNon00zwt1eWfqSDiYMhH0xxLMwk",
+                "--dart-define=FIREBASE_AUTH_DOMAIN=menucom-ff087.firebaseapp.com",
+                "--dart-define=FIREBASE_PROJECT_ID=menucom-ff087",
+                "--dart-define=FIREBASE_STORAGE_BUCKET=menucom-ff087.firebasestorage.app",
+                "--dart-define=FIREBASE_MESSAGING_SENDER_ID=1053737382833",
+                "--dart-define=FIREBASE_APP_ID_WEB=1:1053737382833:web:d4173f40d6b88a52900390",
+                "--dart-define=FIREBASE_MEASUREMENT_ID=G-D5ZC2VB6GR",
+                "--dart-define=GOOGLE_SIGN_IN_WEB_CLIENT_ID=1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com",
+                "--dart-define=GOOGLE_SIGN_IN_IOS_CLIENT_ID=1053737382833-your-ios-client-id.apps.googleusercontent.com",
+                "--dart-define=GOOGLE_SIGN_IN_ANDROID_CLIENT_ID=1053737382833-your-android-client-id.apps.googleusercontent.com",
+                "--dart-define=FIREBASE_IOS_BUNDLE_ID=com.pickmeup.menucomdashboard"
             ]
         },
     ]
