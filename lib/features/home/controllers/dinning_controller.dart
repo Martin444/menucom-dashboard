@@ -110,6 +110,14 @@ class DinningController extends GetxController with NavigationStateMixin {
     items: [],
   );
 
+  // Variables para el manejo de usuarios por roles
+  List<UserByRoleModel> usersByRolesList = <UserByRoleModel>[];
+  bool _isLoadingUsersByRoles = false;
+  UsersByRolesResponse? lastUsersByRolesResponse;
+
+  // Getter público para el estado de carga de usuarios por roles
+  bool get isLoadingUsersByRoles => _isLoadingUsersByRoles;
+
   bool _isLoadingWardrobes = false; // Flag para evitar llamadas concurrentes
 
   void chageWardSelected(WardrobeModel select) {
@@ -120,6 +128,85 @@ class DinningController extends GetxController with NavigationStateMixin {
   void chageMenuSelected(MenuModel select) {
     menuSelected = select;
     update();
+  }
+
+  /// Obtiene usuarios filtrados por roles específicos
+  ///
+  /// [roles] - Lista de roles para filtrar usuarios
+  /// [withVinculedAccount] - Incluir información de cuentas vinculadas
+  ///
+  /// Retorna la lista de usuarios encontrados o null si hay error
+  Future<List<UserByRoleModel>?> getUsersByRoles({
+    required List<RolesUsers> roles,
+    bool withVinculedAccount = false,
+  }) async {
+    if (_isLoadingUsersByRoles) {
+      debugPrint('=== getUsersByRoles already in progress, skipping ===');
+      return usersByRolesList;
+    }
+
+    try {
+      _isLoadingUsersByRoles = true;
+      debugPrint('=== DEBUG getUsersByRoles CALLED ===');
+      debugPrint('Roles requested: ${roles.map((r) => r.toString().split('.').last).join(', ')}');
+      debugPrint('With vinculated account: $withVinculedAccount');
+
+      // Limpiar lista anterior
+      usersByRolesList.clear();
+
+      // Crear parámetros para la consulta
+      final params = UsersByRolesParams(
+        roles: roles,
+        withVinculedAccount: withVinculedAccount,
+        includeMenus: true,
+      );
+
+      // Ejecutar el caso de uso
+      final response = await GetUsersByRolesUseCase().execute(params);
+      lastUsersByRolesResponse = response;
+
+      debugPrint('=== DEBUG DinningController.getUsersByRoles ===');
+      debugPrint('API response users count: ${response.total}');
+
+      // Debug: Verificar cada elemento de la respuesta
+      for (int i = 0; i < response.users.length; i++) {
+        final user = response.users[i];
+        debugPrint('=== USER $i DETAILS ===');
+        debugPrint('Name: ${user.name}');
+        debugPrint('Role: ${user.role}');
+        debugPrint('Email: ${user.email}');
+        debugPrint('Phone: ${user.phone}');
+        debugPrint('PhotoURL: ${user.photoURL}');
+        debugPrint('IsEmailVerified: ${user.isEmailVerified}');
+        debugPrint('CreateAt: ${user.createAt}');
+        debugPrint('LastLoginAt: ${user.lastLoginAt}');
+        debugPrint('ID: ${user.id}');
+        debugPrint('====================');
+      }
+
+      // Agregar usuarios a la lista
+      usersByRolesList.addAll(response.users);
+
+      debugPrint('Final usersByRolesList length: ${usersByRolesList.length}');
+
+      _isLoadingUsersByRoles = false;
+      update();
+      return usersByRolesList;
+    } on ApiException catch (e) {
+      _isLoadingUsersByRoles = false;
+      debugPrint('Error getting users by roles: ${e.statusCode} - ${e.message}');
+      update();
+
+      if (e.statusCode == 404) {
+        usersByRolesList.clear();
+        return null;
+      }
+      return null;
+    } catch (e) {
+      _isLoadingUsersByRoles = false;
+      debugPrint('Unexpected error getting users by roles: $e');
+      rethrow;
+    }
   }
 
   MenuItemModel menusToEdit = MenuItemModel();

@@ -160,7 +160,7 @@ class MenuSide extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: PUColors.primaryColor.withOpacity(0.3),
+              color: PUColors.primaryColor.withAlpha((0.3 * 255).toInt()),
               width: 2,
             ),
           ),

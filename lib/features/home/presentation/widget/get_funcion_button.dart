@@ -105,10 +105,47 @@ Widget getActionPrincipalByRole(DinningController role) {
           ),
         ],
       );
+    case RolesUsers.customer:
+      if (role.wardList.isEmpty) {
+        return ButtonPrimary(
+          title: 'Comenzá a emprender',
+          onPressed: () {
+            // Get.toNamed(PURoutes.REGISTER_WARDROBES);
+          },
+          load: false,
+        );
+      }
+      return Row(
+        children: [
+          Flexible(
+            child: ButtonSecundary(
+              title: 'Nueva prenda',
+              onPressed: () {
+                Get.toNamed(
+                  PURoutes.REGISTER_ITEM_WARDROBES,
+                );
+              },
+              load: false,
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Flexible(
+            child: ButtonPrimary(
+              title: 'Nuevo guardarropas',
+              onPressed: () {
+                Get.toNamed(PURoutes.REGISTER_WARDROBES);
+              },
+              load: false,
+            ),
+          ),
+        ],
+      );
 
     default:
       return ButtonPrimary(
-        title: 'Error en el rol $roleByRoleUser',
+        title: 'Error en el rol ${roleByRoleUser?.name}',
         onPressed: () {},
         load: false,
       );
