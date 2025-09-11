@@ -5,7 +5,7 @@ import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/widgets/buttons/button_primary.dart';
 
 /// Widget de diálogo especializado para mostrar limitaciones del plan
-/// 
+///
 /// Se usa cuando el usuario alcanza los límites de su plan gratuito
 /// y necesita considerar actualizar a un plan superior.
 class PlanLimitDialog extends StatelessWidget {
@@ -18,10 +18,10 @@ class PlanLimitDialog extends StatelessWidget {
 
   /// Título del diálogo
   final String title;
-  
+
   /// Mensaje explicativo sobre la limitación
   final String message;
-  
+
   /// Callback cuando el usuario presiona "Actualizar Plan"
   final VoidCallback? onUpgradePressed;
 
@@ -58,18 +58,18 @@ class PlanLimitDialog extends StatelessWidget {
                 size: 32,
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Título
             Text(
               title,
               style: PuTextStyle.title1,
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Mensaje
             Text(
               message,
@@ -78,9 +78,9 @@ class PlanLimitDialog extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Botones de acción
             Row(
               children: [
@@ -103,9 +103,9 @@ class PlanLimitDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(width: 12),
-                
+
                 // Botón Actualizar Plan
                 Expanded(
                   child: ButtonPrimary(

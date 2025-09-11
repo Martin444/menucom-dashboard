@@ -11,10 +11,14 @@ class GlobalDialogsHandles {
     required String title,
     String? message,
   }) {
+    // Validar que el mensaje no esté vacío
+    final String validMessage =
+        message?.trim().isNotEmpty == true ? message!.trim() : 'Ha ocurrido un error inesperado';
+
     Get.showSnackbar(
       GetSnackBar(
         title: title,
-        message: message,
+        message: validMessage,
         snackPosition: SnackPosition.TOP,
         backgroundColor: PUColors.bgError,
         duration: const Duration(
@@ -28,10 +32,14 @@ class GlobalDialogsHandles {
     required String title,
     String? message,
   }) {
+    // Validar que el mensaje no esté vacío
+    final String validMessage =
+        message?.trim().isNotEmpty == true ? message!.trim() : 'Operación completada exitosamente';
+
     Get.showSnackbar(
       GetSnackBar(
         title: title,
-        message: message,
+        message: validMessage,
         snackPosition: SnackPosition.TOP,
         backgroundColor: PUColors.bgSucces,
         duration: const Duration(

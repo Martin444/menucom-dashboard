@@ -203,16 +203,22 @@ class _CreateItemPageState extends State<CreateWardItemPage> {
                                         return;
                                       }
                                       if (widget.isEditPage ?? false) {
-                                        await _.editClothingWardrobe();
-                                        await dinning.getmenuByDining();
-                                        Get.offAllNamed(PURoutes.HOME);
+                                        final success = await _.editClothingWardrobe();
+                                        if (success) {
+                                          await dinning.getmenuByDining();
+                                          Get.offAllNamed(PURoutes.HOME);
+                                        }
+                                        // Si hay error, no navegar - el usuario ya vio el mensaje de error
                                         return;
                                       }
                                       _.wardSelected = dinning.wardSelected;
                                       _.update();
-                                      await _.createWardItemInServer();
-                                      await dinning.getmenuByDining();
-                                      Get.offAllNamed(PURoutes.HOME);
+                                      final newItem = await _.createWardItemInServer();
+                                      if (newItem != null) {
+                                        await dinning.getmenuByDining();
+                                        Get.offAllNamed(PURoutes.HOME);
+                                      }
+                                      // Si hay error, no navegar - el usuario ya vio el mensaje de error
                                       return;
                                     }
                                   },

@@ -13,7 +13,8 @@ class WardrobesController extends GetxController {
   bool isLoadWard = false;
   TextEditingController nameWard = TextEditingController();
 
-  Future<void> postWardrobe() async {
+  Future<bool> postWardrobe() async {
+    final wardrobeName = nameWard.text.isNotEmpty ? nameWard.text : "El guardarropa";
     try {
       isLoadWard = true;
       update();
@@ -24,24 +25,26 @@ class WardrobesController extends GetxController {
       );
       isLoadWard = false;
       update();
-      
+
       // Mostrar mensaje de éxito
       GlobalDialogsHandles.snackbarSuccess(
         title: 'Guardarropa creado',
-        message: '${nameWard.text} se creó exitosamente',
+        message: '$wardrobeName se creó exitosamente',
       );
-      
+
       // Limpiar el campo de nombre
       nameWard.clear();
+      return true; // Éxito
     } on ApiException catch (apiError) {
       isLoadWard = false;
       update();
-      
+
       _handleApiError(
         apiError,
         defaultErrorTitle: 'No se pudo crear el guardarropa',
         defaultErrorMessage: 'Error al crear el guardarropa',
       );
+      return false; // Error
     } catch (e) {
       isLoadWard = false;
       update();
@@ -49,6 +52,7 @@ class WardrobesController extends GetxController {
         title: 'Error inesperado',
         message: 'Ocurrió un error al crear el guardarropa. Inténtalo de nuevo.',
       );
+      return false; // Error
     }
   }
 
@@ -82,7 +86,8 @@ class WardrobesController extends GetxController {
     }
   }
 
-  void editWardrobe() async {
+  Future<bool> editWardrobe() async {
+    final wardrobeName = nameWard.text.isNotEmpty ? nameWard.text : "El guardarropa";
     try {
       isLoadWard = true;
       update();
@@ -94,21 +99,23 @@ class WardrobesController extends GetxController {
       );
       isLoadWard = false;
       update();
-      
+
       // Mostrar mensaje de éxito
       GlobalDialogsHandles.snackbarSuccess(
         title: 'Guardarropa actualizado',
-        message: '${nameWard.text} se actualizó exitosamente',
+        message: '$wardrobeName se actualizó exitosamente',
       );
+      return true; // Éxito
     } on ApiException catch (apiError) {
       isLoadWard = false;
       update();
-      
+
       _handleApiError(
         apiError,
         defaultErrorTitle: 'No se pudo actualizar el guardarropa',
         defaultErrorMessage: 'Error al actualizar el guardarropa',
       );
+      return false; // Error
     } catch (e) {
       isLoadWard = false;
       update();
@@ -116,6 +123,7 @@ class WardrobesController extends GetxController {
         title: 'Error inesperado',
         message: 'Ocurrió un error al actualizar el guardarropa. Inténtalo de nuevo.',
       );
+      return false; // Error
     }
   }
 
@@ -184,7 +192,7 @@ class WardrobesController extends GetxController {
     } on ApiException catch (apiError) {
       isLoadMenuItem = false;
       update();
-      
+
       _handleApiError(
         apiError,
         defaultErrorTitle: 'No se pudo crear el producto',
@@ -301,7 +309,7 @@ class WardrobesController extends GetxController {
     }
   }
 
-  Future<void> editClothingWardrobe() async {
+  Future<bool> editClothingWardrobe() async {
     try {
       isLoadMenuItem = true;
       update();
@@ -319,16 +327,37 @@ class WardrobesController extends GetxController {
       await PutClothingItemUsesCases().execute(newItem);
       isLoadMenuItem = false;
       update();
-    } catch (e) {
-      GlobalDialogsHandles.snackbarError(
-        title: '¡Ups!',
-        message: 'No se pudo Guardar ${nameWardController.text}, vuelve a intentarlo mas tarde.',
+
+      // Mostrar mensaje de éxito
+      GlobalDialogsHandles.snackbarSuccess(
+        title: '¡Perfecto!',
+        message: '${nameWardController.text} se actualizó exitosamente',
       );
+      return true; // Éxito
+    } on ApiException catch (apiError) {
+      isLoadMenuItem = false;
+      update();
+
+      _handleApiError(
+        apiError,
+        defaultErrorTitle: 'No se pudo actualizar el producto',
+        defaultErrorMessage: 'Error al actualizar el producto en el guardarropa',
+      );
+      return false; // Error
+    } catch (e) {
+      isLoadMenuItem = false;
+      update();
+      GlobalDialogsHandles.snackbarError(
+        title: 'Error inesperado',
+        message: 'Ocurrió un error al actualizar ${nameWardController.text}. Inténtalo de nuevo.',
+      );
+      return false; // Error
     }
   }
 
   /// Método helper para manejar errores de API relacionados con límites de plan
-  void _handleApiError(ApiException apiError, {
+  void _handleApiError(
+    ApiException apiError, {
     required String defaultErrorTitle,
     required String defaultErrorMessage,
   }) {
@@ -336,13 +365,13 @@ class WardrobesController extends GetxController {
     String errorMessage = defaultErrorMessage;
     try {
       final errorJson = jsonDecode(apiError.message);
-      errorMessage = errorJson['message'] ?? errorMessage;
-      
+      final jsonMessage = errorJson['message']?.toString().trim();
+      errorMessage = (jsonMessage?.isNotEmpty == true) ? jsonMessage! : defaultErrorMessage;
+
       // Detectar si es un error de límites de plan
-      if (errorMessage.toLowerCase().contains('límites') || 
+      if (errorMessage.toLowerCase().contains('límites') ||
           errorMessage.toLowerCase().contains('plan free') ||
           errorMessage.toLowerCase().contains('no puedes crear más')) {
-        
         GlobalDialogsHandles.showPlanLimitDialog(
           title: 'Límite del Plan Gratuito',
           message: errorMessage,
@@ -358,14 +387,19 @@ class WardrobesController extends GetxController {
         return;
       }
     } catch (e) {
-      // Si no se puede parsear el JSON, usar el mensaje por defecto
-      errorMessage = apiError.message;
+      // Si no se puede parsear el JSON, usar el mensaje del error original o el por defecto
+      final apiMessage = apiError.message.trim();
+      errorMessage = apiMessage.isNotEmpty ? apiMessage : defaultErrorMessage;
     }
-    
+
+    // Validar que el mensaje final no esté vacío antes de mostrar el snackbar
+    final finalMessage = errorMessage.trim();
+    final validMessage = finalMessage.isNotEmpty ? finalMessage : defaultErrorMessage;
+
     // Mostrar error genérico
     GlobalDialogsHandles.snackbarError(
       title: defaultErrorTitle,
-      message: errorMessage,
+      message: validMessage,
     );
   }
 }

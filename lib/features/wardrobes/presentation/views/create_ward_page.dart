@@ -22,8 +22,16 @@ class CreateWardPage extends StatefulWidget {
 }
 
 class _CreateWardPageState extends State<CreateWardPage> {
-  var dinninController = Get.find<DinningController>();
-  var wrController = Get.find<WardrobesController>();
+  late final DinningController dinninController;
+  late final WardrobesController wrController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializar controladores de manera segura
+    dinninController = Get.find<DinningController>();
+    wrController = Get.find<WardrobesController>();
+  }
 
   @override
   void dispose() {
@@ -57,7 +65,7 @@ class _CreateWardPageState extends State<CreateWardPage> {
                               cursor: SystemMouseCursors.click,
                               child: GestureDetector(
                                 onTap: () {
-                                  Get.back();
+                                  Get.offAllNamed(PURoutes.HOME);
                                 },
                                 child: Row(
                                   children: [
@@ -105,14 +113,18 @@ class _CreateWardPageState extends State<CreateWardPage> {
                               controller: _.nameWard,
                               onSubmited: (p0) async {
                                 if (widget.isEditPage ?? false) {
-                                  _.editWardrobe();
-                                  await dinninController.getWardrobebyDining();
-                                  Get.offAllNamed(PURoutes.HOME);
+                                  final success = await _.editWardrobe();
+                                  if (success) {
+                                    await dinninController.getWardrobebyDining();
+                                    Get.offAllNamed(PURoutes.HOME);
+                                  }
                                   return;
                                 }
-                                await _.postWardrobe();
-                                await dinninController.getWardrobebyDining();
-                                Get.offAllNamed(PURoutes.HOME);
+                                final success = await _.postWardrobe();
+                                if (success) {
+                                  await dinninController.getWardrobebyDining();
+                                  Get.offAllNamed(PURoutes.HOME);
+                                }
                               },
                             ),
                           ],
@@ -123,14 +135,18 @@ class _CreateWardPageState extends State<CreateWardPage> {
                               title: widget.isEditPage ?? false ? 'Guardar' : 'Crear',
                               onPressed: () async {
                                 if (widget.isEditPage ?? false) {
-                                  _.editWardrobe();
-                                  await dinninController.getWardrobebyDining();
-                                  Get.offAllNamed(PURoutes.HOME);
+                                  final success = await _.editWardrobe();
+                                  if (success) {
+                                    await dinninController.getWardrobebyDining();
+                                    Get.offAllNamed(PURoutes.HOME);
+                                  }
                                   return;
                                 }
-                                await _.postWardrobe();
-                                await dinninController.getWardrobebyDining();
-                                Get.offAllNamed(PURoutes.HOME);
+                                final success = await _.postWardrobe();
+                                if (success) {
+                                  await dinninController.getWardrobebyDining();
+                                  Get.offAllNamed(PURoutes.HOME);
+                                }
                               },
                               load: _.isLoadWard,
                             ),
