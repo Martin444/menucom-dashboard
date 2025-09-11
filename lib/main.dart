@@ -34,14 +34,12 @@ void main() async {
 Future<void> initializeFirebase() async {
   try {
     debugPrint('Iniciando configuración de Firebase...');
-    debugPrint('Configuración a usar: ${FirebaseConfig.currentPlatform}');
 
     await Firebase.initializeApp(
       options: FirebaseConfig.currentPlatform,
     );
 
     debugPrint('Firebase inicializado correctamente para ${Firebase.app().name}');
-    debugPrint('Proyecto ID: ${Firebase.app().options.projectId}');
     debugPrint('Auth Domain: ${Firebase.app().options.authDomain}');
 
     // Solo configurar emuladores en desarrollo si está habilitado

@@ -97,8 +97,6 @@ class AuthFirebaseDataSourceImpl implements AuthFirebaseDataSource {
       );
 
       debugPrint('Credenciales de Firebase creadas, intentando autenticación...');
-      debugPrint('Access Token: ${googleAuth.accessToken?.substring(0, 20)}...');
-      debugPrint('ID Token: ${googleAuth.idToken?.substring(0, 20)}...');
 
       // Autenticar con Firebase usando las credenciales de Google
       final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
