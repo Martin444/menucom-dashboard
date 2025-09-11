@@ -10,8 +10,7 @@
             "type": "dart",
             "program": "lib/main.dart",
             "args": [
-                "--web-renderer",
-                "html",
+                "canvaskit",
                 //"--web-port=52245",
                 //"--no-sound-null-safety",
                 "--dart-define=API_URL=http://localhost:3001",
@@ -35,7 +34,7 @@
             "program": "lib/main.dart",
             "args": [
                 "--web-renderer",
-                "html",
+                "canvaskit",
                 //"--web-port=52245",
                 //"--no-sound-null-safety",
                 "--dart-define=API_URL=https://menucom-api-60e608ae2f99.herokuapp.com",
