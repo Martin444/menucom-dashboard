@@ -252,9 +252,10 @@ class HeadDinning extends StatelessWidget {
 
   void _navigateToProfile(DinningController controller) {
     try {
+      final userName = controller.dinningLogin.name ?? 'usuario';
       var newRoutProfile = PURoutes.USER_PROFILE.replaceFirst(
         ':idUsuario',
-        controller.dinningLogin.name!.toLowerCase().split(' ').join('-'),
+        userName.toLowerCase().split(' ').join('-'),
       );
       Get.toNamed(newRoutProfile);
     } catch (e) {

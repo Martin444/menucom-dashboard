@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pickmeup_dashboard/widgets/dialogs/plan_limit_dialog.dart';
 import 'package:pu_material/utils/pu_colors.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 
@@ -108,5 +109,21 @@ class GlobalDialogsHandles {
     );
 
     return whenComplet.future;
+  }
+
+  /// Muestra un diálogo especializado para limitaciones del plan
+  static void showPlanLimitDialog({
+    required String title,
+    required String message,
+    VoidCallback? onUpgradePressed,
+  }) {
+    Get.dialog(
+      PlanLimitDialog(
+        title: title,
+        message: message,
+        onUpgradePressed: onUpgradePressed,
+      ),
+      barrierDismissible: true,
+    );
   }
 }

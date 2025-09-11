@@ -24,7 +24,14 @@ class DinningController extends GetxController with NavigationStateMixin {
       // update();
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
-      final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(dinningLogin.role!);
+
+      // Verificar que el rol no sea null antes de procesarlo
+      final userRole = dinningLogin.role;
+      if (userRole == null || userRole.isEmpty) {
+        throw Exception('Rol de usuario no válido');
+      }
+
+      final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(userRole);
       switch (roleByRoleUser) {
         case RolesUsers.dinning:
           await getmenuByDining();
@@ -62,7 +69,12 @@ class DinningController extends GetxController with NavigationStateMixin {
       wardList = [];
       debugPrint('wardList cleared, length: ${wardList.length}');
 
-      final responseWar = await GetClothingUserUsescase().execute(dinningLogin.id!);
+      final userId = dinningLogin.id;
+      if (userId == null || userId.isEmpty) {
+        throw Exception('ID de usuario no válido');
+      }
+
+      final responseWar = await GetClothingUserUsescase().execute(userId);
       debugPrint('=== DEBUG DinningController.getWardrobebyDining ===');
       debugPrint('API response wardrobes count: ${responseWar.listClothing?.length ?? 0}');
 
@@ -218,7 +230,12 @@ class DinningController extends GetxController with NavigationStateMixin {
 
   Future<List<MenuModel>?> getmenuByDining() async {
     try {
-      var respMenu = await GetMenuUseCase().execute(dinningLogin.id!);
+      final userId = dinningLogin.id;
+      if (userId == null || userId.isEmpty) {
+        throw Exception('ID de usuario no válido');
+      }
+
+      var respMenu = await GetMenuUseCase().execute(userId);
 
       menusList.assignAll(respMenu.listmenus!);
       menuSelected = menusList.first;

@@ -10,6 +10,7 @@ class PURoutes {
 
   //User
   static String USER_PROFILE = '/perfil/:idUsuario';
+  static String EDIT_PROFILE = '/editar-perfil';
 
   //menu
   static String REGISTER_MENU_CATEGORY = '/nuevo-menu';
@@ -26,6 +27,9 @@ class PURoutes {
   static String REGISTER_PURCHACE = '/registrar-venta';
 
   static String ORDERS_PAGES = '/ordenes';
+
+  // Business type selection
+  static String BUSINESS_TYPE_SELECTION = '/seleccionar-tipo-negocio';
 
   // Payment methods
   static String PAYMENT_METHODS = '/metodos-de-pago';

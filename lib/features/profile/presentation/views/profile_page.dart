@@ -18,6 +18,15 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return GetBuilder<DinningController>(
       builder: (_) {
+        // Mostrar loading si los datos están cargando o no hay datos básicos
+        if (_.isLoaginDataUser || _.dinningLogin.id == null) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
         return Scaffold(
           body: Center(
             child: Container(
@@ -56,22 +65,30 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   PuRobustNetworkImage(
-                    imageUrl: _.dinningLogin.photoURL!,
+                    imageUrl: _.dinningLogin.photoURL ?? '',
                     height: 100,
                     width: 100,
                     fit: BoxFit.cover,
                   ),
                   Text(
-                    _.dinningLogin.name!,
+                    _.dinningLogin.name ?? 'Sin nombre',
                     style: PuTextStyle.title1,
                   ),
                   Text(
-                    _.dinningLogin.email!,
+                    _.dinningLogin.email ?? 'Sin email',
                     style: PuTextStyle.title2,
                   ),
                   Text(
-                    _.dinningLogin.phone!,
+                    _.dinningLogin.phone ?? 'Sin teléfono',
                     style: PuTextStyle.title2,
+                  ),
+                  ListTile(
+                    title: const Text('Editar perfil'),
+                    subtitle: const Text('Cambiá tus datos personales'),
+                    trailing: const Icon(FluentIcons.arrow_right_24_regular),
+                    onTap: () {
+                      Get.toNamed(PURoutes.EDIT_PROFILE);
+                    },
                   ),
                   ListTile(
                     title: const Text('Métodos de pago'),

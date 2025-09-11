@@ -179,7 +179,7 @@ class MenuSide extends StatelessWidget {
         // Nombre del usuario
         if (dinningController.dinningLogin.name != null) ...[
           Text(
-            dinningController.dinningLogin.name!,
+            dinningController.dinningLogin.name ?? 'Usuario',
             style: PuTextStyle.title3.copyWith(
               fontWeight: FontWeight.w600,
               color: PUColors.iconColor,
@@ -204,7 +204,7 @@ class MenuSide extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              _formatUserRole(dinningController.dinningLogin.role!),
+              _formatUserRole(dinningController.dinningLogin.role ?? 'Usuario'),
               style: PuTextStyle.description1.copyWith(
                 color: PUColors.primaryColor,
                 fontSize: roleFontSize,

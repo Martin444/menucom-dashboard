@@ -32,8 +32,9 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   Future<void> _loadOrders() async {
-    if (dinningController.dinningLogin.id != null) {
-      await ordersController.fetchOrdersByBusinessOwner(dinningController.dinningLogin.id!);
+    final userId = dinningController.dinningLogin.id;
+    if (userId != null && userId.isNotEmpty) {
+      await ordersController.fetchOrdersByBusinessOwner(userId);
     }
   }
 

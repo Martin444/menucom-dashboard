@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -23,8 +24,31 @@ class WardrobesController extends GetxController {
       );
       isLoadWard = false;
       update();
+      
+      // Mostrar mensaje de éxito
+      GlobalDialogsHandles.snackbarSuccess(
+        title: 'Guardarropa creado',
+        message: '${nameWard.text} se creó exitosamente',
+      );
+      
+      // Limpiar el campo de nombre
+      nameWard.clear();
+    } on ApiException catch (apiError) {
+      isLoadWard = false;
+      update();
+      
+      _handleApiError(
+        apiError,
+        defaultErrorTitle: 'No se pudo crear el guardarropa',
+        defaultErrorMessage: 'Error al crear el guardarropa',
+      );
     } catch (e) {
-      rethrow;
+      isLoadWard = false;
+      update();
+      GlobalDialogsHandles.snackbarError(
+        title: 'Error inesperado',
+        message: 'Ocurrió un error al crear el guardarropa. Inténtalo de nuevo.',
+      );
     }
   }
 
@@ -70,8 +94,28 @@ class WardrobesController extends GetxController {
       );
       isLoadWard = false;
       update();
+      
+      // Mostrar mensaje de éxito
+      GlobalDialogsHandles.snackbarSuccess(
+        title: 'Guardarropa actualizado',
+        message: '${nameWard.text} se actualizó exitosamente',
+      );
+    } on ApiException catch (apiError) {
+      isLoadWard = false;
+      update();
+      
+      _handleApiError(
+        apiError,
+        defaultErrorTitle: 'No se pudo actualizar el guardarropa',
+        defaultErrorMessage: 'Error al actualizar el guardarropa',
+      );
     } catch (e) {
-      rethrow;
+      isLoadWard = false;
+      update();
+      GlobalDialogsHandles.snackbarError(
+        title: 'Error inesperado',
+        message: 'Ocurrió un error al actualizar el guardarropa. Inténtalo de nuevo.',
+      );
     }
   }
 
@@ -137,10 +181,24 @@ class WardrobesController extends GetxController {
       fileTaked = null;
       update();
       return newItemMenu;
+    } on ApiException catch (apiError) {
+      isLoadMenuItem = false;
+      update();
+      
+      _handleApiError(
+        apiError,
+        defaultErrorTitle: 'No se pudo crear el producto',
+        defaultErrorMessage: 'Error al crear el producto en el guardarropa',
+      );
+      return null;
     } catch (e) {
       isLoadMenuItem = false;
       update();
-      rethrow;
+      GlobalDialogsHandles.snackbarError(
+        title: 'Error inesperado',
+        message: 'Ocurrió un error al crear el producto. Inténtalo de nuevo.',
+      );
+      return null;
     }
   }
 
@@ -181,10 +239,17 @@ class WardrobesController extends GetxController {
       priceWardController.clear();
       stockWardController.clear();
       return respItem;
+    } on ApiException catch (apiError) {
+      _handleApiError(
+        apiError,
+        defaultErrorTitle: 'No se pudo cargar el producto',
+        defaultErrorMessage: 'Error al cargar el producto al guardarropa',
+      );
+      rethrow;
     } catch (e) {
       GlobalDialogsHandles.snackbarError(
-        title: 'Ups no se pudo cargar al menu',
-        message: '$e',
+        title: 'Error inesperado',
+        message: 'Ocurrió un error al cargar el producto. Inténtalo de nuevo.',
       );
       rethrow;
     }
@@ -260,5 +325,47 @@ class WardrobesController extends GetxController {
         message: 'No se pudo Guardar ${nameWardController.text}, vuelve a intentarlo mas tarde.',
       );
     }
+  }
+
+  /// Método helper para manejar errores de API relacionados con límites de plan
+  void _handleApiError(ApiException apiError, {
+    required String defaultErrorTitle,
+    required String defaultErrorMessage,
+  }) {
+    // Extraer el mensaje de error del JSON
+    String errorMessage = defaultErrorMessage;
+    try {
+      final errorJson = jsonDecode(apiError.message);
+      errorMessage = errorJson['message'] ?? errorMessage;
+      
+      // Detectar si es un error de límites de plan
+      if (errorMessage.toLowerCase().contains('límites') || 
+          errorMessage.toLowerCase().contains('plan free') ||
+          errorMessage.toLowerCase().contains('no puedes crear más')) {
+        
+        GlobalDialogsHandles.showPlanLimitDialog(
+          title: 'Límite del Plan Gratuito',
+          message: errorMessage,
+          onUpgradePressed: () {
+            // TODO: Navegar a la página de actualización del plan
+            // Get.toNamed(PURoutes.UPGRADE_PLAN);
+            GlobalDialogsHandles.snackbarError(
+              title: 'Función en desarrollo',
+              message: 'La actualización del plan estará disponible pronto.',
+            );
+          },
+        );
+        return;
+      }
+    } catch (e) {
+      // Si no se puede parsear el JSON, usar el mensaje por defecto
+      errorMessage = apiError.message;
+    }
+    
+    // Mostrar error genérico
+    GlobalDialogsHandles.snackbarError(
+      title: defaultErrorTitle,
+      message: errorMessage,
+    );
   }
 }

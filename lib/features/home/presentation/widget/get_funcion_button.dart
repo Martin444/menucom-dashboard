@@ -24,7 +24,7 @@ Widget getActionPrincipalByRole(DinningController role) {
     );
   }
 
-  final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(role.dinningLogin.role!);
+  final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(role.dinningLogin.role ?? '');
 
   switch (roleByRoleUser) {
     case RolesUsers.dinning:
@@ -110,7 +110,7 @@ Widget getActionPrincipalByRole(DinningController role) {
         return ButtonPrimary(
           title: 'Comenzá a emprender',
           onPressed: () {
-            // Get.toNamed(PURoutes.REGISTER_WARDROBES);
+            Get.toNamed(PURoutes.BUSINESS_TYPE_SELECTION);
           },
           load: false,
         );
@@ -141,6 +141,48 @@ Widget getActionPrincipalByRole(DinningController role) {
             ),
           ),
         ],
+      );
+
+    case RolesUsers.commerce:
+      return ButtonPrimary(
+        title: 'Gestionar inventario',
+        onPressed: () {
+          // TODO: Implementar gestión de inventario
+          Get.snackbar(
+            'Próximamente',
+            'La gestión de inventario estará disponible pronto',
+            snackPosition: SnackPosition.TOP,
+          );
+        },
+        load: false,
+      );
+
+    case RolesUsers.distributor:
+      return ButtonPrimary(
+        title: 'Gestionar distribución',
+        onPressed: () {
+          // TODO: Implementar gestión de distribución
+          Get.snackbar(
+            'Próximamente',
+            'La gestión de distribución estará disponible pronto',
+            snackPosition: SnackPosition.TOP,
+          );
+        },
+        load: false,
+      );
+
+    case RolesUsers.service:
+      return ButtonPrimary(
+        title: 'Gestionar servicios',
+        onPressed: () {
+          // TODO: Implementar gestión de servicios
+          Get.snackbar(
+            'Próximamente',
+            'La gestión de servicios estará disponible pronto',
+            snackPosition: SnackPosition.TOP,
+          );
+        },
+        load: false,
       );
 
     default:

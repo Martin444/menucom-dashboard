@@ -6,6 +6,7 @@ import 'package:pickmeup_dashboard/features/menu/presentation/views/create_item_
 import 'package:pickmeup_dashboard/features/menu/get/menu_binding.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/views/create_menu_page.dart';
 import 'package:pickmeup_dashboard/features/profile/presentation/views/profile_page.dart';
+import 'package:pickmeup_dashboard/features/profile/presentation/views/edit_profile_page.dart';
 import 'package:pickmeup_dashboard/features/profile/presentation/views/payment_methods_page.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/getx/wardrobes_binding.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/views/create_ward_item_page.dart';
@@ -15,6 +16,7 @@ import 'package:pickmeup_dashboard/features/login/controllers/login_bindings.dar
 import 'package:pickmeup_dashboard/features/login/presentation/pages/change_password_page.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/pages/login_page.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/pages/register_commerce.dart';
+import 'package:pickmeup_dashboard/features/business_selection/presentation/pages/business_selection_page.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
 import 'package:pickmeup_dashboard/features/home/presentation/pages/mp_oauth_callback_page.dart';
@@ -188,6 +190,15 @@ class PUPages {
       bindings: [DinningBinding()],
     ),
     GetPage(
+      name: PURoutes.EDIT_PROFILE,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+      transition: Transition.rightToLeft,
+      page: () => const EditProfilePage(),
+      bindings: [DinningBinding()],
+    ),
+    GetPage(
       name: PURoutes.MP_OAUTH_CALLBACK,
       page: () => const MPOAuthCallbackPage(),
       transition: Transition.fadeIn,
@@ -198,6 +209,15 @@ class PUPages {
         AuthMiddleware(),
       ],
       page: () => const PaymentMethodsPage(),
+      transition: Transition.rightToLeft,
+      bindings: [DinningBinding()],
+    ),
+    GetPage(
+      name: PURoutes.BUSINESS_TYPE_SELECTION,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+      page: () => const BusinessSelectionPage(),
       transition: Transition.rightToLeft,
       bindings: [DinningBinding()],
     ),
