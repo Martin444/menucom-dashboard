@@ -70,15 +70,6 @@ class CommerceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Debug: Imprimir información de los menús
-    debugPrint('CommerceCard: Building card for $name');
-    debugPrint('CommerceCard: Menus data: ${menus?.length ?? 0} menus');
-    if (menus != null) {
-      for (int i = 0; i < menus!.length; i++) {
-        debugPrint('CommerceCard: Menu $i: ${menus![i].description} with ${menus![i].items?.length ?? 0} items');
-      }
-    }
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final isMobile = constraints.maxWidth < 768;
@@ -108,7 +99,7 @@ class CommerceCard extends StatelessWidget {
       actions: _buildMobileActions(),
       storeURL: storeUrl,
       onStoreUrlTap: _launchStoreUrl,
-      onTap: onTap,
+      onTap: onTap ?? _launchStoreUrl,
     );
   }
 
@@ -125,7 +116,7 @@ class CommerceCard extends StatelessWidget {
       actions: _buildActions(),
       storeURL: storeUrl,
       onStoreUrlTap: _launchStoreUrl,
-      onTap: onTap,
+      onTap: onTap ?? _launchStoreUrl,
     );
   }
 
@@ -142,7 +133,7 @@ class CommerceCard extends StatelessWidget {
       actions: _buildActions(),
       storeURL: storeUrl,
       onStoreUrlTap: _launchStoreUrl,
-      onTap: onTap,
+      onTap: onTap ?? _launchStoreUrl,
     );
   }
 
