@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
-/// ÁTOMOS - Componentes básicos e indivisibles
+/// ÁTOMOS - Wrappers de compatibilidad para migración gradual a pu_material
+///
+/// Estos componentes están marcados como deprecated y usan internamente
+/// los nuevos atoms de pu_material. Se recomienda migrar gradualmente
+/// al uso directo de los componentes de pu_material.
 
 /// Átomo: Avatar circular con icono
+/// @deprecated Use UserAvatarAtom from pu_material instead
 class CustomerAvatar extends StatelessWidget {
   const CustomerAvatar({
     super.key,
@@ -18,23 +22,15 @@ class CustomerAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: PUColors.primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(size / 2),
-      ),
-      child: Icon(
-        icon,
-        size: size * 0.5,
-        color: PUColors.primaryColor,
-      ),
+    return UserAvatarAtom(
+      size: size,
+      icon: icon,
     );
   }
 }
 
 /// Átomo: Texto de título principal
+/// @deprecated Use TitleAtom with level TitleLevel.h2 from pu_material instead
 class CustomerTitle extends StatelessWidget {
   const CustomerTitle({
     super.key,
@@ -47,18 +43,15 @@ class CustomerTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: PuTextStyle.title2.copyWith(
-        fontSize: fontSize,
-        fontWeight: FontWeight.w600,
-        color: PUColors.textColor1,
-      ),
+    return TitleAtom(
+      text: text,
+      level: TitleLevel.h2,
     );
   }
 }
 
 /// Átomo: Texto de subtítulo
+/// @deprecated Use SubtitleAtom with variant SubtitleVariant.description from pu_material instead
 class CustomerSubtitle extends StatelessWidget {
   const CustomerSubtitle({
     super.key,
@@ -71,17 +64,16 @@ class CustomerSubtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: PuTextStyle.description1.copyWith(
-        fontSize: fontSize,
-        color: PUColors.textColor3,
-      ),
+    return SubtitleAtom(
+      text: text,
+      variant: SubtitleVariant.description,
+      fontSize: fontSize,
     );
   }
 }
 
 /// Átomo: Texto de sección
+/// @deprecated Use TitleAtom with level TitleLevel.section from pu_material instead
 class CustomerSectionTitle extends StatelessWidget {
   const CustomerSectionTitle({
     super.key,
@@ -94,18 +86,15 @@ class CustomerSectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: PuTextStyle.title3.copyWith(
-        fontSize: fontSize,
-        fontWeight: FontWeight.w600,
-        color: PUColors.textColor1,
-      ),
+    return TitleAtom(
+      text: text,
+      level: TitleLevel.section,
     );
   }
 }
 
 /// Átomo: Icono con color primario
+/// @deprecated Use IconAtom from pu_material instead
 class CustomerIcon extends StatelessWidget {
   const CustomerIcon({
     super.key,
@@ -118,15 +107,15 @@ class CustomerIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Icon(
-      icon,
+    return IconAtom(
+      icon: icon,
       size: size,
-      color: PUColors.primaryColor,
     );
   }
 }
 
 /// Átomo: Contenedor base con bordes redondeados
+/// @deprecated Use ContainerAtom with variant ContainerVariant.card from pu_material instead
 class CustomerContainer extends StatelessWidget {
   const CustomerContainer({
     super.key,
@@ -139,15 +128,9 @@ class CustomerContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return ContainerAtom(
+      variant: ContainerVariant.card,
       padding: padding,
-      decoration: BoxDecoration(
-        color: PUColors.bgItem,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: PUColors.borderInputColor.withOpacity(0.2),
-        ),
-      ),
       child: child,
     );
   }

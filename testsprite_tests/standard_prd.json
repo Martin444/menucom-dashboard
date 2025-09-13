@@ -1,0 +1,116 @@
+{
+  "meta": {
+    "project": "MenuCom Dashboard Web Application",
+    "date": "2025-09-11",
+    "prepared_by": "Software Development Manager"
+  },
+  "product_overview": "MenuCom Dashboard Web Application is a Flutter-based web platform providing authenticated users with a comprehensive management interface featuring a scalable navigational menu and secure social login capabilities. It leverages Firebase Authentication, REST APIs, and GetX for efficient state and navigation management.",
+  "core_goals": [
+    "Enable seamless and secure user authentication including Google social login leveraging Firebase and backend token validation.",
+    "Provide a robust, scalable, and maintainable sidebar navigation system with clear visual feedback and role-based access control.",
+    "Implement smooth user experience with responsive, accessible UI components following Material Design principles.",
+    "Ensure clean architecture and separation of concerns to facilitate maintainability and future expansion.",
+    "Provide robust error handling and logging for effective debugging and user feedback."
+  ],
+  "key_features": [
+    "Google Sign-In social authentication fully integrated with Firebase and backend JWT token issuance via SocialLoginUseCase.",
+    "Responsive and Material3-styled Google Sign-In button component with comprehensive state management (loading, success, error).",
+    "Comprehensive integration and configuration for web platform including environment variables and Firebase SDK setup.",
+    "Centralized and extensible sidebar menu navigation system with role-based item filtering, automatic route detection, and enhanced visual states including badges and animations.",
+    "Improved user avatar display with role and business type formatting in the sidebar.",
+    "Robust error handling and feedback mechanisms for authentication flows with snackbar notifications for users.",
+    "Clean architecture separation using GetX for state and navigation control, bindings for dependency injection, and REST API integration for backend communication.",
+    "Testing strategies and debugging support with detailed logging for authentication and navigation components."
+  ],
+  "user_flow_summary": [
+    "User lands on login page and uses Google Sign-In button to initiate social login.",
+    "Upon Google authentication, Firebase user token is retrieved and used to request a JWT token from backend via SocialLoginUseCase.",
+    "On successful authentication, user receives access token stored securely and is redirected to the dashboard.",
+    "The sidebar navigation loads menu items filtered according to the user’s assigned role and permissions.",
+    "User selects menu items which trigger navigation to appropriate routes with visual selection indicators and smooth animations.",
+    "User can trigger logout or access profile and other management sections as permitted.",
+    "Error states during login or navigation show contextual snackbars or dialogs with user-friendly messages.",
+    "The system logs key events and errors to assist in debugging and monitoring.",
+    "Future features like badges for notifications and dynamic menu groupings can easily be integrated due to the scalable design."
+  ],
+  "validation_criteria": [
+    "All social login flows work successfully on supported web browsers without error, including proper handling of cancellations and errors.",
+    "JWT token is correctly received from backend and used for authenticated requests in the session.",
+    "Sidebar navigation displays appropriate menu items based on user role and permissions consistently.",
+    "Navigation correctly updates selection states according to current route and provides smooth visual transitions.",
+    "Google Sign-In button passes all usability and visual design requirements including Material3 compliance and responsive layout.",
+    "Error feedback is consistent and informative for users, with snackbar messages for failures in login and backend validation.",
+    "Codebase is free from compilation errors and passes existing automated tests relevant to authentication and navigation.",
+    "Logging is enabled and captures relevant lifecycle and error information during login and navigation processes.",
+    "Environment configurations and secrets (e.g., client IDs) are correctly loaded and used in app initialization.",
+    "Future scalability and maintainability requirements are met, demonstrated by ease of adding new menu items or social login providers."
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "Dart",
+      "Flutter (Web)",
+      "GetX",
+      "Firebase Authentication",
+      "REST API (menu_dart_api)",
+      "Netlify (Hosting)"
+    ],
+    "features": [
+      {
+        "name": "App Bootstrap and Routing",
+        "description": "Punto de entrada de la app Flutter Web, inicialización y configuración global de MaterialApp/GetMaterialApp, assets web y metadatos.",
+        "files": [
+          "lib/main.dart",
+          "web/index.html",
+          "web/logomenucom.png"
+        ]
+      },
+      {
+        "name": "Authentication (Firebase)",
+        "description": "Datasource para autenticación con Firebase (posibles métodos de login/email y social). Documentación de integración social login.",
+        "files": [
+          "lib/features/auth/data/datasources/auth_firebase_datasource.dart",
+          "SOCIAL_LOGIN_INTEGRATION.md"
+        ]
+      },
+      {
+        "name": "Wardrobes - UI",
+        "description": "Pantallas de creación/edición de guardarropas e items de guardarropa.",
+        "files": [
+          "lib/features/wardrobes/presentation/views/create_ward_page.dart",
+          "lib/features/wardrobes/presentation/views/create_ward_item_page.dart"
+        ]
+      },
+      {
+        "name": "Wardrobes - State Management (GetX)",
+        "description": "Controladores GetX para manejo de estado, acciones y binding de la feature de guardarropas.",
+        "files": [
+          "lib/features/wardrobes/getx/wardrobes_controller.dart"
+        ]
+      },
+      {
+        "name": "Wardrobes - Domain and Data (API)",
+        "description": "Capa de dominio y data para operaciones de guardarropa. Incluye use cases y providers para PUT de guardarropa usando el módulo menu_dart_api.",
+        "files": [
+          "menu_dart_api/lib/by_feature/wardrobe/put_wardrobe/data/usescase/put_wardrobe_usecase.dart",
+          "menu_dart_api/lib/by_feature/wardrobe/put_wardrobe/data/provider/put_wardrobes_provider.dart"
+        ]
+      },
+      {
+        "name": "Core - Global Dialogs",
+        "description": "Manejadores globales de diálogos, feedback de UI y alertas reutilizables.",
+        "files": [
+          "lib/core/handles/global_handle_dialogs.dart"
+        ]
+      },
+      {
+        "name": "Project Configuration",
+        "description": "Metadatos del proyecto, dependencias y configuración de despliegue/editor.",
+        "files": [
+          "pubspec.yaml",
+          "netlify.toml",
+          ".vscode/launch.json"
+        ]
+      }
+    ]
+  }
+}

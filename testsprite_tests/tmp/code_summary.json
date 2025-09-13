@@ -1,0 +1,344 @@
+{
+  "tech_stack": [
+    "Dart",
+    "Flutter",
+    "Firebase",
+    "GetX",
+    "Material Design 3",
+    "Google Sign-In",
+    "Apple Sign-In",
+    "Netlify",
+    "REST API",
+    "SVG",
+    "URL Launcher"
+  ],
+  "architectural_guidelines": [
+    {
+      "rule": "❌ NUNCA escribir funciones que retornen widgets",
+      "description": "Siempre encapsular widgets en clases dedicadas con nombres claros. Evitar métodos como _buildSomething() que retornen Widget.",
+      "correct_approach": "Crear clases Widget específicas (ej: BusinessCardHeader, ContactSection) en lugar de métodos _buildHeader(), _buildContactSection()",
+      "reason": "Mejora la separación de responsabilidades, reutilización, mantenibilidad y escalabilidad del código",
+      "enforced_since": "2025-09-12",
+      "applies_to": "Todo el codebase, especialmente componentes de UI y design system"
+    },
+    {
+      "rule": "✅ Aplicar atomic design consistentemente",
+      "description": "Separar componentes en átomos, moléculas, organismos, templates y páginas",
+      "structure": "atoms/ → molecules/ → organisms/ → templates/ → pages/",
+      "applies_to": "Design system pu_material y features UI"
+    },
+    {
+      "rule": "✅ Priorizar StatelessWidget sobre StatefulWidget",
+      "description": "Usar StatelessWidget salvo que el estado sea estrictamente necesario",
+      "applies_to": "Todos los componentes UI"
+    },
+    {
+      "rule": "✅ Separar lógica de negocio de widgets",
+      "description": "Delegar lógica a helpers, providers, repositories o services",
+      "applies_to": "Controllers, services, repositories"
+    },
+    {
+      "rule": "✅ Usar const y final siempre que sea posible",
+      "description": "Optimizar rendimiento con constructores const y variables final",
+      "applies_to": "Todo el codebase"
+    },
+    {
+      "rule": "✅ Implementar diseño responsivo en componentes UI",
+      "description": "Los botones y componentes deben adaptarse a diferentes tamaños de pantalla. Usar Wrap en lugar de Row cuando sea necesario para evitar overflow",
+      "correct_approach": "Implementar lógica responsiva: Row+Expanded para 1-2 elementos, Wrap para 3+ elementos o pantallas pequeñas",
+      "reason": "Previene problemas de overflow y mejora la experiencia en dispositivos móviles y diferentes resoluciones",
+      "enforced_since": "2025-09-12",
+      "applies_to": "Especialmente BusinessCardActionsSection y componentes con múltiples botones"
+    },
+    {
+      "rule": "✅ Separar widgets en archivos individuales",
+      "description": "Un archivo no puede tener muchos widgets. Separar cada widget en su propio archivo para mejor comprensión y mantenimiento",
+      "correct_approach": "Crear archivos específicos por widget: business_card_header.dart, contact_section.dart, etc.",
+      "reason": "Facilita la navegación, comprensión del código, debugging y colaboración en equipo",
+      "enforced_since": "2025-09-12",
+      "applies_to": "Todo el design system y componentes UI complejos"
+    }
+  ],
+  "features": [
+    {
+      "name": "Authentication System",
+      "description": "Complete authentication system with Firebase integration, social login (Google/Apple), email/password login, and session management",
+      "files": [
+        "lib/features/auth/config/firebase_config.dart",
+        "lib/features/auth/data/datasources/auth_firebase_datasource.dart",
+        "lib/features/auth/data/repositories/auth_repository_impl.dart",
+        "lib/features/auth/domain/repositories/auth_repository.dart",
+        "lib/features/auth/domain/usecases/login_with_social_usecase.dart",
+        "lib/features/auth/domain/usecases/register_user_usecase.dart",
+        "lib/features/auth/presentation/controllers/auth_controller.dart",
+        "lib/features/login/controllers/login_controller.dart"
+      ]
+    },
+    {
+      "name": "Navigation System",
+      "description": "Advanced navigation system with GetX routing, menu navigation controller, and state synchronization",
+      "files": [
+        "lib/core/navigation/menu_navigation_controller.dart",
+        "lib/core/navigation/menu_navigation_items.dart",
+        "lib/core/bindings/menu_navigation_binding.dart",
+        "lib/core/mixins/navigation_state_mixin.dart",
+        "lib/widgets/navigation_state_sync.dart",
+        "lib/routes/routes.dart",
+        "lib/routes/pages.dart"
+      ]
+    },
+    {
+      "name": "Design System (PU Material)",
+      "description": "Comprehensive design system following atomic design principles with reusable components, typography, colors, and UI elements. Now includes store URL redirection functionality in BusinessCardMolecule for seamless e-commerce integration.",
+      "files": [
+        "pu_material/lib/pu_material.dart",
+        "pu_material/lib/utils/pu_colors.dart",
+        "pu_material/lib/utils/style/pu_style_fonts.dart",
+        "pu_material/lib/atoms/",
+        "pu_material/lib/molecule/business_card_molecule.dart",
+        "pu_material/lib/organisms/",
+        "pu_material/lib/widgets/"
+      ],
+      "new_features": [
+        {
+          "name": "Store URL Integration",
+          "description": "BusinessCardMolecule now supports storeURL field with automatic 'Ir a Tienda' button generation",
+          "implementation": "Automatic action button creation when storeURL is provided, with customizable onStoreUrlTap callback",
+          "added_date": "2025-09-12"
+        }
+      ]
+    },
+    {
+      "name": "Customer Management Interface",
+      "description": "Customer-focused interface with atomic design structure including customer cards, molecules, atoms, and organisms",
+      "files": [
+        "lib/features/home/presentation/views/customer/atoms/customer_atoms.dart",
+        "lib/features/home/presentation/views/customer/molecules/customer_molecules.dart",
+        "lib/features/home/presentation/views/customer/organisms/customer_organisms.dart",
+        "lib/features/home/presentation/views/customer/pages/customer_home_view.dart"
+      ]
+    },
+    {
+      "name": "Business Selection System",
+      "description": "Feature for selecting and managing business entities with dedicated UI components",
+      "files": [
+        "lib/features/business_selection/"
+      ]
+    },
+    {
+      "name": "Orders Management",
+      "description": "Complete orders management system with tables, cards, status tracking, and specialized UI components",
+      "files": [
+        "lib/features/orders/",
+        "pu_material/lib/features/orders/models/order.dart",
+        "pu_material/lib/features/orders/ui/atoms/",
+        "pu_material/lib/features/orders/ui/molecules/",
+        "pu_material/lib/features/orders/ui/organisms/",
+        "pu_material/lib/features/orders/ui/templates/"
+      ]
+    },
+    {
+      "name": "Menu Management",
+      "description": "System for managing restaurant menus with items, categories, and pricing using MenuCom API",
+      "files": [
+        "lib/features/menu/",
+        "menu_dart_api/lib/by_feature/menu/",
+        "lib/features/home/controllers/dinning_controller.dart",
+        "lib/features/home/controllers/dinning_binding.dart"
+      ]
+    },
+    {
+      "name": "Profile Management",
+      "description": "User profile management with edit capabilities and responsive design",
+      "files": [
+        "lib/features/profile/"
+      ]
+    },
+    {
+      "name": "Wardrobes Feature",
+      "description": "Wardrobe management system with grid layouts, statistics, and item organization",
+      "files": [
+        "lib/features/wardrobes/",
+        "pu_material/lib/atoms/ward_statistics_atom.dart",
+        "pu_material/lib/molecule/ward_item_grid.dart",
+        "pu_material/lib/organisms/wards_home_organism.dart"
+      ]
+    },
+    {
+      "name": "Home Dashboard",
+      "description": "Main dashboard interface with dining management and home controllers",
+      "files": [
+        "lib/features/home/controllers/dinning_controller.dart",
+        "lib/features/home/controllers/dinning_binding.dart",
+        "lib/features/home/presentation/"
+      ]
+    },
+    {
+      "name": "State Management",
+      "description": "GetX-based state management with controllers, bindings, and reactive programming",
+      "files": [
+        "lib/core/injection_bindings.dart",
+        "lib/core/bindings/"
+      ]
+    },
+    {
+      "name": "API Integration",
+      "description": "MenuCom API integration with social login, user management, and data services. Updated UserByRoleModel to include storeURL field for e-commerce store redirection functionality.",
+      "files": [
+        "menu_dart_api/lib/",
+        "menu_dart_api/lib/by_feature/auth/social_login/",
+        "menu_dart_api/lib/by_feature/menu/get_menu_bydinning/",
+        "menu_dart_api/lib/by_feature/user/get_users_by_roles/model/user_by_role_model.dart",
+        "lib/core/config.dart"
+      ],
+      "model_updates": [
+        {
+          "model": "UserByRoleModel",
+          "new_field": "storeURL",
+          "description": "URL de la tienda del usuario para redirección directa desde BusinessCard",
+          "type": "String?",
+          "updated_date": "2025-09-12"
+        }
+      ]
+    },
+    {
+      "name": "UI Components Library",
+      "description": "Extensive collection of reusable UI components following atomic design principles",
+      "files": [
+        "pu_material/lib/widgets/buttons/",
+        "pu_material/lib/widgets/inputs/",
+        "pu_material/lib/widgets/dialogs/",
+        "pu_material/lib/widgets/menu/"
+      ]
+    },
+    {
+      "name": "Network Image Handling",
+      "description": "Robust network image loading with caching, error handling, and loading states",
+      "files": [
+        "pu_material/lib/widgets/pu_robust_network_image.dart"
+      ]
+    },
+    {
+      "name": "Form Validation",
+      "description": "Comprehensive form validation utilities and input components",
+      "files": [
+        "pu_material/lib/utils/validators/validators_utils.dart",
+        "pu_material/lib/widgets/inputs/"
+      ]
+    },
+    {
+      "name": "Responsive Design",
+      "description": "Mobile-first responsive design with adaptive layouts and components",
+      "files": [
+        "pu_material/lib/atoms/grid_layout_atom.dart",
+        "lib/features/home/presentation/views/customer/"
+      ]
+    },
+    {
+      "name": "Firebase Configuration",
+      "description": "Complete Firebase setup with web, iOS, and Android configurations",
+      "files": [
+        "lib/features/auth/config/firebase_config.dart",
+        "web/index.html"
+      ]
+    },
+    {
+      "name": "Environment Configuration",
+      "description": "Environment-based configuration system with secure credential management",
+      "files": [
+        ".env",
+        ".env.example",
+        ".vscode/launch.json"
+      ]
+    },
+    {
+      "name": "Commerce Card System",
+      "description": "Advanced commerce card component with store visit functionality, contact info, menu integration, URL launching, and direct store redirection through storeURL field",
+      "files": [
+        "lib/features/home/presentation/views/customer/molecules/customer_molecules.dart",
+        "pu_material/lib/molecule/business_card_molecule.dart",
+        "COMMERCE_CARD_EXAMPLE.dart"
+      ],
+      "store_integration": {
+        "description": "Seamless integration with store URLs from UserByRoleModel API response",
+        "features": [
+          "Automatic 'Ir a Tienda' button generation when storeURL is provided",
+          "Customizable onStoreUrlTap callback for URL handling implementation",
+          "Integration with users by roles API response structure",
+          "Fallback debug logging when no custom handler is provided"
+        ],
+        "implementation_date": "2025-09-12"
+      }
+    },
+    {
+      "name": "Utility Functions",
+      "description": "Core utility functions for application configuration and common operations",
+      "files": [
+        "lib/core/utils/",
+        "lib/core/functions/",
+        "lib/core/handles/"
+      ]
+    },
+    {
+      "name": "Middleware System",
+      "description": "Application middleware for route protection and request handling",
+      "files": [
+        "lib/core/middlewares/"
+      ]
+    },
+    {
+      "name": "Testing Infrastructure",
+      "description": "Automated testing setup with test sprite integration and comprehensive test suites",
+      "files": [
+        "test/widget_test.dart",
+        "testsprite_tests/"
+      ]
+    },
+    {
+      "name": "Build and Deployment",
+      "description": "Build configuration and deployment setup for web and mobile platforms",
+      "files": [
+        "pubspec.yaml",
+        "analysis_options.yaml",
+        "netlify.toml",
+        "web/",
+        "build/"
+      ]
+    }
+  ],
+  "recent_updates": {
+    "date": "2025-09-12",
+    "summary": "Store URL Integration for E-commerce Redirection",
+    "changes": [
+      {
+        "component": "UserByRoleModel",
+        "file": "menu_dart_api/lib/by_feature/user/get_users_by_roles/model/user_by_role_model.dart",
+        "change": "Added storeURL field to support direct store redirection from API response",
+        "impact": "Enables seamless integration between user data and commerce functionality"
+      },
+      {
+        "component": "BusinessCardMolecule",
+        "file": "pu_material/lib/molecule/business_card_molecule.dart",
+        "change": "Added automatic 'Ir a Tienda' button generation when storeURL is provided",
+        "impact": "Provides direct access to user stores from business cards",
+        "features": [
+          "storeURL parameter support",
+          "onStoreUrlTap customizable callback",
+          "Automatic action button generation",
+          "Fallback debug logging"
+        ]
+      },
+      {
+        "component": "API Integration Flow",
+        "description": "Complete flow from API response to UI interaction",
+        "workflow": [
+          "API returns user data with storeURL field",
+          "UserByRoleModel parses and stores storeURL",
+          "BusinessCardMolecule automatically shows store button",
+          "User taps button to navigate to store"
+        ]
+      }
+    ],
+    "architectural_compliance": "All changes follow established architectural guidelines: no widget-returning functions, proper atomic design structure, and clear separation of concerns"
+  }
+}

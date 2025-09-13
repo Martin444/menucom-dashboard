@@ -1,0 +1,18 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:55164",
+  "loginUser": "username@username.com",
+  "loginPassword": "password",
+  "executionArgs": {
+    "projectName": "menucom-dashboard",
+    "projectPath": "c:\\Users\\aleja\\OneDrive\\Escritorio\\Menucom\\menucom-dashboard",
+    "testIds": [],
+    "additionalInstruction": "",
+    "envs": {
+      "API_KEY": "sk-user-_xmxgY3AMDZxSn0ss4OdA1zT_gh96ISMn-tdRBl4x3MuNu-GAhwXcMOzOqBq7tP5SExqAhe6kLRj1rM07cLgK6gGq6CJkR8fS5nUHvawBVBjYXKAm000XnzM20RhisojbNc"
+    }
+  },
+  "proxy": "http://5833d4d3-712a-444f-a28b-9667fe86aca5:XyxSjRrD850KVh2ke3s0XTEJ1OTEyxW2@tun.testsprite.com:8080"
+}

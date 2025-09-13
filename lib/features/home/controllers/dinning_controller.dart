@@ -1,3 +1,4 @@
+import '../../../helpers/token_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
@@ -8,6 +9,14 @@ import '../../../core/config.dart';
 import '../../../core/mixins/navigation_state_mixin.dart';
 
 class DinningController extends GetxController with NavigationStateMixin {
+  /// Hashea el accessToken actual de la sesión
+  String getHashedAccessToken() {
+    debugPrint("Access Token: ${ACCESS_TOKEN}");
+    var hashed = hashAccessToken(ACCESS_TOKEN);
+    debugPrint("Hashed Access Token: $hashed");
+    return hashed;
+  }
+
   DinningModel dinningLogin = DinningModel();
 
   bool isLoaginDataUser = false;

@@ -1,0 +1,375 @@
+[
+  {
+    "id": "TC001",
+    "title": "Google Sign-In Successful Authentication",
+    "description": "Test the successful Google social login flow using Firebase Authentication, ensuring JWT token retrieval and dashboard redirection.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Click on the Google Sign-In button."
+      },
+      {
+        "type": "action",
+        "description": "Complete the Google OAuth flow successfully."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that Firebase user token is obtained."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the JWT token is requested and received from backend via SocialLoginUseCase."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the JWT token is securely stored in session/local storage."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the user is redirected to the dashboard page."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Google Sign-In Cancellation Handling",
+    "description": "Verify that cancelling the Google OAuth login process is handled gracefully with appropriate user feedback.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Click on the Google Sign-In button."
+      },
+      {
+        "type": "action",
+        "description": "Cancel the Google OAuth login process before completion."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the application shows an appropriate snackbar message indicating login was cancelled."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that no JWT token or user session is created."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Google Sign-In Error Handling on Authentication Failure",
+    "description": "Tests the scenario where Google sign-in fails due to errors such as network issues or invalid client configuration and proper error feedback is given.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Click on the Google Sign-In button."
+      },
+      {
+        "type": "action",
+        "description": "Simulate Google OAuth failure (e.g., network failure or invalid credentials)."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that an error snackbar with user-friendly message is shown."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that no user session or JWT token is stored."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Responsive Google Sign-In Button UI States",
+    "description": "Verify Google Sign-In button component UI states (loading, success, error) are displayed correctly and is responsive across screen sizes.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Trigger Google Sign-In loading state."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify loading spinner or indicator is visible on the button."
+      },
+      {
+        "type": "action",
+        "description": "Simulate sign-in success state."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify success feedback (e.g., button color change or icon) is displayed."
+      },
+      {
+        "type": "action",
+        "description": "Simulate sign-in error state."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error indicator or message on the button is shown."
+      },
+      {
+        "type": "action",
+        "description": "Resize browser window to multiple common screen sizes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify button remains fully visible, functional and uses Material3 styling correctly."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Sidebar Menu Role-Based Access Control",
+    "description": "Verify sidebar menu items are filtered and displayed correctly according to the authenticated user’s role and permissions.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as a user with Role A."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that only menu items permitted for Role A are visible."
+      },
+      {
+        "type": "action",
+        "description": "Login as a user with Role B."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that only menu items permitted for Role B are visible."
+      },
+      {
+        "type": "action",
+        "description": "Login as a user with multiple roles or elevated permissions."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the sidebar correctly merges and displays all allowed menu items."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Sidebar Navigation Selection and Visual Feedback",
+    "description": "Verify smooth navigation on menu item selection, with correct route updates, selection highlights, visual animations and badge displays.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login and load sidebar menu."
+      },
+      {
+        "type": "action",
+        "description": "Click on each available menu item sequentially."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the application navigates to the correct route for each click."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that the clicked menu item visually shows as selected with highlight/animation."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that menu badge counts (if any) are displayed correctly."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "User Avatar Display with Role and Business Type Formatting",
+    "description": "Verify that the user avatar in the sidebar correctly displays with proper role and business type formatting.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as a user with role and business type metadata."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that avatar is shown in sidebar."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the displayed role and business type labels (e.g., text, badges) are correct and formatted properly."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Logout Flow and Session Clearance",
+    "description": "Verify user can trigger logout from the dashboard and session tokens are cleared securely, redirecting to login.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login successfully and load dashboard."
+      },
+      {
+        "type": "action",
+        "description": "Trigger the logout action via sidebar or profile section."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user session and JWT token are cleared from storage."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the app redirects the user back to the login page."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Error Feedback for Backend Validation Failures",
+    "description": "Validate that backend errors during JWT token validation or API calls are shown to the user with detailed but user-friendly snackbars.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate backend validation failure during token retrieval or API call."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user sees a snackbar with appropriate error message without app crash."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify retry mechanisms or options are provided if applicable."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Environment Configuration Loading and Initialization",
+    "description": "Verify environment variables such as client IDs and Firebase SDK configurations load properly and initialize the app without errors.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Start the application with given environment configurations."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify Firebase SDK initializes correctly."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify environment-specific variables such as OAuth client IDs are loaded and used."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that no initialization or configuration errors appear in logs or UI."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Logging Behavior During Authentication and Navigation",
+    "description": "Verify that all key lifecycle events, authentication states, and navigation actions are logged for debugging and monitoring purposes.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Perform a complete login flow including social authentication."
+      },
+      {
+        "type": "action",
+        "description": "Navigate through multiple sidebar menu items."
+      },
+      {
+        "type": "assertion",
+        "description": "Check application logs include detailed records of login attempts, token retrieval, role-based menu filtering, and navigation actions."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that errors (if any) in authentication or navigation are logged with details."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Compatibility Across Supported Web Browsers",
+    "description": "Validate that the social login flow, sidebar navigation, and UI components function as expected on all supported web browsers.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open the application on supported browsers (e.g., Chrome, Firefox, Edge, Safari)."
+      },
+      {
+        "type": "action",
+        "description": "Execute complete Google Sign-In and dashboard navigation flows."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no functional or visual errors occur in all tested browsers."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify UI responsiveness and Material3 compliance across browsers."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Scalability of Menu with Dynamic Items and Future Features",
+    "description": "Test adding new menu items and dynamic badge features to ensure the architecture supports maintainability and future expansion without regression.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Add a new menu group and items programmatically with badges."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new menu items appear correctly, filtered by roles as applicable."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that badges display with animations correctly."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to newly added routes from sidebar."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify smooth navigation and visual feedback remain consistent."
+      }
+    ]
+  }
+]

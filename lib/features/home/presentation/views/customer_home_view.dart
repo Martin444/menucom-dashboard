@@ -65,12 +65,14 @@ class _CustomerHomeViewState extends State<CustomerHomeView> {
                         commercesList: controller.usersByRolesList,
                         isLoadingCommerces: controller.isLoadingUsersByRoles,
                         onCommerceSelected: _onCommerceSelected,
+                        accessTokenHashed: controller.getHashedAccessToken(),
                       )
                     : CustomerDesktopTemplate(
                         userName: userName,
                         commercesList: controller.usersByRolesList,
                         isLoadingCommerces: controller.isLoadingUsersByRoles,
                         onCommerceSelected: _onCommerceSelected,
+                        accessTokenHashed: controller.getHashedAccessToken(),
                       ),
               ),
             );

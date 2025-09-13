@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 
+/// Widget de transición que usa la nueva CategoryTileMolecule de pu_material
+///
+/// Esta es una capa de compatibilidad que mantiene la API existente mientras
+/// migra al nuevo sistema de componentes reutilizables.
+///
+/// @deprecated Use CategoryTileMolecule directly from pu_material
 class ItemCategoryTile<T> extends StatelessWidget {
   final T? item;
   final Function(T)? onEdit;
@@ -23,61 +27,27 @@ class ItemCategoryTile<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        onSelect!(item as T);
+    final currentItem = item;
+    final currentDescriptionBuilder = descriptionBuilder;
+
+    if (currentItem == null || currentDescriptionBuilder == null) {
+      return const SizedBox.shrink();
+    }
+
+    // Usar la nueva CategoryTileMolecule de pu_material
+    return CategoryTileMolecule<T>(
+      item: currentItem,
+      label: currentDescriptionBuilder(currentItem),
+      isSelected: isSelected ?? false,
+      onSelect: (selectedItem) {
+        if (onSelect != null) {
+          onSelect!(selectedItem);
+        }
       },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        padding: const EdgeInsets.symmetric(
-          vertical: 5,
-          horizontal: 10,
-        ),
-        decoration: BoxDecoration(
-          color: isSelected ?? false ? PUColors.bgCategorySelected : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              descriptionBuilder!(item as T),
-              style: PuTextStyle.textbtnStyle,
-            ),
-            Row(
-              children: [
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () {
-                      onEdit!(item as T);
-                    },
-                    child: Icon(
-                      FluentIcons.edit_24_regular,
-                      size: 20,
-                      color: PUColors.primaryColor,
-                    ),
-                  ),
-                ),
-                //El boton de borrar solo se debe mostrar si el usuario tiene permisos
-                // MouseRegion(
-                //   cursor: SystemMouseCursors.click,
-                //   child: GestureDetector(
-                //     onTap: () {
-                //       onDelete!(item as T);
-                //     },
-                //     child: Icon(
-                //       FluentIcons.delete_24_regular,
-                //       size: 20,
-                //       color: Colors.red,
-                //     ),
-                //   ),
-                // ),
-              ],
-            ),
-          ],
-        ),
-      ),
+      onEdit: onEdit != null ? (selectedItem) => onEdit!(selectedItem) : null,
+      onDelete: onDelete != null ? (selectedItem) => onDelete!(selectedItem) : null,
+      showEditAction: onEdit != null,
+      showDeleteAction: onDelete != null,
     );
   }
 }
