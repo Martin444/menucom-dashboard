@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pu_material/pu_material.dart';
+import 'package:pu_material/utils/pu_assets.dart';
 import '../controllers/business_selection_controller.dart';
 import '../widgets/business_type_card.dart';
 import '../../models/business_type.dart';
@@ -132,7 +133,7 @@ class BusinessSelectionPage extends StatelessWidget {
       slivers: [
         // App Bar personalizado
         SliverAppBar(
-          expandedHeight: isTablet ? 220 : 180,
+          expandedHeight: isTablet ? 240 : 360,
           floating: false,
           pinned: true,
           backgroundColor: PUColors.primaryBackground,
@@ -146,40 +147,121 @@ class BusinessSelectionPage extends StatelessWidget {
             ),
           ),
           flexibleSpace: FlexibleSpaceBar(
-            background: Container(
-              padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 60, 20, 20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    PUColors.primaryColor.withValues(alpha: 0.1),
-                    PUColors.secundaryBackground.withValues(alpha: 0.05),
-                  ],
+            background: Stack(
+              children: [
+                // Fondo con gradiente más intenso y decorativo
+                Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        PUColors.primaryColor.withValues(alpha: 0.22),
+                        PUColors.primaryColor.withValues(alpha: 0.09),
+                        PUColors.secundaryBackground.withValues(alpha: 0.08),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '¡Comenzá tu emprendimiento!',
-                    style: PuTextStyle.title1.copyWith(
-                      fontSize: isTablet ? 28 : 24,
-                      fontWeight: FontWeight.w700,
-                      color: PUColors.textColor3,
+                // Icono grande decorativo arriba del título
+                Positioned(
+                  top: MediaQuery.of(context).padding.top + 18,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      width: isTablet ? 70 : 90,
+                      height: isTablet ? 70 : 90,
+                      decoration: BoxDecoration(
+                        color: PUColors.primaryColor.withValues(alpha: 0.13),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: PUColors.primaryColor.withValues(alpha: 0.18),
+                            blurRadius: 18,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Hero(
+                        tag: 'dashLogo',
+                        child: Image.asset(
+                          PUImages.dashLogo,
+                          height: 90,
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Elegí el tipo de negocio que mejor se adapte a tu emprendimiento.',
-                    style: PuTextStyle.title3.copyWith(
-                      fontSize: isTablet ? 16 : 14,
-                      color: PUColors.textColor1,
-                      height: 1.4,
+                ),
+                // Título y subtítulo con sombra
+                Positioned(
+                  top: MediaQuery.of(context).padding.top + (isTablet ? 100 : 130),
+                  left: 20,
+                  right: 20,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '¡Comenzá tu emprendimiento!',
+                        style: PuTextStyle.title1.copyWith(
+                          fontSize: isTablet ? 32 : 28,
+                          fontWeight: FontWeight.w800,
+                          color: PUColors.textColor3,
+                          shadows: [
+                            Shadow(
+                              color: PUColors.primaryColor.withValues(alpha: 0.18),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Elegí el tipo de negocio que mejor se adapte a tu emprendimiento.',
+                        style: PuTextStyle.title3.copyWith(
+                          fontSize: isTablet ? 17 : 15,
+                          color: PUColors.textColor1,
+                          height: 1.4,
+                          fontWeight: FontWeight.w500,
+                          shadows: [
+                            Shadow(
+                              color: PUColors.primaryColor.withValues(alpha: 0.10),
+                              blurRadius: 6,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Detalle decorativo inferior (borde curvo)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: PUColors.primaryBackground,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(32),
+                        topRight: Radius.circular(32),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: PUColors.primaryColor.withValues(alpha: 0.08),
+                          blurRadius: 12,
+                          offset: const Offset(0, -2),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -190,12 +272,10 @@ class BusinessSelectionPage extends StatelessWidget {
           sliver: SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // Grid responsivo de opciones
-                _buildBusinessTypesGrid(
-                  controller,
-                  crossAxisCount: isTablet ? 2 : 1,
-                ),
+                _buildBusinessTypesGrid(controller, context, crossAxisCount: isTablet ? 1 : 1),
 
                 const SizedBox(height: 24),
 
@@ -203,7 +283,7 @@ class BusinessSelectionPage extends StatelessWidget {
                 _buildMobileActionButtons(controller),
 
                 // Espacio adicional para evitar que el FAB tape el contenido
-                const SizedBox(height: 80),
+                const SizedBox(height: 40),
               ],
             ),
           ),
@@ -213,13 +293,15 @@ class BusinessSelectionPage extends StatelessWidget {
   }
 
   /// Grid de tipos de negocio adaptable
-  Widget _buildBusinessTypesGrid(BusinessSelectionController controller, {required int crossAxisCount}) {
+  Widget _buildBusinessTypesGrid(BusinessSelectionController controller, BuildContext context,
+      {required int crossAxisCount}) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
-        childAspectRatio: crossAxisCount == 1 ? 3.5 : 0.9, // Reducido de 1.2 a 0.9 para web
+        childAspectRatio:
+            crossAxisCount == 1 ? (MediaQuery.of(context).size.width > 600 ? 3.2 : 1.7) : 0.9, // Ajuste de proporción
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
       ),
@@ -229,6 +311,15 @@ class BusinessSelectionPage extends StatelessWidget {
 
         return Obx(() {
           final isSelected = controller.selectedBusinessType?.id == businessType.id;
+
+          // Use mobile-optimized card when grid is single-column (mobile)
+          if (crossAxisCount == 1) {
+            return BusinessTypeCardMobile(
+              businessType: businessType,
+              isSelected: isSelected,
+              onTap: () => controller.selectBusinessType(businessType),
+            );
+          }
 
           return BusinessTypeCard(
             businessType: businessType,

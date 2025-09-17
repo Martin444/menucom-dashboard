@@ -5,6 +5,7 @@ import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.
 import 'package:pickmeup_dashboard/features/home/presentation/views/customer_home_view.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/views/menu_home_view.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/views/ward_home_view.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/views/service_home_view.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/head_actions.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/starter_banner.dart';
@@ -248,6 +249,8 @@ class _RoleBasedView extends StatelessWidget {
     switch (role) {
       case RolesUsers.clothes:
         return WardsHomeView(isMobile: isMobile);
+      case RolesUsers.service:
+        return ServiceHomeView(isMobile: isMobile);
       case RolesUsers.dinning:
         return MenuHomeView(isMobile: isMobile);
       case RolesUsers.customer:
