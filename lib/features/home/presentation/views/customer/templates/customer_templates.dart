@@ -221,12 +221,19 @@ class CustomerDesktopTemplate extends StatelessWidget {
               // Columna principal - Comercios con scroll
               Expanded(
                 flex: 2,
-                child: CustomerFeaturedCommerces(
-                  isMobile: false,
-                  commercesList: commercesList,
-                  isLoading: isLoadingCommerces,
-                  onCommerceSelected: onCommerceSelected,
-                  accessTokenHashed: accessTokenHashed,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomerFeaturedCommerces(
+                        isMobile: false,
+                        commercesList: commercesList,
+                        isLoading: isLoadingCommerces,
+                        onCommerceSelected: onCommerceSelected,
+                        accessTokenHashed: accessTokenHashed,
+                      ),
+                    ],
+                  ),
                 ),
               ),
 

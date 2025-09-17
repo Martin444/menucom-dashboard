@@ -28,7 +28,7 @@ class MenuHomeView extends StatefulWidget {
 }
 
 class _MenuHomeViewState extends State<MenuHomeView> {
-  var menusController = Get.find<MenusController>();
+  final menusController = Get.put(MenusController());
 
   @override
   Widget build(BuildContext context) {

@@ -167,12 +167,12 @@ class CommerceCard extends StatelessWidget {
   List<ContactInfo> _buildContactInfo() {
     List<ContactInfo> contactList = [];
 
-    if (email != null && email!.trim().isNotEmpty && email!.contains('@')) {
-      contactList.add(ContactInfo(
-        icon: FluentIcons.mail_24_regular,
-        value: _maskEmail(email!),
-      ));
-    }
+    // if (email != null && email!.trim().isNotEmpty && email!.contains('@')) {
+    //   contactList.add(ContactInfo(
+    //     icon: FluentIcons.mail_24_regular,
+    //     value: _maskEmail(email!),
+    //   ));
+    // }
 
     if (phone != null && phone!.trim().isNotEmpty) {
       contactList.add(ContactInfo(

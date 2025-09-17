@@ -58,7 +58,7 @@ class _CustomerHomeViewState extends State<CustomerHomeView> {
             return SizedBox(
               height: constraints.maxHeight,
               child: Padding(
-                padding: EdgeInsets.all(widget.isMobile ? 16 : 24),
+                padding: EdgeInsets.symmetric(horizontal: 10),
                 child: widget.isMobile
                     ? CustomerMobileTemplate(
                         userName: userName,

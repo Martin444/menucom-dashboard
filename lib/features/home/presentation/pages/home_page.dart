@@ -100,8 +100,8 @@ class _MobileContent extends StatelessWidget {
 
         // Contenido principal
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
+          child: Center(
+            // padding: const EdgeInsets.symmetric(16),
             child: controller.everyListEmpty
                 ? _RoleBasedView(controller: controller, isMobile: true)
                 : StarterBanner(user: controller.dinningLogin),
