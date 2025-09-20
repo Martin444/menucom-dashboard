@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
+import 'package:pickmeup_dashboard/core/helpers/image_size_helper.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
 class WardrobesController extends GetxController {
@@ -74,14 +75,13 @@ class WardrobesController extends GetxController {
 
   void pickImageDirectory() async {
     final ImagePicker pickerImage = ImagePicker();
-
     final result = await pickerImage.pickImage(source: ImageSource.gallery);
-
     if (result != null) {
-      Uint8List newFile = await result.readAsBytes();
-      toSend = newFile;
-      // Upload file
-      fileTaked = await result.readAsBytes();
+      Uint8List originalFile = await result.readAsBytes();
+      // Reducir imagen si es necesario
+      Uint8List reducedFile = ImageSizeHelper.resizeIfNeeded(originalFile);
+      toSend = reducedFile;
+      fileTaked = reducedFile;
       update();
     }
   }

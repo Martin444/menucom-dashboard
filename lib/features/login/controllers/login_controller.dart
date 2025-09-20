@@ -1,3 +1,4 @@
+import 'package:pickmeup_dashboard/core/helpers/image_size_helper.dart';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -163,14 +164,13 @@ class LoginController extends GetxController {
 
   void pickImageDirectory() async {
     final ImagePicker pickerImage = ImagePicker();
-
     final result = await pickerImage.pickImage(source: ImageSource.gallery);
-
     if (result != null) {
-      Uint8List newFile = await result.readAsBytes();
-      toSend = newFile;
-      // Upload file
-      fileTaked = await result.readAsBytes();
+      Uint8List originalFile = await result.readAsBytes();
+      // Reducir imagen si es necesario
+      Uint8List reducedFile = ImageSizeHelper.resizeIfNeeded(originalFile);
+      toSend = reducedFile;
+      fileTaked = reducedFile;
       update();
     }
   }

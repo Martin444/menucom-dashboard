@@ -8,6 +8,7 @@ import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
 import '../../../core/handles/global_handle_dialogs.dart';
+import '../../../core/helpers/image_size_helper.dart';
 
 class MenusController extends GetxController {
   TextEditingController nameMenu = TextEditingController();
@@ -180,14 +181,13 @@ class MenusController extends GetxController {
 
   void pickImageDirectory() async {
     final ImagePicker pickerImage = ImagePicker();
-
     final result = await pickerImage.pickImage(source: ImageSource.gallery);
-
     if (result != null) {
-      Uint8List newFile = await result.readAsBytes();
-      toSend = newFile;
-      // Upload file
-      fileTaked = await result.readAsBytes();
+      Uint8List originalFile = await result.readAsBytes();
+      // Reducir imagen si es necesario
+      Uint8List reducedFile = ImageSizeHelper.resizeIfNeeded(originalFile);
+      toSend = reducedFile;
+      fileTaked = reducedFile;
       update();
     }
   }
