@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 /// Controlador para manejar la navegación del menú lateral
 class MenuNavigationController extends GetxController {
   /// Item actualmente seleccionado
-  Rx<MenuNavigationItem?> _currentItem = Rx<MenuNavigationItem?>(MenuNavigationItem.home);
+  final Rx<MenuNavigationItem?> _currentItem = Rx<MenuNavigationItem?>(MenuNavigationItem.home);
 
   /// Getter para el item actual
   MenuNavigationItem? get currentItem => _currentItem.value;

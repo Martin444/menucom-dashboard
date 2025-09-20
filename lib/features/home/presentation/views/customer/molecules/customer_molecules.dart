@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_model.dart';

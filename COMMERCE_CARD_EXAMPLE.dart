@@ -2,6 +2,7 @@
 ///
 /// Este archivo muestra cómo usar la CommerceCard actualizada con la nueva funcionalidad
 /// de "Visitar tienda" que incluye el parámetro storeUrl.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_model.dart';

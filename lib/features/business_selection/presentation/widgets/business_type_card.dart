@@ -1,5 +1,7 @@
 /// Widget optimizado para mobile, más legible y visual
 ///
+library;
+
 import 'package:flutter/material.dart';
 import 'package:pu_material/pu_material.dart';
 import '../../models/business_type.dart';

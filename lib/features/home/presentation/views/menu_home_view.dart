@@ -8,10 +8,6 @@ import 'package:pickmeup_dashboard/features/menu/get/menu_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
-import 'package:pu_material/utils/style/pu_style_containers.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
-import 'package:svg_flutter/svg.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 import '../../controllers/dinning_controller.dart';
 

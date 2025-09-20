@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

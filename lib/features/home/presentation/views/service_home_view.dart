@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 
 /// Vista para usuarios con rol `service`.
 /// Es un widget sencillo y responsivo que acepta `isMobile` para mantener

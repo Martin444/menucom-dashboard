@@ -14,10 +14,10 @@ Future<void> setupFCM({
   Future<void> Function(String fcmToken)? onTokenReceived,
   void Function(Object error)? onError,
 }) async {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   // 1. Solicitar permisos de notificación
-  NotificationSettings settings = await _firebaseMessaging.requestPermission(
+  NotificationSettings settings = await firebaseMessaging.requestPermission(
     alert: true,
     announcement: false,
     badge: true,
@@ -31,7 +31,7 @@ Future<void> setupFCM({
   debugPrint('User granted permission: ${settings.authorizationStatus}');
 
   // 2. Obtener el token de FCM
-  String? fcmToken = await _firebaseMessaging.getToken();
+  String? fcmToken = await firebaseMessaging.getToken();
   debugPrint('FCM Token: $fcmToken');
 
   // 3. Callback para token recibido

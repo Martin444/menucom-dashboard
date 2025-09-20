@@ -225,7 +225,7 @@ class _MPOAuthGateWidgetState extends State<MPOAuthGateWidget> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text('Cancelar'),
+                    child: const Text('Cancelar'),
                   ),
                   ButtonPrimary(
                     onPressed: _retryLinking,
@@ -261,7 +261,7 @@ class _MPOAuthGateWidgetState extends State<MPOAuthGateWidget> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text('Cancelar'),
+                    child: const Text('Cancelar'),
                   ),
                   ButtonPrimary(
                     onPressed: _startMPLinking,
@@ -356,7 +356,7 @@ class _LinkingInProgressDialog extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: onCancel,
-                  child: Text('Cancelar'),
+                  child: const Text('Cancelar'),
                 ),
                 ButtonPrimary(
                   onPressed: onRefresh,

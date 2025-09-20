@@ -10,7 +10,6 @@ import 'package:pickmeup_dashboard/features/login/controllers/login_controller.d
 import 'package:pickmeup_dashboard/features/menu/presentation/widgets/card_take_photo.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/widgets/inputs/pu_input_dropdown.dart';
 
 import '../../../../routes/routes.dart';

@@ -137,10 +137,10 @@ class CustomerServiceInfo extends StatelessWidget {
           fontSize: isMobile ? 16 : 18,
         ),
         const SizedBox(height: 16),
-        CustomerContainer(
+        const CustomerContainer(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               CustomerInfoTile(
                 icon: FluentIcons.clock_24_regular,
                 title: 'Horarios de Atención',
@@ -172,7 +172,7 @@ class CustomerSidePanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomerContainer(
+    return const CustomerContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -181,15 +181,15 @@ class CustomerSidePanel extends StatelessWidget {
             fontSize: 16,
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
 
           // Notificación placeholder
-          const CustomerNotification(
+          CustomerNotification(
             message: 'No tienes notificaciones nuevas',
             icon: FluentIcons.info_24_regular,
           ),
 
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
 
           // Estadísticas rápidas
           CustomerSectionTitle(
@@ -197,9 +197,9 @@ class CustomerSidePanel extends StatelessWidget {
             fontSize: 14,
           ),
 
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
 
-          const CustomerInfoTile(
+          CustomerInfoTile(
             icon: FluentIcons.receipt_24_regular,
             title: 'Pedidos Realizados',
             subtitle: '0 este mes',

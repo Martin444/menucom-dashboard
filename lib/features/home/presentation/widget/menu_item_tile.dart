@@ -3,8 +3,6 @@ import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_item
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/formaters/currency_converter.dart';
 import 'package:pu_material/utils/overflow_text.dart';
-import 'package:pu_material/utils/style/pu_style_containers.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 
 class MenuItemTile extends StatelessWidget {
   final MenuItemModel item;

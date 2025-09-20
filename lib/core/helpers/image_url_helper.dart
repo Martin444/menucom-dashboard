@@ -1,5 +1,6 @@
 /// Helper para procesamiento y validación de URLs de imágenes protegidas por proxy.
 /// Modular y reutilizable para todo el proyecto.
+library;
 
 import 'package:flutter/foundation.dart';
 

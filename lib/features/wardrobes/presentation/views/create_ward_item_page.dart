@@ -8,9 +8,7 @@ import 'package:pickmeup_dashboard/features/menu/presentation/widgets/card_take_
 import 'package:pickmeup_dashboard/features/wardrobes/getx/wardrobes_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/widgets/inputs/pu_input_tags.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class CreateWardItemPage extends StatefulWidget {
   final bool? isEditPage;

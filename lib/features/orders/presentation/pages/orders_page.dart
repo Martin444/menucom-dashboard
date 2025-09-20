@@ -50,7 +50,7 @@ class _OrdersPageState extends State<OrdersPage> {
         if (isMobile) {
           // Layout móvil: MenuSide como drawer + contenido full width
           return Scaffold(
-            drawer: MenuSide(isMobile: true),
+            drawer: const MenuSide(isMobile: true),
             appBar: AppBar(
               title: const Text('Órdenes'),
               backgroundColor: Colors.transparent,
@@ -78,7 +78,7 @@ class _OrdersPageState extends State<OrdersPage> {
               // MenuSide con ancho fijo
               SizedBox(
                 width: isTablet ? 200 : 250,
-                child: MenuSide(isMobile: false),
+                child: const MenuSide(isMobile: false),
               ),
               // Contenido principal expandido
               Expanded(

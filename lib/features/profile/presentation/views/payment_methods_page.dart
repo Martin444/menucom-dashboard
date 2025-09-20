@@ -265,7 +265,7 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(FluentIcons.error_circle_24_regular, color: Colors.red),
+                                    const Icon(FluentIcons.error_circle_24_regular, color: Colors.red),
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Text(

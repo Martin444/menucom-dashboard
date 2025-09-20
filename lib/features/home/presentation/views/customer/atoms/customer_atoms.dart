@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 /// ÁTOMOS - Wrappers de compatibilidad para migración gradual a pu_material
 ///

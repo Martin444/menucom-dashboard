@@ -7,7 +7,6 @@ import 'package:pickmeup_dashboard/core/config.dart';
 import 'package:pickmeup_dashboard/features/login/controllers/login_controller.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 
 import '../../../../routes/routes.dart';
 

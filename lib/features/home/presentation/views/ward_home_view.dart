@@ -8,7 +8,6 @@ import 'package:pickmeup_dashboard/features/wardrobes/getx/wardrobes_controller.
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 import '../../controllers/dinning_controller.dart';
 

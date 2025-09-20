@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pickmeup_dashboard/widgets/button_logo.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 import '../../../../core/config.dart';
 

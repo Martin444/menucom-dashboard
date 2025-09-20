@@ -11,7 +11,7 @@ import '../../../core/mixins/navigation_state_mixin.dart';
 class DinningController extends GetxController with NavigationStateMixin {
   /// Hashea el accessToken actual de la sesión
   String getHashedAccessToken() {
-    debugPrint("Access Token: ${ACCESS_TOKEN}");
+    debugPrint("Access Token: $ACCESS_TOKEN");
     var hashed = hashAccessToken(ACCESS_TOKEN);
     debugPrint("Hashed Access Token: $hashed");
     return hashed;

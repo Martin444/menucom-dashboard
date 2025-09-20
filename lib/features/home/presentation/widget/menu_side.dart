@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pu_material/utils/style/pu_style_containers.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/pu_material.dart';
 
 import '../../../../core/navigation/menu_navigation_controller.dart';

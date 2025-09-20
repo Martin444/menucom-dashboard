@@ -9,7 +9,6 @@ import 'package:pu_material/pu_material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // Firebase imports
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 // Auth system imports
 import 'package:pickmeup_dashboard/features/auth/presentation/controllers/auth_bindings.dart';
 import 'package:pickmeup_dashboard/features/auth/config/firebase_config.dart';

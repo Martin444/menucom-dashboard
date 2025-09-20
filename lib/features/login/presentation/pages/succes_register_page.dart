@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
-import 'package:svg_flutter/svg.dart';
 
 class SuccesRegisterPage extends StatefulWidget {
   final String? imageUrl;
