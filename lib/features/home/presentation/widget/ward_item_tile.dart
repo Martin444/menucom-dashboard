@@ -38,16 +38,17 @@ class WardItemTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  PuRobustNetworkImage(
-                    imageUrl: item.photoURL!,
-                    height: 220,
-                    width: double.infinity,
-                    fit: BoxFit.fitHeight,
+                  Flexible(
+                    flex: 4,
+                    child: PuRobustNetworkImage(
+                      imageUrl: item.photoURL!,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                  const SizedBox(
-                    height: 4,
-                  ),
+                  const SizedBox(height: 4),
                   Expanded(
+                    flex: 2,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -71,9 +72,7 @@ class WardItemTile extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.min,
