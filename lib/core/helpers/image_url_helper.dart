@@ -2,8 +2,6 @@
 /// Modular y reutilizable para todo el proyecto.
 library;
 
-import 'package:flutter/foundation.dart';
-
 class ImageUrlHelper {
   /// Procesa una URL de imagen, extrayendo la URL directa si es proxy.
   static String processUrl(String url) {

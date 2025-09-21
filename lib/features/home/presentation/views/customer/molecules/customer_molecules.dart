@@ -323,20 +323,20 @@ class CommerceCard extends StatelessWidget {
     return actionList;
   }
 
-  // Helper methods (mantienen la funcionalidad original)
-  String _maskEmail(String email) {
-    final parts = email.split('@');
-    if (parts.length != 2) return email;
+  // // Helper methods (mantienen la funcionalidad original)
+  // String _maskEmail(String email) {
+  //   final parts = email.split('@');
+  //   if (parts.length != 2) return email;
 
-    final username = parts[0];
-    final domain = parts[1];
+  //   final username = parts[0];
+  //   final domain = parts[1];
 
-    if (username.length <= 2) return email;
+  //   if (username.length <= 2) return email;
 
-    final maskedUsername = username.substring(0, 2) + '*' * (username.length - 2);
+  //   final maskedUsername = username.substring(0, 2) + '*' * (username.length - 2);
 
-    return '$maskedUsername@$domain';
-  }
+  //   return '$maskedUsername@$domain';
+  // }
 
   String _formatMemberSince(DateTime date) {
     final now = DateTime.now();

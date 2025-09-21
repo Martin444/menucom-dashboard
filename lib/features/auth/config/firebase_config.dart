@@ -60,10 +60,10 @@ class FirebaseConfig {
     defaultValue: '1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com', // iOS Client ID
   );
 
-  static const String _googleAndroidClientId = String.fromEnvironment(
-    'GOOGLE_SIGN_IN_ANDROID_CLIENT_ID',
-    defaultValue: '1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com', // Android Client ID
-  );
+  // static const String _googleAndroidClientId = String.fromEnvironment(
+  //   'GOOGLE_SIGN_IN_ANDROID_CLIENT_ID',
+  //   defaultValue: '1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com', // Android Client ID
+  // );
 
   /// Opciones de Firebase para la plataforma web
   static FirebaseOptions get web => const FirebaseOptions(
