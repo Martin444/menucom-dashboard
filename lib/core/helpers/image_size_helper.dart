@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:image/image.dart' as img;
 
 /// Helper para obtener tamaño y reducir imágenes antes de subirlas.
@@ -18,11 +19,26 @@ class ImageSizeHelper {
   static Uint8List resizeIfNeeded(Uint8List bytes, {int maxWidth = 1000, int maxHeight = 1000}) {
     final image = img.decodeImage(bytes);
     if (image == null) return bytes;
-    if (image.width <= maxWidth && image.height <= maxHeight) {
-      return bytes;
+
+    // Si estamos en web
+    if (kIsWeb) {
+      // Si es web mobile, reducir a width 800 y mantener aspect ratio
+      // No hay una forma directa de detectar mobile en Dart puro, pero puedes usar un width menor por defecto
+      if (image.width > 800) {
+        final resized = img.copyResize(image, width: 800);
+        return Uint8List.fromList(img.encodePng(resized));
+      }
+      // Si ya es menor, devolver PNG para compatibilidad
+      return Uint8List.fromList(img.encodePng(image));
     }
-    final resized = img.copyResize(image, width: maxWidth, height: maxHeight);
-    return Uint8List.fromList(img.encodeJpg(resized));
+
+    // Nativo: reducir si supera maxWidth/maxHeight
+    if (image.width > maxWidth || image.height > maxHeight) {
+      final resized = img.copyResize(image, width: maxWidth, height: maxHeight);
+      return Uint8List.fromList(img.encodePng(resized));
+    }
+    // Si ya es menor, devolver PNG para compatibilidad
+    return Uint8List.fromList(img.encodePng(image));
   }
 }
 
