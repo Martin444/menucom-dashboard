@@ -77,6 +77,16 @@ class WardrobesController extends GetxController {
     final ImagePicker pickerImage = ImagePicker();
     final result = await pickerImage.pickImage(source: ImageSource.gallery);
     if (result != null) {
+      final String? extension = result.name.split('.').last.toLowerCase();
+      if (extension != 'png' && extension != 'jpg' && extension != 'jpeg') {
+        Get.snackbar(
+          'Formato inválido',
+          'Solo se permiten imágenes PNG o JPG.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
       Uint8List originalFile = await result.readAsBytes();
       // Reducir imagen si es necesario
       Uint8List reducedFile = ImageSizeHelper.resizeIfNeeded(originalFile);
