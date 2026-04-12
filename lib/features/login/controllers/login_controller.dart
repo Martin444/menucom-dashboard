@@ -33,10 +33,11 @@ class LoginController extends GetxController {
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  RxString? errorTextEmail = ''.obs;
+  RxString errorTextEmail = ''.obs;
   RxString errorTextPassword = ''.obs;
 
   RxBool isLogging = false.obs;
+  RxBool isLoggingGoogle = false.obs;
   RxBool isValidInit = false.obs;
 
   @override
@@ -85,30 +86,30 @@ class LoginController extends GetxController {
       // }
       emailController.clear();
       passwordController.clear();
-      errorTextEmail?.value = '';
+      errorTextEmail.value = '';
       errorTextPassword.value = '';
       update();
     } on ApiException catch (e) {
       isLogging.value = false;
       var err = e;
       if (err.statusCode == 102) {
-        errorTextEmail?.value = '';
-        errorTextEmail?.refresh();
+        errorTextEmail.value = '';
+        errorTextEmail.value;
         errorTextPassword.value = e.message;
         errorTextPassword.refresh();
       }
       if (err.statusCode == 401) {
-        errorTextEmail?.value = '';
+        errorTextEmail.value = '';
         errorTextPassword.value = e.message;
         errorTextPassword.refresh();
       } else if (e.statusCode == 404) {
         errorTextPassword.value = '';
 
-        errorTextEmail?.value = e.message;
-        errorTextEmail?.refresh();
+        errorTextEmail.value = e.message;
+        errorTextEmail.value;
       } else if (e.statusCode == 111) {
-        errorTextEmail?.value = e.message;
-        errorTextEmail?.refresh();
+        errorTextEmail.value = e.message;
+        errorTextEmail.value;
       }
       update();
     } on ClientException catch (w) {
@@ -119,12 +120,14 @@ class LoginController extends GetxController {
   RxBool validateBtnLoginUser() {
     var isEmail = PUValidators.validateEmail(emailController.text);
     if (!isEmail && emailController.text.length >= 4) {
-      errorTextEmail?.value = 'Ingresa un email válido';
+      errorTextEmail.value = 'Ingresa un email válido';
     } else {
-      errorTextEmail?.value = '';
+      errorTextEmail.value = '';
     }
 
-    var validateItems = (emailController.text.isNotEmpty && passwordController.text.isNotEmpty).obs;
+    var validateItems =
+        (emailController.text.isNotEmpty && passwordController.text.isNotEmpty)
+            .obs;
 
     isValidInit = validateItems;
     update();
@@ -333,7 +336,7 @@ class LoginController extends GetxController {
   /// Autentica usuario con Google Sign-In
   Future<void> loginWithGoogle() async {
     try {
-      isLogging.value = true;
+      isLoggingGoogle.value = true;
       update();
 
       // Inicializar Google Sign-In con configuración específica
@@ -351,7 +354,8 @@ class LoginController extends GetxController {
       }
 
       // Obtener las credenciales de autenticación
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       // Crear credenciales para Firebase
       final credential = GoogleAuthProvider.credential(
@@ -360,7 +364,8 @@ class LoginController extends GetxController {
       );
 
       // Autenticar con Firebase
-      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
       final User? user = userCredential.user;
 
       if (user != null) {

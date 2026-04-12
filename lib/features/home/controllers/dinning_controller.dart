@@ -83,9 +83,10 @@ class DinningController extends GetxController with NavigationStateMixin {
         throw Exception('ID de usuario no válido');
       }
 
-      final responseWar = await GetClothingUserUsescase().execute(userId);
+      final responseWar = await GetClothingUserUsescase.execute(userId);
       debugPrint('=== DEBUG DinningController.getWardrobebyDining ===');
-      debugPrint('API response wardrobes count: ${responseWar.listClothing?.length ?? 0}');
+      debugPrint(
+          'API response wardrobes count: ${responseWar.listClothing?.length ?? 0}');
 
       // Debug: Verificar cada elemento de la respuesta
       if (responseWar.listClothing != null) {
@@ -169,7 +170,8 @@ class DinningController extends GetxController with NavigationStateMixin {
     try {
       _isLoadingUsersByRoles = true;
       debugPrint('=== DEBUG getUsersByRoles CALLED ===');
-      debugPrint('Roles requested: ${roles.map((r) => r.toString().split('.').last).join(', ')}');
+      debugPrint(
+          'Roles requested: ${roles.map((r) => r.toString().split('.').last).join(', ')}');
       debugPrint('With vinculated account: $withVinculedAccount');
 
       // Limpiar lista anterior
@@ -215,7 +217,8 @@ class DinningController extends GetxController with NavigationStateMixin {
       return usersByRolesList;
     } on ApiException catch (e) {
       _isLoadingUsersByRoles = false;
-      debugPrint('Error getting users by roles: ${e.statusCode} - ${e.message}');
+      debugPrint(
+          'Error getting users by roles: ${e.statusCode} - ${e.message}');
       update();
 
       if (e.statusCode == 404) {
@@ -244,9 +247,9 @@ class DinningController extends GetxController with NavigationStateMixin {
         throw Exception('ID de usuario no válido');
       }
 
-      var respMenu = await GetMenuUseCase().execute(userId);
+      var respMenu = await GetMenuUseCase.execute(userId);
 
-      menusList.assignAll(respMenu.listmenus!);
+      menusList.assignAll(respMenu);
       menuSelected = menusList.first;
       everyListEmpty = true;
       update();

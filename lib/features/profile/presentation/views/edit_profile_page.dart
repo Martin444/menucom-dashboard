@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:pu_material/pu_material.dart';
 
@@ -108,14 +109,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
           : [
               if (controller.hasChanges)
                 TextButton(
-                  onPressed: controller.isLoading ? null : () => _saveProfile(controller),
+                  onPressed: controller.isLoading
+                      ? null
+                      : () => _saveProfile(controller),
                   child: controller.isLoading
                       ? SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(PUColors.primaryColor),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                PUColors.primaryColor),
                           ),
                         )
                       : Text(
@@ -304,7 +308,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             message: 'Guardar cambios en el perfil (Ctrl+S)',
             child: ButtonPrimary(
               title: 'Guardar cambios',
-              onPressed: controller.isLoading ? null : () => _saveProfile(controller),
+              onPressed:
+                  controller.isLoading ? null : () => _saveProfile(controller),
               load: controller.isLoading,
             ),
           ),
@@ -321,7 +326,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
         // Botón guardar (principal)
         ButtonPrimary(
           title: 'Guardar cambios',
-          onPressed: controller.isLoading ? null : () => _saveProfile(controller),
+          onPressed:
+              controller.isLoading ? null : () => _saveProfile(controller),
           load: controller.isLoading,
         ),
 

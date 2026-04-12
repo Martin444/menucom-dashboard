@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:menu_dart_api/by_feature/menu/get_menu_bydinning/model/menu_model.dart';
+import 'package:menu_dart_api/menu_com_api.dart';
 
 /// MOLÉCULAS - Wrappers de compatibilidad para migración gradual a pu_material
 ///
@@ -72,7 +73,8 @@ class CommerceCard extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isMobile = constraints.maxWidth < 768;
-        final isTablet = constraints.maxWidth >= 768 && constraints.maxWidth < 1200;
+        final isTablet =
+            constraints.maxWidth >= 768 && constraints.maxWidth < 1200;
 
         if (isMobile) {
           return _buildMobileCard(context);
@@ -371,7 +373,8 @@ class CommerceCard extends StatelessWidget {
   bool _isRecentActivity(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    return difference.inHours < 24; // Consideramos reciente si fue en las últimas 24h
+    return difference.inHours <
+        24; // Consideramos reciente si fue en las últimas 24h
   }
 
   String _formatPhoneNumber(String phone) {
@@ -409,7 +412,8 @@ class CommerceCard extends StatelessWidget {
     for (final menu in menus!) {
       if (menu.items != null) {
         total += menu.items!.length;
-        debugPrint('CommerceCard: Menu "${menu.description}" has ${menu.items!.length} items');
+        debugPrint(
+            'CommerceCard: Menu "${menu.description}" has ${menu.items!.length} items');
       }
     }
     debugPrint('CommerceCard: Total items for $name: $total');
@@ -431,14 +435,16 @@ class CommerceCard extends StatelessWidget {
           if (item.deliveryTime != null) {
             totalTime += item.deliveryTime!;
             itemCount++;
-            debugPrint('CommerceCard: Item "${item.name}" delivery time: ${item.deliveryTime}min');
+            debugPrint(
+                'CommerceCard: Item "${item.name}" delivery time: ${item.deliveryTime}min');
           }
         }
       }
     }
 
     final avgTime = itemCount > 0 ? (totalTime / itemCount).round() : 0;
-    debugPrint('CommerceCard: Average delivery time for $name: ${avgTime}min (from $itemCount items)');
+    debugPrint(
+        'CommerceCard: Average delivery time for $name: ${avgTime}min (from $itemCount items)');
     return avgTime;
   }
 
@@ -451,7 +457,8 @@ class CommerceCard extends StatelessWidget {
     try {
       // Validar que la URL tenga un esquema válido
       String urlToLaunch = storeUrl!.trim();
-      if (!urlToLaunch.startsWith('http://') && !urlToLaunch.startsWith('https://')) {
+      if (!urlToLaunch.startsWith('http://') &&
+          !urlToLaunch.startsWith('https://')) {
         urlToLaunch = 'https://$urlToLaunch';
       }
 
@@ -483,7 +490,8 @@ class CommerceCard extends StatelessWidget {
         // Si no empieza con +, asumir que es un número local
         // Agregar código de país por defecto si es necesario
         if (cleanPhone.length == 10) {
-          cleanPhone = '+1$cleanPhone'; // Asumir EE.UU. para números de 10 dígitos
+          cleanPhone =
+              '+1$cleanPhone'; // Asumir EE.UU. para números de 10 dígitos
         }
       }
 

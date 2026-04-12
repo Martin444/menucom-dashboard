@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
@@ -52,7 +53,9 @@ class HeadDinning extends StatelessWidget {
                   ),
                 ),
               ),
-              child: useMobileLayout ? _buildMobileLayout(_, context) : _buildDesktopLayout(_, context, isLargeScreen),
+              child: useMobileLayout
+                  ? _buildMobileLayout(_, context)
+                  : _buildDesktopLayout(_, context, isLargeScreen),
             );
           },
         );
@@ -60,7 +63,8 @@ class HeadDinning extends StatelessWidget {
     );
   }
 
-  Widget _buildMobileLayout(DinningController controller, BuildContext context) {
+  Widget _buildMobileLayout(
+      DinningController controller, BuildContext context) {
     return Row(
       children: [
         // Menu icon for mobile drawer
@@ -129,7 +133,8 @@ class HeadDinning extends StatelessWidget {
                     Get.dialog(
                       MPOAuthGateWidget(
                         idMenu: controller.dinningLogin.id ?? '',
-                        redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
+                        redirectUri:
+                            'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
                       ),
                     );
                   },
@@ -149,7 +154,8 @@ class HeadDinning extends StatelessWidget {
     );
   }
 
-  Widget _buildDesktopLayout(DinningController controller, BuildContext context, bool isLargeScreen) {
+  Widget _buildDesktopLayout(
+      DinningController controller, BuildContext context, bool isLargeScreen) {
     return Row(
       children: [
         // Left section - Menu button (hidden on desktop since we have sidebar)
@@ -223,7 +229,8 @@ class HeadDinning extends StatelessWidget {
                       Get.dialog(
                         MPOAuthGateWidget(
                           idMenu: controller.dinningLogin.id ?? '',
-                          redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
+                          redirectUri:
+                              'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
                         ),
                       );
                     },

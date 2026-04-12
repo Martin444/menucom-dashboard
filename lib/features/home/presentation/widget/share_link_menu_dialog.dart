@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pickmeup_dashboard/widgets/button_logo.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -49,12 +50,14 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
 
     if (!argentinaPhoneRegex.hasMatch(trimmedNumber)) {
       setState(() {
-        whatsappErrorText = 'Número inválido. Usa el formato: 549XXXXXXXXXX, sin el 15';
+        whatsappErrorText =
+            'Número inválido. Usa el formato: 549XXXXXXXXXX, sin el 15';
       });
       return;
     }
 
-    final url = 'https://wa.me/$trimmedNumber?text=${Uri.encodeComponent(menuUrl)}';
+    final url =
+        'https://wa.me/$trimmedNumber?text=${Uri.encodeComponent(menuUrl)}';
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     } else {
@@ -81,12 +84,14 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
 
     if (!emailRegex.hasMatch(trimmedEmail)) {
       setState(() {
-        emailErrorText = 'Correo inválido. Usa un formato válido como ejemplo@dominio.com';
+        emailErrorText =
+            'Correo inválido. Usa un formato válido como ejemplo@dominio.com';
       });
       return;
     }
 
-    final url = 'mailto:$trimmedEmail?subject=${Uri.encodeComponent('Menú')}&body=${Uri.encodeComponent(menuUrl)}';
+    final url =
+        'mailto:$trimmedEmail?subject=${Uri.encodeComponent('Menú')}&body=${Uri.encodeComponent(menuUrl)}';
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     } else {
@@ -232,14 +237,16 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: menuUrl));
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Se copió la URL correctamente')),
+                    const SnackBar(
+                        content: Text('Se copió la URL correctamente')),
                   );
                 },
                 icon: const Icon(FluentIcons.copy_24_regular, size: 18),
                 label: const Text('Copiar enlace'),
                 style: TextButton.styleFrom(
                   foregroundColor: PUColors.bgButton,
-                  textStyle: PuTextStyle.brandHeadStyle.copyWith(decoration: TextDecoration.underline),
+                  textStyle: PuTextStyle.brandHeadStyle
+                      .copyWith(decoration: TextDecoration.underline),
                 ),
               ),
             ),
@@ -272,7 +279,9 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
                 const SizedBox(width: 10),
                 LogoButton(
                   icon: FluentIcons.arrow_download_24_regular,
-                  colorBackground: isDownloading ? Colors.grey.withOpacity(0.3) : Colors.transparent,
+                  colorBackground: isDownloading
+                      ? Colors.grey.withOpacity(0.3)
+                      : Colors.transparent,
                   iconColor: isDownloading ? Colors.grey : null,
                   onTap: isDownloading
                       ? null
@@ -314,7 +323,8 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: ButtonPrimary(
-                      onPressed: () => _launchWhatsApp(whatsappController.text.trim()),
+                      onPressed: () =>
+                          _launchWhatsApp(whatsappController.text.trim()),
                       title: 'Enviar WhatsApp',
                       load: false,
                     ),
@@ -334,7 +344,8 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: ButtonPrimary(
-                      onPressed: () => _launchGmailComposer(emailController.text.trim()),
+                      onPressed: () =>
+                          _launchGmailComposer(emailController.text.trim()),
                       title: 'Enviar email',
                       load: false,
                     ),

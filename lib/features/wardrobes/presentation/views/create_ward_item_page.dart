@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
@@ -82,10 +83,13 @@ class _CreateItemPageState extends State<CreateWardItemPage> {
                                   Row(
                                     children: [
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            widget.isEditPage ?? false ? 'Editá tu menú' : 'Creá tu prenda',
+                                            widget.isEditPage ?? false
+                                                ? 'Editá tu menú'
+                                                : 'Creá tu prenda',
                                             textAlign: TextAlign.start,
                                             style: PuTextStyle.title1,
                                           ),
@@ -104,7 +108,8 @@ class _CreateItemPageState extends State<CreateWardItemPage> {
                                     height: 20,
                                   ),
                                   CardTakePhoto(
-                                    title: 'Cargá la foto de tu prenda (jpg, png)',
+                                    title:
+                                        'Cargá la foto de tu prenda (jpg, png)',
                                     onTaka: () {
                                       _.pickImageDirectory();
                                     },
@@ -159,7 +164,8 @@ class _CreateItemPageState extends State<CreateWardItemPage> {
                                     height: 20,
                                   ),
                                   PUInput(
-                                    hintText: 'Disponibles en Stock (por defecto es 1)',
+                                    hintText:
+                                        'Disponibles en Stock (por defecto es 1)',
                                     controller: _.stockWardController,
                                     textInputType: TextInputType.number,
                                     textInputAction: TextInputAction.next,
@@ -190,18 +196,24 @@ class _CreateItemPageState extends State<CreateWardItemPage> {
                                   height: 20,
                                 ),
                                 ButtonPrimary(
-                                  title: widget.isEditPage ?? false ? 'Guardar' : 'Crear',
+                                  title: widget.isEditPage ?? false
+                                      ? 'Guardar'
+                                      : 'Crear',
                                   onPressed: () async {
-                                    if (keyFormCreateItem.currentState?.validate() ?? false) {
+                                    if (keyFormCreateItem.currentState
+                                            ?.validate() ??
+                                        false) {
                                       if (_.fileTaked == null) {
                                         GlobalDialogsHandles.snackbarError(
-                                          title: 'La foto de la prenda es obligatoria',
+                                          title:
+                                              'La foto de la prenda es obligatoria',
                                           message: 'Preferentemente PNG',
                                         );
                                         return;
                                       }
                                       if (widget.isEditPage ?? false) {
-                                        final success = await _.editClothingWardrobe();
+                                        final success =
+                                            await _.editClothingWardrobe();
                                         if (success) {
                                           await dinning.getmenuByDining();
                                           Get.offAllNamed(PURoutes.HOME);
@@ -211,7 +223,8 @@ class _CreateItemPageState extends State<CreateWardItemPage> {
                                       }
                                       _.wardSelected = dinning.wardSelected;
                                       _.update();
-                                      final newItem = await _.createWardItemInServer();
+                                      final newItem =
+                                          await _.createWardItemInServer();
                                       if (newItem != null) {
                                         await dinning.getmenuByDining();
                                         Get.offAllNamed(PURoutes.HOME);

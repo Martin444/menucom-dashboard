@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
@@ -79,20 +80,28 @@ class _CreateItemPageState extends State<CreateItemPage> {
                             child: Column(
                               children: [
                                 SizedBox(
-                                  height: MediaQuery.of(context).size.width > 1000 ? 80 : 30,
+                                  height:
+                                      MediaQuery.of(context).size.width > 1000
+                                          ? 80
+                                          : 30,
                                 ),
                                 Row(
                                   children: [
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          widget.isEditPage ?? false ? 'Editá tu menú' : 'Creá tu nuevo plato',
+                                          widget.isEditPage ?? false
+                                              ? 'Editá tu menú'
+                                              : 'Creá tu nuevo plato',
                                           textAlign: TextAlign.start,
                                           style: PuTextStyle.title1,
                                         ),
                                         Text(
-                                          widget.isEditPage ?? false ? 'Renová tus ideas' : 'Deleitá a tus clientes',
+                                          widget.isEditPage ?? false
+                                              ? 'Renová tus ideas'
+                                              : 'Deleitá a tus clientes',
                                           textAlign: TextAlign.start,
                                           style: PuTextStyle.title2,
                                         ),
@@ -104,7 +113,8 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                   height: 20,
                                 ),
                                 CardTakePhoto(
-                                  title: 'Cargá la foto de tu platillo (jpg, png)',
+                                  title:
+                                      'Cargá la foto de tu platillo (jpg, png)',
                                   onTaka: () {
                                     _.pickImageDirectory();
                                   },
@@ -143,7 +153,8 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                   height: 20,
                                 ),
                                 PUInput(
-                                  hintText: 'Tiempo de preparación (en minutos)',
+                                  hintText:
+                                      'Tiempo de preparación (en minutos)',
                                   controller: _.newdeliveryController,
                                   textInputType: TextInputType.number,
                                   validator: (time) {
@@ -173,7 +184,9 @@ class _CreateItemPageState extends State<CreateItemPage> {
                           Column(
                             children: [
                               ButtonPrimary(
-                                title: widget.isEditPage ?? false ? 'Guardar' : 'Crear',
+                                title: widget.isEditPage ?? false
+                                    ? 'Guardar'
+                                    : 'Crear',
                                 onPressed: () async {
                                   if (widget.isEditPage ?? false) {
                                     try {
@@ -188,7 +201,9 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                       );
                                     }
                                   }
-                                  if (keyFormCreateItem.currentState?.validate() ?? false) {
+                                  if (keyFormCreateItem.currentState
+                                          ?.validate() ??
+                                      false) {
                                     if (_.fileTaked == null) {
                                       GlobalDialogsHandles.snackbarError(
                                         title: 'Logo obligatorio',

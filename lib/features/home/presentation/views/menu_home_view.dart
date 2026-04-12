@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/category_tags_section.dart';
@@ -45,11 +46,13 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                       items: _.menusList,
                       selectedItem: _.menuSelected,
                       onItemSelected: (menu) => _.chageMenuSelected(menu),
-                      descriptionBuilder: (menu) => menu.description ?? 'Sin nombre',
+                      descriptionBuilder: (menu) =>
+                          menu.description ?? 'Sin nombre',
                       itemCountBuilder: (menu) => menu.items?.length ?? 0,
                       constrains: constrains,
                       icon: FluentIcons.food_24_regular,
-                      onEditSelected: () => menusController.gotoEditMenu(_.menuSelected),
+                      onEditSelected: () =>
+                          menusController.gotoEditMenu(_.menuSelected),
                       emptyMessage: 'No hay menús disponibles',
                     ),
                   ),
@@ -65,7 +68,8 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                             child: _.menuSelected.items?.isNotEmpty ?? false
                                 ? GridView.builder(
                                     itemCount: _.menuSelected.items?.length,
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: constrains.maxWidth < 800
                                           ? constrains.maxWidth > 600
                                               ? 3
@@ -83,9 +87,11 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                         onAddCart: (val) {},
                                         actionSelected: (value, action) async {
                                           if (action == 'edit') {
-                                            menusController.gotoEditItemMenu(value);
+                                            menusController
+                                                .gotoEditItemMenu(value);
                                           } else if (action == 'delete') {
-                                            await menusController.deleteItemMenu(value);
+                                            await menusController
+                                                .deleteItemMenu(value);
                                             _.getmenuByDining();
                                           }
                                         },
@@ -94,7 +100,8 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                   )
                                 : Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       SvgPicture.asset(
                                         PUImages.noDataImageSvg,
@@ -119,7 +126,8 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                         child: ButtonPrimary(
                                           title: 'Cargar primer plato',
                                           onPressed: () {
-                                            Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
+                                            Get.toNamed(
+                                                PURoutes.REGISTER_ITEM_MENU);
                                           },
                                           load: false,
                                         ),
@@ -162,7 +170,8 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                         onDelete: (menu) async {
                                           _.chageMenuSelected(menu);
                                           // _.chagemenuSelected(menu);
-                                          await menusController.deleteMenus(menu);
+                                          await menusController
+                                              .deleteMenus(menu);
                                           _.getmenuByDining();
                                         },
                                         onEdit: (menu) {

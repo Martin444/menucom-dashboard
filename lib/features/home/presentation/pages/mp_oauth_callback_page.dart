@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pu_material/pu_material.dart';
@@ -60,7 +61,8 @@ class _MPOAuthCallbackPageState extends State<MPOAuthCallbackPage> {
         setState(() {
           _isProcessing = false;
           _isSuccess = false;
-          _errorMessage = 'No se recibió el código de autorización de Mercado Pago';
+          _errorMessage =
+              'No se recibió el código de autorización de Mercado Pago';
         });
         return;
       }

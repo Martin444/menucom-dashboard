@@ -57,7 +57,8 @@ class MenusController extends GetxController {
     } catch (e) {
       GlobalDialogsHandles.snackbarError(
         title: '¡Ups!',
-        message: 'No se pudo editar ${menuSelected.description}, vuelve a intentarlo mas tarde.',
+        message:
+            'No se pudo editar ${menuSelected.description}, vuelve a intentarlo mas tarde.',
       );
     }
   }
@@ -88,7 +89,8 @@ class MenusController extends GetxController {
     } catch (e) {
       GlobalDialogsHandles.snackbarError(
         title: '¡Ups!',
-        message: 'No se pudo eliminar ${select.description}, vuelve a intentarlo mas tarde.',
+        message:
+            'No se pudo eliminar ${select.description}, vuelve a intentarlo mas tarde.',
       );
     }
   }
@@ -113,7 +115,8 @@ class MenusController extends GetxController {
       newphotoController = menu.photoUrl!;
       ingredientsTags = menu.ingredients!;
       menuItemToEdit = menu;
-      var resultIamge = await McFunctions().fetchImageAsUint8List(newphotoController);
+      var resultIamge =
+          await McFunctions().fetchImageAsUint8List(newphotoController);
       fileTaked = resultIamge;
       toSend = fileTaked!;
       update();
@@ -139,9 +142,9 @@ class MenusController extends GetxController {
         photoUrl: newphotoController,
         deliveryTime: int.tryParse(newdeliveryController.text),
         ingredients: ingredientsTags,
-        price: int.tryParse(newpriceController.text),
+        price: double.tryParse(newpriceController.text),
       );
-      await PutMenuItemUsesCases().execute(
+      await PutMenuItemUsesCases.execute(
         newItem,
       );
       isEditProcess = false;
@@ -160,7 +163,7 @@ class MenusController extends GetxController {
         // message: '',
       );
       if (isComfirm) {
-        await DeleteMenuItemUsesCases().execute(menuItem);
+        await DeleteMenuItemUsesCases.execute(menuItem);
         GlobalDialogsHandles.snackbarSuccess(
           title: '¡Perfecto!',
           message: 'Se eliminó ${menuItem.name} con éxito.',
@@ -169,7 +172,8 @@ class MenusController extends GetxController {
     } catch (e) {
       GlobalDialogsHandles.snackbarError(
         title: '¡Ups!',
-        message: 'No se pudo eliminar ${menuItem.name}, vuelve a intentarlo mas tarde.',
+        message:
+            'No se pudo eliminar ${menuItem.name}, vuelve a intentarlo mas tarde.',
       );
     }
   }
@@ -233,10 +237,10 @@ class MenusController extends GetxController {
         photoUrl: newphotoController,
         deliveryTime: int.tryParse(newdeliveryController.text),
         ingredients: ingredientsTags,
-        price: int.tryParse(newpriceController.text),
+        price: double.tryParse(newpriceController.text),
       );
 
-      var respItem = await PostMenuItemUsesCases().execute(
+      var respItem = await PostMenuItemUsesCases.execute(
         menuSelected.id!,
         newItem,
       );

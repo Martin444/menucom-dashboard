@@ -50,10 +50,12 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                             SizedBox(
                               height: MediaQuery.of(context).size.height - 100,
                               child: ScrollConfiguration(
-                                behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                                behavior: ScrollConfiguration.of(context)
+                                    .copyWith(scrollbars: false),
                                 child: SingleChildScrollView(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       const SizedBox(
@@ -63,7 +65,8 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                         children: [
                                           Flexible(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Hero(
                                                   tag: 'dashLogo',
@@ -79,7 +82,8 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                       ),
                                       FadeIn(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               'Creá tu cuenta',
@@ -100,7 +104,8 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                 _.pickImageDirectory();
                                               },
                                               isTaked: _.fileTaked != null,
-                                              photoInBytes: _.fileTaked ?? Uint8List(2),
+                                              photoInBytes:
+                                                  _.fileTaked ?? Uint8List(2),
                                               isLogo: true,
                                             ),
                                             const SizedBox(
@@ -109,21 +114,27 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                             PUInput(
                                               labelText: 'Email',
                                               hintText: 'Email',
-                                              textInputAction: TextInputAction.next,
-                                              textInputType: TextInputType.emailAddress,
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                              textInputType:
+                                                  TextInputType.emailAddress,
                                               controller: _.newemailController,
                                               validator: (value) {
                                                 if (value!.isEmpty) {
-                                                  return PUValidators.validatoObligatory(value);
+                                                  return PUValidators
+                                                      .validatoObligatory(
+                                                          value);
                                                 }
-                                                if (!PUValidators.validateEmail(value)) {
+                                                if (!PUValidators.validateEmail(
+                                                    value)) {
                                                   return 'Escribe un email valido';
                                                 }
                                                 return null;
                                               },
-                                              errorText: _.errorTextEmail?.value.isEmpty ?? false
-                                                  ? null
-                                                  : _.errorTextEmail!.value,
+                                              errorText:
+                                                  _.errorTextEmail.value.isEmpty
+                                                      ? null
+                                                      : _.errorTextEmail.value,
                                             ),
                                             const SizedBox(
                                               height: 15,
@@ -132,10 +143,13 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                               labelText: 'Nombre',
                                               hintText: 'Nombre',
                                               isPassword: false,
-                                              textInputAction: TextInputAction.next,
+                                              textInputAction:
+                                                  TextInputAction.next,
                                               textInputType: TextInputType.name,
-                                              errorText:
-                                                  _.errorTextPassword.value.isEmpty ? null : _.errorTextPassword.value,
+                                              errorText: _.errorTextPassword
+                                                      .value.isEmpty
+                                                  ? null
+                                                  : _.errorTextPassword.value,
                                               controller: _.newnameController,
                                             ),
                                             const SizedBox(
@@ -144,18 +158,24 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                             PUInput(
                                               hintText: 'Número de teléfono',
                                               isPassword: false,
-                                              textInputAction: TextInputAction.next,
-                                              textInputType: TextInputType.phone,
-                                              errorText:
-                                                  _.errorTextPassword.value.isEmpty ? null : _.errorTextPassword.value,
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                              textInputType:
+                                                  TextInputType.phone,
+                                              errorText: _.errorTextPassword
+                                                      .value.isEmpty
+                                                  ? null
+                                                  : _.errorTextPassword.value,
                                               controller: _.newphoneController,
                                             ),
                                             const SizedBox(
                                               height: 15,
                                             ),
                                             PUInputDropDown<TypeComerceModel>(
-                                              items: _.listCommerceAvilable.map((e) {
-                                                return DropdownMenuItem<TypeComerceModel>(
+                                              items: _.listCommerceAvilable
+                                                  .map((e) {
+                                                return DropdownMenuItem<
+                                                    TypeComerceModel>(
                                                   key: Key(e.id),
                                                   value: e,
                                                   child: Text(
@@ -183,13 +203,21 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                               labelText: 'Contraseña',
                                               hintText: 'Contraseña',
                                               isPassword: true,
-                                              textInputAction: TextInputAction.done,
-                                              textInputType: TextInputType.visiblePassword,
-                                              errorText:
-                                                  _.errorTextPassword.value.isEmpty ? null : _.errorTextPassword.value,
-                                              controller: _.newpasswordController,
+                                              textInputAction:
+                                                  TextInputAction.done,
+                                              textInputType:
+                                                  TextInputType.visiblePassword,
+                                              errorText: _.errorTextPassword
+                                                      .value.isEmpty
+                                                  ? null
+                                                  : _.errorTextPassword.value,
+                                              controller:
+                                                  _.newpasswordController,
                                               onSubmited: (p0) {
-                                                var validRegister = _formRegisterKey.currentState?.validate();
+                                                var validRegister =
+                                                    _formRegisterKey
+                                                        .currentState
+                                                        ?.validate();
                                                 if (validRegister ?? false) {
                                                   _.registerCommerce();
                                                 }
@@ -201,7 +229,10 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                             ButtonPrimary(
                                               title: 'Registrate',
                                               onPressed: () {
-                                                var validRegister = _formRegisterKey.currentState?.validate();
+                                                var validRegister =
+                                                    _formRegisterKey
+                                                        .currentState
+                                                        ?.validate();
                                                 if (validRegister ?? false) {
                                                   _.registerCommerce();
                                                 }
@@ -209,28 +240,35 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                               load: _.isLogging.value,
                                             ),
                                             Container(
-                                              padding: const EdgeInsets.symmetric(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                 vertical: 10,
                                               ),
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
                                                 children: [
                                                   RichText(
                                                     text: TextSpan(
                                                       children: [
                                                         TextSpan(
-                                                          text: '¿Ya tenés cuenta? ',
-                                                          style: PuTextStyle.description1,
+                                                          text:
+                                                              '¿Ya tenés cuenta? ',
+                                                          style: PuTextStyle
+                                                              .description1,
                                                         ),
                                                         TextSpan(
-                                                          recognizer: TapGestureRecognizer()
-                                                            ..onTap = () {
-                                                              Get.toNamed(
-                                                                PURoutes.LOGIN,
-                                                              );
-                                                            },
+                                                          recognizer:
+                                                              TapGestureRecognizer()
+                                                                ..onTap = () {
+                                                                  Get.toNamed(
+                                                                    PURoutes
+                                                                        .LOGIN,
+                                                                  );
+                                                                },
                                                           text: 'Inicia sesión',
-                                                          style: PuTextStyle.redirectLink1,
+                                                          style: PuTextStyle
+                                                              .redirectLink1,
                                                         ),
                                                       ],
                                                     ),

@@ -15,7 +15,8 @@ class WardrobesController extends GetxController {
   TextEditingController nameWard = TextEditingController();
 
   Future<bool> postWardrobe() async {
-    final wardrobeName = nameWard.text.isNotEmpty ? nameWard.text : "El guardarropa";
+    final wardrobeName =
+        nameWard.text.isNotEmpty ? nameWard.text : "El guardarropa";
     try {
       isLoadWard = true;
       update();
@@ -51,7 +52,8 @@ class WardrobesController extends GetxController {
       update();
       GlobalDialogsHandles.snackbarError(
         title: 'Error inesperado',
-        message: 'Ocurrió un error al crear el guardarropa. Inténtalo de nuevo.',
+        message:
+            'Ocurrió un error al crear el guardarropa. Inténtalo de nuevo.',
       );
       return false; // Error
     }
@@ -97,7 +99,8 @@ class WardrobesController extends GetxController {
   }
 
   Future<bool> editWardrobe() async {
-    final wardrobeName = nameWard.text.isNotEmpty ? nameWard.text : "El guardarropa";
+    final wardrobeName =
+        nameWard.text.isNotEmpty ? nameWard.text : "El guardarropa";
     try {
       isLoadWard = true;
       update();
@@ -131,7 +134,8 @@ class WardrobesController extends GetxController {
       update();
       GlobalDialogsHandles.snackbarError(
         title: 'Error inesperado',
-        message: 'Ocurrió un error al actualizar el guardarropa. Inténtalo de nuevo.',
+        message:
+            'Ocurrió un error al actualizar el guardarropa. Inténtalo de nuevo.',
       );
       return false; // Error
     }
@@ -163,7 +167,8 @@ class WardrobesController extends GetxController {
     } catch (e) {
       GlobalDialogsHandles.snackbarError(
         title: '¡Ups!',
-        message: 'No se pudo eliminar ${select.description}, vuelve a intentarlo mas tarde.',
+        message:
+            'No se pudo eliminar ${select.description}, vuelve a intentarlo mas tarde.',
       );
       rethrow;
     }
@@ -240,7 +245,7 @@ class WardrobesController extends GetxController {
         price: double.tryParse(priceWardController.text),
       );
 
-      var respItem = await PostWardItemUsesCases().execute(
+      var respItem = await PostWardItemUsesCases.execute(
         wardSelected.id!,
         newItem,
       );
@@ -280,7 +285,7 @@ class WardrobesController extends GetxController {
         // message: '',
       );
       if (isComfirm) {
-        await DeleteClothingItemUsesCases().execute(wardItem);
+        await DeleteClothingItemUsesCases.execute(wardItem);
         GlobalDialogsHandles.snackbarSuccess(
           title: '¡Perfecto!',
           message: 'Se eliminó ${wardItem.name} con éxito.',
@@ -289,7 +294,8 @@ class WardrobesController extends GetxController {
     } catch (e) {
       GlobalDialogsHandles.snackbarError(
         title: '¡Ups!',
-        message: 'No se pudo eliminar ${wardItem.name}, vuelve a intentarlo mas tarde.',
+        message:
+            'No se pudo eliminar ${wardItem.name}, vuelve a intentarlo mas tarde.',
       );
     }
   }
@@ -307,14 +313,16 @@ class WardrobesController extends GetxController {
       sizesTags = wardItem.sizes ?? [];
       clothingToEdit = wardItem;
       newphotoController = wardItem.photoURL!;
-      var resultIamge = await McFunctions().fetchImageAsUint8List(newphotoController);
+      var resultIamge =
+          await McFunctions().fetchImageAsUint8List(newphotoController);
       fileTaked = resultIamge;
       toSend = fileTaked!;
       Get.toNamed(PURoutes.EDIT_ITEM_WARDROBES);
     } catch (e) {
       GlobalDialogsHandles.snackbarError(
         title: '¡Ups!',
-        message: 'No se pudo completar la acción, vuelve a intentarlo mas tarde.',
+        message:
+            'No se pudo completar la acción, vuelve a intentarlo mas tarde.',
       );
     }
   }
@@ -334,7 +342,7 @@ class WardrobesController extends GetxController {
         price: double.tryParse(priceWardController.text),
       );
 
-      await PutClothingItemUsesCases().execute(newItem);
+      await PutClothingItemUsesCases.execute(newItem);
       isLoadMenuItem = false;
       update();
 
@@ -351,7 +359,8 @@ class WardrobesController extends GetxController {
       _handleApiError(
         apiError,
         defaultErrorTitle: 'No se pudo actualizar el producto',
-        defaultErrorMessage: 'Error al actualizar el producto en el guardarropa',
+        defaultErrorMessage:
+            'Error al actualizar el producto en el guardarropa',
       );
       return false; // Error
     } catch (e) {
@@ -359,7 +368,8 @@ class WardrobesController extends GetxController {
       update();
       GlobalDialogsHandles.snackbarError(
         title: 'Error inesperado',
-        message: 'Ocurrió un error al actualizar ${nameWardController.text}. Inténtalo de nuevo.',
+        message:
+            'Ocurrió un error al actualizar ${nameWardController.text}. Inténtalo de nuevo.',
       );
       return false; // Error
     }
@@ -376,7 +386,9 @@ class WardrobesController extends GetxController {
     try {
       final errorJson = jsonDecode(apiError.message);
       final jsonMessage = errorJson['message']?.toString().trim();
-      errorMessage = (jsonMessage?.isNotEmpty == true) ? jsonMessage! : defaultErrorMessage;
+      errorMessage = (jsonMessage?.isNotEmpty == true)
+          ? jsonMessage!
+          : defaultErrorMessage;
 
       // Detectar si es un error de límites de plan
       if (errorMessage.toLowerCase().contains('límites') ||
@@ -404,7 +416,8 @@ class WardrobesController extends GetxController {
 
     // Validar que el mensaje final no esté vacío antes de mostrar el snackbar
     final finalMessage = errorMessage.trim();
-    final validMessage = finalMessage.isNotEmpty ? finalMessage : defaultErrorMessage;
+    final validMessage =
+        finalMessage.isNotEmpty ? finalMessage : defaultErrorMessage;
 
     // Mostrar error genérico
     GlobalDialogsHandles.snackbarError(
