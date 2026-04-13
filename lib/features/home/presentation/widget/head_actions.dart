@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
-import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/get_funcion_button.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/widget/mp_oauth_gate_widget.dart';
-import 'package:pickmeup_dashboard/routes/routes.dart';
-import 'package:pu_material/utils/pu_colors.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/user_info_header.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 
 class HeadActions extends StatefulWidget {
   const HeadActions({
@@ -20,18 +15,6 @@ class HeadActions extends StatefulWidget {
 }
 
 class _HeadActionsState extends State<HeadActions> {
-  /// Obtiene el rol del usuario actual
-  RolesUsers? _getUserRole(String? roleString) {
-    if (roleString == null) return null;
-    return RolesFuncionts.getTypeRoleByRoleString(roleString);
-  }
-
-  /// Verifica si el usuario puede acceder a la vinculación MP OAuth
-  /// Los usuarios con rol 'customer' no tienen acceso a esta funcionalidad
-  bool _canAccessMPOAuth(RolesUsers? userRole) {
-    return userRole != null && userRole != RolesUsers.customer;
-  }
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DinningController>(
@@ -64,56 +47,40 @@ class _HeadActionsState extends State<HeadActions> {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: PuStyleContainers.borderBottomContainer,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isMobile = constraints.maxWidth < 600;
+
+              if (isMobile) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    UserInfoHeader(dinning: dinning),
+                    const SizedBox(height: 16),
+                    getActionPrincipalByRole(dinning),
+                  ],
+                );
+              }
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Get.toNamed(PURoutes.USER_PROFILE);
-                    },
-                    child: Text(
-                      dinning.dinningLogin.name ?? 'Usuario',
-                      style: PuTextStyle.title1,
+                  UserInfoHeader(dinning: dinning),
+                  const SizedBox(width: 20),
+                  Flexible(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: getActionPrincipalByRole(dinning),
                     ),
                   ),
-                  // Mostrar icono de vinculación solo si el usuario NO es customer
-                  if (_canAccessMPOAuth(_getUserRole(dinning.dinningLogin.role)))
-                    GestureDetector(
-                      onTap: () {
-                        Get.dialog(
-                          MPOAuthGateWidget(
-                            idMenu: dinning.dinningLogin.id ?? '',
-                            redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
-                          ),
-                        );
-                      },
-                      child: MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: Tooltip(
-                          message: 'Vincular con Mercado Pago',
-                          child: Container(
-                            margin: const EdgeInsets.only(left: 12),
-                            child: Icon(
-                              FluentIcons.link_24_regular,
-                              color: PUColors.iconColor,
-                              size: 24,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
                 ],
-              ),
-              SizedBox(
-                width: 400,
-                child: getActionPrincipalByRole(dinning),
-              ),
-            ],
+              );
+            },
           ),
         );
       },
     );
   }
 }
+
