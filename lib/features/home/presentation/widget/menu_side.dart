@@ -27,8 +27,12 @@ class MenuSide extends StatelessWidget {
         return GetBuilder<MenuNavigationController>(
           builder: (navController) {
             final menuItems = navController.getMenuItems();
-            final mainItems = menuItems.where((item) => !MenuNavigationItem.actionItems.contains(item)).toList();
-            final actionItems = menuItems.where((item) => MenuNavigationItem.actionItems.contains(item)).toList();
+            final mainItems = menuItems
+                .where((item) => !MenuNavigationItem.actionItems.contains(item))
+                .toList();
+            final actionItems = menuItems
+                .where((item) => MenuNavigationItem.actionItems.contains(item))
+                .toList();
 
             if (isMobile ?? false) {
               // Versión móvil como Drawer
@@ -146,7 +150,8 @@ class MenuSide extends StatelessWidget {
   }
 
   /// Construye el avatar del usuario con información
-  Widget _buildUserAvatar(DinningController dinningController, [bool isMobile = false]) {
+  Widget _buildUserAvatar(DinningController dinningController,
+      [bool isMobile = false]) {
     final avatarSize = isMobile ? 80.0 : 100.0;
     final titleFontSize = isMobile ? 14.0 : 16.0;
     final roleFontSize = isMobile ? 10.0 : 12.0;
@@ -220,8 +225,32 @@ class MenuSide extends StatelessWidget {
     switch (role.toLowerCase()) {
       case 'dinning':
         return 'Restaurante';
+      case 'food':
+        return 'Restaurant/Comida';
       case 'clothes':
         return 'Tienda de Ropa';
+      case 'retail':
+        return 'Comercio General';
+      case 'water_distributor':
+        return 'Distribuidora de Agua';
+      case 'grocery':
+        return 'Distribuidora de Alimentos';
+      case 'accessories':
+        return 'Accesorios';
+      case 'electronics':
+        return 'Electrónica';
+      case 'pharmacy':
+        return 'Farmacia';
+      case 'beauty':
+        return 'Belleza';
+      case 'construction':
+        return 'Materiales de Construcción';
+      case 'automotive':
+        return 'Automotriz';
+      case 'pets':
+        return 'Petshop';
+      case 'service':
+        return 'Servicios';
       case 'admin':
         return 'Administrador';
       case 'customer':

@@ -19,22 +19,23 @@ class DinningController extends GetxController with NavigationStateMixin {
 
   DinningModel dinningLogin = DinningModel();
 
-  bool isLoaginDataUser = false;
+  RxBool isLoaginDataUser = false.obs;
+  RxBool everyListEmpty = true.obs;
 
   @override
   void onInit() {
     super.onInit();
-    getMyDinningInfo();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getMyDinningInfo();
+    });
   }
 
   void getMyDinningInfo() async {
     try {
-      isLoaginDataUser = true;
-      // update();
+      isLoaginDataUser.value = true;
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
 
-      // Verificar que el rol no sea null antes de procesarlo
       final userRole = dinningLogin.role;
       if (userRole == null || userRole.isEmpty) {
         throw Exception('Rol de usuario no válido');
@@ -43,74 +44,72 @@ class DinningController extends GetxController with NavigationStateMixin {
       final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(userRole);
       switch (roleByRoleUser) {
         case RolesUsers.dinning:
-          await getmenuByDining();
+        case RolesUsers.food:
+          await getCatalogsByType('menu');
           break;
         case RolesUsers.clothes:
-          await getWardrobebyDining();
+        case RolesUsers.retail:
+        case RolesUsers.water_distributor:
+        case RolesUsers.grocery:
+        case RolesUsers.accessories:
+        case RolesUsers.electronics:
+        case RolesUsers.pharmacy:
+        case RolesUsers.beauty:
+        case RolesUsers.construction:
+        case RolesUsers.automotive:
+        case RolesUsers.pets:
+          await getCatalogsByType('wardrobe');
           break;
         default:
-        // closeSesion();
       }
 
-      isLoaginDataUser = false;
-      update();
-      // setDataToEditItem(menusToEdit);
-      update();
+      isLoaginDataUser.value = false;
     } catch (e) {
       closeSesion();
-      isLoaginDataUser = false;
-      // update();
+      isLoaginDataUser.value = false;
     }
   }
 
-  //Wardrobes
+  // Catalogs (new unified system - replaces Wardrobe/Menu)
 
-  Future<List<WardrobeModel>?> getWardrobebyDining() async {
+  Future<List<CatalogModel>?> getCatalogsByType(String type) async {
     if (_isLoadingWardrobes) {
-      debugPrint('=== getWardrobebyDining already in progress, skipping ===');
-      return wardList;
+      debugPrint('=== getCatalogsByType already in progress, skipping ===');
+      return catalogsList;
     }
 
     try {
       _isLoadingWardrobes = true;
-      debugPrint('=== DEBUG getWardrobebyDining CALLED ===');
-      debugPrint('Current wardList length before clear: ${wardList.length}');
-      wardList = [];
-      debugPrint('wardList cleared, length: ${wardList.length}');
-
-      final userId = dinningLogin.id;
-      if (userId == null || userId.isEmpty) {
-        throw Exception('ID de usuario no válido');
-      }
-
-      final responseWar = await GetClothingUserUsescase.execute(userId);
-      debugPrint('=== DEBUG DinningController.getWardrobebyDining ===');
+      debugPrint('=== DEBUG getCatalogsByType CALLED ===');
+      debugPrint('Type: $type');
       debugPrint(
-          'API response wardrobes count: ${responseWar.listClothing?.length ?? 0}');
+          'Current catalogsList length before clear: ${catalogsList.length}');
+      catalogsList.clear();
 
-      // Debug: Verificar cada elemento de la respuesta
-      if (responseWar.listClothing != null) {
-        for (int i = 0; i < responseWar.listClothing!.length; i++) {
-          debugPrint(
-              'API Response Item $i: ${responseWar.listClothing![i].description} (ID: ${responseWar.listClothing![i].id})');
-        }
+      final response = await GetMyCatalogsUseCase().execute(type: type);
+      debugPrint('=== DEBUG DinningController.getCatalogsByType ===');
+      debugPrint('API response catalogs count: ${response.length}');
+
+      for (int i = 0; i < response.length; i++) {
+        debugPrint(
+            'API Response Item $i: ${response[i].description} (ID: ${response[i].id})');
       }
 
-      for (var e in responseWar.listClothing!) {
-        debugPrint('Adding wardrobe: ${e.description} (ID: ${e.id})');
-        wardList.add(e);
-        debugPrint('wardList length after adding: ${wardList.length}');
+      for (var e in response) {
+        debugPrint('Adding catalog: ${e.description} (ID: ${e.id})');
+        catalogsList.add(e);
+        debugPrint('catalogsList length after adding: ${catalogsList.length}');
       }
 
-      debugPrint('Final wardList length: ${wardList.length}');
-      wardSelected = wardList.first;
-      debugPrint('Selected wardrobe: ${wardSelected.description}');
+      debugPrint('Final catalogsList length: ${catalogsList.length}');
+      catalogSelected = catalogsList.isNotEmpty ? catalogsList.first : null;
+      debugPrint('Selected catalog: ${catalogSelected?.description}');
       update();
       _isLoadingWardrobes = false;
-      return wardList;
+      return catalogsList;
     } on ApiException catch (e) {
       _isLoadingWardrobes = false;
-      everyListEmpty = false;
+      everyListEmpty.value = false;
       update();
       if (e.statusCode == 404) {
         return null;
@@ -122,15 +121,8 @@ class DinningController extends GetxController with NavigationStateMixin {
     }
   }
 
-  List<MenuModel> menusList = <MenuModel>[];
-  MenuModel menuSelected = MenuModel();
-  bool everyListEmpty = true;
-  List<WardrobeModel> wardList = <WardrobeModel>[];
-  WardrobeModel wardSelected = WardrobeModel(
-    id: '',
-    idOwner: '',
-    items: [],
-  );
+  List<CatalogModel> catalogsList = <CatalogModel>[];
+  CatalogModel? catalogSelected;
 
   // Variables para el manejo de usuarios por roles
   List<UserByRoleModel> usersByRolesList = <UserByRoleModel>[];
@@ -140,15 +132,54 @@ class DinningController extends GetxController with NavigationStateMixin {
   // Getter público para el estado de carga de usuarios por roles
   bool get isLoadingUsersByRoles => _isLoadingUsersByRoles;
 
-  bool _isLoadingWardrobes = false; // Flag para evitar llamadas concurrentes
+  bool _isLoadingWardrobes = false; // Alias for loading state
 
-  void chageWardSelected(WardrobeModel select) {
-    wardSelected = select;
+  List<CatalogModel> get wardList => catalogsList;
+  CatalogModel? get wardSelected => catalogSelected;
+  List<CatalogModel> get menusList => catalogsList;
+  CatalogModel? get menuSelected => catalogSelected;
+
+  void chageCatalogSelected(CatalogModel select) {
+    catalogSelected = select;
     update();
   }
 
+  @Deprecated('Use chageCatalogSelected instead')
+  void chageWardSelected(WardrobeModel select) {
+    final wardrobeAsCatalog = CatalogModel(
+      id: select.id ?? '',
+      catalogType: 'wardrobe',
+      name: select.description,
+      description: select.description,
+      ownerId: select.idOwner ?? '',
+      status: 'active',
+      slug: '',
+      isPublic: true,
+      itemCount: select.items?.length ?? 0,
+      capacity: 10,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+    catalogSelected = wardrobeAsCatalog;
+    update();
+  }
+
+  @Deprecated('Use chageCatalogSelected instead')
   void chageMenuSelected(MenuModel select) {
-    menuSelected = select;
+    catalogSelected = CatalogModel(
+      id: select.id ?? '',
+      catalogType: 'menu',
+      name: select.description,
+      description: select.description,
+      ownerId: '',
+      status: 'active',
+      slug: '',
+      isPublic: true,
+      itemCount: select.items?.length ?? 0,
+      capacity: 10,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
     update();
   }
 
@@ -233,38 +264,28 @@ class DinningController extends GetxController with NavigationStateMixin {
     }
   }
 
-  MenuItemModel menusToEdit = MenuItemModel();
+  CatalogItemModel menusToEdit = CatalogItemModel(
+    id: '',
+    catalogId: '',
+    name: '',
+    price: 0.0,
+    quantity: 0,
+    status: 'available',
+    isAvailable: true,
+    isFeatured: false,
+    displayOrder: 0,
+    createdAt: DateTime.now(),
+    updatedAt: DateTime.now(),
+  );
 
   TextEditingController nameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController deliveryController = TextEditingController();
   String photoController = '';
 
+  @Deprecated('Use getCatalogsByType(type) with type="menu" instead')
   Future<List<MenuModel>?> getmenuByDining() async {
-    try {
-      final userId = dinningLogin.id;
-      if (userId == null || userId.isEmpty) {
-        throw Exception('ID de usuario no válido');
-      }
-
-      var respMenu = await GetMenuUseCase.execute(userId);
-
-      menusList.assignAll(respMenu);
-      menuSelected = menusList.first;
-      everyListEmpty = true;
-      update();
-      return menusList;
-    } on ApiException catch (e) {
-      update();
-      if (e.statusCode == 404) {
-        everyListEmpty = false;
-        menusList.clear();
-
-        update();
-        return null;
-      }
-      rethrow;
-    }
+    return null;
   }
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();

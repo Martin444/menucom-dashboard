@@ -18,7 +18,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return GetBuilder<DinningController>(
       builder: (_) {
         // Mostrar loading si los datos están cargando o no hay datos básicos
-        if (_.isLoaginDataUser || _.dinningLogin.id == null) {
+        if (_.isLoaginDataUser.value || _.dinningLogin.id == null) {
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),

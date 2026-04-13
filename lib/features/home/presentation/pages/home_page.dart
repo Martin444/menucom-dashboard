@@ -28,38 +28,40 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     dinningController = Get.find<DinningController>();
-    dinningController.getMyDinningInfo();
   }
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DinningController>(
+      init: Get.find<DinningController>(),
       builder: (dinning) {
-        if (dinning.isLoaginDataUser) {
-          return Scaffold(
-            backgroundColor: PUColors.primaryBackground,
-            body: const Center(
-              child: CircularProgressIndicator(),
-            ),
+        return Obx(() {
+          if (dinning.isLoaginDataUser.value) {
+            return Scaffold(
+              backgroundColor: PUColors.primaryBackground,
+              body: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final screenWidth = constraints.maxWidth;
+              final isMobile = screenWidth < 768;
+              final isTablet = screenWidth >= 768 && screenWidth < 1024;
+
+              if (isMobile) {
+                return _MobileLayout(controller: dinning);
+              } else {
+                return _DesktopLayout(
+                  controller: dinning,
+                  isTablet: isTablet,
+                );
+              }
+            },
           );
-        }
-
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final screenWidth = constraints.maxWidth;
-            final isMobile = screenWidth < 768;
-            final isTablet = screenWidth >= 768 && screenWidth < 1024;
-
-            if (isMobile) {
-              return _MobileLayout(controller: dinning);
-            } else {
-              return _DesktopLayout(
-                controller: dinning,
-                isTablet: isTablet,
-              );
-            }
-          },
-        );
+        });
       },
     );
   }
@@ -102,14 +104,14 @@ class _MobileContent extends StatelessWidget {
         Expanded(
           child: Center(
             // padding: const EdgeInsets.symmetric(16),
-            child: controller.everyListEmpty
+            child: controller.everyListEmpty.value
                 ? _RoleBasedView(controller: controller, isMobile: true)
                 : StarterBanner(user: controller.dinningLogin),
           ),
         ),
 
         // Actions principales en la parte inferior para mobile
-        if (controller.everyListEmpty) ...[
+        if (controller.everyListEmpty.value) ...[
           Container(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             decoration: BoxDecoration(
@@ -219,7 +221,7 @@ class _DesktopContent extends StatelessWidget {
               horizontal: horizontalPadding,
               vertical: verticalPadding,
             ),
-            child: controller.everyListEmpty
+            child: controller.everyListEmpty.value
                 ? _RoleBasedView(controller: controller, isMobile: false)
                 : StarterBanner(user: controller.dinningLogin),
           ),

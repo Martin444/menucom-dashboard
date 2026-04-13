@@ -3,12 +3,10 @@ import 'package:pickmeup_dashboard/core/middlewares/auth_middleware.dart';
 import 'package:pickmeup_dashboard/core/bindings/menu_navigation_binding.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_binding.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/views/create_item_page.dart';
-import 'package:pickmeup_dashboard/features/menu/get/menu_binding.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/views/create_menu_page.dart';
 import 'package:pickmeup_dashboard/features/profile/presentation/views/profile_page.dart';
 import 'package:pickmeup_dashboard/features/profile/presentation/views/edit_profile_page.dart';
 import 'package:pickmeup_dashboard/features/profile/presentation/views/payment_methods_page.dart';
-import 'package:pickmeup_dashboard/features/wardrobes/getx/wardrobes_binding.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/views/create_ward_item_page.dart';
 import 'package:pickmeup_dashboard/features/wardrobes/presentation/views/create_ward_page.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/pages/home_page.dart';
@@ -22,6 +20,8 @@ import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/pages/mp_oauth_callback_page.dart';
 
 import '../features/orders/presentation/pages/orders_page.dart';
+
+import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_binding.dart';
 
 class PUPages {
   static final List<GetPage> listPages = [
@@ -59,8 +59,7 @@ class PUPages {
       bindings: [
         MenuNavigationBinding(),
         DinningBinding(),
-        WardrobesBinding(),
-        MenuBinding(),
+        CatalogsBinding(),
       ],
     ),
     GetPage(
@@ -72,7 +71,7 @@ class PUPages {
       page: () => const CreateItemPage(),
       bindings: [
         DinningBinding(),
-        MenuBinding(),
+        CatalogsBinding(),
       ],
     ),
     GetPage(
@@ -86,7 +85,7 @@ class PUPages {
       ),
       bindings: [
         DinningBinding(),
-        MenuBinding(),
+        CatalogsBinding(),
       ],
     ),
     GetPage(
@@ -97,7 +96,7 @@ class PUPages {
       transition: Transition.fadeIn,
       page: () => const CreateWardPage(),
       bindings: [
-        WardrobesBinding(),
+        CatalogsBinding(),
       ],
     ),
     GetPage(
@@ -110,7 +109,7 @@ class PUPages {
         isEditPage: true,
       ),
       bindings: [
-        WardrobesBinding(),
+        CatalogsBinding(),
       ],
     ),
     GetPage(
@@ -121,7 +120,7 @@ class PUPages {
       transition: Transition.fadeIn,
       page: () => const CreateMenuPage(),
       bindings: [
-        MenuBinding(),
+        CatalogsBinding(),
       ],
     ),
     GetPage(
@@ -134,7 +133,7 @@ class PUPages {
         isEditPage: true,
       ),
       bindings: [
-        MenuBinding(),
+        CatalogsBinding(),
       ],
     ),
     GetPage(
@@ -147,8 +146,7 @@ class PUPages {
         isEditPage: false,
       ),
       bindings: [
-        MenuBinding(),
-        WardrobesBinding(),
+        CatalogsBinding(),
       ],
     ),
     GetPage(
@@ -160,8 +158,7 @@ class PUPages {
       page: () => const OrdersPage(),
       bindings: [
         MenuNavigationBinding(),
-        MenuBinding(),
-        WardrobesBinding(),
+        CatalogsBinding(),
         DinningBinding(),
       ],
     ),
@@ -176,8 +173,7 @@ class PUPages {
       ),
       bindings: [
         DinningBinding(),
-        MenuBinding(),
-        WardrobesBinding(),
+        CatalogsBinding(),
       ],
     ),
     GetPage(

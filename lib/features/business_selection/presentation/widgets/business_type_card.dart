@@ -28,18 +28,22 @@ class BusinessTypeCardMobile extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected ? _getColorFromHex(businessType.colorHex).withValues(alpha: 0.07) : Colors.white,
+          color: isSelected
+              ? _getColorFromHex(businessType.colorHex).withValues(alpha: 0.07)
+              : Colors.white,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isSelected
-                ? _getColorFromHex(businessType.colorHex).withValues(alpha: 0.35)
+                ? _getColorFromHex(businessType.colorHex)
+                    .withValues(alpha: 0.35)
                 : PUColors.borderInputColor,
             width: isSelected ? 2.5 : 1,
           ),
           boxShadow: [
             BoxShadow(
               color: isSelected
-                  ? _getColorFromHex(businessType.colorHex).withValues(alpha: 0.18)
+                  ? _getColorFromHex(businessType.colorHex)
+                      .withValues(alpha: 0.18)
                   : Colors.grey.withValues(alpha: 0.09),
               blurRadius: isSelected ? 16 : 6,
               offset: const Offset(0, 6),
@@ -60,7 +64,8 @@ class BusinessTypeCardMobile extends StatelessWidget {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: _getColorFromHex(businessType.colorHex).withValues(alpha: 0.22),
+                        color: _getColorFromHex(businessType.colorHex)
+                            .withValues(alpha: 0.22),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Icon(
@@ -74,7 +79,9 @@ class BusinessTypeCardMobile extends StatelessWidget {
                       child: Text(
                         businessType.title,
                         style: PuTextStyle.title1.copyWith(
-                          color: isSelected ? _getColorFromHex(businessType.colorHex) : PUColors.textColor3,
+                          color: isSelected
+                              ? _getColorFromHex(businessType.colorHex)
+                              : PUColors.textColor3,
                           fontWeight: FontWeight.w700,
                           fontSize: 18,
                         ),
@@ -129,12 +136,15 @@ class BusinessTypeCardMobile extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.only(right: 8.0),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: _getColorFromHex(businessType.colorHex).withValues(alpha: 0.12),
+                              color: _getColorFromHex(businessType.colorHex)
+                                  .withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(18),
                               border: Border.all(
-                                color: _getColorFromHex(businessType.colorHex).withValues(alpha: 0.28),
+                                color: _getColorFromHex(businessType.colorHex)
+                                    .withValues(alpha: 0.28),
                                 width: 1,
                               ),
                             ),
@@ -172,14 +182,23 @@ class BusinessTypeCardMobile extends StatelessWidget {
   IconData _getIconForBusinessType(String businessId) {
     switch (businessId) {
       case 'food_store':
+      case 'food':
         return Icons.restaurant;
       case 'clothes':
+      case 'accessories':
         return Icons.checkroom;
-      case 'general_commerce':
+      case 'retail':
+      case 'electronics':
+      case 'pets':
         return Icons.store;
-      case 'distributor':
+      case 'water_distributor':
+      case 'grocery':
+      case 'construction':
         return Icons.local_shipping;
       case 'service':
+      case 'pharmacy':
+      case 'beauty':
+      case 'automotive':
         return Icons.build;
       default:
         return Icons.business;
@@ -209,25 +228,30 @@ class BusinessTypeCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        margin: isCompact ? const EdgeInsets.all(6) : const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        margin: isCompact
+            ? const EdgeInsets.all(6)
+            : const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         padding: isCompact
             ? const EdgeInsets.symmetric(horizontal: 14, vertical: 14)
             : const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         decoration: BoxDecoration(
           color: isSelected
-              ? _getColorFromHex(businessType.colorHex).withValues(alpha: 0.05) // Más suave
+              ? _getColorFromHex(businessType.colorHex)
+                  .withValues(alpha: 0.05) // Más suave
               : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
-                ? _getColorFromHex(businessType.colorHex).withValues(alpha: 0.3) // Más suave
+                ? _getColorFromHex(businessType.colorHex)
+                    .withValues(alpha: 0.3) // Más suave
                 : PUColors.borderInputColor,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
               color: isSelected
-                  ? _getColorFromHex(businessType.colorHex).withValues(alpha: 0.15) // Más suave
+                  ? _getColorFromHex(businessType.colorHex)
+                      .withValues(alpha: 0.15) // Más suave
                   : Colors.grey.withValues(alpha: 0.1),
               blurRadius: isSelected ? 12 : 4,
               offset: const Offset(0, 4),
@@ -254,7 +278,8 @@ class BusinessTypeCard extends StatelessWidget {
                 width: 54,
                 height: 54,
                 decoration: BoxDecoration(
-                  color: _getColorFromHex(businessType.colorHex).withValues(alpha: 0.18),
+                  color: _getColorFromHex(businessType.colorHex)
+                      .withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
@@ -273,8 +298,11 @@ class BusinessTypeCard extends StatelessWidget {
                       child: Text(
                         businessType.title,
                         style: PuTextStyle.title1.copyWith(
-                          color: isSelected ? _getColorFromHex(businessType.colorHex) : PUColors.textColor3,
-                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                          color: isSelected
+                              ? _getColorFromHex(businessType.colorHex)
+                              : PUColors.textColor3,
+                          fontWeight:
+                              isSelected ? FontWeight.w700 : FontWeight.w600,
                           fontSize: 21,
                         ),
                       ),
@@ -329,7 +357,8 @@ class BusinessTypeCard extends StatelessWidget {
           width: 38,
           height: 38,
           decoration: BoxDecoration(
-            color: _getColorFromHex(businessType.colorHex).withValues(alpha: 0.13),
+            color:
+                _getColorFromHex(businessType.colorHex).withValues(alpha: 0.13),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
@@ -344,7 +373,9 @@ class BusinessTypeCard extends StatelessWidget {
         Text(
           businessType.title,
           style: PuTextStyle.title3.copyWith(
-            color: isSelected ? _getColorFromHex(businessType.colorHex) : PUColors.textColor3,
+            color: isSelected
+                ? _getColorFromHex(businessType.colorHex)
+                : PUColors.textColor3,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             fontSize: 11,
           ),
@@ -403,7 +434,9 @@ class BusinessTypeCard extends StatelessWidget {
 
   /// Construye las features con opción de mostrar todas
   Widget _buildFeatures({bool showAll = false}) {
-    final featuresToShow = showAll ? businessType.features : businessType.features.take(2).toList();
+    final featuresToShow = showAll
+        ? businessType.features
+        : businessType.features.take(2).toList();
 
     return Wrap(
       spacing: 8,
@@ -415,10 +448,12 @@ class BusinessTypeCard extends StatelessWidget {
             vertical: 6,
           ),
           decoration: BoxDecoration(
-            color: _getColorFromHex(businessType.colorHex).withValues(alpha: 0.1),
+            color:
+                _getColorFromHex(businessType.colorHex).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: _getColorFromHex(businessType.colorHex).withValues(alpha: 0.3),
+              color: _getColorFromHex(businessType.colorHex)
+                  .withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -445,14 +480,23 @@ class BusinessTypeCard extends StatelessWidget {
   IconData _getIconForBusinessType(String businessId) {
     switch (businessId) {
       case 'food_store':
+      case 'food':
         return Icons.restaurant;
       case 'clothes':
+      case 'accessories':
         return Icons.checkroom;
-      case 'general_commerce':
+      case 'retail':
+      case 'electronics':
+      case 'pets':
         return Icons.store;
-      case 'distributor':
+      case 'water_distributor':
+      case 'grocery':
+      case 'construction':
         return Icons.local_shipping;
       case 'service':
+      case 'pharmacy':
+      case 'beauty':
+      case 'automotive':
         return Icons.build;
       default:
         return Icons.business;

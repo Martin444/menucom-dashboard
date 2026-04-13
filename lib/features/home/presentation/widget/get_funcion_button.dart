@@ -8,7 +8,7 @@ import '../../controllers/dinning_controller.dart';
 
 Widget getActionPrincipalByRole(DinningController role) {
   // Verificar que los datos estén cargados
-  if (role.isLoaginDataUser) {
+  if (role.isLoaginDataUser.value) {
     return const Center(
       child: CircularProgressIndicator(),
     );
@@ -24,10 +24,12 @@ Widget getActionPrincipalByRole(DinningController role) {
     );
   }
 
-  final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(role.dinningLogin.role ?? '');
+  final roleByRoleUser =
+      RolesFuncionts.getTypeRoleByRoleString(role.dinningLogin.role ?? '');
 
   switch (roleByRoleUser) {
     case RolesUsers.dinning:
+    case RolesUsers.food:
       if (role.menusList.isEmpty) {
         return ButtonPrimary(
           title: 'Nuevo Menú',
@@ -69,9 +71,19 @@ Widget getActionPrincipalByRole(DinningController role) {
         ],
       );
     case RolesUsers.clothes:
+    case RolesUsers.retail:
+    case RolesUsers.water_distributor:
+    case RolesUsers.grocery:
+    case RolesUsers.accessories:
+    case RolesUsers.electronics:
+    case RolesUsers.pharmacy:
+    case RolesUsers.beauty:
+    case RolesUsers.construction:
+    case RolesUsers.automotive:
+    case RolesUsers.pets:
       if (role.wardList.isEmpty) {
         return ButtonPrimary(
-          title: 'Nuevo guardarropas',
+          title: 'Nuevo catálogo',
           onPressed: () {
             Get.toNamed(PURoutes.REGISTER_WARDROBES);
           },
@@ -82,7 +94,7 @@ Widget getActionPrincipalByRole(DinningController role) {
         children: [
           Flexible(
             child: ButtonSecundary(
-              title: 'Nueva prenda',
+              title: 'Nuevo producto',
               onPressed: () {
                 Get.toNamed(
                   PURoutes.REGISTER_ITEM_WARDROBES,
@@ -96,7 +108,7 @@ Widget getActionPrincipalByRole(DinningController role) {
           ),
           Flexible(
             child: ButtonPrimary(
-              title: 'Nuevo guardarropas',
+              title: 'Nuevo catálogo',
               onPressed: () {
                 Get.toNamed(PURoutes.REGISTER_WARDROBES);
               },
@@ -143,39 +155,10 @@ Widget getActionPrincipalByRole(DinningController role) {
         ],
       );
 
-    case RolesUsers.commerce:
-      return ButtonPrimary(
-        title: 'Gestionar inventario',
-        onPressed: () {
-          // TODO: Implementar gestión de inventario
-          Get.snackbar(
-            'Próximamente',
-            'La gestión de inventario estará disponible pronto',
-            snackPosition: SnackPosition.TOP,
-          );
-        },
-        load: false,
-      );
-
-    case RolesUsers.distributor:
-      return ButtonPrimary(
-        title: 'Gestionar distribución',
-        onPressed: () {
-          // TODO: Implementar gestión de distribución
-          Get.snackbar(
-            'Próximamente',
-            'La gestión de distribución estará disponible pronto',
-            snackPosition: SnackPosition.TOP,
-          );
-        },
-        load: false,
-      );
-
     case RolesUsers.service:
       return ButtonPrimary(
         title: 'Gestionar servicios',
         onPressed: () {
-          // TODO: Implementar gestión de servicios
           Get.snackbar(
             'Próximamente',
             'La gestión de servicios estará disponible pronto',
@@ -187,7 +170,7 @@ Widget getActionPrincipalByRole(DinningController role) {
 
     default:
       return ButtonPrimary(
-        title: 'Error en el rol ${roleByRoleUser?.name}',
+        title: 'Error en el rol',
         onPressed: () {},
         load: false,
       );

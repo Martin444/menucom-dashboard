@@ -12,7 +12,7 @@ class CategoryTagsSection<T> extends StatelessWidget {
     super.key,
     required this.title,
     required this.items,
-    required this.selectedItem,
+    this.selectedItem,
     required this.onItemSelected,
     required this.descriptionBuilder,
     required this.itemCountBuilder,
@@ -31,7 +31,7 @@ class CategoryTagsSection<T> extends StatelessWidget {
   final List<T> items;
 
   /// Elemento actualmente seleccionado
-  final T selectedItem;
+  final T? selectedItem;
 
   /// Callback cuando se selecciona un elemento
   final ValueChanged<T> onItemSelected;

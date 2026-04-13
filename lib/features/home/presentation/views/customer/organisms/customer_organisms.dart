@@ -43,7 +43,8 @@ class CustomerFeaturedCommerces extends StatelessWidget {
       emptyIcon: FluentIcons.store_microsoft_24_regular,
       emptyTitle: 'No hay comercios registrados',
       emptySubtitle: 'No se encontraron comercios en este momento',
-      itemBuilder: (commerce, index) => _buildCommerceCard(commerce, accessTokenHashed),
+      itemBuilder: (commerce, index) =>
+          _buildCommerceCard(commerce, accessTokenHashed),
       headerActions: [
         GridHeaderAction(
           icon: FluentIcons.info_24_regular,
@@ -58,7 +59,8 @@ class CustomerFeaturedCommerces extends StatelessWidget {
   }
 
   /// Construye la card de comercio individual
-  Widget _buildCommerceCard(UserByRoleModel commerce, String accessTokenHashed) {
+  Widget _buildCommerceCard(
+      UserByRoleModel commerce, String accessTokenHashed) {
     String? storeUrlWithToken;
     if (commerce.storeURL != null && commerce.storeURL!.isNotEmpty) {
       final uri = Uri.parse(commerce.storeURL!);
@@ -94,10 +96,30 @@ class CustomerFeaturedCommerces extends StatelessWidget {
     switch (role.toLowerCase()) {
       case 'dinning':
         return 'Restaurante';
+      case 'food':
+        return 'Restaurant/Comida';
       case 'clothes':
-        return 'Ropa & Moda';
-      case 'commerce':
+        return 'Tienda de Ropa';
+      case 'retail':
         return 'Comercio General';
+      case 'water_distributor':
+        return 'Distribuidora de Agua';
+      case 'grocery':
+        return 'Distribuidora de Alimentos';
+      case 'accessories':
+        return 'Accesorios';
+      case 'electronics':
+        return 'Electrónica';
+      case 'pharmacy':
+        return 'Farmacia';
+      case 'beauty':
+        return 'Belleza';
+      case 'construction':
+        return 'Materiales de Construcción';
+      case 'automotive':
+        return 'Automotriz';
+      case 'pets':
+        return 'Petshop';
       case 'service':
         return 'Servicios';
       default:

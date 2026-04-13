@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
-import 'package:pickmeup_dashboard/features/wardrobes/getx/wardrobes_controller.dart';
+import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/utils/pu_colors.dart';
 import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:pu_material/widgets/buttons/button_primary.dart';
 import 'package:pu_material/widgets/inputs/pu_input.dart';
+import 'dart:typed_data';
+import 'package:pickmeup_dashboard/features/menu/presentation/widgets/card_take_photo.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class CreateWardPage extends StatefulWidget {
@@ -23,26 +25,20 @@ class CreateWardPage extends StatefulWidget {
 
 class _CreateWardPageState extends State<CreateWardPage> {
   late final DinningController dinninController;
-  late final WardrobesController wrController;
+  late final CatalogsController catalogsController;
 
   @override
   void initState() {
     super.initState();
-    // Inicializar controladores de manera segura
     dinninController = Get.find<DinningController>();
-    wrController = Get.find<WardrobesController>();
-  }
-
-  @override
-  void dispose() {
-    wrController.nameWard.clear();
-    super.dispose();
+    catalogsController = Get.put(CatalogsController());
+    catalogsController.loadCatalogsByType('wardrobe');
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<WardrobesController>(
-      builder: (_) {
+    return GetBuilder<CatalogsController>(
+      builder: (catCtrl) {
         return Scaffold(
           body: Center(
             child: Column(
@@ -91,13 +87,15 @@ class _CreateWardPageState extends State<CreateWardPage> {
                                   children: [
                                     Text(
                                       widget.isEditPage ?? false
-                                          ? 'Editá tu guardarropa'
-                                          : 'Creá tu nuevo guardarropas',
+                                          ? 'Editá tu catálogo'
+                                          : 'Creá tu nuevo catálogo',
                                       textAlign: TextAlign.start,
                                       style: PuTextStyle.title1,
                                     ),
                                     Text(
-                                      widget.isEditPage ?? false ? 'Renová tus ideas' : 'Dejá que tu imaginación vuele',
+                                      widget.isEditPage ?? false
+                                          ? 'Renová tus ideas'
+                                          : 'Dejá que tu imaginación vuele',
                                       textAlign: TextAlign.start,
                                       style: PuTextStyle.title2,
                                     ),
@@ -110,45 +108,70 @@ class _CreateWardPageState extends State<CreateWardPage> {
                             ),
                             PUInput(
                               hintText: 'Nombre',
-                              controller: _.nameWard,
-                              onSubmited: (p0) async {
-                                if (widget.isEditPage ?? false) {
-                                  final success = await _.editWardrobe();
-                                  if (success) {
-                                    await dinninController.getWardrobebyDining();
-                                    Get.offAllNamed(PURoutes.HOME);
-                                  }
-                                  return;
-                                }
-                                final success = await _.postWardrobe();
-                                if (success) {
-                                  await dinninController.getWardrobebyDining();
-                                  Get.offAllNamed(PURoutes.HOME);
-                                }
-                              },
+                              controller: catCtrl.nameCatalog,
+                            ),
+                            const SizedBox(height: 20),
+                            PUInput(
+                              hintText: 'Descripción',
+                              controller: catCtrl.descriptionCatalog,
+                            ),
+                            const SizedBox(height: 20),
+                            CardTakePhoto(
+                              onTaka: () => catCtrl.pickCoverImageCatalog(),
+                              photoInBytes:
+                                  catCtrl.coverImageCatalog ?? Uint8List(0),
+                              isTaked: catCtrl.coverImageCatalog != null,
+                              title: 'Cargá tu banner de catálogo (1200x400px)',
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              children: [
+                                Text('¿Catálogo Público?',
+                                    style: PuTextStyle.description1),
+                                const SizedBox(width: 8),
+                                Tooltip(
+                                  message:
+                                      'Si es público, los usuarios lo van a poder ver en la landing de Menu.com',
+                                  child: Icon(
+                                    FluentIcons.info_24_regular,
+                                    color: PUColors.textColor1,
+                                    size: 20,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Switch(
+                                  value: catCtrl.isPublicCatalog,
+                                  onChanged: (val) {
+                                    catCtrl.changeIsPublicCatalog(val);
+                                  },
+                                ),
+                              ],
                             ),
                           ],
                         ),
                         Column(
                           children: [
                             ButtonPrimary(
-                              title: widget.isEditPage ?? false ? 'Guardar' : 'Crear',
+                              title: widget.isEditPage ?? false
+                                  ? 'Guardar'
+                                  : 'Crear',
                               onPressed: () async {
                                 if (widget.isEditPage ?? false) {
-                                  final success = await _.editWardrobe();
-                                  if (success) {
-                                    await dinninController.getWardrobebyDining();
+                                  final selected =
+                                      catCtrl.catalogSelected.value;
+                                  if (selected != null) {
+                                    await catCtrl.editCatalog(selected);
+                                    await catCtrl
+                                        .loadCatalogsByType('wardrobe');
                                     Get.offAllNamed(PURoutes.HOME);
                                   }
                                   return;
                                 }
-                                final success = await _.postWardrobe();
-                                if (success) {
-                                  await dinninController.getWardrobebyDining();
-                                  Get.offAllNamed(PURoutes.HOME);
-                                }
+                                await catCtrl.createCatalog('wardrobe');
+                                await catCtrl.loadCatalogsByType('wardrobe');
+                                Get.offAllNamed(PURoutes.HOME);
                               },
-                              load: _.isLoadWard,
+                              load: catCtrl.isLoadingCatalogs.value,
                             ),
                             const SizedBox(
                               height: 20,

@@ -87,16 +87,36 @@ enum MenuNavigationItem {
         logout,
       ];
 
+  /// Roles que usan catálogo (wardrobe)
+  static List<String> get catalogRoles => [
+        'clothes',
+        'retail',
+        'water_distributor',
+        'grocery',
+        'accessories',
+        'electronics',
+        'pharmacy',
+        'beauty',
+        'construction',
+        'automotive',
+        'pets',
+      ];
+
+  /// Roles que usan menú (restaurant)
+  static List<String> get menuRoles => ['dinning', 'food'];
+
   /// Items que están disponibles según el rol del usuario
   static List<MenuNavigationItem> getItemsByRole(String role) {
-    // Aquí puedes implementar lógica para mostrar diferentes items según el rol
-    switch (role.toLowerCase()) {
+    final roleLower = role.toLowerCase();
+    if (menuRoles.contains(roleLower)) {
+      return [home, orders, sales, ...actionItems];
+    }
+    if (catalogRoles.contains(roleLower)) {
+      return [home, orders, sales, ...actionItems];
+    }
+    switch (roleLower) {
       case 'admin':
         return [...mainItems, ...actionItems];
-      case 'dinning':
-        return [home, orders, sales, ...actionItems];
-      case 'clothes':
-        return [home, orders, sales, ...actionItems];
       case 'customer':
         return [home, orders, ...actionItems];
       default:

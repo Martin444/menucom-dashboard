@@ -90,11 +90,14 @@ class EnhancedMenuDrawItem extends StatelessWidget {
                   Expanded(
                     child: Row(
                       children: [
-                        Text(
-                          config.label,
-                          style: PuTextStyle.title3.copyWith(
-                            color: _getTextColor(isSelected, isComingSoon),
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        Flexible(
+                          child: Text(
+                            config.label,
+                            style: PuTextStyle.title3.copyWith(
+                              color: _getTextColor(isSelected, isComingSoon),
+                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         if (isComingSoon) ...[

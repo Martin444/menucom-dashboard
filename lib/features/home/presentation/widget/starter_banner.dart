@@ -26,11 +26,47 @@ class _StarterBannerState extends State<StarterBanner> {
 
     switch (role) {
       case RolesUsers.dinning:
-        return "Registrá tus platos en menús irresistibles";
+      case RolesUsers.food:
+        return "Registrá tus platos en menús irresistible";
       case RolesUsers.clothes:
-        return 'Registrá tus prendas en guardarropas flexibles';
+      case RolesUsers.retail:
+      case RolesUsers.water_distributor:
+      case RolesUsers.grocery:
+      case RolesUsers.accessories:
+      case RolesUsers.electronics:
+      case RolesUsers.pharmacy:
+      case RolesUsers.beauty:
+      case RolesUsers.construction:
+      case RolesUsers.automotive:
+      case RolesUsers.pets:
+        return 'Registrá tus productos en catálogos flexibles';
+      case RolesUsers.service:
+        return 'Empezá a gestionar tus servicios';
       default:
-        return '';
+        return 'Comenzá a usar el dashboard';
+    }
+  }
+
+  String getRouteByRole() {
+    final role = RolesFuncionts.getTypeRoleByRoleString(widget.user.role!);
+    switch (role) {
+      case RolesUsers.dinning:
+      case RolesUsers.food:
+        return PURoutes.REGISTER_MENU_CATEGORY;
+      case RolesUsers.clothes:
+      case RolesUsers.retail:
+      case RolesUsers.water_distributor:
+      case RolesUsers.grocery:
+      case RolesUsers.accessories:
+      case RolesUsers.electronics:
+      case RolesUsers.pharmacy:
+      case RolesUsers.beauty:
+      case RolesUsers.construction:
+      case RolesUsers.automotive:
+      case RolesUsers.pets:
+        return PURoutes.REGISTER_WARDROBES;
+      default:
+        return PURoutes.HOME;
     }
   }
 
@@ -69,16 +105,7 @@ class _StarterBannerState extends State<StarterBanner> {
                 child: ButtonPrimary(
                   title: 'Comenzar',
                   onPressed: () {
-                    final role = RolesFuncionts.getTypeRoleByRoleString(widget.user.role!);
-                    switch (role) {
-                      case RolesUsers.dinning:
-                        Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY);
-                        break;
-                      case RolesUsers.clothes:
-                        Get.toNamed(PURoutes.REGISTER_WARDROBES);
-                        break;
-                      default:
-                    }
+                    Get.toNamed(getRouteByRole());
                   },
                   load: false,
                 ),

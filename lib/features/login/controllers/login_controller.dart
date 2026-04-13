@@ -38,6 +38,7 @@ class LoginController extends GetxController {
 
   RxBool isLogging = false.obs;
   RxBool isLoggingGoogle = false.obs;
+  RxBool isRegistering = false.obs;
   RxBool isValidInit = false.obs;
 
   @override
@@ -195,18 +196,11 @@ class LoginController extends GetxController {
   TextEditingController newphoneController = TextEditingController();
   TextEditingController newpasswordController = TextEditingController();
 
-  List<TypeComerceModel> listCommerceAvilable = [
-    TypeComerceModel(
-      id: '1',
-      code: 'clothes',
-      description: 'Venta de ropa',
-    ),
-    TypeComerceModel(
-      id: '2',
-      code: 'dinning',
-      description: 'Venta de comida',
-    ),
-  ];
+  RxString errorTextName = ''.obs;
+  RxString errorTextPhone = ''.obs;
+
+  List<TypeComerceModel> listCommerceAvilable =
+      TypeComerceModel.getAvailableCommerceTypes();
 
   TypeComerceModel? comerceModelSelected;
 
@@ -217,8 +211,7 @@ class LoginController extends GetxController {
 
   Future<UserSuccess?> registerCommerce() async {
     try {
-      isLogging.value = true;
-      update();
+      isRegistering.value = true;
       var urlPhoto = await UploadFileUsesCase().execute(toSend);
       var responseCommerce = await RegisterCommerceUsescase().execute(
         photo: urlPhoto,
@@ -229,11 +222,7 @@ class LoginController extends GetxController {
         role: comerceModelSelected!.code,
       );
 
-      isLogging.value = false;
-      // ACCESS_TOKEN = responseCommerce.accessToken;
-      // var sharedToken = await _prefs;
-      // sharedToken.setString('acccesstoken', ACCESS_TOKEN);
-      update();
+      isRegistering.value = false;
       Get.dialog(
         const SuccesRegisterPage(),
         barrierDismissible: false,
@@ -244,8 +233,7 @@ class LoginController extends GetxController {
       newphoneController.clear();
       return responseCommerce;
     } catch (e) {
-      isLogging.value = false;
-      update();
+      isRegistering.value = false;
       HandleRegister.registerError(e.toString());
     }
     return null;

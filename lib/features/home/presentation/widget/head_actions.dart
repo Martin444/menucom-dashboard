@@ -37,7 +37,7 @@ class _HeadActionsState extends State<HeadActions> {
     return GetBuilder<DinningController>(
       builder: (dinning) {
         // Verificar que los datos estén cargados
-        if (dinning.isLoaginDataUser) {
+        if (dinning.isLoaginDataUser.value) {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: PuStyleContainers.borderBottomContainer,

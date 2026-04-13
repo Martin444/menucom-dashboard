@@ -33,27 +33,24 @@ O eliminar manualmente la carpeta build/
 
 ---
 
-## 2. Register Commerce (`register_commerce.dart`)
+## 3. Home Page (`home_page.dart`)
 
-### Críticos
+### ✅ ARREGLADO - Sprint 2
+| # | Problema | Solución |
+|---|----------|----------|
+| 1 | Variables NO reactivas | ✅ `isLoaginDataUser` y `everyListEmpty` ahora `RxBool` |
+| 2 | GetBuilder sin Obx | ✅ Agregado `Obx()` para rebuilds mínimos |
+| 3 | Múltiples `update()` innecesarios | ✅ Eliminados, RxBool ya notifica |
+
+### Pendientes
 | # | Problema | Línea | Solución |
 |---|----------|-------|----------|
-| 1 | `GetBuilder` rebuild completo | 31 | Cambiar a `Obx()` |
-| 2 | Error text复用复用 | 138,150,189 | Usar diferente error para cada campo |
-| 3 | `load` compartido | 209 | Estado independiente para registro |
-
-### Medium
-| # | Problema | Línea | Solución |
-|---|----------|-------|----------|
-| 4 | `ScrollConfiguration` innecesario | 53 | Eliminar o justificar |
-| 5 | Altura fija `size.height - 100` | 51 | Usar `constraints.maxHeight` |
-| 6 | Validator no usa el valor | 115-123 | Usar `value` en validación |
+| 4 | `debugPrint` en producción | múltiples | Remover o conditional |
 
 ### Mejoras UX
-- [ ] Agregar términos y condiciones checkbox
-- [ ] Progress indicator del upload de logo
-- [ ] Validación de contraseña (mín 8 chars, etc)
-- [ ] Confirmar contraseña (repetir)
+- [ ] Skeleton loading en vez de spinner
+- [ ] Pull-to-refresh
+- [ ] Animaciones de transición entre roles
 
 ---
 

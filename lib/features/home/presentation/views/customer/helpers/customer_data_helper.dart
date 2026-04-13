@@ -7,7 +7,24 @@ import '../../../../controllers/dinning_controller.dart';
 /// Este helper actúa como intermediario entre los widgets y el controlador,
 /// proporcionando una interfaz limpia y desacoplada para obtener datos.
 class CustomerDataHelper {
-  /// Obtiene usuarios con rol de negocio (dinning y clothes) para mostrar como comercios
+  /// Obtiene todos los tipos de roles de negocio del registro
+  static List<RolesUsers> get businessRoles => [
+        RolesUsers.dinning,
+        RolesUsers.clothes,
+        RolesUsers.retail,
+        RolesUsers.water_distributor,
+        RolesUsers.grocery,
+        RolesUsers.food,
+        RolesUsers.accessories,
+        RolesUsers.electronics,
+        RolesUsers.pharmacy,
+        RolesUsers.beauty,
+        RolesUsers.construction,
+        RolesUsers.automotive,
+        RolesUsers.pets,
+      ];
+
+  /// Obtiene usuarios con rol de negocio para mostrar como comercios
   ///
   /// Retorna una lista de comercios basada en usuarios registrados en el sistema
   /// o null si hay error o no hay datos
@@ -22,7 +39,7 @@ class CustomerDataHelper {
 
       // Solicitar usuarios con roles de negocio
       final users = await dinningController.getUsersByRoles(
-        roles: [RolesUsers.dinning, RolesUsers.clothes],
+        roles: businessRoles,
         withVinculedAccount: false,
       );
 
@@ -45,7 +62,8 @@ class CustomerDataHelper {
     }
 
     final dinningController = Get.find<DinningController>();
-    return dinningController.usersByRolesList.isEmpty && dinningController.lastUsersByRolesResponse == null;
+    return dinningController.usersByRolesList.isEmpty &&
+        dinningController.lastUsersByRolesResponse == null;
   }
 }
 
@@ -77,7 +95,8 @@ class CommerceData {
   factory CommerceData.fromUserByRole(UserByRoleModel user) {
     return CommerceData(
       id: user.id ?? 'unknown',
-      name: (user.name?.isNotEmpty == true) ? user.name! : 'Comercio Sin Nombre',
+      name:
+          (user.name?.isNotEmpty == true) ? user.name! : 'Comercio Sin Nombre',
       category: _getCategoryFromRole(user.role ?? ''),
       rating: _generateRating(), // Rating simulado
       distance: _generateDistance(), // Distancia simulada
@@ -94,6 +113,28 @@ class CommerceData {
         return 'Restaurante';
       case 'clothes':
         return 'Tienda de Ropa';
+      case 'retail':
+        return 'Tienda Retail';
+      case 'water_distributor':
+        return 'Distribuidora de Agua';
+      case 'grocery':
+        return 'Distribuidora de Alimentos';
+      case 'food':
+        return 'Restaurant/Comida';
+      case 'accessories':
+        return 'Accesorios';
+      case 'electronics':
+        return 'Electrónica';
+      case 'pharmacy':
+        return 'Farmacia';
+      case 'beauty':
+        return 'Belleza';
+      case 'construction':
+        return 'Materiales de Construcción';
+      case 'automotive':
+        return 'Automotriz';
+      case 'pets':
+        return 'Petshop';
       case 'admin':
         return 'Administración';
       default:
@@ -110,7 +151,14 @@ class CommerceData {
 
   /// Genera una distancia simulada
   static String _generateDistance() {
-    final distances = ['0.3 km', '0.5 km', '0.8 km', '1.2 km', '1.5 km', '2.0 km'];
+    final distances = [
+      '0.3 km',
+      '0.5 km',
+      '0.8 km',
+      '1.2 km',
+      '1.5 km',
+      '2.0 km'
+    ];
     distances.shuffle();
     return distances.first;
   }
