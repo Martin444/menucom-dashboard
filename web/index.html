@@ -496,70 +496,47 @@
         {{flutter_js}}
         {{flutter_build_config}}
         
-        // Limpiar la versión inyectada por Flutter (quita comillas y comentarios)
+        // Limpieza de versión robusta para Flutter 3.27+
         var serviceWorkerVersion = '{{flutter_service_worker_version}}';
         if (serviceWorkerVersion) {
-          serviceWorkerVersion = serviceWorkerVersion.replace(/"/g, '').replace(/\/\*.*?\*\//g, '').trim();
+            // Extraer solo la parte numérica antes del comentario
+            serviceWorkerVersion = serviceWorkerVersion.split('/*')[0].replace(/"/g, '').trim();
         }
         console.log('📦 [SPLASH] Service Worker Version:', serviceWorkerVersion);
         
-        var loaderConfig = {
+        _flutter.loader.loadEntrypoint({
           serviceWorker: {
             serviceWorkerVersion: serviceWorkerVersion,
-            serviceWorkerUrl: "flutter_service_worker.js?v=" + serviceWorkerVersion,
           },
-          entrypointUrl: 'main.dart.js?v=' + serviceWorkerVersion,
           onEntrypointLoaded: function(engineInitializer) {
-            console.log('✅ [SPLASH] Entrypoint cargado exitosamente');
+            console.log('✅ [SPLASH] Entrypoint cargado');
             
-            try {
-              engineInitializer.initializeEngine({renderer: "canvaskit"}).then(function(appRunner) {
-                console.log('🎯 [SPLASH] Motor Flutter inicializado');
-                
-                var flutterTextElement = document.querySelector(".loader-text span");
-                if (flutterTextElement) {
-                  flutterTextElement.innerHTML = "Finalizando configuración... ⚙️";
+            engineInitializer.initializeEngine({
+              renderer: "html", // Forzar HTML para carga rápida
+              serviceWorkerVersion: serviceWorkerVersion
+            }).then(function(appRunner) {
+              console.log('🎯 [SPLASH] Motor Flutter inicializado');
+              var text = document.querySelector("#loader > span") || document.querySelector(".loader-text span");
+              if (text) text.innerHTML = "¡Casi listo! Finalizando... ⚙️";
+              return appRunner.runApp();
+            }).then(function() {
+              console.log('🎉 [SPLASH] Aplicación cargada correctamente');
+              setTimeout(function() {
+                var container = document.getElementById("loader");
+                if (container) {
+                  container.classList.add("hidden");
                 }
-                
-                return appRunner.runApp();
-              }).then(function() {
-                console.log('🎉 [SPLASH] Aplicación Flutter ejecutándose correctamente');
-                
-                // Limpiar intervalo de mensajes
-                if (window.hideLoaderInterval) {
-                  clearInterval(window.hideLoaderInterval);
-                }
-                
-                // Ocultar loader con animación suave
-                setTimeout(function() {
-                  var container = document.getElementById("loader");
-                  if (container) {
-                    console.log('🫥 [SPLASH] Ocultando splash screen...');
-                    container.classList.add("hidden");
-                    // Remover del DOM después de la animación
-                    setTimeout(function() {
-                      container.style.display = "none";
-                      console.log('✨ [SPLASH] Splash screen removido del DOM');
-                    }, 500);
-                  }
-                }, 1500);
-              }).catch(function(error) {
-                console.error('❌ [SPLASH] Error ejecutando la aplicación Flutter:', error);
-                handleSplashError('Error al ejecutar la aplicación', error);
-              });
-            } catch (error) {
-              console.error('❌ [SPLASH] Error inicializando el motor Flutter:', error);
-              handleSplashError('Error al inicializar el motor Flutter', error);
-            }
+              }, 1000);
+            }).catch(function(error) {
+              console.error("❌ Error en la inicialización:", error);
+            });
           }
-        };
-        
-        console.log('📋 [SPLASH] Configuración del loader:', loaderConfig);
-        _flutter.loader.load(loaderConfig);
-        
+        });
       } catch (error) {
         console.error('❌ [SPLASH] Error crítico durante la carga inicial:', error);
-        handleSplashError('Error crítico en la carga inicial', error);
+        if (typeof handleSplashError === 'function') {
+          handleSplashError('Error crítico en la carga inicial', error);
+        }
       }
     });
   </script>
