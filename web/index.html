@@ -11,7 +11,7 @@
     For more details:
     * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
 
-                 }, 1000); // Reducir tiempo para una transición más suave  This is a placeholder for base href that will be replaced by the value of
+    This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
   -->
   <base href="$FLUTTER_BASE_HREF">
@@ -73,7 +73,6 @@
     // The value below is injected by flutter build, do not touch.
   </script> -->
   <!-- This script adds the flutter initialization JS code -->
-  <script src="flutter.js" defer></script>
   <!-- Agregar estilo para el contenedor del loader -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -410,145 +409,74 @@
     // Función para manejar errores durante la carga
     function handleSplashError(errorType, error) {
       console.error('🔥 [SPLASH ERROR]', errorType, ':', error);
-      
-      // Mostrar error en el splash
       var errorTextElement = document.querySelector(".loader-text span");
-      var spinnerElement = document.querySelector(".spinner");
-      
       if (errorTextElement) {
         errorTextElement.innerHTML = "⚠️ Error al cargar la aplicación";
         errorTextElement.style.color = "#FF6B6B";
       }
-      
-      // Ocultar spinner y mostrar información de error
-      if (spinnerElement) {
-        spinnerElement.style.display = "none";
-      }
-      
-      // Crear un contenedor de error detallado
-      var errorContainer = document.createElement('div');
-      errorContainer.style.cssText = `
-        margin-top: 20px;
-        padding: 15px;
-        background: rgba(255, 107, 107, 0.1);
-        border: 1px solid #FF6B6B;
-        border-radius: 8px;
-        max-width: 400px;
-        text-align: left;
-        font-size: 12px;
-        color: #4A4A4A;
-        font-family: 'Courier New', monospace;
-      `;
-      
-      errorContainer.innerHTML = `
-        <strong style="color: #FF6B6B;">Detalles del Error:</strong><br>
-        <strong>Tipo:</strong> ${errorType}<br>
-        <strong>Mensaje:</strong> ${error.message || 'Error desconocido'}<br>
-        <strong>Stack:</strong> ${error.stack ? error.stack.substring(0, 200) + '...' : 'No disponible'}<br><br>
-        <em style="color: #666;">Por favor, recarga la página o contacta al administrador.</em>
-      `;
+      var spinnerElement = document.querySelector(".spinner");
+      if (spinnerElement) spinnerElement.style.display = "none";
       
       var loaderElement = document.getElementById('loader');
       if (loaderElement) {
+        var errorContainer = document.createElement('div');
+        errorContainer.style.cssText = "margin-top: 20px; padding: 15px; background: rgba(255, 107, 107, 0.1); border: 1px solid #FF6B6B; border-radius: 8px; max-width: 400px; text-align: left; font-size: 12px; color: #4A4A4A; font-family: 'Courier New', monospace;";
+        errorContainer.innerHTML = `<strong>Detalles:</strong><br>${errorType}<br>${error.message || error}<br><br><em>Recarga la página.</em>`;
         loaderElement.appendChild(errorContainer);
       }
-      
-      // Agregar botón de recarga
-      var reloadButton = document.createElement('button');
-      reloadButton.innerHTML = '🔄 Recargar Página';
-      reloadButton.style.cssText = `
-        margin-top: 15px;
-        padding: 10px 20px;
-        background: #4A4A4A;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background 0.3s ease;
-      `;
-      
-      reloadButton.onmouseover = function() { this.style.background = '#666'; };
-      reloadButton.onmouseout = function() { this.style.background = '#4A4A4A'; };
-      reloadButton.onclick = function() {
-        console.log('🔄 [SPLASH] Usuario solicitó recarga de página');
-        window.location.reload();
-      };
-      
-      if (loaderElement) {
-        loaderElement.appendChild(reloadButton);
-      }
-      
-      // Log detallado para debugging
-      console.group('🔍 [SPLASH DEBUG INFO]');
-      console.log('Error Type:', errorType);
-      console.log('Error Object:', error);
-      console.log('User Agent:', navigator.userAgent);
-      console.log('URL:', window.location.href);
-      console.log('Timestamp:', new Date().toISOString());
-      console.groupEnd();
     }
+
+    // Inyección de configuración de Flutter (Reemplazado por el build)
+    {{flutter_js}}
+    {{flutter_build_config}}
     
     window.addEventListener('load', function(ev) {
-      console.log('🚀 [SPLASH] Iniciando carga de la aplicación Flutter...');
+      console.log('🚀 [SPLASH] Iniciando secuencia de carga maestra...');
       
       try {
-        {{flutter_js}}
-        {{flutter_build_config}}
-        
-        // Configuración de carga maestra para Flutter 3.27.3
-        console.log('🚀 [SPLASH] Preparando secuencia de carga...');
-        
-        function launchFlutter() {
-          try {
-            var serviceWorkerVersion = '{{flutter_service_worker_version}}';
-            if (serviceWorkerVersion) {
-              serviceWorkerVersion = serviceWorkerVersion.split('/*')[0].replace(/"/g, '').trim();
-            }
-            console.log('📦 [SPLASH] Version:', serviceWorkerVersion || 'N/A');
+        // Usamos comillas simples externas para evitar conflictos con las dobles que inyecta Flutter
+        var serviceWorkerVersion = '{{flutter_service_worker_version}}';
+        if (serviceWorkerVersion) {
+            // Limpiamos el comentario y cualquier comilla extra que inyecte el compilador
+            serviceWorkerVersion = serviceWorkerVersion.split('/*')[0].replace(/["']/g, '').trim();
+        }
+        console.log('📦 [SPLASH] Motor Detectado. Versión SW:', serviceWorkerVersion || 'N/A');
 
-            if (typeof _flutter === 'undefined' || !_flutter.loader) {
-              console.warn('⚠️ [SPLASH] Loader no listo, reintentando en 100ms...');
-              setTimeout(launchFlutter, 100);
-              return;
-            }
+        if (typeof _flutter === 'undefined' || !_flutter.loader) {
+          throw new Error('El cargador de Flutter (_flutter.loader) no se inicializó correctamente.');
+        }
 
-            _flutter.loader.loadEntrypoint({
-              serviceWorker: {
-                serviceWorkerVersion: serviceWorkerVersion,
-              },
-              entrypointUrl: 'main.dart.js',
-              onEntrypointLoaded: function(engineInitializer) {
-                console.log('✅ [SPLASH] Entrypoint OK. Inicializando motor...');
-                engineInitializer.initializeEngine({
-                  serviceWorkerVersion: serviceWorkerVersion,
-                  useColorEmoji: true,
-                }).then(function(appRunner) {
-                  console.log('🎯 [SPLASH] Motor OK. Ejecutando app...');
-                  return appRunner.runApp();
-                }).then(function() {
-                  console.log('🎉 [SPLASH] App cargada correctamente.');
-                  setTimeout(function() {
-                    var container = document.getElementById("loader");
-                    if (container) container.classList.add("hidden");
-                  }, 500);
-                }).catch(function(error) {
-                  console.error('❌ [SPLASH] Fallo en runApp:', error);
-                });
-              }
+        _flutter.loader.load({
+          serviceWorkerSettings: {
+            serviceWorkerVersion: serviceWorkerVersion,
+          },
+          onEntrypointLoaded: function(engineInitializer) {
+            console.log('✅ [SPLASH] Entrypoint OK. Inicializando motor...');
+            engineInitializer.initializeEngine({
+              serviceWorkerVersion: serviceWorkerVersion,
+              useColorEmoji: true,
+            }).then(function(appRunner) {
+              console.log('🎯 [SPLASH] Motor OK. Ejecutando app...');
+              return appRunner.runApp();
+            }).then(function() {
+              console.log('🎉 [SPLASH] Aplicación cargada exitosamente.');
+              setTimeout(function() {
+                var container = document.getElementById("loader");
+                if (container) {
+                  container.classList.add("hidden");
+                  // Limpiar mensajes de intervalo si existen
+                  if (window.hideLoaderInterval) clearInterval(window.hideLoaderInterval);
+                  // Eliminar el loader después de la transición
+                  setTimeout(() => container.remove(), 800);
+                }
+              }, 400);
+            }).catch(function(error) {
+              handleSplashError('Error en initializeEngine/runApp', error);
             });
-          } catch (e) {
-            console.error('❌ [SPLASH] Error en script de carga:', e);
           }
-        }
-
-        // Iniciar con un pequeño respiro para el navegador
-        setTimeout(launchFlutter, 50);
+        });
       } catch (error) {
-        console.error('❌ [SPLASH] Error crítico durante la carga inicial:', error);
-        if (typeof handleSplashError === 'function') {
-          handleSplashError('Error crítico en la carga inicial', error);
-        }
+        handleSplashError('Error crítico de inicialización', error);
       }
     });
   </script>
