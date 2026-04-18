@@ -52,3 +52,6 @@ app.*.map.json
 # Firebase configuration files with sensitive data
 # google-services.json
 # GoogleService-Info.plist
+
+# FVM Version Cache
+.fvm/

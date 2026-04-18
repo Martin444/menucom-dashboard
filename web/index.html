@@ -434,8 +434,8 @@
       console.log('🚀 [SPLASH] Iniciando secuencia de carga maestra...');
       
       try {
-        // Usamos comillas simples externas para evitar conflictos con las dobles que inyecta Flutter
-        var serviceWorkerVersion = '{{flutter_service_worker_version}}';
+        // Usamos backticks para evitar que el apóstrofe de "Flutter's" rompa el string
+        var serviceWorkerVersion = `{{flutter_service_worker_version}}`;
         if (serviceWorkerVersion) {
             // Limpiamos el comentario y cualquier comilla extra que inyecte el compilador
             serviceWorkerVersion = serviceWorkerVersion.split('/*')[0].replace(/["']/g, '').trim();
