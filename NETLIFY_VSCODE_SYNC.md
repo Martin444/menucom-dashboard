@@ -23,7 +23,7 @@ Configurado para auto-despliegue con múltiples contextos:
 ### **Variables de API**
 | Variable | Desarrollo | QA/Preview | Producción |
 |----------|------------|------------|------------|
-| `API_URL` | `localhost:3001` | `menucom-api-60e608ae2f99.herokuapp.com` | `hammerhead-app-pouq5.ondigitalocean.app` |
+| `API_URL` | `localhost:3001` | `menucom-api.onrender.com` | `menucom-api.onrender.com` |
 
 ### **Variables de Firebase** (Idénticas en todos los entornos)
 ```bash
@@ -60,8 +60,8 @@ FIREBASE_IOS_BUNDLE_ID=com.pickmeup.menucomdashboard
 # QA/Preview (por defecto)
 flutter build web --release --web-renderer html [variables QA]
 
-# Producción
-flutter build web --release --web-renderer html [variables Producción]
+# Producción (Render API)
+flutter build web --release --dart-define=API_URL=https://menucom-api.onrender.com [variables...]
 ```
 
 ## 🛡️ Configuraciones de Seguridad
