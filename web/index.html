@@ -497,7 +497,7 @@
         {{flutter_build_config}}
         
         // Download main.dart.js
-        var serviceWorkerVersion = '{{flutter_service_worker_version}}'.replace('"','');
+        var serviceWorkerVersion = '{{flutter_service_worker_version}}'.replace(/"/g, '').replace(/\s*\/.*$/, '').trim();
         console.log('📦 [SPLASH] Service Worker Version:', serviceWorkerVersion);
         
         var loaderConfig = {
