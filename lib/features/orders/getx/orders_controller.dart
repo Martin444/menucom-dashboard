@@ -17,21 +17,48 @@ class OrdersController extends GetxController {
   // Instancia del caso de uso
   final _getOrdersByBusinessOwnerUseCase = api.GetOrdersByBusinessOwnerUseCase();
 
+
+
+  // Variables para paginación
+  var currentPage = 1.obs;
+  var pageSize = 20.obs;
+  var hasMore = true.obs;
+
   // Obtener órdenes por business owner ID
-  Future<void> fetchOrdersByBusinessOwner(String businessOwnerId) async {
+  Future<void> fetchOrdersByBusinessOwner(String businessOwnerId, {bool refresh = true}) async {
     try {
-      isLoading.value = true;
+      if (refresh) {
+        isLoading.value = true;
+        currentPage.value = 1;
+        orders.clear();
+        hasMore.value = true;
+      }
+
       hasError.value = false;
       errorMessage.value = '';
 
-      // Llamar al caso de uso del API
-      final List<api.Order> apiOrders = await _getOrdersByBusinessOwnerUseCase.call(businessOwnerId);
+      // Llamar al caso de uso del API con paginación
+      final List<api.Order> apiOrders = await _getOrdersByBusinessOwnerUseCase.call(
+        businessOwnerId,
+        page: currentPage.value,
+        limit: pageSize.value,
+      );
 
-      // Convertir órdenes del API al modelo del UI
-      final List<ui.Order> uiOrders = apiOrders.map((apiOrder) => _convertApiOrderToUiOrder(apiOrder)).toList();
+      if (apiOrders.isEmpty) {
+        hasMore.value = false;
+      } else {
+        // Convertir órdenes del API al modelo del UI
+        final List<ui.Order> uiOrders = apiOrders.map((apiOrder) => _convertApiOrderToUiOrder(apiOrder)).toList();
 
-      // Actualizar la lista reactiva
-      orders.assignAll(uiOrders);
+        // Actualizar la lista reactiva
+        if (refresh) {
+          orders.assignAll(uiOrders);
+        } else {
+          orders.addAll(uiOrders);
+        }
+        
+        currentPage.value++;
+      }
     } catch (e) {
       hasError.value = true;
       errorMessage.value = 'Error al cargar órdenes: $e';
@@ -39,27 +66,6 @@ class OrdersController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-  }
-
-  // Método legacy para compatibilidad (simulación)
-  Future<void> fetchOrders() async {
-    isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 1));
-    orders.value = [
-      ui.Order.example(
-        numero: '001',
-        detalle: 'Orden de ejemplo 1',
-        estado: 'Pendiente',
-        totalCentavos: 2500,
-      ),
-      ui.Order.example(
-        numero: '002',
-        detalle: 'Orden de ejemplo 2',
-        estado: 'Completado',
-        totalCentavos: 4050,
-      ),
-    ];
-    isLoading.value = false;
   }
 
   // Convertir Order del API a Order del UI
@@ -76,7 +82,9 @@ class OrdersController extends GetxController {
     int totalCentavos = ((apiOrder.total ?? 0.0) * 100).round();
 
     return ui.Order(
-      numero: apiOrder.id?.substring(0, 8) ?? 'N/A', // Usar primeros 8 chars del ID
+      numero: (apiOrder.id != null && apiOrder.id!.length >= 8)
+          ? apiOrder.id!.substring(0, 8)
+          : (apiOrder.id ?? 'N/A'), // Usar primeros 8 chars del ID de forma segura
       detalle: detalles,
       estado: _mapApiStatusToUiStatus(apiOrder.status),
       creado: apiOrder.createdAt ?? DateTime.now(),
@@ -104,7 +112,11 @@ class OrdersController extends GetxController {
       case 'failed':
         return 'Fallido';
       default:
-        return apiStatus ?? 'Desconocido';
+        if (apiStatus != null && apiStatus.isNotEmpty) {
+          // Si el estado es nuevo, mostrarlo capitalizado en lugar de "Desconocido"
+          return apiStatus[0].toUpperCase() + apiStatus.substring(1).toLowerCase();
+        }
+        return 'Desconocido';
     }
   }
 

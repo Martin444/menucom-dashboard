@@ -27,9 +27,28 @@ Esta skill establece las reglas de composición de widgets para el proyecto Flut
 
 ## Reglas de Composición (OBLIGATORIAS)
 
-### 1. Módulo Único de Exportación
+### 0. Prohibición de Funciones que Retornen Widgets
 
-**Todos los widgets reutilizables DEBEN ser exportados desde un único archivo:**
+**NUNCA** encapsules la creación de UI en funciones privadas o públicas:
+- **Prohibido:** `Widget _buildElement(...) { return Content(); }`
+- **Prohibido:** `Widget _buildDesktopContent() { return ... }`
+- **Prohibido:** `Container _getCard() { return ... }`
+
+**Correcto:** Crear clases que extiendan de `StatelessWidget` o `StatefulWidget`:
+- **Correcto:** `class MiElemento extends StatelessWidget { ... }`
+
+Esto asegura el correcto ciclo de vida del widget, renderizado y rendimiento.
+
+### 1. Un Archivo por Clase (Single Responsibility)
+
+Cada widget o clase debe tener su propio archivo. Queda **estrictamente prohibido** anidar múltiples clases en un único archivo Dart.
+
+Si necesitas separar una sección de una vista:
+1. Crear un nuevo archivo Dart en la subcarpeta correspondiente
+2. Declarar la clase heredando de un Widget
+3. Importarlo y usarlo en la clase padre
+
+### 2. Módulo Único de Exportación
 ```dart
 // ÚNICO punto de exportación
 export 'package:pu_material/pu_material.dart';
@@ -37,7 +56,7 @@ export 'package:pu_material/pu_material.dart';
 
 Todo widget (átomo, molécula, organismo) debe estar registrado en `pu_material/lib/pu_material.dart`. Queda prohibido importar directamente sub-archivos del paquete.
 
-### 2. Jerarquía Atómica Estricta
+### 3. Jerarquía Atómica Estricta
 
 La composición DEBE seguir esta jerarquía exacta:
 
@@ -56,7 +75,7 @@ Page (View)
 - **Molécula:** Usa solo Átomos.
 - **Átomo:** Elementos indivisibles (no usa otros widgets).
 
-### 3. Regla de Importación Inversa Prohibida
+### 4. Regla de Importación Inversa Prohibida
 
 - **Átomo:** Puede vivir en `pu_material` o en la feature.
 - **Molécula:** Puede vivir en `pu_material` o en la feature.
@@ -66,7 +85,7 @@ Page (View)
 
 **Regla clave:** Un nivel inferior NUNCA puede importar de un nivel superior.
 
-### 4. Integración con ui-ux-pro-max
+### 5. Integración con ui-ux-pro-max
 
 **ANTES de crear cualquier widget, consulta la skill ui-ux-pro-max:**
 
@@ -158,3 +177,4 @@ Al crear o modificar widgets, verifica:
 - [ ] ¿Los hijos son del nivel inmediatamente inferior?
 - [ ] ¿Está exportado desde pu_material.dart si es genérico?
 - [ ] ¿Se consultó ui-ux-pro-max para el diseño?
+- [ ] ¿NO hay funciones `_build...()` que retornen widgets?
