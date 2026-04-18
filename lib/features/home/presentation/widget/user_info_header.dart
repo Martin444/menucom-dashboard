@@ -52,7 +52,7 @@ class UserInfoHeader extends StatelessWidget {
               Get.dialog(
                 MPOAuthGateWidget(
                   idMenu: dinning.dinningLogin.id ?? '',
-                  redirectUri: 'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
+                  redirectUri: 'https://menucom-api.onrender.com/payments/oauth/callback',
                 ),
               );
             },

@@ -126,18 +126,18 @@ class HeadDinning extends StatelessWidget {
             const SizedBox(width: 8),
             // Share menu (Vinculación MP) - Solo para usuarios NO customer
             if (_canAccessMPOAuth(_getUserRole(controller.dinningLogin.role)))
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () {
-                    Get.dialog(
-                      MPOAuthGateWidget(
-                        idMenu: controller.dinningLogin.id ?? '',
-                        redirectUri:
-                            'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
-                      ),
-                    );
-                  },
+MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.dialog(
+                        MPOAuthGateWidget(
+                          idMenu: controller.dinningLogin.id ?? '',
+                          redirectUri:
+                              'https://menucom-api.onrender.com/payments/oauth/callback',
+                        ),
+                      );
+                    },
                   child: Tooltip(
                     message: 'Vincular con Mercado Pago',
                     child: Icon(
@@ -230,7 +230,7 @@ class HeadDinning extends StatelessWidget {
                         MPOAuthGateWidget(
                           idMenu: controller.dinningLogin.id ?? '',
                           redirectUri:
-                              'https://menucom-api-60e608ae2f99.herokuapp.com/payments/oauth/callback',
+                              'https://menucom-api.onrender.com/payments/oauth/callback',
                         ),
                       );
                     },

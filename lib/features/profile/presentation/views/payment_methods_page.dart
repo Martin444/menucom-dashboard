@@ -69,7 +69,7 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
     });
 
     try {
-      const redirectUri = 'https://tuapp.com/oauth/callback';
+      const redirectUri = 'https://menucom-api.onrender.com/payments/oauth/callback';
       final result = await _mpOAuthService.initiateLinkingFlow(redirectUri);
 
       if (result.isAlreadyLinked) {
