@@ -496,16 +496,19 @@
         {{flutter_js}}
         {{flutter_build_config}}
         
-        // Download main.dart.js
-        var serviceWorkerVersion = '{{flutter_service_worker_version}}'.replace(/"/g, '').replace(/\s*\/.*$/, '').trim();
+        // Limpiar la versión inyectada por Flutter (quita comillas y comentarios)
+        var serviceWorkerVersion = '{{flutter_service_worker_version}}';
+        if (serviceWorkerVersion) {
+          serviceWorkerVersion = serviceWorkerVersion.replace(/"/g, '').replace(/\/\*.*?\*\//g, '').trim();
+        }
         console.log('📦 [SPLASH] Service Worker Version:', serviceWorkerVersion);
         
         var loaderConfig = {
           serviceWorker: {
-            serviceWorkerVersion: "",
-            serviceWorkerUrl: "/"+serviceWorkerVersion+".js?v=",
+            serviceWorkerVersion: serviceWorkerVersion,
+            serviceWorkerUrl: "flutter_service_worker.js?v=" + serviceWorkerVersion,
           },
-          entrypointUrl: '/main.dart.js?v=' + serviceWorkerVersion,
+          entrypointUrl: 'main.dart.js?v=' + serviceWorkerVersion,
           onEntrypointLoaded: function(engineInitializer) {
             console.log('✅ [SPLASH] Entrypoint cargado exitosamente');
             
