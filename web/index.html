@@ -496,39 +496,40 @@
         {{flutter_js}}
         {{flutter_build_config}}
         
-        // Limpieza de versión robusta para Flutter 3.27+
+        // Diagnóstico inicial
+        console.log('🚀 [SPLASH] Iniciando loadEntrypoint...');
+        if (typeof _flutter === 'undefined') {
+          console.error('❌ [SPLASH] Error: _flutter no está definido. Comprueba si flutter.js cargó correctamente.');
+        }
+
         var serviceWorkerVersion = '{{flutter_service_worker_version}}';
         if (serviceWorkerVersion) {
-            // Extraer solo la parte numérica antes del comentario
             serviceWorkerVersion = serviceWorkerVersion.split('/*')[0].replace(/"/g, '').trim();
         }
-        console.log('📦 [SPLASH] Service Worker Version:', serviceWorkerVersion);
+        console.log('📦 [SPLASH] Version detectada:', serviceWorkerVersion);
         
         _flutter.loader.loadEntrypoint({
           serviceWorker: {
             serviceWorkerVersion: serviceWorkerVersion,
           },
           onEntrypointLoaded: function(engineInitializer) {
-            console.log('✅ [SPLASH] Entrypoint cargado');
+            console.log('✅ [SPLASH] Entrypoint OK. Inicializando motor...');
             
             engineInitializer.initializeEngine({
-              renderer: "html", // Forzar HTML para carga rápida
               serviceWorkerVersion: serviceWorkerVersion
             }).then(function(appRunner) {
-              console.log('🎯 [SPLASH] Motor Flutter inicializado');
+              console.log('🎯 [SPLASH] Motor OK. Ejecutando app...');
               var text = document.querySelector("#loader > span") || document.querySelector(".loader-text span");
-              if (text) text.innerHTML = "¡Casi listo! Finalizando... ⚙️";
+              if (text) text.innerHTML = "Iniciando sistema... ⚙️";
               return appRunner.runApp();
             }).then(function() {
-              console.log('🎉 [SPLASH] Aplicación cargada correctamente');
+              console.log('🎉 [SPLASH] App en ejecución.');
               setTimeout(function() {
                 var container = document.getElementById("loader");
-                if (container) {
-                  container.classList.add("hidden");
-                }
-              }, 1000);
+                if (container) container.classList.add("hidden");
+              }, 500);
             }).catch(function(error) {
-              console.error("❌ Error en la inicialización:", error);
+              console.error("❌ [SPLASH] Fallo en inicialización/runApp:", error);
             });
           }
         });
