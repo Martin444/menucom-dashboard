@@ -26,11 +26,16 @@ class CreateWardItemPage extends StatefulWidget {
 class _CreateWardItemPageState extends State<CreateWardItemPage> {
   var keyFormCreateItem = GlobalKey<FormState>();
   var dinning = Get.find<DinningController>();
-  var catalogsController = Get.put(CatalogsController());
+  late final CatalogsController catalogsController;
 
   @override
   void initState() {
     super.initState();
+    if (Get.isRegistered<CatalogsController>()) {
+      catalogsController = Get.find<CatalogsController>();
+    } else {
+      catalogsController = Get.put(CatalogsController());
+    }
     catalogsController.loadCatalogsByType('wardrobe');
   }
 

@@ -27,7 +27,7 @@ class _StarterBannerState extends State<StarterBanner> {
     switch (role) {
       case RolesUsers.dinning:
       case RolesUsers.food:
-        return "Registrá tus platos en menús irresistible";
+        return "Registrá tus platos en menús irresistibles";
       case RolesUsers.clothes:
       case RolesUsers.retail:
       case RolesUsers.water_distributor:

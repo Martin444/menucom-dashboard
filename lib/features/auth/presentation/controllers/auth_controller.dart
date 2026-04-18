@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
+import 'package:menu_dart_api/core/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -129,6 +130,7 @@ class AuthController extends GetxController {
 
       // Guardar el ACCESS_TOKEN como lo hace login_controller
       ACCESS_TOKEN = user.accessToken;
+      API.setAccessToken(ACCESS_TOKEN);
       var sharedToken = await _prefs;
       sharedToken.setString('acccesstoken', ACCESS_TOKEN);
 
@@ -187,6 +189,7 @@ class AuthController extends GetxController {
           // TODO: Llamar al endpoint de social login del API aquí
           // Por ahora, guardamos el token de Firebase como el ACCESS_TOKEN
           ACCESS_TOKEN = firebaseToken;
+          API.setAccessToken(ACCESS_TOKEN);
           var sharedToken = await _prefs;
           sharedToken.setString('acccesstoken', ACCESS_TOKEN);
 
@@ -338,6 +341,7 @@ class AuthController extends GetxController {
       final savedToken = sharedPrefs.getString('acccesstoken');
       if (savedToken != null && savedToken.isNotEmpty) {
         ACCESS_TOKEN = savedToken;
+        API.setAccessToken(ACCESS_TOKEN);
         debugPrint('Token cargado desde SharedPreferences');
       } else {
         debugPrint('No hay token guardado en SharedPreferences');

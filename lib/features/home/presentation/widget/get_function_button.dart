@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
-import 'package:pickmeup_dashboard/features/membership/getx/membership_controller.dart';
 import 'package:pu_material/pu_material.dart';
 
 import '../../../../routes/routes.dart';
 import '../../controllers/dinning_controller.dart';
+import 'package:pickmeup_dashboard/features/membership/getx/membership_controller.dart';
 
 class ActionPrincipalByRole extends StatelessWidget {
   final DinningController role;
@@ -36,11 +36,13 @@ class ActionPrincipalByRole extends StatelessWidget {
 
     // Verificar si es plan gratuito
     final isFreePlan = Get.isRegistered<MembershipController>()
-        ? (Get.find<MembershipController>().currentPlan.value?.toUpperCase() == 'FREE' ||
+        ? (Get.find<MembershipController>().currentPlan.value?.toUpperCase() ==
+                'FREE' ||
             Get.find<MembershipController>().currentPlan.value == null)
         : true;
 
-    final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(role.dinningLogin.role ?? '');
+    final roleByRoleUser =
+        RolesFuncionts.getTypeRoleByRoleString(role.dinningLogin.role ?? '');
 
     switch (roleByRoleUser) {
       case RolesUsers.dinning:

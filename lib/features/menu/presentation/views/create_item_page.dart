@@ -27,11 +27,12 @@ class CreateItemPage extends StatefulWidget {
 class _CreateItemPageState extends State<CreateItemPage> {
   var keyFormCreateItem = GlobalKey<FormState>();
   var dinning = Get.find<DinningController>();
-  var catalogsController = Get.put(CatalogsController());
+  late final CatalogsController catalogsController;
 
   @override
   void initState() {
     super.initState();
+    catalogsController = Get.find<CatalogsController>();
     catalogsController.loadCatalogsByType('menu');
   }
 

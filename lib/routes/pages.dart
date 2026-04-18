@@ -22,6 +22,7 @@ import 'package:pickmeup_dashboard/features/home/presentation/pages/mp_oauth_cal
 import '../features/orders/presentation/pages/orders_page.dart';
 
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_binding.dart';
+import 'package:pickmeup_dashboard/features/membership/presentation/pages/membership_page.dart';
 
 class PUPages {
   static final List<GetPage> listPages = [
@@ -216,6 +217,18 @@ class PUPages {
       page: () => const BusinessSelectionPage(),
       transition: Transition.rightToLeft,
       bindings: [DinningBinding()],
+    ),
+    GetPage(
+      name: PURoutes.MEMBERSHIP,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+      transition: Transition.fadeIn,
+      page: () => const MembershipPage(),
+      bindings: [
+        MenuNavigationBinding(),
+        DinningBinding(),
+      ],
     ),
   ];
 }

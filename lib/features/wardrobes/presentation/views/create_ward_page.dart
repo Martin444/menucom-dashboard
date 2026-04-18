@@ -31,7 +31,11 @@ class _CreateWardPageState extends State<CreateWardPage> {
   void initState() {
     super.initState();
     dinninController = Get.find<DinningController>();
-    catalogsController = Get.put(CatalogsController());
+    if (Get.isRegistered<CatalogsController>()) {
+      catalogsController = Get.find<CatalogsController>();
+    } else {
+      catalogsController = Get.put(CatalogsController());
+    }
     catalogsController.loadCatalogsByType('wardrobe');
   }
 
@@ -160,16 +164,20 @@ class _CreateWardPageState extends State<CreateWardPage> {
                                   final selected =
                                       catCtrl.catalogSelected.value;
                                   if (selected != null) {
-                                    await catCtrl.editCatalog(selected);
-                                    await catCtrl
-                                        .loadCatalogsByType('wardrobe');
-                                    Get.offAllNamed(PURoutes.HOME);
+                                    final result = await catCtrl.editCatalog(selected);
+                                    if (result != null) {
+                                      await catCtrl
+                                          .loadCatalogsByType('wardrobe');
+                                      Get.offAllNamed(PURoutes.HOME);
+                                    }
                                   }
                                   return;
                                 }
-                                await catCtrl.createCatalog('wardrobe');
-                                await catCtrl.loadCatalogsByType('wardrobe');
-                                Get.offAllNamed(PURoutes.HOME);
+                                final result = await catCtrl.createCatalog('wardrobe');
+                                if (result != null) {
+                                  await catCtrl.loadCatalogsByType('wardrobe');
+                                  Get.offAllNamed(PURoutes.HOME);
+                                }
                               },
                               load: catCtrl.isLoadingCatalogs.value,
                             ),

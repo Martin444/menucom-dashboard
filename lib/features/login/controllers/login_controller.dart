@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:menu_dart_api/core/api.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:menu_dart_api/by_feature/auth/login/data/usescase/login_usescase.dart';
@@ -76,6 +77,7 @@ class LoginController extends GetxController {
       );
 
       ACCESS_TOKEN = responseLogin.accessToken;
+      API.setAccessToken(ACCESS_TOKEN);
 
       var sharedToken = await _prefs;
       sharedToken.setString('acccesstoken', ACCESS_TOKEN);
@@ -381,6 +383,7 @@ class LoginController extends GetxController {
 
             // Usar el token de acceso del backend (no el de Firebase)
             ACCESS_TOKEN = socialLoginResponse.accessToken;
+            API.setAccessToken(ACCESS_TOKEN);
 
             var sharedToken = await _prefs;
             sharedToken.setString('acccesstoken', ACCESS_TOKEN);

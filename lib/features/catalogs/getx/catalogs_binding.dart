@@ -4,6 +4,6 @@ import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.da
 class CatalogsBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<CatalogsController>(() => CatalogsController());
+    Get.put<CatalogsController>(CatalogsController());
   }
 }

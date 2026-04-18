@@ -17,7 +17,6 @@ class MenuSide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Inicializar el controlador de navegación si no existe
     if (!Get.isRegistered<MenuNavigationController>()) {
       Get.put(MenuNavigationController());
     }
@@ -35,7 +34,6 @@ class MenuSide extends StatelessWidget {
                 .toList();
 
             if (isMobile ?? false) {
-              // Versión móvil como Drawer
               return Drawer(
                 backgroundColor: PUColors.bgItem.withOpacity(0.3),
                 elevation: 0,
@@ -50,13 +48,13 @@ class MenuSide extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Sección principal del menú
                       Column(
                         children: [
-                          // Avatar del usuario - versión compacta para móvil
-                          _buildUserAvatar(dinningController, true),
+                          UserAvatarSide(
+                            dinningController: dinningController,
+                            isMobile: true,
+                          ),
                           const SizedBox(height: 24),
-                          // Items principales del menú
                           ...mainItems.map((item) => EnhancedMenuDrawItem(
                                 item: item,
                                 showBadge: _shouldShowBadge(item),
@@ -64,10 +62,8 @@ class MenuSide extends StatelessWidget {
                               )),
                         ],
                       ),
-                      // Sección de acciones (logout, etc.)
                       Column(
                         children: [
-                          // Divider si hay items de acción
                           if (actionItems.isNotEmpty) ...[
                             Container(
                               height: 1,
@@ -77,7 +73,6 @@ class MenuSide extends StatelessWidget {
                               ),
                             ),
                           ],
-                          // Items de acción
                           ...actionItems.map((item) => EnhancedMenuDrawItem(
                                 item: item,
                               )),
@@ -88,7 +83,6 @@ class MenuSide extends StatelessWidget {
                 ),
               );
             } else {
-              // Versión desktop como panel lateral fijo
               return Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -106,13 +100,13 @@ class MenuSide extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Sección principal del menú
                     Column(
                       children: [
-                        // Avatar del usuario - versión desktop
-                        _buildUserAvatar(dinningController, false),
+                        UserAvatarSide(
+                          dinningController: dinningController,
+                          isMobile: false,
+                        ),
                         const SizedBox(height: 32),
-                        // Items principales del menú
                         ...mainItems.map((item) => EnhancedMenuDrawItem(
                               item: item,
                               showBadge: _shouldShowBadge(item),
@@ -120,10 +114,8 @@ class MenuSide extends StatelessWidget {
                             )),
                       ],
                     ),
-                    // Sección de acciones (logout, etc.)
                     Column(
                       children: [
-                        // Divider si hay items de acción
                         if (actionItems.isNotEmpty) ...[
                           Container(
                             height: 1,
@@ -133,7 +125,6 @@ class MenuSide extends StatelessWidget {
                             ),
                           ),
                         ],
-                        // Items de acción
                         ...actionItems.map((item) => EnhancedMenuDrawItem(
                               item: item,
                             )),
@@ -149,16 +140,43 @@ class MenuSide extends StatelessWidget {
     );
   }
 
-  /// Construye el avatar del usuario con información
-  Widget _buildUserAvatar(DinningController dinningController,
-      [bool isMobile = false]) {
+  bool _shouldShowBadge(MenuNavigationItem item) {
+    switch (item) {
+      case MenuNavigationItem.orders:
+        return false;
+      default:
+        return false;
+    }
+  }
+
+  String? _getBadgeText(MenuNavigationItem item) {
+    switch (item) {
+      case MenuNavigationItem.orders:
+        return null;
+      default:
+        return null;
+    }
+  }
+}
+
+class UserAvatarSide extends StatelessWidget {
+  final DinningController dinningController;
+  final bool isMobile;
+
+  const UserAvatarSide({
+    super.key,
+    required this.dinningController,
+    this.isMobile = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final avatarSize = isMobile ? 80.0 : 100.0;
     final titleFontSize = isMobile ? 14.0 : 16.0;
     final roleFontSize = isMobile ? 10.0 : 12.0;
 
     return Column(
       children: [
-        // Avatar circular
         Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -176,10 +194,7 @@ class MenuSide extends StatelessWidget {
             ),
           ),
         ),
-
         SizedBox(height: isMobile ? 12 : 16),
-
-        // Nombre del usuario
         if (dinningController.dinningLogin.name != null) ...[
           Text(
             dinningController.dinningLogin.name ?? 'Usuario',
@@ -194,8 +209,6 @@ class MenuSide extends StatelessWidget {
           ),
           const SizedBox(height: 4),
         ],
-
-        // Rol del usuario
         if (dinningController.dinningLogin.role != null) ...[
           Container(
             padding: EdgeInsets.symmetric(
@@ -220,7 +233,6 @@ class MenuSide extends StatelessWidget {
     );
   }
 
-  /// Formatea el rol del usuario para mostrar
   String _formatUserRole(String role) {
     switch (role.toLowerCase()) {
       case 'dinning':
@@ -257,28 +269,6 @@ class MenuSide extends StatelessWidget {
         return 'Cliente';
       default:
         return role;
-    }
-  }
-
-  /// Determina si un item debe mostrar badge
-  bool _shouldShowBadge(MenuNavigationItem item) {
-    switch (item) {
-      case MenuNavigationItem.orders:
-        // Aquí podrías agregar lógica para mostrar cantidad de órdenes pendientes
-        return false;
-      default:
-        return false;
-    }
-  }
-
-  /// Obtiene el texto del badge para un item
-  String? _getBadgeText(MenuNavigationItem item) {
-    switch (item) {
-      case MenuNavigationItem.orders:
-        // Aquí podrías obtener la cantidad real de órdenes pendientes
-        return null;
-      default:
-        return null;
     }
   }
 }

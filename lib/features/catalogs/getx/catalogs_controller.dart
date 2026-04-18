@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -38,18 +39,35 @@ class CatalogsController extends GetxController {
 
       final response = await GetMyCatalogsUseCase().execute(type: type);
 
-      debugPrint('=== API Response ===');
+      debugPrint('=== API Response (getMyCatalogs) ===');
       debugPrint('Catalogs count: ${response.length}');
 
       for (int i = 0; i < response.length; i++) {
         debugPrint(
-            'Catalog $i: ${response[i].description} (ID: ${response[i].id})');
+            'Catalog $i: ${response[i].description} (ID: ${response[i].id}), items: ${response[i].items?.length ?? 0}');
       }
 
       catalogsList.addAll(response);
 
       if (catalogsList.isNotEmpty) {
-        catalogSelected.value = catalogsList.first;
+        final selectedCatalog = catalogSelected.value ?? catalogsList.first;
+        catalogSelected.value = selectedCatalog;
+
+        // Cargar los items del catálogo seleccionado usando getCatalogById
+        try {
+          final fullCatalog =
+              await GetCatalogByIdUseCase().execute(selectedCatalog.id);
+          final index =
+              catalogsList.indexWhere((c) => c.id == selectedCatalog.id);
+          if (index != -1) {
+            catalogsList[index] = fullCatalog;
+            catalogSelected.value = fullCatalog;
+          }
+          debugPrint(
+              '=== Loaded items for catalog ${selectedCatalog.id}: ${fullCatalog.items?.length ?? 0} items ===');
+        } catch (e) {
+          debugPrint('Error loading catalog items: $e');
+        }
       }
 
       isLoadingCatalogs.value = false;
@@ -74,9 +92,24 @@ class CatalogsController extends GetxController {
     }
   }
 
-  void changeCatalogSelected(CatalogModel select) {
+  void changeCatalogSelected(CatalogModel select) async {
     catalogSelected.value = select;
     update();
+
+    // Cargar los items del catálogo seleccionado
+    try {
+      final fullCatalog = await GetCatalogByIdUseCase().execute(select.id);
+      final index = catalogsList.indexWhere((c) => c.id == select.id);
+      if (index != -1) {
+        catalogsList[index] = fullCatalog;
+        catalogSelected.value = fullCatalog;
+      }
+      debugPrint(
+          '=== Loaded items for catalog ${select.id}: ${fullCatalog.items?.length ?? 0} items ===');
+      update();
+    } catch (e) {
+      debugPrint('Error loading catalog items: $e');
+    }
   }
 
   TextEditingController nameCatalog = TextEditingController();
@@ -202,7 +235,8 @@ class CatalogsController extends GetxController {
 
       GlobalDialogsHandles.snackbarSuccess(
         title: 'Catálogo actualizado',
-        message: '${updatedCatalog.name ?? 'El catálogo'} se actualizó exitosamente',
+        message:
+            '${updatedCatalog.name ?? 'El catálogo'} se actualizó exitosamente',
       );
 
       update();
@@ -290,7 +324,8 @@ class CatalogsController extends GetxController {
     coverImageCatalog = null;
     try {
       if (catalog.coverImageUrl != null && catalog.coverImageUrl!.isNotEmpty) {
-        coverImageCatalog = await McFunctions().fetchImageAsUint8List(catalog.coverImageUrl!);
+        coverImageCatalog =
+            await McFunctions().fetchImageAsUint8List(catalog.coverImageUrl!);
       }
     } catch (e) {
       debugPrint('Error loading image catalog: $e');
@@ -495,22 +530,51 @@ class CatalogsController extends GetxController {
         title: '¿Seguro desea eliminar ${item.name}?',
         message: '',
       );
-      if (isConfirm) {
-        await DeleteCatalogItemUseCase().execute(
-          catalogId: catalogSelected.value!.id,
-          itemId: item.id,
-        );
+      if (!isConfirm) return;
+
+      await DeleteCatalogItemUseCase().execute(
+        catalogId: catalogSelected.value!.id,
+        itemId: item.id,
+      );
+      GlobalDialogsHandles.snackbarSuccess(
+        title: '¡Perfecto!',
+        message: 'Se eliminó ${item.name} con éxito.',
+      );
+      // Recargar los items del catálogo
+      await _reloadCatalogItems();
+    } catch (e) {
+      debugPrint('Error deleting catalog item: $e');
+      if (e.toString().contains('200') || e.toString().contains('204')) {
+        // La eliminación fue exitosa pero hubo un problema con la respuesta
         GlobalDialogsHandles.snackbarSuccess(
           title: '¡Perfecto!',
           message: 'Se eliminó ${item.name} con éxito.',
         );
+        await _reloadCatalogItems();
+      } else {
+        GlobalDialogsHandles.snackbarError(
+          title: '¡Ups!',
+          message:
+              'No se pudo eliminar ${item.name}, vuelve a intentarlo más tarde.',
+        );
       }
+    }
+  }
+
+  Future<void> _reloadCatalogItems() async {
+    if (catalogSelected.value == null) return;
+    try {
+      final fullCatalog =
+          await GetCatalogByIdUseCase().execute(catalogSelected.value!.id);
+      final index =
+          catalogsList.indexWhere((c) => c.id == catalogSelected.value!.id);
+      if (index != -1) {
+        catalogsList[index] = fullCatalog;
+        catalogSelected.value = fullCatalog;
+      }
+      update();
     } catch (e) {
-      GlobalDialogsHandles.snackbarError(
-        title: '¡Ups!',
-        message:
-            'No se pudo eliminar ${item.name}, vuelve a intentarlo más tarde.',
-      );
+      debugPrint('Error reloading catalog items: $e');
     }
   }
 
@@ -529,6 +593,13 @@ class CatalogsController extends GetxController {
       update();
     } catch (e) {
       debugPrint('Error loading image: $e');
+    }
+
+    // Navegar a la ruta correcta según el tipo de catálogo
+    if (_currentType == TYPE_WARDROBE || _currentType == TYPE_SERVICE) {
+      Get.toNamed('/editar-prenda');
+    } else {
+      Get.toNamed('/edit-menu-item');
     }
   }
 
@@ -564,7 +635,24 @@ class CatalogsController extends GetxController {
   }) {
     String errorMessage = defaultErrorMessage;
     try {
-      final apiMessage = apiError.message.trim();
+      String apiMessage = apiError.message.trim();
+      
+      try {
+        // Option 1: It's valid JSON
+        final decoded = jsonDecode(apiMessage);
+        if (decoded is Map && decoded.containsKey('message')) {
+          apiMessage = decoded['message'].toString();
+        }
+      } catch (_) {
+        // Option 2: It's a Map toString() representation (Dart default behavior for dynamic objects)
+        if (apiMessage.startsWith('{') && apiMessage.contains('message:')) {
+          final match = RegExp(r'message:\s*(.+?)(?:,\s*[a-zA-Z0-9_]+:|})').firstMatch(apiMessage);
+          if (match != null && match.groupCount >= 1) {
+            apiMessage = match.group(1)!.trim();
+          }
+        }
+      }
+      
       errorMessage = apiMessage.isNotEmpty ? apiMessage : defaultErrorMessage;
 
       if (errorMessage.toLowerCase().contains('límites') ||
@@ -583,7 +671,22 @@ class CatalogsController extends GetxController {
         return;
       }
     } catch (e) {
-      final apiMessage = apiError.message.trim();
+      String apiMessage = apiError.message.trim();
+      
+      try {
+        final decoded = jsonDecode(apiMessage);
+        if (decoded is Map && decoded.containsKey('message')) {
+          apiMessage = decoded['message'].toString();
+        }
+      } catch (_) {
+        if (apiMessage.startsWith('{') && apiMessage.contains('message:')) {
+          final match = RegExp(r'message:\s*(.+?)(?:,\s*[a-zA-Z0-9_]+:|})').firstMatch(apiMessage);
+          if (match != null && match.groupCount >= 1) {
+            apiMessage = match.group(1)!.trim();
+          }
+        }
+      }
+      
       errorMessage = apiMessage.isNotEmpty ? apiMessage : defaultErrorMessage;
     }
 

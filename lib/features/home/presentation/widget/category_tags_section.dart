@@ -16,7 +16,7 @@ class CategoryTagsSection<T> extends StatelessWidget {
     required this.onItemSelected,
     required this.descriptionBuilder,
     required this.itemCountBuilder,
-    required this.constrains,
+    required this.constraints,
     this.onEditSelected,
     this.onDeleteSelected,
     this.actionButtons = const [],
@@ -42,8 +42,8 @@ class CategoryTagsSection<T> extends StatelessWidget {
   /// Constructor para obtener el conteo de items de un elemento
   final int Function(T item) itemCountBuilder;
 
-  /// Constrains del layout padre para responsividad
-  final BoxConstraints constrains;
+  /// Constraints del layout padre para responsividad
+  final BoxConstraints constraints;
 
   /// Callback para editar el elemento seleccionado
   final VoidCallback? onEditSelected;
@@ -75,7 +75,7 @@ class CategoryTagsSection<T> extends StatelessWidget {
       onDeleteSelected: onDeleteSelected,
       headerActions: actionButtons,
       emptyMessage: emptyMessage ?? 'No hay elementos disponibles',
-      constrains: constrains,
+      constraints: constraints,
       showAsGrid: true,
       maxTagsToShow: 15,
     );

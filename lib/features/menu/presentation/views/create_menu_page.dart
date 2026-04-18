@@ -26,11 +26,16 @@ class CreateMenuPage extends StatefulWidget {
 
 class _CreateMenuPageState extends State<CreateMenuPage> {
   var dinningController = Get.find<DinningController>();
-  var catalogsController = Get.put(CatalogsController());
+  late final CatalogsController catalogsController;
 
   @override
   void initState() {
     super.initState();
+    if (Get.isRegistered<CatalogsController>()) {
+      catalogsController = Get.find<CatalogsController>();
+    } else {
+      catalogsController = Get.put(CatalogsController());
+    }
     catalogsController.loadCatalogsByType('menu');
   }
 
@@ -159,15 +164,19 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
                                   final selected =
                                       catCtrl.catalogSelected.value;
                                   if (selected != null) {
-                                    await catCtrl.editCatalog(selected);
-                                    await catCtrl.loadCatalogsByType('menu');
-                                    Get.offAllNamed(PURoutes.HOME);
+                                    final result = await catCtrl.editCatalog(selected);
+                                    if (result != null) {
+                                      await catCtrl.loadCatalogsByType('menu');
+                                      Get.offAllNamed(PURoutes.HOME);
+                                    }
                                   }
                                   return;
                                 }
-                                await catCtrl.createCatalog('menu');
-                                await catCtrl.loadCatalogsByType('menu');
-                                Get.offAllNamed(PURoutes.HOME);
+                                final result = await catCtrl.createCatalog('menu');
+                                if (result != null) {
+                                  await catCtrl.loadCatalogsByType('menu');
+                                  Get.offAllNamed(PURoutes.HOME);
+                                }
                               },
                               load: catCtrl.isLoadingCatalogs.value,
                             ),

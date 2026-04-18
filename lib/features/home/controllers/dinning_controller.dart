@@ -19,7 +19,7 @@ class DinningController extends GetxController with NavigationStateMixin {
 
   DinningModel dinningLogin = DinningModel();
 
-  RxBool isLoaginDataUser = false.obs;
+  RxBool isLoadingDataUser = false.obs;
   RxBool everyListEmpty = true.obs;
 
   @override
@@ -32,7 +32,7 @@ class DinningController extends GetxController with NavigationStateMixin {
 
   void getMyDinningInfo() async {
     try {
-      isLoaginDataUser.value = true;
+      isLoadingDataUser.value = true;
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
 
@@ -63,10 +63,10 @@ class DinningController extends GetxController with NavigationStateMixin {
         default:
       }
 
-      isLoaginDataUser.value = false;
+      isLoadingDataUser.value = false;
     } catch (e) {
       closeSesion();
-      isLoaginDataUser.value = false;
+      isLoadingDataUser.value = false;
     }
   }
 

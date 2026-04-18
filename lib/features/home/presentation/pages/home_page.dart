@@ -9,7 +9,7 @@ import 'package:pickmeup_dashboard/features/home/presentation/views/service_home
 import 'package:pickmeup_dashboard/features/home/presentation/widget/head_actions.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/starter_banner.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/widget/get_funcion_button.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/get_function_button.dart';
 import 'package:pu_material/pu_material.dart';
 
 import '../widget/head_dinning.dart';
@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
       init: Get.find<DinningController>(),
       builder: (dinning) {
         return Obx(() {
-          if (dinning.isLoaginDataUser.value) {
+          if (dinning.isLoadingDataUser.value) {
             return Scaffold(
               backgroundColor: PUColors.primaryBackground,
               body: const Center(
@@ -143,7 +143,7 @@ class _MobileContent extends StatelessWidget {
                   ),
 
                   // Botones principales
-                  getActionPrincipalByRole(controller),
+                  ActionPrincipalByRole(role: controller),
                 ],
               ),
             ),

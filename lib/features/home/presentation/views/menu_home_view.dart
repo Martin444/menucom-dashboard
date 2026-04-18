@@ -9,6 +9,7 @@ import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.da
 
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_empty_state.dart';
 
 import '../../controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
@@ -25,13 +26,29 @@ class MenuHomeView extends StatefulWidget {
   State<MenuHomeView> createState() => _MenuHomeViewState();
 }
 
-class _MenuHomeViewState extends State<MenuHomeView> {
-  final catalogsController = Get.put(CatalogsController());
+class _MenuHomeViewState extends State<MenuHomeView>
+    with WidgetsBindingObserver {
+  late final CatalogsController catalogsController;
 
   @override
   void initState() {
     super.initState();
+    catalogsController = Get.find<CatalogsController>();
+    WidgetsBinding.instance.addObserver(this);
     loadCatalogs();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      loadCatalogs();
+    }
   }
 
   Future<void> loadCatalogs() async {
@@ -44,6 +61,13 @@ class _MenuHomeViewState extends State<MenuHomeView> {
       builder: (_) {
         return GetBuilder<CatalogsController>(
           builder: (catCtrl) {
+            debugPrint('=== MenuHomeView rebuild ===');
+            debugPrint('catalogsList length: ${catCtrl.catalogsList.length}');
+            debugPrint(
+                'catalogSelected: ${catCtrl.catalogSelected.value?.description}');
+            debugPrint(
+                'catalogSelected items: ${catCtrl.catalogSelected.value?.items?.length ?? 0}');
+
             return LayoutBuilder(
               builder: (context, constrains) {
                 final catalogs = catCtrl.catalogsList.toList();
@@ -69,7 +93,7 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                           descriptionBuilder: (catalog) =>
                               catalog.description ?? 'Sin nombre',
                           itemCountBuilder: (catalog) => catalog.itemCount,
-                          constrains: constrains,
+                          constraints: constrains,
                           icon: FluentIcons.food_24_regular,
                           onEditSelected: () {
                             final catalog = selectedCatalog ??
@@ -100,16 +124,17 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                   right: constrains.maxWidth > 1200 ? 20 : 0,
                                 ),
                                 child: catalogs.isEmpty
-                                    ? _buildEmptyState()
+                                    ? const CatalogEmptyState()
                                     : _buildCatalogGrid(constrains, catCtrl),
                               ),
                             ),
                             Visibility(
                               visible: constrains.maxWidth > 1200,
-                              child: Flexible(
+                              child: Expanded(
                                 flex: 2,
                                 child: Container(
                                   height: constrains.maxHeight,
+                                  width: double.infinity,
                                   padding: const EdgeInsets.only(
                                     left: 20,
                                   ),
@@ -126,6 +151,17 @@ class _MenuHomeViewState extends State<MenuHomeView> {
                                       const SizedBox(
                                         height: 20,
                                       ),
+                                      if (catalogs.isEmpty)
+                                        Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(top: 24.0),
+                                            child: Text(
+                                              'No hay catálogos disponibles',
+                                              style: PuTextStyle.description1,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
                                       ...catalogs.map(
                                         (element) {
                                           return ItemCategoryTile(
@@ -172,42 +208,6 @@ class _MenuHomeViewState extends State<MenuHomeView> {
     );
   }
 
-  Widget _buildEmptyState() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SvgPicture.asset(
-          PUImages.noDataImageSvg,
-          height: 140,
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Center(
-          child: Text(
-            'No hay catálogos disponibles',
-            style: PuTextStyle.description1,
-          ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Container(
-          constraints: const BoxConstraints(
-            maxWidth: 300,
-          ),
-          child: ButtonPrimary(
-            title: 'Crear primer catálogo',
-            onPressed: () async {
-              await catalogsController.createCatalog('menu');
-            },
-            load: false,
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget _buildCatalogGrid(
       BoxConstraints constrains, CatalogsController catCtrl) {
@@ -219,9 +219,14 @@ class _MenuHomeViewState extends State<MenuHomeView> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SvgPicture.asset(
+          Image.asset(
             PUImages.noDataImageSvg,
             height: 140,
+            errorBuilder: (context, error, stackTrace) => Icon(
+              FluentIcons.food_24_regular,
+              size: 60,
+              color: Colors.grey[400],
+            ),
           ),
           const SizedBox(
             height: 20,
