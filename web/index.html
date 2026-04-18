@@ -496,43 +496,54 @@
         {{flutter_js}}
         {{flutter_build_config}}
         
-        // Diagnóstico inicial
-        console.log('🚀 [SPLASH] Iniciando loadEntrypoint...');
-        if (typeof _flutter === 'undefined') {
-          console.error('❌ [SPLASH] Error: _flutter no está definido. Comprueba si flutter.js cargó correctamente.');
+        // Configuración de carga maestra para Flutter 3.27.3
+        console.log('🚀 [SPLASH] Preparando secuencia de carga...');
+        
+        function launchFlutter() {
+          try {
+            var serviceWorkerVersion = '{{flutter_service_worker_version}}';
+            if (serviceWorkerVersion) {
+              serviceWorkerVersion = serviceWorkerVersion.split('/*')[0].replace(/"/g, '').trim();
+            }
+            console.log('📦 [SPLASH] Version:', serviceWorkerVersion || 'N/A');
+
+            if (typeof _flutter === 'undefined' || !_flutter.loader) {
+              console.warn('⚠️ [SPLASH] Loader no listo, reintentando en 100ms...');
+              setTimeout(launchFlutter, 100);
+              return;
+            }
+
+            _flutter.loader.loadEntrypoint({
+              serviceWorker: {
+                serviceWorkerVersion: serviceWorkerVersion,
+              },
+              entrypointUrl: 'main.dart.js',
+              onEntrypointLoaded: function(engineInitializer) {
+                console.log('✅ [SPLASH] Entrypoint OK. Inicializando motor...');
+                engineInitializer.initializeEngine({
+                  serviceWorkerVersion: serviceWorkerVersion,
+                  useColorEmoji: true,
+                }).then(function(appRunner) {
+                  console.log('🎯 [SPLASH] Motor OK. Ejecutando app...');
+                  return appRunner.runApp();
+                }).then(function() {
+                  console.log('🎉 [SPLASH] App cargada correctamente.');
+                  setTimeout(function() {
+                    var container = document.getElementById("loader");
+                    if (container) container.classList.add("hidden");
+                  }, 500);
+                }).catch(function(error) {
+                  console.error('❌ [SPLASH] Fallo en runApp:', error);
+                });
+              }
+            });
+          } catch (e) {
+            console.error('❌ [SPLASH] Error en script de carga:', e);
+          }
         }
 
-        var serviceWorkerVersion = '{{flutter_service_worker_version}}';
-        if (serviceWorkerVersion) {
-            serviceWorkerVersion = serviceWorkerVersion.split('/*')[0].replace(/"/g, '').trim();
-        }
-        console.log('📦 [SPLASH] Version detectada:', serviceWorkerVersion);
-        
-        _flutter.loader.loadEntrypoint({
-          serviceWorker: {
-            serviceWorkerVersion: serviceWorkerVersion,
-          },
-          onEntrypointLoaded: function(engineInitializer) {
-            console.log('✅ [SPLASH] Entrypoint OK. Inicializando motor...');
-            
-            engineInitializer.initializeEngine({
-              serviceWorkerVersion: serviceWorkerVersion
-            }).then(function(appRunner) {
-              console.log('🎯 [SPLASH] Motor OK. Ejecutando app...');
-              var text = document.querySelector("#loader > span") || document.querySelector(".loader-text span");
-              if (text) text.innerHTML = "Iniciando sistema... ⚙️";
-              return appRunner.runApp();
-            }).then(function() {
-              console.log('🎉 [SPLASH] App en ejecución.');
-              setTimeout(function() {
-                var container = document.getElementById("loader");
-                if (container) container.classList.add("hidden");
-              }, 500);
-            }).catch(function(error) {
-              console.error("❌ [SPLASH] Fallo en inicialización/runApp:", error);
-            });
-          }
-        });
+        // Iniciar con un pequeño respiro para el navegador
+        setTimeout(launchFlutter, 50);
       } catch (error) {
         console.error('❌ [SPLASH] Error crítico durante la carga inicial:', error);
         if (typeof handleSplashError === 'function') {
