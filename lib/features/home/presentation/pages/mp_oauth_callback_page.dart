@@ -129,7 +129,7 @@ class _MPOAuthCallbackPageState extends State<MPOAuthCallbackPage> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -144,10 +144,10 @@ class _MPOAuthCallbackPageState extends State<MPOAuthCallbackPage> {
                 height: 80,
                 decoration: BoxDecoration(
                   color: _isProcessing
-                      ? PUColors.bgButton.withOpacity(0.1)
+                      ? PUColors.bgButton.withValues(alpha: 0.1)
                       : _isSuccess
-                          ? PUColors.bgSucces.withOpacity(0.1)
-                          : PUColors.bgError.withOpacity(0.1),
+                          ? PUColors.bgSucces.withValues(alpha: 0.1)
+                          : PUColors.bgError.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(40),
                 ),
                 child: Icon(

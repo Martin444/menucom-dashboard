@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:menu_dart_api/menu_com_api.dart';
 
 /// MOLÉCULAS - Wrappers de compatibilidad para migración gradual a pu_material
 ///
@@ -64,7 +64,7 @@ class CommerceCard extends StatelessWidget {
   final bool? isEmailVerified;
   final DateTime? memberSince;
   final DateTime? lastActivity;
-  final List<MenuModel>? menus; // Lista de menús del comercio
+  final List<CatalogModel>? menus; // Lista de catálogos del comercio
   final String? storeUrl; // URL de la tienda para visitar
   final VoidCallback? onTap;
 
@@ -241,8 +241,8 @@ class CommerceCard extends StatelessWidget {
         // Badge de productos con mejor diseño
         badgeList.add(BadgeInfo(
           text: '$totalItems platos',
-          backgroundColor: Colors.green.withOpacity(0.15),
-          borderColor: Colors.green.withOpacity(0.4),
+          backgroundColor: Colors.green.withValues(alpha: 0.15),
+          borderColor: Colors.green.withValues(alpha: 0.4),
           textColor: Colors.green[700]!,
         ));
       }
@@ -266,8 +266,8 @@ class CommerceCard extends StatelessWidget {
 
         badgeList.add(BadgeInfo(
           text: deliveryText,
-          backgroundColor: badgeColor.withOpacity(0.15),
-          borderColor: badgeColor.withOpacity(0.4),
+          backgroundColor: badgeColor.withValues(alpha: 0.15),
+          borderColor: badgeColor.withValues(alpha: 0.4),
           textColor: badgeColor,
         ));
       }
@@ -277,8 +277,8 @@ class CommerceCard extends StatelessWidget {
     if (isEmailVerified == true) {
       badgeList.add(BadgeInfo(
         text: '✓ Verificado',
-        backgroundColor: Colors.blue.withOpacity(0.15),
-        borderColor: Colors.blue.withOpacity(0.4),
+        backgroundColor: Colors.blue.withValues(alpha: 0.15),
+        borderColor: Colors.blue.withValues(alpha: 0.4),
         textColor: Colors.blue,
       ));
     }
@@ -404,48 +404,36 @@ class CommerceCard extends StatelessWidget {
 
   int _getTotalMenuItems() {
     if (menus == null || menus!.isEmpty) {
-      debugPrint('CommerceCard: No menus data for $name');
+      debugPrint('CommerceCard: No catalogs data for $name');
       return 0;
     }
-
     int total = 0;
-    for (final menu in menus!) {
-      if (menu.items != null) {
-        total += menu.items!.length;
-        debugPrint(
-            'CommerceCard: Menu "${menu.description}" has ${menu.items!.length} items');
+    for (final catalog in menus!) {
+      if (catalog.items != null) {
+        total += catalog.items!.length;
       }
     }
-    debugPrint('CommerceCard: Total items for $name: $total');
     return total;
   }
 
   int _getAverageDeliveryTime() {
     if (menus == null || menus!.isEmpty) {
-      debugPrint('CommerceCard: No menus for delivery time calculation');
       return 0;
     }
-
     int totalTime = 0;
     int itemCount = 0;
-
-    for (final menu in menus!) {
-      if (menu.items != null) {
-        for (final item in menu.items!) {
-          if (item.deliveryTime != null) {
-            totalTime += item.deliveryTime!;
+    for (final catalog in menus!) {
+      if (catalog.items != null) {
+        for (final item in catalog.items!) {
+          final deliveryTime = item.attributes?['deliveryTime'] as int?;
+          if (deliveryTime != null) {
+            totalTime += deliveryTime;
             itemCount++;
-            debugPrint(
-                'CommerceCard: Item "${item.name}" delivery time: ${item.deliveryTime}min');
           }
         }
       }
     }
-
-    final avgTime = itemCount > 0 ? (totalTime / itemCount).round() : 0;
-    debugPrint(
-        'CommerceCard: Average delivery time for $name: ${avgTime}min (from $itemCount items)');
-    return avgTime;
+    return itemCount > 0 ? (totalTime / itemCount).round() : 0;
   }
 
   Future<void> _launchStoreUrl() async {

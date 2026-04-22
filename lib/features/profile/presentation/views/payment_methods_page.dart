@@ -259,9 +259,9 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
                                 padding: const EdgeInsets.all(16),
                                 margin: const EdgeInsets.only(bottom: 20),
                                 decoration: BoxDecoration(
-                                  color: Colors.red.withOpacity(0.1),
+                                  color: Colors.red.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.red.withOpacity(0.3)),
+                                  border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
                                 ),
                                 child: Row(
                                   children: [
@@ -307,10 +307,10 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: PUColors.borderInputColor.withOpacity(0.3)),
+        border: Border.all(color: PUColors.borderInputColor.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -355,10 +355,10 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: _isLinked ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+                  color: _isLinked ? Colors.green.withValues(alpha: 0.1) : Colors.grey.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: _isLinked ? Colors.green.withOpacity(0.3) : Colors.grey.withOpacity(0.3),
+                    color: _isLinked ? Colors.green.withValues(alpha: 0.3) : Colors.grey.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
@@ -381,9 +381,9 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.05),
+                color: Colors.green.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.green.withOpacity(0.2)),
+                border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -449,9 +449,9 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.05),
+                color: Colors.blue.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.blue.withOpacity(0.2)),
+                border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
               ),
               child: Column(
                 children: [

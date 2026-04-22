@@ -10,7 +10,6 @@ import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.da
 import 'package:pickmeup_dashboard/features/menu/presentation/widgets/card_take_photo.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/widgets/inputs/pu_input_tags.dart';
 
 class CreateItemPage extends StatefulWidget {
   final bool? isEditPage;

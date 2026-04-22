@@ -35,7 +35,7 @@ class MenuSide extends StatelessWidget {
 
             if (isMobile ?? false) {
               return Drawer(
-                backgroundColor: PUColors.bgItem.withOpacity(0.3),
+                backgroundColor: PUColors.bgItem.withValues(alpha: 0.3),
                 elevation: 0,
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -69,7 +69,7 @@ class MenuSide extends StatelessWidget {
                               height: 1,
                               margin: const EdgeInsets.symmetric(vertical: 16),
                               decoration: BoxDecoration(
-                                color: PUColors.iconColor.withOpacity(0.2),
+                                color: PUColors.iconColor.withValues(alpha: 0.2),
                               ),
                             ),
                           ],
@@ -92,7 +92,7 @@ class MenuSide extends StatelessWidget {
                   color: PUColors.primaryBackground,
                   border: Border(
                     right: BorderSide(
-                      color: PUColors.iconColor.withOpacity(0.1),
+                      color: PUColors.iconColor.withValues(alpha: 0.1),
                       width: 1,
                     ),
                   ),
@@ -121,7 +121,7 @@ class MenuSide extends StatelessWidget {
                             height: 1,
                             margin: const EdgeInsets.symmetric(vertical: 20),
                             decoration: BoxDecoration(
-                              color: PUColors.iconColor.withOpacity(0.2),
+                              color: PUColors.iconColor.withValues(alpha: 0.2),
                             ),
                           ),
                         ],
@@ -216,7 +216,7 @@ class UserAvatarSide extends StatelessWidget {
               vertical: isMobile ? 2 : 4,
             ),
             decoration: BoxDecoration(
-              color: PUColors.primaryColor.withOpacity(0.1),
+              color: PUColors.primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(

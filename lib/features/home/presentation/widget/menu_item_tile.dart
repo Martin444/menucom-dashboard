@@ -5,10 +5,10 @@ import 'package:pu_material/utils/formaters/currency_converter.dart';
 import 'package:pu_material/utils/overflow_text.dart';
 
 class MenuItemTile extends StatelessWidget {
-  final MenuItemModel item;
+  final CatalogItemModel item;
   final bool selected;
-  final Function(MenuItemModel) onAddCart;
-  final Function(MenuItemModel, String) actionSelected;
+  final Function(CatalogItemModel) onAddCart;
+  final Function(CatalogItemModel, String) actionSelected;
   const MenuItemTile({
     super.key,
     required this.item,
@@ -39,7 +39,7 @@ class MenuItemTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   PuRobustNetworkImage(
-                    imageUrl: item.photoUrl!,
+                    imageUrl: item.photoURL ?? '',
                     height: 220,
                     width: double.infinity,
                     fit: BoxFit.fitHeight,
@@ -54,10 +54,10 @@ class MenuItemTile extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         PUOverflowTextDetector(
-                          message: item.ingredients!.join(','),
+                          message: (item.tags ?? []).join(','),
                           children: [
                             Text(
-                              item.ingredients!.join(','),
+                              (item.tags ?? []).join(','),
                               style: PuTextStyle.brandHeadStyle,
                             ),
                           ],
@@ -66,10 +66,10 @@ class MenuItemTile extends StatelessWidget {
                           height: 10,
                         ),
                         PUOverflowTextDetector(
-                          message: item.name!,
+                          message: item.name,
                           children: [
                             Text(
-                              item.name!,
+                              item.name,
                               style: PuTextStyle.nameProductStyle,
                             ),
                           ],
@@ -84,10 +84,10 @@ class MenuItemTile extends StatelessWidget {
                             Flexible(
                               child: PUOverflowTextDetector(
                                 message:
-                                    item.price!.toString().convertToCorrency(),
+                                    item.price.toString().convertToCorrency(),
                                 children: [
                                   Text(
-                                    item.price!.toString().convertToCorrency(),
+                                    item.price.toString().convertToCorrency(),
                                     style: PuTextStyle.nameProductStyle,
                                   ),
                                 ],

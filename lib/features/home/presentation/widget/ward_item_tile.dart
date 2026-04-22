@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:menu_dart_api/by_feature/wardrobe/get_me_wardrobe/model/clothing_item_model.dart';
+import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pu_material/utils/formaters/currency_converter.dart';
 import 'package:pu_material/utils/overflow_text.dart';
 import 'package:pu_material/pu_material.dart';
 
 class WardItemTile extends StatelessWidget {
-  final ClothingItemModel item;
+  final CatalogItemModel item;
   final bool selected;
-  final Function(ClothingItemModel) onAddCart;
-  final Function(ClothingItemModel, String) actionSelected;
+  final Function(CatalogItemModel) onAddCart;
+  final Function(CatalogItemModel, String) actionSelected;
   const WardItemTile({
     super.key,
     required this.item,
@@ -41,7 +41,7 @@ class WardItemTile extends StatelessWidget {
                   Flexible(
                     flex: 4,
                     child: PuRobustNetworkImage(
-                      imageUrl: item.photoURL!,
+                      imageUrl: item.photoURL ?? '',
                       width: double.infinity,
                       fit: BoxFit.contain,
                     ),
@@ -55,19 +55,19 @@ class WardItemTile extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         PUOverflowTextDetector(
-                          message: item.sizes!.join(','),
+                          message: (item.tags ?? []).join(','),
                           children: [
                             Text(
-                              item.sizes!.join(','),
+                              (item.tags ?? []).join(','),
                               style: PuTextStyle.brandHeadStyle,
                             ),
                           ],
                         ),
                         PUOverflowTextDetector(
-                          message: item.name!,
+                          message: item.name,
                           children: [
                             Text(
-                              item.name!,
+                              item.name,
                               style: PuTextStyle.nameProductStyle,
                             ),
                           ],
@@ -79,10 +79,10 @@ class WardItemTile extends StatelessWidget {
                           children: [
                             Flexible(
                               child: PUOverflowTextDetector(
-                                message: item.price!.toString().convertToCorrency(),
+                                message: item.price.toString().convertToCorrency(),
                                 children: [
                                   Text(
-                                    item.price!.toString().convertToCorrency(),
+                                    item.price.toString().convertToCorrency(),
                                     style: PuTextStyle.nameProductStyle,
                                   ),
                                 ],

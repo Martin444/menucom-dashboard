@@ -118,7 +118,7 @@ class _MobileContent extends StatelessWidget {
               color: PUColors.bgItem,
               border: Border(
                 top: BorderSide(
-                  color: PUColors.borderInputColor.withOpacity(0.3),
+                  color: PUColors.borderInputColor.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),

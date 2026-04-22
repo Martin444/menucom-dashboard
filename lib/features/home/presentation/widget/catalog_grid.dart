@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/ward_item_tile.dart';
 import 'package:pu_material/pu_material.dart';
@@ -78,7 +77,7 @@ class CatalogGrid extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = items[index];
           return WardItemTile(
-            item: _convertCatalogItemToClothingItem(item),
+            item: item,
             selected: false,
             onAddCart: (val) {},
             actionSelected: (value, action) async {
@@ -93,16 +92,5 @@ class CatalogGrid extends StatelessWidget {
         },
       );
     });
-  }
-
-  ClothingItemModel _convertCatalogItemToClothingItem(CatalogItemModel item) {
-    return ClothingItemModel(
-      id: item.id,
-      name: item.name,
-      photoURL: item.photoURL,
-      price: item.price,
-      sizes: item.tags,
-      brand: item.description,
-    );
   }
 }

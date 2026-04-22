@@ -43,7 +43,7 @@ class BusinessSelectionController extends GetxController {
       _isLoading.value = true;
 
       // Print del rol seleccionado
-      print(
+      debugPrint(
           '🎯 ROL SELECCIONADO: ${_selectedBusinessType.value!.title} (${_selectedBusinessType.value!.roleType.name})');
 
       // Obtener ID del usuario actual

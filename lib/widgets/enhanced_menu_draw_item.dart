@@ -45,7 +45,7 @@ class EnhancedMenuDrawItem extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isSelected ? PUColors.bgItemMenuSelected : Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
-                border: isSelected ? Border.all(color: PUColors.primaryColor.withOpacity(0.3)) : null,
+                border: isSelected ? Border.all(color: PUColors.primaryColor.withValues(alpha: 0.3)) : null,
               ),
               child: Row(
                 children: [
@@ -112,7 +112,7 @@ class EnhancedMenuDrawItem extends StatelessWidget {
                               'Próximamente',
                               style: PuTextStyle.description1.copyWith(
                                 fontSize: 9,
-                                color: PUColors.iconColor.withOpacity(0.7),
+                                color: PUColors.iconColor.withValues(alpha: 0.7),
                               ),
                             ),
                           ),
@@ -142,14 +142,14 @@ class EnhancedMenuDrawItem extends StatelessWidget {
 
   Color _getIconColor(bool isSelected, bool isComingSoon) {
     if (isComingSoon) {
-      return PUColors.iconColor.withOpacity(0.5);
+      return PUColors.iconColor.withValues(alpha: 0.5);
     }
     return isSelected ? PUColors.primaryColor : PUColors.iconColor;
   }
 
   Color _getTextColor(bool isSelected, bool isComingSoon) {
     if (isComingSoon) {
-      return PUColors.iconColor.withOpacity(0.5);
+      return PUColors.iconColor.withValues(alpha: 0.5);
     }
     return isSelected ? PUColors.primaryColor : PUColors.iconColor;
   }

@@ -270,7 +270,7 @@ class _MenuHomeViewState extends State<MenuHomeView>
       itemBuilder: (context, index) {
         final item = items[index];
         return MenuItemTile(
-          item: _convertCatalogItemToMenuItem(item),
+          item: item,
           selected: false,
           onAddCart: (val) {},
           actionSelected: (value, action) async {
@@ -283,17 +283,6 @@ class _MenuHomeViewState extends State<MenuHomeView>
           },
         );
       },
-    );
-  }
-
-  MenuItemModel _convertCatalogItemToMenuItem(CatalogItemModel item) {
-    return MenuItemModel(
-      id: item.id,
-      name: item.name,
-      photoUrl: item.photoURL,
-      price: item.price,
-      ingredients: item.tags,
-      description: item.description,
     );
   }
 }

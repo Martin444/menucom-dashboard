@@ -108,10 +108,10 @@ class _LoginPageState extends State<LoginPage> {
                                                 textInputAction:
                                                     TextInputAction.next,
                                                 errorText: _.errorTextEmail
-                                                            ?.value.isEmpty ??
+                                                            .value.isEmpty ??
                                                         false
                                                     ? null
-                                                    : _.errorTextEmail!.value,
+                                                    : _.errorTextEmail.value,
                                               ),
                                               const SizedBox(
                                                 height: 15,
@@ -213,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                                                                 TapGestureRecognizer()
                                                                   ..onTap = () {
                                                                     _.errorTextEmail
-                                                                        ?.value = '';
+                                                                        .value = '';
                                                                     Get.toNamed(
                                                                         PURoutes
                                                                             .REGISTER_COMMERCE);

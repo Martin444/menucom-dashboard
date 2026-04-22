@@ -82,8 +82,7 @@ class DinningController extends GetxController with NavigationStateMixin {
       _isLoadingWardrobes = true;
       debugPrint('=== DEBUG getCatalogsByType CALLED ===');
       debugPrint('Type: $type');
-      debugPrint(
-          'Current catalogsList length before clear: ${catalogsList.length}');
+      debugPrint('Current catalogsList length before clear: ${catalogsList.length}');
       catalogsList.clear();
 
       final response = await GetMyCatalogsUseCase().execute(type: type);
@@ -91,8 +90,7 @@ class DinningController extends GetxController with NavigationStateMixin {
       debugPrint('API response catalogs count: ${response.length}');
 
       for (int i = 0; i < response.length; i++) {
-        debugPrint(
-            'API Response Item $i: ${response[i].description} (ID: ${response[i].id})');
+        debugPrint('API Response Item $i: ${response[i].description} (ID: ${response[i].id})');
       }
 
       for (var e in response) {
@@ -144,45 +142,6 @@ class DinningController extends GetxController with NavigationStateMixin {
     update();
   }
 
-  @Deprecated('Use chageCatalogSelected instead')
-  void chageWardSelected(WardrobeModel select) {
-    final wardrobeAsCatalog = CatalogModel(
-      id: select.id ?? '',
-      catalogType: 'wardrobe',
-      name: select.description,
-      description: select.description,
-      ownerId: select.idOwner ?? '',
-      status: 'active',
-      slug: '',
-      isPublic: true,
-      itemCount: select.items?.length ?? 0,
-      capacity: 10,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-    catalogSelected = wardrobeAsCatalog;
-    update();
-  }
-
-  @Deprecated('Use chageCatalogSelected instead')
-  void chageMenuSelected(MenuModel select) {
-    catalogSelected = CatalogModel(
-      id: select.id ?? '',
-      catalogType: 'menu',
-      name: select.description,
-      description: select.description,
-      ownerId: '',
-      status: 'active',
-      slug: '',
-      isPublic: true,
-      itemCount: select.items?.length ?? 0,
-      capacity: 10,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-    update();
-  }
-
   /// Obtiene usuarios filtrados por roles específicos
   ///
   /// [roles] - Lista de roles para filtrar usuarios
@@ -201,8 +160,7 @@ class DinningController extends GetxController with NavigationStateMixin {
     try {
       _isLoadingUsersByRoles = true;
       debugPrint('=== DEBUG getUsersByRoles CALLED ===');
-      debugPrint(
-          'Roles requested: ${roles.map((r) => r.toString().split('.').last).join(', ')}');
+      debugPrint('Roles requested: ${roles.map((r) => r.toString().split('.').last).join(', ')}');
       debugPrint('With vinculated account: $withVinculedAccount');
 
       // Limpiar lista anterior
@@ -248,8 +206,7 @@ class DinningController extends GetxController with NavigationStateMixin {
       return usersByRolesList;
     } on ApiException catch (e) {
       _isLoadingUsersByRoles = false;
-      debugPrint(
-          'Error getting users by roles: ${e.statusCode} - ${e.message}');
+      debugPrint('Error getting users by roles: ${e.statusCode} - ${e.message}');
       update();
 
       if (e.statusCode == 404) {
@@ -282,11 +239,6 @@ class DinningController extends GetxController with NavigationStateMixin {
   TextEditingController priceController = TextEditingController();
   TextEditingController deliveryController = TextEditingController();
   String photoController = '';
-
-  @Deprecated('Use getCatalogsByType(type) with type="menu" instead')
-  Future<List<MenuModel>?> getmenuByDining() async {
-    return null;
-  }
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 

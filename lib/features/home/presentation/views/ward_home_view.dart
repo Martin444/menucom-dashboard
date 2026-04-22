@@ -7,7 +7,6 @@ import 'package:pickmeup_dashboard/features/home/presentation/widget/item_catego
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_empty_state.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_grid.dart';
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
-import 'package:pu_material/pu_material.dart';
 
 import '../../controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';

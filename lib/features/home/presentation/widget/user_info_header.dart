@@ -65,7 +65,7 @@ class UserInfoHeader extends StatelessWidget {
                   margin: const EdgeInsets.only(left: 12),
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: PUColors.iconColor.withOpacity(0.1),
+                    color: PUColors.iconColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(

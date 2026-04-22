@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/utils/style/pu_style_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'share_link_menu_dialog.dart';
 
@@ -124,13 +123,14 @@ class _MPOAuthGateWidgetState extends State<MPOAuthGateWidget> {
 
   /// Mostrar diálogo de compartir cuando está vinculado
   void _showShareDialog() {
-    // Cerrar este diálogo primero
     Navigator.of(context).pop();
 
-    // Mostrar el diálogo de compartir
     showDialog(
       context: context,
-      builder: (context) => ShareLinkMenuDialog(idMenu: widget.idMenu),
+      builder: (context) => ShareLinkMenuDialog(
+        idMenu: widget.idMenu,
+        accountEmail: _accountEmail,
+      ),
     );
   }
 

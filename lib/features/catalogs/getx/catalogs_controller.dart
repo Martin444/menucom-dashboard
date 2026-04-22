@@ -14,11 +14,11 @@ class CatalogsController extends GetxController {
   final Rxn<CatalogModel> catalogSelected = Rxn<CatalogModel>();
   final RxBool isLoadingCatalogs = false.obs;
 
-  static const String TYPE_MENU = 'menu';
-  static const String TYPE_WARDROBE = 'wardrobe';
-  static const String TYPE_SERVICE = 'service';
+  static const String typeMenu = 'menu';
+  static const String typeWardrobe = 'wardrobe';
+  static const String typeService = 'service';
 
-  String _currentType = TYPE_MENU;
+  String _currentType = typeMenu;
   bool _isLoadingCatalogsInternal = false;
 
   Future<void> loadCatalogsByType(String type) async {
@@ -122,7 +122,7 @@ class CatalogsController extends GetxController {
     final ImagePicker pickerImage = ImagePicker();
     final result = await pickerImage.pickImage(source: ImageSource.gallery);
     if (result != null) {
-      final String? extension = result.name.split('.').last.toLowerCase();
+      final String extension = result.name.split('.').last.toLowerCase();
       if (extension != 'png' && extension != 'jpg' && extension != 'jpeg') {
         Get.snackbar(
           'Formato inválido',
@@ -290,7 +290,7 @@ class CatalogsController extends GetxController {
           message: 'Se eliminó ${catalog.description} con éxito.',
         );
       }
-    } on ApiException catch (e) {
+    } on ApiException {
       isLoadingCatalogs.value = false;
       update();
       GlobalDialogsHandles.snackbarError(
@@ -362,7 +362,7 @@ class CatalogsController extends GetxController {
     final ImagePicker pickerImage = ImagePicker();
     final result = await pickerImage.pickImage(source: ImageSource.gallery);
     if (result != null) {
-      final String? extension = result.name.split('.').last.toLowerCase();
+      final String extension = result.name.split('.').last.toLowerCase();
       if (extension != 'png' && extension != 'jpg' && extension != 'jpeg') {
         Get.snackbar(
           'Formato inválido',
@@ -596,7 +596,7 @@ class CatalogsController extends GetxController {
     }
 
     // Navegar a la ruta correcta según el tipo de catálogo
-    if (_currentType == TYPE_WARDROBE || _currentType == TYPE_SERVICE) {
+    if (_currentType == typeWardrobe || _currentType == typeService) {
       Get.toNamed('/editar-prenda');
     } else {
       Get.toNamed('/edit-menu-item');

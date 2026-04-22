@@ -80,7 +80,7 @@ class _CreateWardItemPageState extends State<CreateWardItemPage> {
                                       },
                                       child: Row(
                                         children: [
-                                          Icon(
+                                          const Icon(
                                             FluentIcons.arrow_left_24_regular,
                                           ),
                                           Text(

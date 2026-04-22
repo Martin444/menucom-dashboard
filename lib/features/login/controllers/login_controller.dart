@@ -172,7 +172,7 @@ class LoginController extends GetxController {
     final ImagePicker pickerImage = ImagePicker();
     final result = await pickerImage.pickImage(source: ImageSource.gallery);
     if (result != null) {
-      final String? extension = result.name.split('.').last.toLowerCase();
+      final String extension = result.name.split('.').last.toLowerCase();
       if (extension != 'png' && extension != 'jpg' && extension != 'jpeg') {
         Get.snackbar(
           'Formato inválido',

@@ -83,7 +83,7 @@ class CustomerFeaturedCommerces extends StatelessWidget {
       isEmailVerified: commerce.isEmailVerified,
       memberSince: commerce.createAt,
       lastActivity: commerce.lastLoginAt,
-      menus: commerce.menus,
+      menus: commerce.catalogs,
       storeUrl: storeUrlWithToken,
       onTap: () => onCommerceSelected?.call(commerce),
     );

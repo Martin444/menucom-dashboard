@@ -21,7 +21,7 @@ class FormEditSide extends StatelessWidget {
             vertical: 20,
           ),
           decoration: BoxDecoration(
-            color: PUColors.bgItem.withOpacity(0.2),
+            color: PUColors.bgItem.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
