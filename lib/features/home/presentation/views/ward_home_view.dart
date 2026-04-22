@@ -152,15 +152,15 @@ class _WardsHomeViewState extends State<WardsHomeView> with WidgetsBindingObserv
                                   height: constrains.maxHeight,
                                   width: double.infinity,
                                   padding: const EdgeInsets.only(
-                                    left: 24,
+                                    left: 20,
                                     right: 16,
                                     top: 32,
                                   ),
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFF8FAFC),
+                                  decoration: BoxDecoration(
+                                    color: PUColors.bgItemMenuSelected.withValues(alpha: 0.5),
                                     border: Border(
                                       left: BorderSide(
-                                        color: Color(0xFFE2E8F0),
+                                        color: PUColors.primaryColor.withValues(alpha: 0.05),
                                         width: 1,
                                       ),
                                     ),

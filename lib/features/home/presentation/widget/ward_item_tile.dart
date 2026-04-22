@@ -27,7 +27,9 @@ class WardItemTile extends StatelessWidget {
           price: item.price,
           primaryInfo: (item.tags ?? []).isNotEmpty ? (item.tags ?? []).join(', ') : null,
           isSelected: selected,
-          onAddToCart: () => onAddCart(item),
+          onAddToCart: () => actionSelected(item, 'edit'), // Ahora la acción principal es editar
+          unselectedIcon: Icons.mode_edit_outline_outlined, // Icono de gestión/edición
+          unselectedButtonColor: PUColors.primaryColor,
         ),
         Positioned(
           top: 0,

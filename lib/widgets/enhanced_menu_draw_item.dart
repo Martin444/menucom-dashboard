@@ -40,22 +40,33 @@ class EnhancedMenuDrawItem extends StatelessWidget {
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              margin: const EdgeInsets.symmetric(vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
               decoration: BoxDecoration(
                 color: isSelected ? PUColors.bgItemMenuSelected : Colors.transparent,
-                borderRadius: BorderRadius.circular(10),
-                border: isSelected ? Border.all(color: PUColors.primaryColor.withValues(alpha: 0.3)) : null,
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
+                  // Indicador de selección (Izquierda)
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    width: 4,
+                    height: isSelected ? 20 : 0,
+                    decoration: BoxDecoration(
+                      color: PUColors.accentColor,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  SizedBox(width: isSelected ? 12 : 0),
+
                   // Icono principal
                   Stack(
                     children: [
                       Icon(
                         config.icon,
                         color: _getIconColor(isSelected, isComingSoon),
-                        size: 24,
+                        size: 22,
                       ),
                       // Badge si es necesario
                       if (showBadge && badgeText != null)
@@ -65,7 +76,7 @@ class EnhancedMenuDrawItem extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: PUColors.primaryColor,
+                              color: PUColors.accentColor,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             constraints: const BoxConstraints(
@@ -84,7 +95,7 @@ class EnhancedMenuDrawItem extends StatelessWidget {
                         ),
                     ],
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
 
                   // Texto del label
                   Expanded(
@@ -95,7 +106,8 @@ class EnhancedMenuDrawItem extends StatelessWidget {
                             config.label,
                             style: PuTextStyle.title3.copyWith(
                               color: _getTextColor(isSelected, isComingSoon),
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                              fontSize: 15,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -103,16 +115,17 @@ class EnhancedMenuDrawItem extends StatelessWidget {
                         if (isComingSoon) ...[
                           const SizedBox(width: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: PUColors.bgItem,
-                              borderRadius: BorderRadius.circular(10),
+                              color: PUColors.bgItemMenuSelected,
+                              borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               'Próximamente',
                               style: PuTextStyle.description1.copyWith(
-                                fontSize: 9,
-                                color: PUColors.iconColor.withValues(alpha: 0.7),
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: PUColors.textColorMuted.withValues(alpha: 0.6),
                               ),
                             ),
                           ),
@@ -120,17 +133,6 @@ class EnhancedMenuDrawItem extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  // Indicador de selección
-                  if (isSelected)
-                    Container(
-                      width: 3,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: PUColors.primaryColor,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
                 ],
               ),
             ),
