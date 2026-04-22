@@ -22,13 +22,13 @@ class MembershipPlanCard extends StatelessWidget {
     final description = plan['description']?.toString();
     final features = plan['features'] as List? ?? [];
     
-    // UI/UX Pro design color logic based on popular tiers
+    // Design system color logic based on plan tiers
     final bool isEnterprise = name.toUpperCase() == 'ENTERPRISE';
-    final Color accentColor = isEnterprise 
-        ? const Color(0xFF1E293B) // Slate 800
-        : (plan['accentColor'] as Color? ?? const Color(0xFF7C3AED)); // Primary from UI/UX Pro Max
+    final Color accentColor = isEnterprise
+        ? PUColors.enterpriseAccent
+        : (plan['accentColor'] as Color? ?? PUColors.accentColor); // Gold default
     
-    final Color buttonColor = isEnterprise ? Colors.black : const Color(0xFF22C55E); // Green CTA from UI/UX Pro Max
+    final Color buttonColor = isEnterprise ? Colors.black : PUColors.ctaSuccess; // Green CTA
 
     return Container(
       padding: const EdgeInsets.all(20),

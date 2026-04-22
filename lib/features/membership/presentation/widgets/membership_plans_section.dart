@@ -163,7 +163,7 @@ class _DefaultPlansLayout extends StatelessWidget {
           'Analíticas avanzadas',
           'Soporte prioritario',
         ],
-        'accentColor': const Color(0xFF7C3AED), // UI/UX Pro Max Primary
+        'accentColor': PUColors.premiumAccent, // Premium Gold
       },
       {
         'name': 'ENTERPRISE',
@@ -176,7 +176,7 @@ class _DefaultPlansLayout extends StatelessWidget {
           'White label',
           'Soporte dedicado',
         ],
-        'accentColor': const Color(0xFF1E293B), // Dark elegant
+        'accentColor': PUColors.enterpriseAccent, // Dark Slate
       },
     ];
 

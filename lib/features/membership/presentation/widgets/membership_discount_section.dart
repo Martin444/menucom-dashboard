@@ -50,7 +50,7 @@ class _MembershipDiscountSectionState extends State<MembershipDiscountSection> {
                 children: [
                   const Icon(
                     FluentIcons.tag_24_regular,
-                    color: Color(0xFF7C3AED), // UI/UX Primary
+                    color: PUColors.accentColor, // Gold accent
                     size: 24,
                   ),
                   const SizedBox(width: 12),
@@ -163,7 +163,7 @@ class _MembershipDiscountSectionState extends State<MembershipDiscountSection> {
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                            const Color(0xFF7C3AED), // UI/UX Primary
+                            PUColors.accentColor, // Gold accent
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,

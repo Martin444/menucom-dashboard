@@ -21,84 +21,22 @@ class WardItemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: GestureDetector(
-            onTap: () {
-              onAddCart(item);
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                vertical: 5,
-                horizontal: 10,
-              ),
-              decoration: PuStyleContainers.borderAllContainer,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Flexible(
-                    flex: 4,
-                    child: PuRobustNetworkImage(
-                      imageUrl: item.photoURL ?? '',
-                      width: double.infinity,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        PUOverflowTextDetector(
-                          message: (item.tags ?? []).join(','),
-                          children: [
-                            Text(
-                              (item.tags ?? []).join(','),
-                              style: PuTextStyle.brandHeadStyle,
-                            ),
-                          ],
-                        ),
-                        PUOverflowTextDetector(
-                          message: item.name,
-                          children: [
-                            Text(
-                              item.name,
-                              style: PuTextStyle.nameProductStyle,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Flexible(
-                              child: PUOverflowTextDetector(
-                                message: item.price.toString().convertToCorrency(),
-                                children: [
-                                  Text(
-                                    item.price.toString().convertToCorrency(),
-                                    style: PuTextStyle.nameProductStyle,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+        ProductCard(
+          imageUrl: item.photoURL,
+          title: item.name,
+          price: item.price,
+          primaryInfo: (item.tags ?? []).isNotEmpty ? (item.tags ?? []).join(', ') : null,
+          isSelected: selected,
+          onAddToCart: () => onAddCart(item),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: McOptionBtnTile(
+            actionSelected: actionSelected,
+            item: item,
           ),
         ),
-        McOptionBtnTile(actionSelected: actionSelected, item: item),
       ],
     );
   }

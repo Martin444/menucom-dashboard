@@ -34,7 +34,7 @@ class MembershipBillingHistory extends StatelessWidget {
                 children: [
                   const Icon(
                     FluentIcons.receipt_24_regular,
-                    color: Color(0xFF7C3AED), // UI/UX Pro Max Primary
+                    color: PUColors.accentColor, // Gold accent
                     size: 24,
                   ),
                   const SizedBox(width: 12),
@@ -155,7 +155,7 @@ class MembershipBillingHistory extends StatelessWidget {
                             onPressed: () {},
                             icon: const Icon(
                               FluentIcons.arrow_download_24_regular,
-                              color: Color(0xFF7C3AED),
+                              color: PUColors.accentColor,
                               size: 22,
                             ),
                             tooltip: 'Descargar factura',

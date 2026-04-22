@@ -66,7 +66,7 @@ class OrdersMetricsWidget extends StatelessWidget {
 
   Widget _buildRevenueCard(BuildContext context, double totalRevenue, bool isMobile) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -159,9 +159,12 @@ class OrdersMetricsWidget extends StatelessWidget {
       childAspectRatio: 1.25,
       children: [
         _buildMetricCard(context, 'Total', totalOrders.toString(), FluentIcons.receipt_24_regular, Colors.blue),
-        _buildMetricCard(context, 'Pendientes', pendingOrders.toString(), FluentIcons.hourglass_24_regular, Colors.orange),
-        _buildMetricCard(context, 'En Curso', inProgressOrders.toString(), FluentIcons.arrow_sync_24_regular, Colors.purple),
-        _buildMetricCard(context, 'Completadas', completedOrders.toString(), FluentIcons.checkmark_circle_24_regular, Colors.green),
+        _buildMetricCard(
+            context, 'Pendientes', pendingOrders.toString(), FluentIcons.hourglass_24_regular, Colors.orange),
+        _buildMetricCard(
+            context, 'En Curso', inProgressOrders.toString(), FluentIcons.arrow_sync_24_regular, Colors.purple),
+        _buildMetricCard(
+            context, 'Completadas', completedOrders.toString(), FluentIcons.checkmark_circle_24_regular, Colors.green),
       ],
     );
   }
@@ -175,13 +178,21 @@ class OrdersMetricsWidget extends StatelessWidget {
   ) {
     return Row(
       children: [
-        Expanded(child: _buildMetricCard(context, 'Total', totalOrders.toString(), FluentIcons.receipt_24_regular, Colors.blue)),
+        Expanded(
+            child: _buildMetricCard(
+                context, 'Total', totalOrders.toString(), FluentIcons.receipt_24_regular, Colors.blue)),
         const SizedBox(width: 16),
-        Expanded(child: _buildMetricCard(context, 'Pendientes', pendingOrders.toString(), FluentIcons.hourglass_24_regular, Colors.orange)),
+        Expanded(
+            child: _buildMetricCard(
+                context, 'Pendientes', pendingOrders.toString(), FluentIcons.hourglass_24_regular, Colors.orange)),
         const SizedBox(width: 16),
-        Expanded(child: _buildMetricCard(context, 'En Curso', inProgressOrders.toString(), FluentIcons.arrow_sync_24_regular, Colors.purple)),
+        Expanded(
+            child: _buildMetricCard(
+                context, 'En Curso', inProgressOrders.toString(), FluentIcons.arrow_sync_24_regular, Colors.purple)),
         const SizedBox(width: 16),
-        Expanded(child: _buildMetricCard(context, 'Completadas', completedOrders.toString(), FluentIcons.checkmark_circle_24_regular, Colors.green)),
+        Expanded(
+            child: _buildMetricCard(context, 'Completadas', completedOrders.toString(),
+                FluentIcons.checkmark_circle_24_regular, Colors.green)),
       ],
     );
   }
@@ -194,9 +205,9 @@ class OrdersMetricsWidget extends StatelessWidget {
     Color color,
   ) {
     final theme = Theme.of(context);
-    
+
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -211,30 +222,34 @@ class OrdersMetricsWidget extends StatelessWidget {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: const EdgeInsets.all(6),
+            padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: color, size: 18),
+            child: Icon(icon, color: color, size: 16),
           ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface,
-              height: 1.1,
+          const SizedBox(height: 4),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+                height: 1.1,
+              ),
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 10,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               fontWeight: FontWeight.w500,
             ),

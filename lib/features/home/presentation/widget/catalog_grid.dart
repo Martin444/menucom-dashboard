@@ -69,7 +69,7 @@ class CatalogGrid extends StatelessWidget {
               : constraints.maxWidth >= 768
                   ? 3
                   : 2,
-          mainAxisExtent: 330,
+          mainAxisExtent: 400,
           mainAxisSpacing: 0,
           childAspectRatio: 1.0,
           crossAxisSpacing: 0,

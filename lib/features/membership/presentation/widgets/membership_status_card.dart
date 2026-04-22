@@ -41,9 +41,9 @@ class MembershipStatusCard extends StatelessWidget {
             statusIcon = FluentIcons.circle_24_regular;
         }
 
-        // Glassmorphism properties
-        final Color baseColor = isActive ? const Color(0xFF7C3AED) : PUColors.iconColor;
-        final Color secondaryColor = isActive ? const Color(0xFFA78BFA) : Colors.grey.shade400;
+        // Glassmorphism properties - Use design system tokens
+        final Color baseColor = isActive ? PUColors.glassPremiumBg : PUColors.iconColor;
+        final Color secondaryColor = isActive ? PUColors.premiumAccent.withValues(alpha: 0.65) : Colors.grey.shade400;
 
         return ClipRRect(
           borderRadius: BorderRadius.circular(24),
@@ -67,7 +67,7 @@ class MembershipStatusCard extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: baseColor.withValues(alpha: 0.25),
+                    color: isActive ? PUColors.glassPremiumShadow : PUColors.glassShadow,
                     blurRadius: 24,
                     offset: const Offset(0, 8),
                   ),
