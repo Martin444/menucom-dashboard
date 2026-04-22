@@ -21,21 +21,19 @@ class MembershipPlanCard extends StatelessWidget {
     final price = (plan['price'] as num?)?.toDouble() ?? 0.0;
     final description = plan['description']?.toString();
     final features = plan['features'] as List? ?? [];
-    
+
     // Design system color logic based on plan tiers
     final bool isEnterprise = name.toUpperCase() == 'ENTERPRISE';
     final Color accentColor = isEnterprise
         ? PUColors.enterpriseAccent
         : (plan['accentColor'] as Color? ?? PUColors.accentColor); // Gold default
-    
+
     final Color buttonColor = isEnterprise ? Colors.black : PUColors.ctaSuccess; // Green CTA
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isCurrentPlan
-            ? accentColor.withValues(alpha: 0.05)
-            : PUColors.bgItem,
+        color: isCurrentPlan ? accentColor.withValues(alpha: 0.05) : PUColors.bgItem,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isCurrentPlan ? accentColor : PUColors.borderInputColor.withValues(alpha: 0.3),
@@ -66,10 +64,7 @@ class MembershipPlanCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   displayName,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontFamily: 'Fira Sans',
-                    fontWeight: FontWeight.bold,
+                  style: PuTextStyle.membershipCardTitle.copyWith(
                     color: isCurrentPlan ? accentColor : PUColors.textColor3,
                   ),
                 ),
@@ -84,12 +79,10 @@ class MembershipPlanCard extends StatelessWidget {
                     color: accentColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Actual',
-                    style: TextStyle(
+                    style: PuTextStyle.membershipBadge.copyWith(
                       color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -99,9 +92,7 @@ class MembershipPlanCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               description,
-              style: TextStyle(
-                fontSize: 13,
-                fontFamily: 'Fira Sans',
+              style: PuTextStyle.membershipCardDescription.copyWith(
                 color: PUColors.textColor1,
               ),
             ),
@@ -109,10 +100,8 @@ class MembershipPlanCard extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             price == 0 ? 'Gratis' : '\$${price.toStringAsFixed(2)}/mes',
-            style: TextStyle(
+            style: PuTextStyle.membershipPriceLarge.copyWith(
               fontSize: 32,
-              fontFamily: 'Fira Sans',
-              fontWeight: FontWeight.bold,
               color: isCurrentPlan ? accentColor : PUColors.textColor3,
             ),
           ),
@@ -143,9 +132,7 @@ class MembershipPlanCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             feature.toString(),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Fira Sans',
+                            style: PuTextStyle.membershipFeature.copyWith(
                               color: PUColors.textColor3,
                             ),
                           ),
@@ -174,10 +161,7 @@ class MembershipPlanCard extends StatelessWidget {
                 ),
                 child: Text(
                   price == 0 ? 'Comenzar Free' : 'Hacer Upgrade',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: PuTextStyle.buttonTextStyle,
                 ),
               ),
             ),

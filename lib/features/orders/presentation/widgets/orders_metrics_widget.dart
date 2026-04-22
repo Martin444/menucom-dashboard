@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import '../../getx/orders_controller.dart';
+import 'package:pu_material/pu_material.dart';
 
 /// Widget que muestra estadísticas y métricas de las órdenes con diseño premium
 class OrdersMetricsWidget extends StatelessWidget {
@@ -106,20 +107,18 @@ class OrdersMetricsWidget extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Ingresos Totales',
-                style: TextStyle(
+                style: PuTextStyle.bodySmall.copyWith(
                   color: Colors.white70,
-                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               Text(
                 '\$${totalRevenue.toStringAsFixed(2)}',
-                style: TextStyle(
+                style: PuTextStyle.title1.copyWith(
                   color: Colors.white,
                   fontSize: isMobile ? 24 : 28,
-                  fontWeight: FontWeight.bold,
                   letterSpacing: -0.5,
                 ),
               ),
@@ -133,9 +132,12 @@ class OrdersMetricsWidget extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
+              child: Text(
                 'Bruto',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                style: PuTextStyle.bodySmall.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
         ],
@@ -237,9 +239,8 @@ class OrdersMetricsWidget extends StatelessWidget {
             fit: BoxFit.scaleDown,
             child: Text(
               value,
-              style: TextStyle(
+              style: PuTextStyle.title3.copyWith(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
                 color: theme.colorScheme.onSurface,
                 height: 1.1,
               ),
@@ -248,7 +249,7 @@ class OrdersMetricsWidget extends StatelessWidget {
           const SizedBox(height: 1),
           Text(
             label,
-            style: TextStyle(
+            style: PuTextStyle.bodySmall.copyWith(
               fontSize: 10,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               fontWeight: FontWeight.w500,

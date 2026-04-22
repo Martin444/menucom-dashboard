@@ -7,6 +7,7 @@ import 'package:pickmeup_dashboard/features/home/presentation/widget/item_catego
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_empty_state.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_grid.dart';
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
+import 'package:pu_material/pu_material.dart';
 
 import '../../controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
@@ -115,22 +116,18 @@ class _WardsHomeViewState extends State<WardsHomeView> with WidgetsBindingObserv
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Dashboard de Catálogos',
-                                      style: TextStyle(
+                                      style: PuTextStyle.title1.copyWith(
                                         fontSize: 28,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF0F172A),
                                         letterSpacing: -0.5,
                                       ),
                                     ),
                                     const SizedBox(height: 8),
-                                    const Text(
+                                    Text(
                                       'Gestiona tus productos y visualiza tu inventario de forma rápida y sencilla.',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: Color(0xFF475569),
-                                        fontWeight: FontWeight.w400,
+                                      style: PuTextStyle.bodyMedium.copyWith(
+                                        color: const Color(0xFF475569),
                                       ),
                                     ),
                                     const SizedBox(height: 32),
@@ -171,12 +168,11 @@ class _WardsHomeViewState extends State<WardsHomeView> with WidgetsBindingObserv
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
+                                      Text(
                                         'Mis catálogos',
-                                        style: TextStyle(
+                                        style: PuTextStyle.title3.copyWith(
                                           fontSize: 18,
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFF0F172A),
+                                          color: const Color(0xFF0F172A),
                                           letterSpacing: -0.3,
                                         ),
                                       ),
@@ -184,15 +180,12 @@ class _WardsHomeViewState extends State<WardsHomeView> with WidgetsBindingObserv
                                         height: 24,
                                       ),
                                       if (catalogs.isEmpty)
-                                        const Center(
+                                        Center(
                                           child: Padding(
                                             padding: EdgeInsets.only(top: 24.0),
                                             child: Text(
                                               'No hay catálogos disponibles',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: Color(0xFF64748B),
-                                              ),
+                                              style: PuTextStyle.bodySmall,
                                               textAlign: TextAlign.center,
                                             ),
                                           ),

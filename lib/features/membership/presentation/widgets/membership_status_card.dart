@@ -53,10 +53,7 @@ class MembershipStatusCard extends StatelessWidget {
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    baseColor.withValues(alpha: 0.85),
-                    secondaryColor.withValues(alpha: 0.65)
-                  ],
+                  colors: [baseColor.withValues(alpha: 0.85), secondaryColor.withValues(alpha: 0.65)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -75,7 +72,7 @@ class MembershipStatusCard extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                   // Light reflection effect
+                  // Light reflection effect
                   Positioned(
                     top: -50,
                     right: -50,
@@ -101,12 +98,7 @@ class MembershipStatusCard extends StatelessWidget {
                               children: [
                                 Text(
                                   controller.getPlanLabel(plan),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 36,
-                                    fontFamily: 'Fira Code',
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: PuTextStyle.membershipPlanTitle,
                                 ),
                                 const SizedBox(height: 12),
                                 Container(
@@ -130,12 +122,7 @@ class MembershipStatusCard extends StatelessWidget {
                                       const SizedBox(width: 8),
                                       Text(
                                         controller.getStatusLabel(status),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontFamily: 'Fira Sans',
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                        style: PuTextStyle.membershipStatus,
                                       ),
                                     ],
                                   ),
@@ -151,9 +138,7 @@ class MembershipStatusCard extends StatelessWidget {
                               border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
                             ),
                             child: Icon(
-                              isActive
-                                  ? FluentIcons.premium_32_regular
-                                  : FluentIcons.star_32_regular,
+                              isActive ? FluentIcons.premium_32_regular : FluentIcons.star_32_regular,
                               color: Colors.white,
                               size: 40,
                             ),
@@ -168,12 +153,7 @@ class MembershipStatusCard extends StatelessWidget {
                             if (hasDiscount && discountPct != null) ...[
                               Text(
                                 '$currency ${(amountVal * (1 - discountPct / 100)).toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 48,
-                                  fontFamily: 'Fira Sans',
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: PuTextStyle.membershipPriceLarge,
                               ),
                               const SizedBox(width: 16),
                               Container(
@@ -187,35 +167,21 @@ class MembershipStatusCard extends StatelessWidget {
                                 ),
                                 child: Text(
                                   '-${discountPct.toStringAsFixed(0)}%',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontFamily: 'Fira Code',
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: PuTextStyle.membershipBadge,
                                 ),
                               ),
                             ] else ...[
                               Text(
                                 '$currency ${amountVal.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 48,
-                                  fontFamily: 'Fira Sans',
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: PuTextStyle.membershipPriceLarge,
                               ),
                             ],
                             const SizedBox(width: 8),
-                            const Padding(
-                              padding: EdgeInsets.only(bottom: 8),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
                               child: Text(
                                 '/mes',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 18,
-                                  fontFamily: 'Fira Sans',
-                                ),
+                                style: PuTextStyle.membershipPriceLabel,
                               ),
                             ),
                           ],
@@ -232,34 +198,21 @@ class MembershipStatusCard extends StatelessWidget {
                               const SizedBox(width: 8),
                               Text(
                                 'Próxima facturación: ${_formatDate(nextBilling)}',
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 15,
-                                  fontFamily: 'Fira Sans',
-                                ),
+                                style: PuTextStyle.membershipPriceLabel.copyWith(fontSize: 15),
                               ),
                             ],
                           ),
                         ],
                       ],
                       if (!isActive) ...[
-                        const Text(
+                        Text(
                           'Plan Gratis',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 32,
-                            fontFamily: 'Fira Sans',
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: PuTextStyle.membershipPlanTitle.copyWith(fontSize: 32),
                         ),
                         const SizedBox(height: 12),
-                        const Text(
+                        Text(
                           'Hasta 10 items, 1 catálogo, 7 días analytics',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontFamily: 'Fira Sans',
-                            fontSize: 16,
-                          ),
+                          style: PuTextStyle.membershipPlanSubtitle.copyWith(fontSize: 16, color: Colors.white70),
                         ),
                       ],
                     ],
