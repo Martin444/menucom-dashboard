@@ -28,6 +28,9 @@ class PURoutes {
 
   static String ORDERS_PAGES = '/ordenes';
 
+  // My Purchases (mis compras como cliente)
+  static String MY_PURCHASES = '/mis-compras';
+
   // Business type selection
   static String BUSINESS_TYPE_SELECTION = '/seleccionar-tipo-negocio';
 

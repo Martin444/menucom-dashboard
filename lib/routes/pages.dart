@@ -20,6 +20,8 @@ import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/pages/mp_oauth_callback_page.dart';
 
 import '../features/orders/presentation/pages/orders_page.dart';
+import '../features/orders/presentation/pages/my_purchases_page.dart';
+import '../features/orders/bindings/my_purchases_binding.dart';
 
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_binding.dart';
 import 'package:pickmeup_dashboard/features/membership/presentation/pages/membership_page.dart';
@@ -160,6 +162,18 @@ class PUPages {
       bindings: [
         MenuNavigationBinding(),
         CatalogsBinding(),
+        DinningBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.MY_PURCHASES,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+      transition: Transition.fadeIn,
+      page: () => const MyPurchasesPage(),
+      bindings: [
+        MenuNavigationBinding(),
         DinningBinding(),
       ],
     ),

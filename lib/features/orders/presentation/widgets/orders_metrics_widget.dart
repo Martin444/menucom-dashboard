@@ -66,77 +66,81 @@ class OrdersMetricsWidget extends StatelessWidget {
   }
 
   Widget _buildRevenueCard(BuildContext context, double totalRevenue, bool isMobile) {
-    final theme = Theme.of(context);
-
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [
-            theme.colorScheme.primary,
-            theme.colorScheme.primary.withValues(alpha: 0.8),
+            PUColors.primaryBlue,
+            PUColors.primaryBlueDark,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.primary.withValues(alpha: 0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+            color: PUColors.primaryBlue.withValues(alpha: 0.25),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(
               FluentIcons.money_24_filled,
               color: Colors.white,
-              size: 28,
+              size: 32,
             ),
           ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Ingresos Totales',
-                style: PuTextStyle.bodySmall.copyWith(
-                  color: Colors.white70,
-                  fontWeight: FontWeight.w500,
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Ingresos Totales',
+                  style: PuTextStyle.bodySmall.copyWith(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
                 ),
-              ),
-              Text(
-                '\$${totalRevenue.toStringAsFixed(2)}',
-                style: PuTextStyle.title1.copyWith(
-                  color: Colors.white,
-                  fontSize: isMobile ? 24 : 28,
-                  letterSpacing: -0.5,
+                const SizedBox(height: 4),
+                Text(
+                  '\$${totalRevenue.toStringAsFixed(2)}',
+                  style: PuTextStyle.title1.copyWith(
+                    color: Colors.white,
+                    fontSize: isMobile ? 26 : 32,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -1,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          const Spacer(),
           if (!isMobile)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.white.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
               ),
               child: Text(
                 'Bruto',
                 style: PuTextStyle.bodySmall.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
                 ),
               ),
             ),
@@ -160,13 +164,13 @@ class OrdersMetricsWidget extends StatelessWidget {
       mainAxisSpacing: 12,
       childAspectRatio: 1.25,
       children: [
-        _buildMetricCard(context, 'Total', totalOrders.toString(), FluentIcons.receipt_24_regular, Colors.blue),
+        _buildMetricCard(context, 'Total', totalOrders.toString(), FluentIcons.receipt_24_regular, PUColors.primaryBlue),
         _buildMetricCard(
-            context, 'Pendientes', pendingOrders.toString(), FluentIcons.hourglass_24_regular, Colors.orange),
+            context, 'Pendientes', pendingOrders.toString(), FluentIcons.hourglass_24_regular, const Color(0xFFD97706)), // Amber-600
         _buildMetricCard(
-            context, 'En Curso', inProgressOrders.toString(), FluentIcons.arrow_sync_24_regular, Colors.purple),
+            context, 'En Curso', inProgressOrders.toString(), FluentIcons.arrow_sync_24_regular, const Color(0xFF7C3AED)), // Violet-600
         _buildMetricCard(
-            context, 'Completadas', completedOrders.toString(), FluentIcons.checkmark_circle_24_regular, Colors.green),
+            context, 'Completadas', completedOrders.toString(), FluentIcons.checkmark_circle_24_regular, const Color(0xFF059669)), // Emerald-600
       ],
     );
   }
@@ -182,19 +186,19 @@ class OrdersMetricsWidget extends StatelessWidget {
       children: [
         Expanded(
             child: _buildMetricCard(
-                context, 'Total', totalOrders.toString(), FluentIcons.receipt_24_regular, Colors.blue)),
+                context, 'Total', totalOrders.toString(), FluentIcons.receipt_24_regular, PUColors.primaryBlue)),
         const SizedBox(width: 16),
         Expanded(
             child: _buildMetricCard(
-                context, 'Pendientes', pendingOrders.toString(), FluentIcons.hourglass_24_regular, Colors.orange)),
+                context, 'Pendientes', pendingOrders.toString(), FluentIcons.hourglass_24_regular, const Color(0xFFD97706))),
         const SizedBox(width: 16),
         Expanded(
             child: _buildMetricCard(
-                context, 'En Curso', inProgressOrders.toString(), FluentIcons.arrow_sync_24_regular, Colors.purple)),
+                context, 'En Curso', inProgressOrders.toString(), FluentIcons.arrow_sync_24_regular, const Color(0xFF7C3AED))),
         const SizedBox(width: 16),
         Expanded(
             child: _buildMetricCard(context, 'Completadas', completedOrders.toString(),
-                FluentIcons.checkmark_circle_24_regular, Colors.green)),
+                FluentIcons.checkmark_circle_24_regular, const Color(0xFF059669))),
       ],
     );
   }

@@ -7,7 +7,7 @@ import '../../routes/routes.dart';
 enum MenuNavigationItem {
   home,
   orders,
-  sales,
+  myPurchases,
   membership,
   clients,
   suppliers,
@@ -27,8 +27,15 @@ enum MenuNavigationItem {
       case MenuNavigationItem.orders:
         return MenuItemConfig(
           icon: FluentIcons.clipboard_task_list_ltr_24_regular,
-          label: 'Ordenes',
+          label: 'Órdenes',
           route: PURoutes.ORDERS_PAGES,
+          isNavigationRoute: true,
+        );
+      case MenuNavigationItem.myPurchases:
+        return MenuItemConfig(
+          icon: FluentIcons.cart_24_regular,
+          label: 'Mis Compras',
+          route: PURoutes.MY_PURCHASES,
           isNavigationRoute: true,
         );
       case MenuNavigationItem.membership:
@@ -37,14 +44,6 @@ enum MenuNavigationItem {
           label: 'Membresía',
           route: PURoutes.MEMBERSHIP,
           isNavigationRoute: true,
-        );
-      case MenuNavigationItem.sales:
-        return const MenuItemConfig(
-          icon: FluentIcons.money_24_regular,
-          label: 'Ventas',
-          route: null,
-          isNavigationRoute: false,
-          isComingSoon: true,
         );
       case MenuNavigationItem.clients:
         return const MenuItemConfig(
@@ -85,10 +84,8 @@ enum MenuNavigationItem {
   static List<MenuNavigationItem> get mainItems => [
         home,
         orders,
+        myPurchases,
         membership,
-        sales,
-        clients,
-        suppliers,
       ];
 
   /// Items de acción (como logout)
@@ -118,18 +115,18 @@ enum MenuNavigationItem {
   static List<MenuNavigationItem> getItemsByRole(String role) {
     final roleLower = role.toLowerCase();
     if (menuRoles.contains(roleLower)) {
-      return [home, orders, membership, sales, ...actionItems];
+      return [home, orders, myPurchases, membership, ...actionItems];
     }
     if (catalogRoles.contains(roleLower)) {
-      return [home, orders, membership, sales, ...actionItems];
+      return [home, orders, myPurchases, membership, ...actionItems];
     }
     switch (roleLower) {
       case 'admin':
         return [...mainItems, ...actionItems];
       case 'customer':
-        return [home, orders, membership, ...actionItems];
+        return [home, myPurchases, membership, ...actionItems];
       default:
-        return [home, membership, ...actionItems];
+        return [home, myPurchases, membership, ...actionItems];
     }
   }
 }

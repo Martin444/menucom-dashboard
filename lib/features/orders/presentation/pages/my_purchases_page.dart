@@ -1,47 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
-import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
-import 'package:pickmeup_dashboard/features/orders/getx/orders_controller.dart';
+import 'package:pickmeup_dashboard/features/orders/getx/my_purchases_controller.dart';
 import 'package:pickmeup_dashboard/features/orders/presentation/widgets/orders_metrics_widget.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
-class OrdersPage extends StatefulWidget {
-  const OrdersPage({super.key});
+class MyPurchasesPage extends StatefulWidget {
+  const MyPurchasesPage({super.key});
 
   @override
-  State<OrdersPage> createState() => _OrdersPageState();
+  State<MyPurchasesPage> createState() => _MyPurchasesPageState();
 }
 
-class _OrdersPageState extends State<OrdersPage> {
-  late final OrdersController ordersController;
-  late final DinningController dinningController;
+class _MyPurchasesPageState extends State<MyPurchasesPage> {
+  late final MyPurchasesController purchasesController;
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    // Inicializar controladores
-    ordersController = Get.put(OrdersController());
-    dinningController = Get.find<DinningController>();
+    purchasesController = Get.put(MyPurchasesController());
 
-    // Cargar órdenes al inicializar
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadOrders();
+      _loadPurchases();
     });
 
-    // Escuchar el scroll para paginación (Issue 2.1.2)
     _scrollController.addListener(_onScroll);
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
-      if (!ordersController.isLoading.value && ordersController.hasMore.value) {
-        final userId = dinningController.dinningLogin.id;
-        if (userId != null && userId.isNotEmpty) {
-          ordersController.fetchOrdersByBusinessOwner(userId, refresh: false);
-        }
+      if (!purchasesController.isLoading.value && purchasesController.hasMore.value) {
+        purchasesController.fetchPurchases(refresh: false);
       }
     }
   }
@@ -52,28 +43,23 @@ class _OrdersPageState extends State<OrdersPage> {
     super.dispose();
   }
 
-  Future<void> _loadOrders() async {
-    final userId = dinningController.dinningLogin.id;
-    if (userId != null && userId.isNotEmpty) {
-      await ordersController.fetchOrdersByBusinessOwner(userId);
-    }
+  Future<void> _loadPurchases() async {
+    await purchasesController.fetchPurchases();
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Definir breakpoints
         final screenWidth = constraints.maxWidth;
         final isMobile = screenWidth < 768;
         final isTablet = screenWidth >= 768 && screenWidth < 1024;
 
         if (isMobile) {
-          // Layout móvil: MenuSide como drawer + contenido full width
           return Scaffold(
             drawer: const MenuSide(isMobile: true),
             appBar: AppBar(
-              title: const Text('Órdenes'),
+              title: const Text('Mis Compras'),
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: Builder(
@@ -84,24 +70,21 @@ class _OrdersPageState extends State<OrdersPage> {
               ),
               actions: [
                 IconButton(
-                  onPressed: _loadOrders,
+                  onPressed: _loadPurchases,
                   icon: const Icon(FluentIcons.arrow_sync_24_regular),
-                  tooltip: 'Actualizar órdenes',
+                  tooltip: 'Actualizar compras',
                 ),
               ],
             ),
             body: _buildMobileContent(),
           );
         } else {
-          // Layout tablet/desktop: MenuSide fijo + contenido expandido
           return Row(
             children: [
-              // MenuSide con ancho fijo
               SizedBox(
                 width: isTablet ? 200 : 250,
                 child: const MenuSide(isMobile: false),
               ),
-              // Contenido principal expandido
               Expanded(
                 child: _buildDesktopContent(isTablet),
               ),
@@ -114,7 +97,7 @@ class _OrdersPageState extends State<OrdersPage> {
 
   Widget _buildMobileContent() {
     return RefreshIndicator(
-      onRefresh: _loadOrders,
+      onRefresh: _loadPurchases,
       child: SingleChildScrollView(
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
@@ -122,11 +105,9 @@ class _OrdersPageState extends State<OrdersPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Widget de métricas - versión móvil compacta
             const OrdersMetricsWidget(),
             const SizedBox(height: 16),
-            // Tabla/lista de órdenes
-            _buildOrdersContent(),
+            _buildPurchasesContent(),
           ],
         ),
       ),
@@ -146,34 +127,31 @@ class _OrdersPageState extends State<OrdersPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header con título y botón de refresh
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Órdenes',
+                'Mis Compras',
                 style: PuTextStyle.title1.copyWith(
                   fontSize: isTablet ? 24 : 32,
                   color: PUColors.textColorRich,
                 ),
               ),
               IconButton(
-                onPressed: _loadOrders,
+                onPressed: _loadPurchases,
                 icon: const Icon(FluentIcons.arrow_sync_24_regular),
-                tooltip: 'Actualizar órdenes',
+                tooltip: 'Actualizar compras',
                 iconSize: isTablet ? 20 : 24,
               ),
             ],
           ),
           SizedBox(height: isTablet ? 16 : 20),
-          // Widget de métricas - versión desktop
           const OrdersMetricsWidget(),
           SizedBox(height: isTablet ? 16 : 20),
-          // Tabla de órdenes expandida
           Expanded(
             child: SingleChildScrollView(
               controller: _scrollController,
-              child: _buildOrdersContent(),
+              child: _buildPurchasesContent(),
             ),
           ),
         ],
@@ -181,10 +159,10 @@ class _OrdersPageState extends State<OrdersPage> {
     );
   }
 
-  Widget _buildOrdersContent() {
-    return GetX<OrdersController>(
+  Widget _buildPurchasesContent() {
+    return GetX<MyPurchasesController>(
       builder: (controller) {
-        if (controller.isLoading.value && controller.orders.isEmpty) {
+        if (controller.isLoading.value && controller.purchases.isEmpty) {
           return _buildSkeletonLoader();
         }
 
@@ -200,7 +178,7 @@ class _OrdersPageState extends State<OrdersPage> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Error al cargar órdenes',
+                  'Error al cargar compras',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 8),
@@ -211,7 +189,7 @@ class _OrdersPageState extends State<OrdersPage> {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: _loadOrders,
+                  onPressed: _loadPurchases,
                   child: const Text('Reintentar'),
                 ),
               ],
@@ -219,30 +197,30 @@ class _OrdersPageState extends State<OrdersPage> {
           );
         }
 
-        if (controller.orders.isEmpty) {
+        if (controller.purchases.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  FluentIcons.receipt_24_regular,
+                  FluentIcons.cart_24_regular,
                   size: 64,
                   color: Colors.grey.shade400,
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'No hay órdenes disponibles',
+                  'No hay compras disponibles',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Las órdenes aparecerán aquí cuando los clientes realicen pedidos.',
+                  'Las compras aparecerán aquí cuando realices pedidos.',
                   style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: _loadOrders,
+                  onPressed: _loadPurchases,
                   child: const Text('Actualizar'),
                 ),
               ],
@@ -254,19 +232,19 @@ class _OrdersPageState extends State<OrdersPage> {
           children: [
             OrdersTable(
               padding: EdgeInsets.zero,
-              data: controller.orders,
+              data: controller.purchases,
             ),
-            if (controller.isLoading.value && controller.orders.isNotEmpty)
+            if (controller.isLoading.value && controller.purchases.isNotEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Center(child: CircularProgressIndicator()),
               ),
-            if (!controller.hasMore.value && controller.orders.isNotEmpty)
+            if (!controller.hasMore.value && controller.purchases.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Center(
                   child: Text(
-                    'No hay más órdenes para mostrar',
+                    'No hay más compras para mostrar',
                     style: TextStyle(color: Colors.grey.shade500),
                   ),
                 ),
