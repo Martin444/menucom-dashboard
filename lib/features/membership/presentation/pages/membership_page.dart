@@ -97,68 +97,70 @@ class _MembershipPageState extends State<MembershipPage> {
           final horizontalPadding = isTablet ? 24.0 : 32.0;
           final verticalPadding = isTablet ? 16.0 : 24.0;
 
-          return Row(
-            children: [
-              SizedBox(
-                width: isTablet ? 200 : 250,
-                child: const MenuSide(isMobile: false),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPadding,
-                    vertical: verticalPadding,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Membresía',
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                  fontSize: isTablet ? 24 : 32,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Fira Code',
-                                ),
-                          ),
-                          IconButton(
-                            onPressed: _loadMembership,
-                            icon: const Icon(FluentIcons.arrow_sync_24_regular),
-                            tooltip: 'Actualizar',
-                            iconSize: isTablet ? 20 : 24,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: isTablet ? 24 : 32),
-                      const Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              MembershipStatusCard(),
-                              SizedBox(height: 24),
-                              MembershipQuickActions(),
-                              SizedBox(height: 32),
-                              MembershipPlansSection(),
-                              SizedBox(height: 32),
-                              MembershipDiscountSection(),
-                              SizedBox(height: 32),
-                              MembershipBillingHistory(),
-                              SizedBox(height: 32),
-                              MembershipAuditHistory(),
-                              SizedBox(height: 48),
-                            ],
+          return Scaffold(
+            body: Row(
+              children: [
+                SizedBox(
+                  width: isTablet ? 200 : 250,
+                  child: const MenuSide(isMobile: false),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                      vertical: verticalPadding,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Membresía',
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontSize: isTablet ? 24 : 32,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Fira Code',
+                                  ),
+                            ),
+                            IconButton(
+                              onPressed: _loadMembership,
+                              icon: const Icon(FluentIcons.arrow_sync_24_regular),
+                              tooltip: 'Actualizar',
+                              iconSize: isTablet ? 20 : 24,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: isTablet ? 24 : 32),
+                        const Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                MembershipStatusCard(),
+                                SizedBox(height: 24),
+                                MembershipQuickActions(),
+                                SizedBox(height: 32),
+                                MembershipPlansSection(),
+                                SizedBox(height: 32),
+                                MembershipDiscountSection(),
+                                SizedBox(height: 32),
+                                MembershipBillingHistory(),
+                                SizedBox(height: 32),
+                                MembershipAuditHistory(),
+                                SizedBox(height: 48),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         }
       },

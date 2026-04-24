@@ -27,6 +27,7 @@ import 'package:pickmeup_dashboard/features/membership/presentation/pages/member
 import 'package:pickmeup_dashboard/features/admin/presentation/views/admin_dashboard_view.dart';
 import 'package:pickmeup_dashboard/features/admin/presentation/bindings/admin_dashboard_binding.dart';
 import 'package:pickmeup_dashboard/features/admin/presentation/views/users_view.dart';
+import 'package:pickmeup_dashboard/features/admin/presentation/views/membership_admin_view.dart';
 
 class PUPages {
   static final List<GetPage> listPages = [
@@ -274,5 +275,20 @@ class PUPages {
         DinningBinding(),
       ],
     ),
+    GetPage(
+      name: PURoutes.ADMIN_MEMBERSHIPS,
+      middlewares: [
+        AuthMiddleware(),
+        AdminMiddleware(),
+      ],
+      transition: Transition.fadeIn,
+      page: () => const MembershipAdminView(),
+      bindings: [
+        AdminDashboardBinding(),
+        MenuNavigationBinding(),
+        DinningBinding(),
+      ],
+    ),
   ];
 }
+

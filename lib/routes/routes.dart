@@ -49,4 +49,5 @@ class PURoutes {
   // Admin Dashboard
   static String ADMIN_DASHBOARD = '/admin';
   static String ADMIN_USERS = '/admin/usuarios';
+  static String ADMIN_MEMBERSHIPS = '/admin/membresias';
 }

@@ -79,16 +79,18 @@ class _MyPurchasesPageState extends State<MyPurchasesPage> {
             body: _buildMobileContent(),
           );
         } else {
-          return Row(
-            children: [
-              SizedBox(
-                width: isTablet ? 200 : 250,
-                child: const MenuSide(isMobile: false),
-              ),
-              Expanded(
-                child: _buildDesktopContent(isTablet),
-              ),
-            ],
+          return Scaffold(
+            body: Row(
+              children: [
+                SizedBox(
+                  width: isTablet ? 200 : 250,
+                  child: const MenuSide(isMobile: false),
+                ),
+                Expanded(
+                  child: _buildDesktopContent(isTablet),
+                ),
+              ],
+            ),
           );
         }
       },

@@ -94,18 +94,20 @@ class _OrdersPageState extends State<OrdersPage> {
           );
         } else {
           // Layout tablet/desktop: MenuSide fijo + contenido expandido
-          return Row(
-            children: [
-              // MenuSide con ancho fijo
-              SizedBox(
-                width: isTablet ? 200 : 250,
-                child: const MenuSide(isMobile: false),
-              ),
-              // Contenido principal expandido
-              Expanded(
-                child: _buildDesktopContent(isTablet),
-              ),
-            ],
+          return Scaffold(
+            body: Row(
+              children: [
+                // MenuSide con ancho fijo
+                SizedBox(
+                  width: isTablet ? 200 : 250,
+                  child: const MenuSide(isMobile: false),
+                ),
+                // Contenido principal expandido
+                Expanded(
+                  child: _buildDesktopContent(isTablet),
+                ),
+              ],
+            ),
           );
         }
       },

@@ -89,16 +89,7 @@ class AdminDashboardDesktopView extends StatelessWidget {
             child: MenuSide(isMobile: false),
           ),
           Expanded(
-            child: Obx(() {
-              final index = controller.selectedIndex.value;
-              if (index == 0) {
-                return _DashboardContent();
-              }
-              if (index == 1) {
-                return const UsersDesktopView();
-              }
-              return _DashboardContent();
-            }),
+            child: _DashboardContent(),
           ),
         ],
       ),

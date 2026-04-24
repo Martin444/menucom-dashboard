@@ -29,14 +29,7 @@ class UsersView extends StatelessWidget {
       }
     } catch (_) {}
 
-    try {
-      if (Get.isRegistered<AdminDashboardController>()) {
-        final adminController = Get.find<AdminDashboardController>();
-        if (adminController.selectedIndex.value != 1) {
-          adminController.selectedIndex.value = 1;
-        }
-      }
-    } catch (_) {}
+
 
     return LayoutBuilder(
       builder: (context, constraints) {

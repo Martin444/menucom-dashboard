@@ -13,43 +13,114 @@ class MenuNavigationController extends GetxController {
   /// Getter para el item actual
   MenuNavigationItem? get currentItem => _currentItem.value;
 
-  /// Método para determinar si un item está seleccionado
+  /// Comprueba si un ítem debe mostrarse como seleccionado
   bool isItemSelected(MenuNavigationItem item) {
-    final userRole = _getUserRole().toLowerCase();
+    final String currentRoute = Get.currentRoute;
+    final String userRole = _getUserRole().toLowerCase();
     
-    if (userRole == 'admin') {
-      try {
-        final adminController = Get.find<AdminDashboardController>();
-        if (item == MenuNavigationItem.home) return adminController.selectedIndex.value == 0 && Get.currentRoute != PURoutes.USER_PROFILE;
-        if (item == MenuNavigationItem.users) return adminController.selectedIndex.value == 1;
-      } catch (_) {
-        // Si no se encuentra el controlador, fallback al comportamiento normal
+    // 1. Caso especial: Cerrar sesión nunca está seleccionado
+    if (item == MenuNavigationItem.logout) return false;
+
+    // 2. Match por ruta configurada (Prioridad Máxima)
+    final config = item.config;
+    if (config.route != null) {
+      // Match exacto
+      if (currentRoute == config.route) return true;
+      
+      // Manejo especial para Admin
+      if (userRole == 'admin') {
+        if (item == MenuNavigationItem.home && 
+            (currentRoute == PURoutes.ADMIN_DASHBOARD || currentRoute == '/admin')) {
+          return true;
+        }
+        if (item == MenuNavigationItem.users && 
+            (currentRoute == PURoutes.ADMIN_USERS || currentRoute.startsWith('/admin/usuarios'))) {
+          return true;
+        }
+        if (item == MenuNavigationItem.adminMemberships &&
+            (currentRoute == PURoutes.ADMIN_MEMBERSHIPS ||
+                currentRoute.startsWith('/admin/membresias'))) {
+          return true;
+        }
+      }
+
+      // Match dinámico (ej: /perfil/:idUsuario)
+      if (config.isDynamic && _matchDynamicRoute(currentRoute, config.route!)) {
+        return true;
+      }
+
+      // Match por prefijo (para subrutas, excepto la raíz)
+      if (config.route != '/' && currentRoute.startsWith(config.route!)) {
+        return true;
       }
     }
-    
+
+    // 3. Si no hay match por ruta, usar la selección en memoria solo como fallback
+    // pero verificando que el item actual en memoria REALMENTE sea el que estamos evaluando
+    // y que no estemos en una ruta que ya debería haber matcheado con otro item.
     return _currentItem.value == item;
   }
 
   /// Método para actualizar el item seleccionado basado en la ruta actual
   void updateCurrentItemFromRoute() {
     final currentRoute = Get.currentRoute;
+    final userRole = _getUserRole().toLowerCase();
 
+    // Caso especial para rutas de administración
+    if (userRole == 'admin') {
+      if (currentRoute == PURoutes.ADMIN_DASHBOARD) {
+        _currentItem.value = MenuNavigationItem.home;
+        update();
+        return;
+      }
+      if (currentRoute == PURoutes.ADMIN_USERS) {
+        _currentItem.value = MenuNavigationItem.users;
+        update();
+        return;
+      }
+      if (currentRoute == PURoutes.ADMIN_MEMBERSHIPS) {
+        _currentItem.value = MenuNavigationItem.adminMemberships;
+        update();
+        return;
+      }
+    }
+
+    // Buscar en los items configurados
     for (final item in MenuNavigationItem.values) {
-      if (item.config.route == currentRoute) {
-        _currentItem.value = item;
-        
-        // Sincronizar con el dashboard de admin si es necesario
-        if (_getUserRole().toLowerCase() == 'admin' && currentRoute == PURoutes.ADMIN_DASHBOARD) {
-           try {
-             final adminController = Get.find<AdminDashboardController>();
-             if (item == MenuNavigationItem.home) adminController.onNavIndexChanged(0);
-             if (item == MenuNavigationItem.users) adminController.onNavIndexChanged(1);
-           } catch (_) {}
+      final config = item.config;
+      if (config.route != null) {
+        // Comparación exacta
+        if (currentRoute == config.route) {
+          _currentItem.value = item;
+          break;
         }
-        break;
+        
+        // Manejo de rutas dinámicas (ej: /perfil/:idUsuario)
+        if (config.isDynamic && _matchDynamicRoute(currentRoute, config.route!)) {
+          _currentItem.value = item;
+          break;
+        }
       }
     }
     update();
+  }
+
+  /// Verifica si una ruta actual coincide con una ruta base con parámetros
+  bool _matchDynamicRoute(String current, String base) {
+    if (base.contains(':')) {
+      final baseSegments = base.split('/');
+      final currentSegments = current.split('/');
+      
+      if (baseSegments.length != currentSegments.length) return false;
+      
+      for (int i = 0; i < baseSegments.length; i++) {
+        if (!baseSegments[i].startsWith(':') && baseSegments[i] != currentSegments[i]) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return current == base;
   }
 
   /// Navegar a un item del menú
@@ -63,64 +134,61 @@ class MenuNavigationController extends GetxController {
       return;
     }
 
-    // Si es coming soon
-    if (config.isComingSoon) {
-      _showComingSoonMessage(config.label);
+    // Evitar navegar al mismo ítem si ya estamos en esa ruta
+    if (isItemSelected(item) && config.route != null && Get.currentRoute == config.route) {
       return;
     }
+
+    _currentItem.value = item;
 
     // Manejo especial para el dashboard de administrador
     if (userRole == 'admin') {
       if (item == MenuNavigationItem.home) {
-        _currentItem.value = item;
-        // Navegar a la raíz o al dashboard admin
-        if (Get.currentRoute != PURoutes.HOME && Get.currentRoute != PURoutes.ADMIN_DASHBOARD) {
+        _updateAdminDashboardIndex(0);
+        if (Get.currentRoute != PURoutes.ADMIN_DASHBOARD) {
           Get.toNamed(PURoutes.ADMIN_DASHBOARD);
         }
-        
-        // Actualizar el índice del dashboard
-        try {
-          final adminController = Get.find<AdminDashboardController>();
-          adminController.onNavIndexChanged(0);
-        } catch (_) {
-          // El controlador se inicializará con el dashboard
-        }
         update();
         return;
       }
-
+      
       if (item == MenuNavigationItem.users) {
-        _currentItem.value = item;
-        // Asegurar que estamos en la vista de admin usuarios
+        _updateAdminDashboardIndex(1);
         if (Get.currentRoute != PURoutes.ADMIN_USERS) {
           Get.toNamed(PURoutes.ADMIN_USERS);
-        } else {
-          // Si ya estamos en la ruta, solo cambiar el índice
-          try {
-            final adminController = Get.find<AdminDashboardController>();
-            adminController.onNavIndexChanged(1);
-          } catch (_) {}
+        }
+        update();
+        return;
+      }
+
+      if (item == MenuNavigationItem.adminMemberships) {
+        _updateAdminDashboardIndex(2);
+        if (Get.currentRoute != PURoutes.ADMIN_MEMBERSHIPS) {
+          Get.toNamed(PURoutes.ADMIN_MEMBERSHIPS);
         }
         update();
         return;
       }
     }
 
-    // Si no es una ruta de navegación válida
-    if (!config.isNavigationRoute || config.route == null) {
-      return;
+    // Navegación estándar para otros items o roles
+    if (config.isNavigationRoute && config.route != null) {
+      final targetRoute = config.isDynamic ? _buildDynamicRoute(config.route!) : config.route!;
+      Get.toNamed(targetRoute);
+    } else if (config.isComingSoon) {
+      _showComingSoonMessage(config.label);
     }
 
-    // Manejar rutas dinámicas
-    String finalRoute = config.route!;
-    if (config.isDynamic) {
-      finalRoute = _buildDynamicRoute(finalRoute);
-    }
-
-    // Actualizar item seleccionado y navegar
-    _currentItem.value = item;
-    Get.toNamed(finalRoute);
     update();
+  }
+
+  /// Actualiza el índice del dashboard de admin si el controlador está registrado
+  void _updateAdminDashboardIndex(int index) {
+    try {
+      if (Get.isRegistered<AdminDashboardController>()) {
+        Get.find<AdminDashboardController>().selectedIndex.value = index;
+      }
+    } catch (_) {}
   }
 
   String _getUserRole() {

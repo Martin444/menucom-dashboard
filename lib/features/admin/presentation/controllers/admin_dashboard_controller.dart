@@ -20,10 +20,6 @@ class AdminDashboardController extends GetxController {
   final isLoading = false.obs;
   final searchResults = <Map<String, dynamic>>[].obs;
 
-  static const List<Widget> adminViews = [
-    AdminDashboardDesktopView(),
-    UsersDesktopView(),
-  ];
 
   static const List<AdminNavItemData> navItems = [
     AdminNavItemData(icon: FluentIcons.home_24_regular, label: 'Dashboard'),
@@ -32,20 +28,6 @@ class AdminDashboardController extends GetxController {
     AdminNavItemData(icon: FluentIcons.data_histogram_24_regular, label: 'Estadísticas'),
     AdminNavItemData(icon: FluentIcons.settings_24_regular, label: 'Configuración'),
   ];
-
-  void onNavIndexChanged(int index) {
-    selectedIndex.value = index;
-    try {
-      Get.find<MenuNavigationController>().update();
-    } catch (_) {}
-  }
-
-  Widget get currentView {
-    if (selectedIndex.value < adminViews.length) {
-      return adminViews[selectedIndex.value];
-    }
-    return adminViews.first;
-  }
 
   Future<void> search(String query) async {
     searchQuery.value = query;
