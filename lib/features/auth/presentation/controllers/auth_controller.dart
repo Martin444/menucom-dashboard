@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
 import 'package:menu_dart_api/core/api.dart';
@@ -68,7 +69,7 @@ class AuthController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     await _initializeUseCases();
-    await _checkAuthenticationStatus();
+    await checkAuthenticationStatus();
   }
 
   /// Inicializa los casos de uso con las dependencias necesarias
@@ -88,14 +89,19 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Verifica el estado de autenticación al iniciar la aplicación
-  Future<void> _checkAuthenticationStatus() async {
+  /// Verifica el estado de autenticación al iniciar la aplicación o después de un login manual
+  Future<void> checkAuthenticationStatus() async {
     try {
       _setCurrentAction(AuthAction.checkingAuth);
       _setLoading(true);
 
       // Cargar el token guardado de SharedPreferences
       await _loadSavedToken();
+
+      if (ACCESS_TOKEN.isEmpty) {
+        _setUnauthenticated();
+        return;
+      }
 
       final user = await _getCurrentUserUseCase.executeWithRefresh();
 
@@ -136,6 +142,10 @@ class AuthController extends GetxController {
 
       _setAuthenticatedUser(user);
       debugPrint('Login tradicional exitoso - Token guardado');
+
+      // También registrar en el sistema de persistencia (SharedPreferences)
+      sharedToken.setString('access_token', ACCESS_TOKEN);
+      sharedToken.setString('authenticated_user', json.encode(user.toMap()));
 
       // Navegar al dashboard principal
       Get.offAllNamed('/dashboard');
@@ -186,29 +196,21 @@ class AuthController extends GetxController {
         final String? firebaseToken = await user.getIdToken();
 
         if (firebaseToken != null) {
-          // TODO: Llamar al endpoint de social login del API aquí
-          // Por ahora, guardamos el token de Firebase como el ACCESS_TOKEN
-          ACCESS_TOKEN = firebaseToken;
+          // Usar el caso de uso del nuevo sistema para mayor robustez
+          final userEntity = await _loginWithSocialUseCase.executeWithToken(firebaseToken);
+
+          // Actualizar variables globales (para compatibilidad)
+          ACCESS_TOKEN = userEntity.accessToken;
           API.setAccessToken(ACCESS_TOKEN);
           var sharedToken = await _prefs;
           sharedToken.setString('acccesstoken', ACCESS_TOKEN);
+          sharedToken.setString('access_token', ACCESS_TOKEN);
+          sharedToken.setString('authenticated_user', json.encode(userEntity.toMap()));
 
-          // Crear el usuario autenticado con los datos disponibles
-          final authenticatedUser = AuthenticatedUser(
-            id: user.uid,
-            email: user.email ?? '',
-            name: user.displayName ?? '',
-            role: 'user', // Rol por defecto, se actualizará con la respuesta del API
-            accessToken: firebaseToken,
-            needToChangePassword: false,
-            isEmailVerified: user.emailVerified,
-            photoURL: user.photoURL,
-            socialToken: firebaseToken,
-            firebaseProvider: 'google.com',
-          );
-
-          _setAuthenticatedUser(authenticatedUser);
-          debugPrint('Login con Google exitoso - Token guardado');
+          // Sincronizar estado interno
+          _setAuthenticatedUser(userEntity);
+          
+          debugPrint('Login con Google exitoso - Sincronizado con sistema de dominio');
 
           // Navegar al dashboard principal
           Get.offAllNamed('/dashboard');
@@ -224,6 +226,41 @@ class AuthController extends GetxController {
     } finally {
       _setLoading(false);
       _setCurrentAction(AuthAction.none);
+    }
+  }
+
+  /// Registra un login exitoso realizado externamente (p.ej. por LoginController)
+  ///
+  /// Esto asegura que el nuevo sistema de autenticación esté sincronizado
+  /// con los tokens y datos de usuario obtenidos manualmente.
+  Future<void> registerManualLogin({
+    required String accessToken,
+    AuthenticatedUser? user,
+  }) async {
+    try {
+      debugPrint('Registrando login manual en AuthController...');
+      
+      // 1. Actualizar variables globales y API
+      ACCESS_TOKEN = accessToken;
+      API.setAccessToken(ACCESS_TOKEN);
+      
+      // 2. Persistir el token en ambos sistemas de claves (compatibilidad)
+      final prefs = await _prefs;
+      await prefs.setString('acccesstoken', accessToken); // Viejo
+      await prefs.setString('access_token', accessToken); // Nuevo
+      
+      // 3. Si se proporcionó el usuario, guardarlo y actualizar estado
+      if (user != null) {
+        await prefs.setString('authenticated_user', json.encode(user.toMap()));
+        _setAuthenticatedUser(user);
+        debugPrint('Login manual registrado con éxito para: ${user.email}');
+      } else {
+        // Si no se proporcionó el usuario, intentar obtenerlo del backend
+        debugPrint('Token registrado, obteniendo perfil del usuario...');
+        await checkAuthenticationStatus();
+      }
+    } catch (e) {
+      debugPrint('Error al registrar login manual: $e');
     }
   }
 
@@ -338,7 +375,7 @@ class AuthController extends GetxController {
   Future<void> _loadSavedToken() async {
     try {
       var sharedPrefs = await _prefs;
-      final savedToken = sharedPrefs.getString('acccesstoken');
+      final savedToken = sharedPrefs.getString('access_token') ?? sharedPrefs.getString('acccesstoken');
       if (savedToken != null && savedToken.isNotEmpty) {
         ACCESS_TOKEN = savedToken;
         API.setAccessToken(ACCESS_TOKEN);

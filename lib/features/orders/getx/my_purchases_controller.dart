@@ -72,7 +72,7 @@ class MyPurchasesController extends GetxController {
           : (apiOrder.id ?? 'N/A'),
       detalle: detalles,
       estado: _mapApiStatusToUiStatus(apiOrder.status),
-      creado: apiOrder.createdAt ?? DateTime.now(),
+      created: apiOrder.createdAt ?? DateTime.now(),
       alias: apiOrder.customerName != null 
           ? '${apiOrder.customerName} ${apiOrder.customerLastName ?? ''}'.trim()
           : (apiOrder.ownerId?.split('-').first ?? 'Tienda'),

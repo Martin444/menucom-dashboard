@@ -10,6 +10,7 @@ import 'package:pickmeup_dashboard/features/home/presentation/widget/head_action
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/starter_banner.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/get_function_button.dart';
+import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 
 import '../widget/head_dinning.dart';
@@ -248,6 +249,10 @@ class _RoleBasedView extends StatelessWidget {
     );
 
     switch (role) {
+      case RolesUsers.admin:
+        // Redirigir a la ruta de admin para evitar doble sidebar y mantener consistencia
+        Future.microtask(() => Get.offNamed(PURoutes.ADMIN_DASHBOARD));
+        return const Center(child: CircularProgressIndicator());
       case RolesUsers.clothes:
         return WardsHomeView(isMobile: isMobile);
       case RolesUsers.service:

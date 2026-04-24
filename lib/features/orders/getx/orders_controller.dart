@@ -92,11 +92,11 @@ class OrdersController extends GetxController {
     return ui.Order(
       numero: (apiOrder.id != null && apiOrder.id!.length >= 8)
           ? apiOrder.id!.substring(0, 8)
-          : (apiOrder.id ?? 'N/A'), // Usar primeros 8 chars del ID de forma segura
+          : (apiOrder.id ?? 'N/A'),
       detalle: detalles,
       estado: _mapApiStatusToUiStatus(apiOrder.status),
-      creado: apiOrder.createdAt ?? DateTime.now(),
-      alias: apiOrder.customerEmail?.split('@').first ?? 'Cliente', // Usar parte del email como alias
+      created: apiOrder.createdAt ?? DateTime.now(),
+      alias: apiOrder.customerEmail?.split('@').first ?? 'Cliente',
       idCliente: apiOrder.customerEmail ?? apiOrder.customerPhone ?? 'Sin identificar',
       totalCentavos: totalCentavos,
       paymentUrl: apiOrder.paymentUrl,

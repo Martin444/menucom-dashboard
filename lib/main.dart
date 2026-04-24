@@ -129,7 +129,7 @@ final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
 Future<String?> getToken() async {
   var prefs = await _prefs;
-  var token = prefs.getString('acccesstoken');
+  var token = prefs.getString('access_token') ?? prefs.getString('acccesstoken');
   if (token != null) {
     ACCESS_TOKEN = token;
     API.setAccessToken(ACCESS_TOKEN);

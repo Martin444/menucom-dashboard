@@ -1,4 +1,5 @@
 import 'package:pickmeup_dashboard/core/helpers/image_size_helper.dart';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ import 'package:pickmeup_dashboard/features/login/presentation/pages/succes_regi
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../auth/presentation/controllers/auth_controller.dart';
 
 import '../../../core/config.dart';
 
@@ -80,7 +82,17 @@ class LoginController extends GetxController {
       API.setAccessToken(ACCESS_TOKEN);
 
       var sharedToken = await _prefs;
-      sharedToken.setString('acccesstoken', ACCESS_TOKEN);
+      sharedToken.setString('acccesstoken', ACCESS_TOKEN); // Compat legacy
+      sharedToken.setString('access_token', ACCESS_TOKEN); // Clave correcta
+      
+      // Sincronizar con AuthController usando el nuevo método robusto
+      if (Get.isRegistered<AuthController>()) {
+        final authController = Get.find<AuthController>();
+        await authController.registerManualLogin(
+          accessToken: responseLogin.accessToken,
+        );
+      }
+
       isLogging.value = false;
       Get.toNamed(PURoutes.HOME);
       // if (responseLogin.needToChangePassword) {
@@ -338,7 +350,7 @@ class LoginController extends GetxController {
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
         // El usuario canceló el sign-in
-        isLogging.value = false;
+        isLoggingGoogle.value = false;
         update();
         return;
       }
@@ -387,12 +399,24 @@ class LoginController extends GetxController {
 
             var sharedToken = await _prefs;
             sharedToken.setString('acccesstoken', ACCESS_TOKEN);
+            sharedToken.setString('access_token', ACCESS_TOKEN);
+            if (socialLoginResponse.user != null) {
+              sharedToken.setString('authenticated_user', json.encode(socialLoginResponse.user!.toJson()));
+            }
 
-            isLogging.value = false;
+            // Sincronizar con AuthController usando el nuevo método robusto
+            if (Get.isRegistered<AuthController>()) {
+              final authController = Get.find<AuthController>();
+              await authController.registerManualLogin(
+                accessToken: socialLoginResponse.accessToken,
+              );
+            }
+
+            isLoggingGoogle.value = false;
             Get.toNamed(PURoutes.HOME);
             update();
           } catch (e) {
-            isLogging.value = false;
+            isLoggingGoogle.value = false;
             update();
             debugPrint('❌ Error en autenticación con backend: $e');
 
@@ -410,7 +434,7 @@ class LoginController extends GetxController {
             );
           }
         } else {
-          isLogging.value = false;
+          isLoggingGoogle.value = false;
           update();
           debugPrint('❌ No se pudo obtener el token de Firebase');
           Get.snackbar(

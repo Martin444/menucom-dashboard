@@ -290,3 +290,54 @@ Before delivering UI code, verify these items:
 - [ ] Form inputs have labels
 - [ ] Color is not the only indicator
 - [ ] `prefers-reduced-motion` respected
+
+---
+
+## Flutter / pu_material Guidelines
+
+### Import pu_material First
+When working on Flutter projects with pu_material, always import and reuse existing components:
+
+```dart
+import 'package:pu_material/pu_material.dart';
+```
+
+### Reuse Before Creating
+1. **Search existing components** in pu_material/lib before creating new ones
+2. **Reuse atoms**: ContainerAtom, IconAtom, TitleAtom, AtomText, etc.
+3. **Reuse molecules**: InfoCard, SectionHeader, WelcomeHeaderMolecule, etc.
+4. **Reuse organisms**: DashboardOrganism, ProductCard, etc.
+
+### Where to Create New Components
+- **pu_material/lib/molecule/** → Reusable UI components (admin_nav, admin_kpi, etc.)
+- **pu_material/lib/organisms/** → Complex sections combining molecules
+- **lib/features/** → Feature-specific code (controllers, pages), NOT UI components
+
+### DO NOT Create
+- ❌ Features folders inside pu_material (exception: orders is legacy)
+- ❌ Feature-specific molecules in the main lib
+- ❌ Components without checking if similar exists
+
+### Example: Creating Admin Dashboard
+```dart
+// ✅ CORRECTO - Reuse pu_material components
+import 'package:pu_material/pu_material.dart';
+
+class MyAdminPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DashboardOrganism(
+      userName: 'Admin',
+      sidebarContent: AdminNavMolecule(
+        selectedIndex: _selectedIndex,
+        onIndexChanged: (i) => setState(() => _selectedIndex = i),
+        items: const [
+          AdminNavItem(icon: Icons.people, label: 'Users'),
+          AdminNavItem(icon: Icons.settings, label: 'Settings'),
+        ],
+      ),
+      mainContent: _buildContent(),
+    );
+  }
+}
+```

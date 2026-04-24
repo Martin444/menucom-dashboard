@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:pickmeup_dashboard/features/admin/presentation/controllers/admin_dashboard_controller.dart';
+import 'package:pickmeup_dashboard/routes/routes.dart';
 import '../navigation/menu_navigation_items.dart';
 import '../../features/home/controllers/dinning_controller.dart';
 import 'package:flutter/foundation.dart';
@@ -13,6 +15,18 @@ class MenuNavigationController extends GetxController {
 
   /// Método para determinar si un item está seleccionado
   bool isItemSelected(MenuNavigationItem item) {
+    final userRole = _getUserRole().toLowerCase();
+    
+    if (userRole == 'admin') {
+      try {
+        final adminController = Get.find<AdminDashboardController>();
+        if (item == MenuNavigationItem.home) return adminController.selectedIndex.value == 0 && Get.currentRoute != PURoutes.USER_PROFILE;
+        if (item == MenuNavigationItem.users) return adminController.selectedIndex.value == 1;
+      } catch (_) {
+        // Si no se encuentra el controlador, fallback al comportamiento normal
+      }
+    }
+    
     return _currentItem.value == item;
   }
 
@@ -23,6 +37,15 @@ class MenuNavigationController extends GetxController {
     for (final item in MenuNavigationItem.values) {
       if (item.config.route == currentRoute) {
         _currentItem.value = item;
+        
+        // Sincronizar con el dashboard de admin si es necesario
+        if (_getUserRole().toLowerCase() == 'admin' && currentRoute == PURoutes.ADMIN_DASHBOARD) {
+           try {
+             final adminController = Get.find<AdminDashboardController>();
+             if (item == MenuNavigationItem.home) adminController.onNavIndexChanged(0);
+             if (item == MenuNavigationItem.users) adminController.onNavIndexChanged(1);
+           } catch (_) {}
+        }
         break;
       }
     }
@@ -32,6 +55,7 @@ class MenuNavigationController extends GetxController {
   /// Navegar a un item del menú
   void navigateToItem(MenuNavigationItem item) {
     final config = item.config;
+    final userRole = _getUserRole().toLowerCase();
 
     // Si es una acción (como logout)
     if (config.isAction) {
@@ -39,10 +63,49 @@ class MenuNavigationController extends GetxController {
       return;
     }
 
-    // Si es una ruta que viene pronto
+    // Si es coming soon
     if (config.isComingSoon) {
       _showComingSoonMessage(config.label);
       return;
+    }
+
+    // Manejo especial para el dashboard de administrador
+    if (userRole == 'admin') {
+      if (item == MenuNavigationItem.home) {
+        _currentItem.value = item;
+        // Navegar a la raíz o al dashboard admin
+        if (Get.currentRoute != PURoutes.HOME && Get.currentRoute != PURoutes.ADMIN_DASHBOARD) {
+          Get.toNamed(PURoutes.ADMIN_DASHBOARD);
+        }
+        
+        // Actualizar el índice del dashboard
+        try {
+          final adminController = Get.find<AdminDashboardController>();
+          adminController.onNavIndexChanged(0);
+        } catch (_) {
+          // El controlador se inicializará con el dashboard
+        }
+        update();
+        return;
+      }
+
+      if (item == MenuNavigationItem.users) {
+        _currentItem.value = item;
+        // Asegurar que estamos en la vista de admin
+        if (Get.currentRoute != PURoutes.ADMIN_DASHBOARD) {
+          Get.toNamed(PURoutes.ADMIN_DASHBOARD);
+        }
+        
+        // Cambiar al tab de usuarios
+        try {
+          final adminController = Get.find<AdminDashboardController>();
+          adminController.onNavIndexChanged(1);
+        } catch (_) {
+          // Si no está registrado, se registrará al navegar
+        }
+        update();
+        return;
+      }
     }
 
     // Si no es una ruta de navegación válida
@@ -59,6 +122,39 @@ class MenuNavigationController extends GetxController {
     // Actualizar item seleccionado y navegar
     _currentItem.value = item;
     Get.toNamed(finalRoute);
+    update();
+  }
+
+  String _getUserRole() {
+    try {
+      final dinningController = Get.find<DinningController>();
+      return dinningController.dinningLogin.role ?? 'guest';
+    } catch (e) {
+      return 'guest';
+    }
+  }
+
+  void _handleAdminView(MenuNavigationItem item) {
+    try {
+      final dinningController = Get.find<DinningController>();
+      final role = dinningController.dinningLogin.role ?? '';
+
+      if (role.toLowerCase() != 'admin') {
+        Get.snackbar(
+          'Acceso denegado',
+          'No tienes acceso a esta sección',
+          snackPosition: SnackPosition.TOP,
+        );
+        return;
+      }
+
+      if (item == MenuNavigationItem.users) {
+        final adminController = Get.find<AdminDashboardController>();
+        adminController.onNavIndexChanged(1);
+      }
+    } catch (e) {
+      debugPrint('Error handling admin view: $e');
+    }
     update();
   }
 
@@ -84,7 +180,6 @@ class MenuNavigationController extends GetxController {
     try {
       final dinningController = Get.find<DinningController>();
 
-      // Reemplazar parámetros según sea necesario
       if (route.contains(':idUsuario')) {
         final userName = dinningController.dinningLogin.name?.toLowerCase().split(' ').join('-') ?? 'usuario';
         return route.replaceFirst(':idUsuario', userName);
@@ -114,7 +209,6 @@ class MenuNavigationController extends GetxController {
       final userRole = dinningController.dinningLogin.role ?? 'guest';
       return MenuNavigationItem.getItemsByRole(userRole);
     } catch (e) {
-      // Si no se puede obtener el rol, mostrar items básicos
       return [MenuNavigationItem.home, MenuNavigationItem.logout];
     }
   }

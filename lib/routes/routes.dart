@@ -40,9 +40,13 @@ class PURoutes {
   // OAuth Mercado Pago
   static String MP_OAUTH_CALLBACK = '/oauth/callback';
 
-  // Membership
+// Membership
   static String MEMBERSHIP = '/membership';
   static String MEMBERSHIP_PLANS = '/membership/plans';
   static String MEMBERSHIP_DISCOUNTS = '/membership/discounts';
   static String MEMBERSHIP_SUBSCRIPTIONS = '/membership/subscriptions';
+
+  // Admin Dashboard
+  static String ADMIN_DASHBOARD = '/admin';
+  static String ADMIN_USERS = '/admin/usuarios';
 }

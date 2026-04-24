@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:pickmeup_dashboard/core/middlewares/auth_middleware.dart';
+import 'package:pickmeup_dashboard/features/auth/presentation/middlewares/auth_middleware.dart';
 import 'package:pickmeup_dashboard/core/bindings/menu_navigation_binding.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_binding.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/views/create_item_page.dart';
@@ -21,10 +21,12 @@ import 'package:pickmeup_dashboard/features/home/presentation/pages/mp_oauth_cal
 
 import '../features/orders/presentation/pages/orders_page.dart';
 import '../features/orders/presentation/pages/my_purchases_page.dart';
-import '../features/orders/bindings/my_purchases_binding.dart';
 
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_binding.dart';
 import 'package:pickmeup_dashboard/features/membership/presentation/pages/membership_page.dart';
+import 'package:pickmeup_dashboard/features/admin/presentation/views/admin_dashboard_view.dart';
+import 'package:pickmeup_dashboard/features/admin/presentation/bindings/admin_dashboard_binding.dart';
+import 'package:pickmeup_dashboard/features/admin/presentation/views/users_view.dart';
 
 class PUPages {
   static final List<GetPage> listPages = [
@@ -242,6 +244,32 @@ class PUPages {
       bindings: [
         MenuNavigationBinding(),
         DinningBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.ADMIN_DASHBOARD,
+      middlewares: [
+        AuthMiddleware(),
+        AdminMiddleware(),
+      ],
+      transition: Transition.fadeIn,
+      page: () => const AdminDashboardView(),
+      bindings: [
+        AdminDashboardBinding(),
+        MenuNavigationBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.ADMIN_USERS,
+      middlewares: [
+        AuthMiddleware(),
+        AdminMiddleware(),
+      ],
+      transition: Transition.fadeIn,
+      page: () => const UsersView(),
+      bindings: [
+        AdminDashboardBinding(),
+        MenuNavigationBinding(),
       ],
     ),
   ];

@@ -12,6 +12,7 @@ enum MenuNavigationItem {
   clients,
   suppliers,
   profile,
+  users,
   logout;
 
   /// Configuración de cada item del menú
@@ -69,6 +70,13 @@ enum MenuNavigationItem {
           isNavigationRoute: true,
           isDynamic: true,
         );
+      case MenuNavigationItem.users:
+        return MenuItemConfig(
+          icon: FluentIcons.people_24_regular,
+          label: 'Usuarios',
+          route: PURoutes.ADMIN_USERS,
+          isNavigationRoute: true,
+        );
       case MenuNavigationItem.logout:
         return const MenuItemConfig(
           icon: FluentIcons.sign_out_24_regular,
@@ -122,7 +130,7 @@ enum MenuNavigationItem {
     }
     switch (roleLower) {
       case 'admin':
-        return [...mainItems, ...actionItems];
+        return [home, users, orders, myPurchases, membership, ...actionItems];
       case 'customer':
         return [home, myPurchases, membership, ...actionItems];
       default:
