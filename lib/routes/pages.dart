@@ -257,6 +257,7 @@ class PUPages {
       bindings: [
         AdminDashboardBinding(),
         MenuNavigationBinding(),
+        DinningBinding(),
       ],
     ),
     GetPage(
@@ -270,6 +271,7 @@ class PUPages {
       bindings: [
         AdminDashboardBinding(),
         MenuNavigationBinding(),
+        DinningBinding(),
       ],
     ),
   ];

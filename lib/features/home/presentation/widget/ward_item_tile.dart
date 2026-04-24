@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
-import 'package:pu_material/utils/formaters/currency_converter.dart';
-import 'package:pu_material/utils/overflow_text.dart';
 import 'package:pu_material/pu_material.dart';
 
 class WardItemTile extends StatelessWidget {

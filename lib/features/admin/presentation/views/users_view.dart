@@ -4,19 +4,37 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pickmeup_dashboard/features/admin/presentation/controllers/users_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
-import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pickmeup_dashboard/features/admin/presentation/controllers/admin_dashboard_controller.dart';
+import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
+
+void _ensureDinningControllerReady() {
+  if (Get.isRegistered<DinningController>()) {
+    final controller = Get.find<DinningController>();
+    if (controller.everyListEmpty.value) {
+      controller.getMyDinningInfo();
+    }
+  }
+}
 
 class UsersView extends StatelessWidget {
   const UsersView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Asegurar que el índice del dashboard esté sincronizado si existe
+    _ensureDinningControllerReady();
+
     try {
-      final adminController = Get.find<AdminDashboardController>();
-      if (adminController.selectedIndex.value != 1) {
-        adminController.selectedIndex.value = 1;
+      if (Get.isRegistered<DinningController>()) {
+        Get.find<DinningController>();
+      }
+    } catch (_) {}
+
+    try {
+      if (Get.isRegistered<AdminDashboardController>()) {
+        final adminController = Get.find<AdminDashboardController>();
+        if (adminController.selectedIndex.value != 1) {
+          adminController.selectedIndex.value = 1;
+        }
       }
     } catch (_) {}
 

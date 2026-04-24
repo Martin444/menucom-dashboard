@@ -43,8 +43,6 @@ class _CreateWardItemPageState extends State<CreateWardItemPage> {
   Widget build(BuildContext context) {
     return GetBuilder<CatalogsController>(
       builder: (catCtrl) {
-        final selectedCatalog = catCtrl.catalogSelected.value;
-
         return Scaffold(
           body: SizedBox(
             height: Get.height,

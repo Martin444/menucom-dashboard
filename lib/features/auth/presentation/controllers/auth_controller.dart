@@ -392,8 +392,13 @@ class AuthController extends GetxController {
   Future<void> _clearSavedToken() async {
     try {
       ACCESS_TOKEN = '';
+      API.setAccessToken('');
       var sharedPrefs = await _prefs;
+      // Limpiar TODAS las claves de token (legacy + actual)
       await sharedPrefs.remove('acccesstoken');
+      await sharedPrefs.remove('access_token');
+      await sharedPrefs.remove('authenticated_user');
+      await sharedPrefs.remove('token_expiry');
       debugPrint('Token limpiado de SharedPreferences');
     } catch (e) {
       debugPrint('Error al limpiar token de SharedPreferences: $e');

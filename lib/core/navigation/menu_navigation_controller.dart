@@ -134,29 +134,6 @@ class MenuNavigationController extends GetxController {
     }
   }
 
-  void _handleAdminView(MenuNavigationItem item) {
-    try {
-      final dinningController = Get.find<DinningController>();
-      final role = dinningController.dinningLogin.role ?? '';
-
-      if (role.toLowerCase() != 'admin') {
-        Get.snackbar(
-          'Acceso denegado',
-          'No tienes acceso a esta sección',
-          snackPosition: SnackPosition.TOP,
-        );
-        return;
-      }
-
-      if (item == MenuNavigationItem.users) {
-        final adminController = Get.find<AdminDashboardController>();
-        adminController.onNavIndexChanged(1);
-      }
-    } catch (e) {
-      debugPrint('Error handling admin view: $e');
-    }
-    update();
-  }
 
   /// Maneja acciones especiales (logout, etc.)
   void _handleAction(MenuNavigationItem item) {

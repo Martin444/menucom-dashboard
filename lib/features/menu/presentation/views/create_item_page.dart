@@ -39,8 +39,6 @@ class _CreateItemPageState extends State<CreateItemPage> {
   Widget build(BuildContext context) {
     return GetBuilder<CatalogsController>(
       builder: (catCtrl) {
-        final selectedCatalog = catCtrl.catalogSelected.value;
-
         return Scaffold(
           body: Center(
             child: SizedBox(

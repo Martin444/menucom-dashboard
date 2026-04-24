@@ -108,8 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                                                 textInputAction:
                                                     TextInputAction.next,
                                                 errorText: _.errorTextEmail
-                                                            .value.isEmpty ??
-                                                        false
+                                                            .value.isEmpty
                                                     ? null
                                                     : _.errorTextEmail.value,
                                               ),

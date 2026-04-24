@@ -16,6 +16,9 @@ class AdminDashboardController extends GetxController {
   final selectedIndex = 0.obs;
   final dashboardData = <String, dynamic>{}.obs;
   final recentOrders = <Map<String, dynamic>>[].obs;
+  final searchQuery = ''.obs;
+  final isLoading = false.obs;
+  final searchResults = <Map<String, dynamic>>[].obs;
 
   static const List<Widget> adminViews = [
     AdminDashboardDesktopView(),
@@ -25,11 +28,13 @@ class AdminDashboardController extends GetxController {
   static const List<AdminNavItemData> navItems = [
     AdminNavItemData(icon: FluentIcons.home_24_regular, label: 'Dashboard'),
     AdminNavItemData(icon: FluentIcons.people_24_regular, label: 'Usuarios'),
+    AdminNavItemData(icon: FluentIcons.receipt_24_regular, label: 'Órdenes'),
+    AdminNavItemData(icon: FluentIcons.data_histogram_24_regular, label: 'Estadísticas'),
+    AdminNavItemData(icon: FluentIcons.settings_24_regular, label: 'Configuración'),
   ];
 
   void onNavIndexChanged(int index) {
     selectedIndex.value = index;
-    // Notificar al controlador de navegación para que actualice la selección visual en el sidebar
     try {
       Get.find<MenuNavigationController>().update();
     } catch (_) {}
@@ -42,7 +47,25 @@ class AdminDashboardController extends GetxController {
     return adminViews.first;
   }
 
+  Future<void> search(String query) async {
+    searchQuery.value = query;
+    if (query.isEmpty) {
+      searchResults.clear();
+      return;
+    }
+    isLoading.value = true;
+    // Simular búsqueda
+    searchResults.value = recentOrders
+        .where((o) =>
+            o['customer'].toString().toLowerCase().contains(query.toLowerCase()) ||
+            o['id'].toString().toLowerCase().contains(query.toLowerCase()))
+        .toList();
+    isLoading.value = false;
+  }
+
   Future<void> loadDashboardData() async {
+    isLoading.value = true;
+    await Future.delayed(const Duration(milliseconds: 500));
     dashboardData.value = {
       'totalUsers': 156,
       'totalOrders': 89,
@@ -57,5 +80,6 @@ class AdminDashboardController extends GetxController {
       {'id': '#004', 'customer': 'Ana Martínez', 'status': 'cancelled', 'total': 1200, 'date': '2024-01-13'},
       {'id': '#005', 'customer': 'Pedro Sánchez', 'status': 'pending', 'total': 3200, 'date': '2024-01-12'},
     ];
+    isLoading.value = false;
   }
 }

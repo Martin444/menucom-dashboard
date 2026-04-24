@@ -5,6 +5,7 @@ import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/navigation/menu_navigation_controller.dart';
 import '../../../core/config.dart';
 import '../../../core/mixins/navigation_state_mixin.dart';
 
@@ -41,6 +42,9 @@ class DinningController extends GetxController with NavigationStateMixin {
         throw Exception('Rol de usuario no válido');
       }
 
+      // Marcar que ya no está vacío porque tenemos info del usuario
+      everyListEmpty.value = false;
+
       final roleByRoleUser = RolesFuncionts.getTypeRoleByRoleString(userRole);
       switch (roleByRoleUser) {
         case RolesUsers.dinning:
@@ -64,9 +68,20 @@ class DinningController extends GetxController with NavigationStateMixin {
       }
 
       isLoadingDataUser.value = false;
+      
+      // Notificar cambios para que MenuSide y otros se actualicen
+      update();
+      
+      // Sincronizar navegación después de obtener el rol
+      if (Get.isRegistered<MenuNavigationController>()) {
+        Get.find<MenuNavigationController>().update();
+      }
     } catch (e) {
-      closeSesion();
+      debugPrint('Error getting dinning info: $e');
+      // No cerrar sesión automáticamente aquí si es solo un error de red o similar
+      // closeSesion(); 
       isLoadingDataUser.value = false;
+      update();
     }
   }
 
@@ -246,6 +261,7 @@ class DinningController extends GetxController with NavigationStateMixin {
     var sesion = await _prefs;
     await sesion.clear();
     ACCESS_TOKEN = '';
+    API.setAccessToken('');
     Get.offAllNamed(PURoutes.LOGIN);
     update();
   }

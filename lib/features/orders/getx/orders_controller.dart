@@ -77,9 +77,9 @@ class OrdersController extends GetxController {
       detalles = apiOrder.items!.map((item) => '${item.quantity}x ${item.productName}').join(', ');
       uiItems = apiOrder.items!
           .map((item) => ui.OrderItem(
-                productName: item.productName ?? 'Sin nombre',
-                quantity: item.quantity ?? 1,
-                price: item.price ?? 0.0,
+                productName: item.productName,
+                quantity: item.quantity,
+                price: item.price,
               ))
           .toList();
     } else {
