@@ -129,6 +129,7 @@ class UsersMobileView extends StatelessWidget {
                         isEmailVerified: user.isEmailVerified,
                         membership: user.membership?['plan'] as String?,
                         onTap: () => controller.showUserDetails(user),
+                        onEdit: () => controller.showEditUserDialog(user),
                         onDelete: () => controller.confirmDeleteUser(user),
                       ),
                     );

@@ -9,11 +9,14 @@ import 'package:menu_dart_api/by_feature/user/count_users_admin/model/count_user
 import 'package:menu_dart_api/by_feature/user/count_users_admin/data/usecase/count_users_admin_usecase.dart';
 import 'package:menu_dart_api/by_feature/user/get_all_users_admin/model/membership_enums.dart';
 import 'package:menu_dart_api/by_feature/user/delete_user/data/usecase/delete_user_usecase.dart';
+import 'package:menu_dart_api/by_feature/user/update_user_admin/update_user_admin.dart';
+import 'package:menu_dart_api/by_feature/user/update_user/model/update_user_request.dart';
 
 class UsersController extends GetxController {
   final getAllUsersUseCase = GetAllUsersAdminUseCase();
   final countUsersUseCase = CountUsersAdminUseCase();
   final deleteUserUseCase = DeleteUserUseCase();
+  final updateUserAdminUseCase = UpdateUserAdminUseCase();
 
   final searchController = TextEditingController();
 
@@ -64,9 +67,7 @@ class UsersController extends GetxController {
     try {
       final filters = GetAllUsersAdminFilters(
         search: searchController.text.isNotEmpty ? searchController.text : null,
-        plan: selectedPlan.value.isNotEmpty 
-            ? MembershipPlanFilter.fromString(selectedPlan.value)
-            : null,
+        plan: selectedPlan.value.isNotEmpty ? MembershipPlanFilter.fromString(selectedPlan.value) : null,
         withActiveMembership: withActiveMembership.value ? true : null,
         withVinculedAccount: withVinculedAccount.value ? true : null,
         sortBy: SortByField.createdAt,
@@ -206,11 +207,132 @@ class UsersController extends GetxController {
   }
 
   void showEditUserDialog(UserByRoleModel user) {
-    Get.snackbar(
-      'Editar usuario',
-      'Funcionalidad en desarrollo',
-      snackPosition: SnackPosition.BOTTOM,
+    final nameController = TextEditingController(text: user.name);
+    final emailController = TextEditingController(text: user.email);
+    final phoneController = TextEditingController(text: user.phone);
+    final needToChangePassword = (user.needToChangepassword == true).obs;
+    final formKey = GlobalKey<FormState>();
+
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Editar Usuario'),
+        content: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre',
+                    hintText: 'Ingrese el nombre completo',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'El nombre es requerido';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    hintText: 'usuario@ejemplo.com',
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'El email es requerido';
+                    }
+                    if (!GetUtils.isEmail(value)) {
+                      return 'Email inválido';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: phoneController,
+                  decoration: const InputDecoration(
+                    labelText: 'Teléfono',
+                    hintText: '+54 9 11 1234-5678',
+                  ),
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 16),
+                Obx(() => CheckboxListTile(
+                      title: const Text('Forzar cambio de contraseña'),
+                      subtitle: const Text('El usuario deberá cambiar su clave en el próximo ingreso'),
+                      value: needToChangePassword.value,
+                      onChanged: (val) => needToChangePassword.value = val ?? false,
+                      contentPadding: EdgeInsets.zero,
+                    )),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (formKey.currentState?.validate() ?? false) {
+                final request = UpdateUserRequest(
+                  userId: user.id!,
+                  name: nameController.text.trim(),
+                  email: emailController.text.trim(),
+                  phone: phoneController.text.trim(),
+                  needToChangePassword: needToChangePassword.value,
+                );
+                Get.back();
+                await updateUser(request);
+              }
+            },
+            child: const Text('Guardar'),
+          ),
+        ],
+      ),
     );
+  }
+
+  Future<void> updateUser(UpdateUserRequest request) async {
+    isLoading.value = true;
+    try {
+      final response = await updateUserAdminUseCase.call(request);
+      if (response.success) {
+        Get.snackbar(
+          'Éxito',
+          'Usuario actualizado correctamente',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.withOpacity(0.1),
+          colorText: Colors.green,
+        );
+        loadUsers();
+      } else {
+        Get.snackbar(
+          'Error',
+          response.message,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.withOpacity(0.1),
+          colorText: Colors.red,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Error inesperado: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.1),
+        colorText: Colors.red,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void confirmDeleteUser(UserByRoleModel user) {

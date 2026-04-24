@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/config.dart';
 import 'package:menu_dart_api/core/type_comerce_model.dart';
@@ -32,24 +33,25 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
         init: Get.find<LoginController>(),
         builder: (_) {
           return Obx(() => Stack(
+                alignment: Alignment.bottomCenter,
                 children: [
-                  Form(
-                    key: _formRegisterKey,
-                    child: Center(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            constraints: const BoxConstraints(
-                              maxWidth: 450,
-                            ),
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  child: SingleChildScrollView(
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: SingleChildScrollView(
+                      child: Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              constraints: const BoxConstraints(
+                                maxWidth: 450,
+                              ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -287,8 +289,27 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                       ],
                                     ),
                                   ),
-                                ),
-                                Padding(
+                                  const SizedBox(
+                                    height: 60,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: KeyboardVisibilityBuilder(
+                      builder: (context, isKeyboardVisible) {
+                        return isKeyboardVisible
+                            ? Container()
+                            : Container(
+                                height: 60,
+                                color: PUColors.primaryBackground,
+                                child: Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 20),
                                   child: Center(
@@ -298,11 +319,8 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                              );
+                      },
                     ),
                   ),
                 ],
