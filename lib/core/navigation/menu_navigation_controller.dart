@@ -91,17 +91,15 @@ class MenuNavigationController extends GetxController {
 
       if (item == MenuNavigationItem.users) {
         _currentItem.value = item;
-        // Asegurar que estamos en la vista de admin
-        if (Get.currentRoute != PURoutes.ADMIN_DASHBOARD) {
-          Get.toNamed(PURoutes.ADMIN_DASHBOARD);
-        }
-        
-        // Cambiar al tab de usuarios
-        try {
-          final adminController = Get.find<AdminDashboardController>();
-          adminController.onNavIndexChanged(1);
-        } catch (_) {
-          // Si no está registrado, se registrará al navegar
+        // Asegurar que estamos en la vista de admin usuarios
+        if (Get.currentRoute != PURoutes.ADMIN_USERS) {
+          Get.toNamed(PURoutes.ADMIN_USERS);
+        } else {
+          // Si ya estamos en la ruta, solo cambiar el índice
+          try {
+            final adminController = Get.find<AdminDashboardController>();
+            adminController.onNavIndexChanged(1);
+          } catch (_) {}
         }
         update();
         return;
