@@ -81,7 +81,7 @@ class MembershipAdminMobileView extends StatelessWidget {
               return Card(
                 margin: const EdgeInsets.only(bottom: 12),
                 child: ListTile(
-                  title: Text(plan.name),
+                  title: Text(plan.displayName ?? plan.name),
                   subtitle: Text('${plan.currency} ${plan.price}'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -91,8 +91,9 @@ class MembershipAdminMobileView extends StatelessWidget {
                         onPressed: () => controller.showEditPlanDialog(plan),
                       ),
                       IconButton(
-                        icon: const Icon(FluentIcons.archive_24_regular),
+                        icon: const Icon(FluentIcons.delete_24_regular),
                         onPressed: () => controller.confirmArchivePlan(plan),
+                        color: Colors.red,
                       ),
                     ],
                   ),
@@ -117,7 +118,7 @@ class MembershipAdminDesktopView extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AdminHeaderMolecule(
               title: 'Gestión de Membresías',
@@ -138,8 +139,11 @@ class MembershipAdminDesktopView extends StatelessWidget {
 
   Widget _buildKPIs(MembershipAdminController controller) {
     return Obx(() {
-      final totalPlans = controller.plans.length;
-      final activePlans = controller.plans.where((p) => p.isActive).length;
+      final stats = controller.stats;
+      final totalPlans = stats['totalPlans'] ?? 0;
+      final activePlans = stats['activePlans'] ?? 0;
+      final customPlans = stats['customPlans'] ?? 0;
+      final standardPlans = stats['standardPlans'] ?? 0;
       final archivedPlans = totalPlans - activePlans;
 
       return Wrap(
@@ -147,7 +151,7 @@ class MembershipAdminDesktopView extends StatelessWidget {
         runSpacing: 16,
         children: [
           SizedBox(
-            width: 250,
+            width: 220,
             child: AdminKpiMolecule(
               title: 'Total Planes',
               value: '$totalPlans',
@@ -155,7 +159,7 @@ class MembershipAdminDesktopView extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 250,
+            width: 220,
             child: AdminKpiMolecule(
               title: 'Planes Activos',
               value: '$activePlans',
@@ -164,12 +168,30 @@ class MembershipAdminDesktopView extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 250,
+            width: 220,
             child: AdminKpiMolecule(
               title: 'Archivados',
               value: '$archivedPlans',
               icon: FluentIcons.archive_24_regular,
               iconColor: Colors.grey,
+            ),
+          ),
+          SizedBox(
+            width: 220,
+            child: AdminKpiMolecule(
+              title: 'Custom',
+              value: '$customPlans',
+              icon: FluentIcons.person_star_24_regular,
+              iconColor: Colors.orange,
+            ),
+          ),
+          SizedBox(
+            width: 220,
+            child: AdminKpiMolecule(
+              title: 'Estándar',
+              value: '$standardPlans',
+              icon: FluentIcons.layer_24_regular,
+              iconColor: Colors.blue,
             ),
           ),
         ],
@@ -182,7 +204,7 @@ class MembershipAdminDesktopView extends StatelessWidget {
       variant: ContainerVariant.card,
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -216,22 +238,24 @@ class MembershipAdminDesktopView extends StatelessWidget {
             }
 
             return AdminDataTableMolecule(
-              headers: const ['Nombre', 'Precio', 'Estado', 'Acciones'],
+              headers: const ['Nombre', 'Precio', 'Límites', 'Estado', 'Acciones'],
               rows: controller.plans.map((plan) {
                 return AdminTableRow([
-                  TextTableCell(plan.name),
+                  TextTableCell(plan.displayName ?? plan.name),
                   TextTableCell('${plan.currency} ${plan.price}'),
+                  TextTableCell('C: ${plan.limits.maxCatalogs} | I: ${plan.limits.maxCatalogItems} | L: ${plan.limits.maxLocations}'),
                   BadgeTableCell(
                     plan.isActive ? 'Activo' : 'Archivado',
                     plan.isActive ? Colors.green : Colors.grey,
                   ),
-                  SwitchTableCell(
-                    plan.isActive,
-                    onChanged: (value) {
-                      if (value == false) {
-                        controller.confirmArchivePlan(plan);
-                      }
-                    },
+                  ActionTableCell(
+                    icon: FluentIcons.edit_24_regular,
+                    onTap: () => controller.showEditPlanDialog(plan),
+                  ),
+                  ActionTableCell(
+                    icon: FluentIcons.delete_24_regular,
+                    onTap: () => controller.confirmArchivePlan(plan),
+                    color: Colors.red,
                   ),
                 ]);
               }).toList(),

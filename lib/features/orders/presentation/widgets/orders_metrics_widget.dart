@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import '../../getx/orders_controller.dart';
 import 'package:pu_material/pu_material.dart';
+import '../../getx/my_purchases_controller.dart';
 
 /// Widget que muestra estadísticas y métricas de las órdenes con diseño premium
 class OrdersMetricsWidget extends StatelessWidget {
@@ -10,9 +10,9 @@ class OrdersMetricsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetX<OrdersController>(
+    return GetX<MyPurchasesController>(
       builder: (controller) {
-        final orders = controller.orders;
+        final orders = controller.purchases;
 
         if (orders.isEmpty) {
           return const SizedBox.shrink();

@@ -15,16 +15,23 @@ class GlobalDialogsHandles {
     final String validMessage =
         message?.trim().isNotEmpty == true ? message!.trim() : 'Ha ocurrido un error inesperado';
 
-    Get.showSnackbar(
-      GetSnackBar(
-        title: title,
-        message: validMessage,
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: PUColors.bgError,
-        duration: const Duration(
-          seconds: 2,
+    Get.snackbar(
+      title,
+      validMessage,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: PUColors.bgError,
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(20),
+      borderRadius: 12,
+      duration: const Duration(seconds: 4),
+      icon: const Icon(Icons.error_outline, color: Colors.white),
+      boxShadows: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.2),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
         ),
-      ),
+      ],
     );
   }
 
@@ -36,16 +43,23 @@ class GlobalDialogsHandles {
     final String validMessage =
         message?.trim().isNotEmpty == true ? message!.trim() : 'Operación completada exitosamente';
 
-    Get.showSnackbar(
-      GetSnackBar(
-        title: title,
-        message: validMessage,
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: PUColors.bgSucces,
-        duration: const Duration(
-          seconds: 2,
+    Get.snackbar(
+      title,
+      validMessage,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: PUColors.bgSuccess,
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(20),
+      borderRadius: 12,
+      duration: const Duration(seconds: 3),
+      icon: const Icon(Icons.check_circle_outline, color: Colors.white),
+      boxShadows: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.2),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
         ),
-      ),
+      ],
     );
   }
 

@@ -9,6 +9,6 @@ class AdminDashboardBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<AdminDashboardController>(() => AdminDashboardController());
     Get.lazyPut<UsersController>(() => UsersController());
-    Get.lazyPut<MembershipAdminController>(() => MembershipAdminController());
+    Get.put<MembershipAdminController>(MembershipAdminController());
   }
 }

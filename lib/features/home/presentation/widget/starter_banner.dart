@@ -42,6 +42,8 @@ class _StarterBannerState extends State<StarterBanner> {
         return 'Registrá tus productos en catálogos flexibles';
       case RolesUsers.service:
         return 'Empezá a gestionar tus servicios';
+      case RolesUsers.customer:
+        return 'Elegí el tipo de negocio para tu emprendimiento';
       default:
         return 'Comenzá a usar el dashboard';
     }
@@ -65,6 +67,8 @@ class _StarterBannerState extends State<StarterBanner> {
       case RolesUsers.automotive:
       case RolesUsers.pets:
         return PURoutes.REGISTER_WARDROBES;
+      case RolesUsers.customer:
+        return PURoutes.BUSINESS_TYPE_SELECTION;
       default:
         return PURoutes.HOME;
     }
