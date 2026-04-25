@@ -17,7 +17,8 @@ class MembershipPlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final name = plan['name']?.toString() ?? '';
-    final displayName = plan['displayName']?.toString() ?? name;
+    final rawDisplayName = plan['displayName']?.toString();
+    final displayName = (rawDisplayName != null && rawDisplayName.isNotEmpty) ? rawDisplayName : name;
     final price = (plan['price'] as num?)?.toDouble() ?? 0.0;
     final description = plan['description']?.toString();
     final features = plan['features'] as List? ?? [];

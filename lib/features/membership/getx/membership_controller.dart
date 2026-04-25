@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
@@ -36,7 +37,7 @@ class MembershipController extends GetxController {
       isLoading.value = true;
       hasError.value = false;
 
-      final status = await _getStatusUseCase.execute();
+      final status = await _getStatusUseCase.call();
       _updateFromStatusModel(status);
     } on ApiException catch (e) {
       if (e.statusCode == 404) {
@@ -74,7 +75,7 @@ class MembershipController extends GetxController {
   Future<void> fetchAvailablePlans() async {
     try {
       isLoading.value = true;
-      final result = await _getPlansUseCase.execute();
+      final result = await _getPlansUseCase.call();
       plans.value = result;
     } on ApiException catch (e) {
       debugPrint('Error fetching plans: ${e.message}');
@@ -94,7 +95,7 @@ class MembershipController extends GetxController {
 
       if (plan.toUpperCase() == 'FREE') {
         // Suscripción directa sin pago
-        final status = await _subscribeUseCase.execute(plan);
+        final status = await _subscribeUseCase.call(plan);
         _updateFromStatusModel(status);
         return true;
       } else {
@@ -120,7 +121,7 @@ class MembershipController extends GetxController {
     try {
       isLoading.value = true;
 
-      final result = await _createPaymentUseCase.execute(plan);
+      final result = await _createPaymentUseCase.call(plan);
       final redirectUrl = result.redirectUrl;
 
       if (redirectUrl != null && redirectUrl.isNotEmpty) {
@@ -159,7 +160,7 @@ class MembershipController extends GetxController {
     try {
       isLoading.value = true;
 
-      final result = await _applyDiscountUseCase.execute(code);
+      final result = await _applyDiscountUseCase.call(code);
 
       if (result.valid) {
         discountCode.value = code;
@@ -187,7 +188,7 @@ class MembershipController extends GetxController {
     try {
       isLoading.value = true;
 
-      final success = await _manageSubscriptionUseCase.pause();
+      final success = await _manageSubscriptionUseCase.call('pause');
       if (success) {
         subscriptionStatus.value = 'paused';
         // Refrescar estado completo desde la API
@@ -211,7 +212,7 @@ class MembershipController extends GetxController {
     try {
       isLoading.value = true;
 
-      final success = await _manageSubscriptionUseCase.resume();
+      final success = await _manageSubscriptionUseCase.call('resume');
       if (success) {
         subscriptionStatus.value = 'authorized';
         // Refrescar estado completo desde la API
@@ -235,7 +236,7 @@ class MembershipController extends GetxController {
     try {
       isLoading.value = true;
 
-      final success = await _manageSubscriptionUseCase.cancel();
+      final success = await _manageSubscriptionUseCase.call('cancel');
       if (success) {
         isActive.value = false;
         subscriptionStatus.value = 'cancelled';
@@ -260,7 +261,7 @@ class MembershipController extends GetxController {
     try {
       isLoading.value = true;
 
-      final status = await _upgradePlanUseCase.execute(newPlan);
+      final status = await _upgradePlanUseCase.call(newPlan);
       _updateFromStatusModel(status);
       return true;
     } on ApiException catch (e) {
@@ -317,8 +318,17 @@ class MembershipController extends GetxController {
     }
   }
 
-  String getPlanLabel(String? plan) {
-    switch (plan?.toUpperCase()) {
+  String getPlanLabel(String? planName) {
+    if (planName == null) return 'Gratis';
+
+    // Intentar buscar el nombre amigable en la lista de planes cargados
+    final plan = plans.firstWhereOrNull((p) => p.name == planName);
+    if (plan != null && plan.displayName != null && plan.displayName!.isNotEmpty) {
+      return plan.displayName!;
+    }
+
+    // Fallback para planes conocidos o retornar el nombre original
+    switch (planName.toUpperCase()) {
       case 'FREE':
         return 'Gratis';
       case 'PREMIUM':
@@ -326,7 +336,11 @@ class MembershipController extends GetxController {
       case 'ENTERPRISE':
         return 'Empresarial';
       default:
-        return plan ?? 'Gratis';
+        // Si no está en la lista ni en el switch, capitalizar primera letra para mejor estética
+        if (planName.length > 1) {
+          return planName[0].toUpperCase() + planName.substring(1).toLowerCase();
+        }
+        return planName;
     }
   }
 

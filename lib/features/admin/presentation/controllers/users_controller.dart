@@ -11,17 +11,25 @@ import 'package:menu_dart_api/by_feature/user/get_all_users_admin/model/membersh
 import 'package:menu_dart_api/by_feature/user/delete_user/data/usecase/delete_user_usecase.dart';
 import 'package:menu_dart_api/by_feature/user/update_user_admin/update_user_admin.dart';
 import 'package:menu_dart_api/by_feature/user/update_user/model/update_user_request.dart';
+import 'package:menu_dart_api/by_feature/membership/data/usecase/assign_plan_to_user_usecase.dart';
+import 'package:menu_dart_api/by_feature/membership/data/usecase/get_all_admin_plans_usecase.dart';
+import 'package:menu_dart_api/by_feature/membership/data/provider/membership_provider.dart';
+import 'package:menu_dart_api/by_feature/membership/models/membership_plan_model.dart';
 
 class UsersController extends GetxController {
   final getAllUsersUseCase = GetAllUsersAdminUseCase();
   final countUsersUseCase = CountUsersAdminUseCase();
   final deleteUserUseCase = DeleteUserUseCase();
   final updateUserAdminUseCase = UpdateUserAdminUseCase();
+  final assignPlanToUserUseCase = AssignPlanToUserUseCase();
+  final getAllAdminPlansUseCase = GetAllAdminPlansUseCase();
 
   final searchController = TextEditingController();
 
   final users = <UserByRoleModel>[].obs;
+  final availablePlans = <MembershipPlanModel>[].obs;
   final isLoading = false.obs;
+  final isAssigningMembership = false.obs;
   final errorMessage = ''.obs;
 
   final currentPage = 1.obs;
@@ -42,6 +50,17 @@ class UsersController extends GetxController {
     super.onInit();
     loadUsers();
     loadCounts();
+    loadAvailablePlans();
+  }
+
+  Future<void> loadAvailablePlans() async {
+    try {
+      final plans = await getAllAdminPlansUseCase.call();
+      availablePlans.value = plans;
+    } catch (e) {
+      debugPrint('Error loading available plans: $e');
+      // No bloqueamos la UI pero informamos al usuario si intenta asignar
+    }
   }
 
   @override
@@ -170,6 +189,13 @@ class UsersController extends GetxController {
           ],
         ),
         actions: [
+          TextButton(
+            onPressed: () {
+              Get.back();
+              showAssignMembershipDialog(user);
+            },
+            child: const Text('Asignar Membresía'),
+          ),
           TextButton(
             onPressed: () => Get.back(),
             child: const Text('Cerrar'),
@@ -383,5 +409,95 @@ class UsersController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> assignMembership(String userId, String plan) async {
+    isAssigningMembership.value = true;
+    try {
+      await assignPlanToUserUseCase.call(userId, plan);
+      Get.snackbar(
+        'Éxito',
+        'Membresía asignada correctamente',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green.withOpacity(0.1),
+        colorText: Colors.green,
+      );
+      loadUsers();
+      loadCounts();
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Error al asignar membresía: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.1),
+        colorText: Colors.red,
+      );
+    } finally {
+      isAssigningMembership.value = false;
+    }
+  }
+
+  void showAssignMembershipDialog(UserByRoleModel user) {
+    if (availablePlans.isEmpty) {
+      Get.snackbar('Error', 'No hay planes disponibles para asignar');
+      return;
+    }
+
+    final selectedPlanToAssign = Rx<String>(availablePlans.first.name);
+
+    Get.dialog(
+      AlertDialog(
+        title: Text('Asignar Membresía a ${user.name}'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Seleccione el plan que desea asignar manualmente al usuario. Esto sobreescribirá su membresía actual.'),
+            const SizedBox(height: 20),
+            Obx(() => DropdownButtonFormField<String>(
+                  value: selectedPlanToAssign.value,
+                  decoration: const InputDecoration(
+                    labelText: 'Plan de Membresía',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: availablePlans.map((plan) {
+                    return DropdownMenuItem(
+                      value: plan.name,
+                      child: Text(plan.displayName ?? plan.name),
+                    );
+                  }).toList(),
+                  onChanged: (val) => selectedPlanToAssign.value = val!,
+                )),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cancelar'),
+          ),
+          Obx(() => ElevatedButton(
+                onPressed: isAssigningMembership.value
+                    ? null
+                    : () {
+                        Get.back();
+                        assignMembership(user.id!, selectedPlanToAssign.value);
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade700,
+                  foregroundColor: Colors.white,
+                ),
+                child: isAssigningMembership.value
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text('Asignar Plan'),
+              )),
+        ],
+      ),
+    );
   }
 }

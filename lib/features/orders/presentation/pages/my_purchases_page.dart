@@ -107,7 +107,7 @@ class _MyPurchasesPageState extends State<MyPurchasesPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const OrdersMetricsWidget(),
+            OrdersMetricsWidget(orders: purchasesController.purchases),
             const SizedBox(height: 16),
             _buildPurchasesContent(),
           ],
@@ -148,7 +148,7 @@ class _MyPurchasesPageState extends State<MyPurchasesPage> {
             ],
           ),
           SizedBox(height: isTablet ? 16 : 20),
-          const OrdersMetricsWidget(),
+          OrdersMetricsWidget(orders: purchasesController.purchases),
           SizedBox(height: isTablet ? 16 : 20),
           Expanded(
             child: SingleChildScrollView(

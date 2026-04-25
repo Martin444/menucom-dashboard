@@ -248,14 +248,25 @@ class MembershipAdminDesktopView extends StatelessWidget {
                     plan.isActive ? 'Activo' : 'Archivado',
                     plan.isActive ? Colors.green : Colors.grey,
                   ),
-                  ActionTableCell(
-                    icon: FluentIcons.edit_24_regular,
-                    onTap: () => controller.showEditPlanDialog(plan),
-                  ),
-                  ActionTableCell(
-                    icon: FluentIcons.delete_24_regular,
-                    onTap: () => controller.confirmArchivePlan(plan),
-                    color: Colors.red,
+                  WidgetTableCell(
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(FluentIcons.edit_24_regular, size: 20),
+                          onPressed: () => controller.showEditPlanDialog(plan),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          icon: const Icon(FluentIcons.delete_24_regular, size: 20, color: Colors.red),
+                          onPressed: () => controller.confirmArchivePlan(plan),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        ),
+                      ],
+                    ),
                   ),
                 ]);
               }).toList(),

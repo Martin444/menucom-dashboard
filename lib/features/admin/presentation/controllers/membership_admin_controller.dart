@@ -27,11 +27,11 @@ class MembershipAdminController extends GetxController {
 
   MembershipAdminController() {
     final MembershipRepository repo = MembershipProvider();
-    getAllPlansUseCase = GetAllAdminPlansUseCase(repo);
-    createPlanUseCase = CreateAdminPlanUseCase(repo);
-    updatePlanUseCase = UpdateAdminPlanUseCase(repo);
-    archivePlanUseCase = ArchiveAdminPlanUseCase(repo);
-    getStatsUseCase = GetAdminPlanStatsUseCase(repo);
+    getAllPlansUseCase = GetAllAdminPlansUseCase(repository: repo);
+    createPlanUseCase = CreateAdminPlanUseCase(repository: repo);
+    updatePlanUseCase = UpdateAdminPlanUseCase(repository: repo);
+    archivePlanUseCase = ArchiveAdminPlanUseCase(repository: repo);
+    getStatsUseCase = GetAdminPlanStatsUseCase(repository: repo);
   }
 
   @override

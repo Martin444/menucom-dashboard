@@ -36,8 +36,10 @@ class _MembershipPageState extends State<MembershipPage> {
   }
 
   Future<void> _loadMembership() async {
-    await membershipController.fetchMembershipStatus();
-    await membershipController.fetchAvailablePlans();
+    await Future.wait([
+      membershipController.fetchMembershipStatus(),
+      membershipController.fetchAvailablePlans(),
+    ]);
   }
 
   @override

@@ -205,13 +205,9 @@ class MembershipStatusCard extends StatelessWidget {
                         ],
                       ],
                       if (!isActive) ...[
-                        Text(
-                          'Plan Gratis',
-                          style: PuTextStyle.membershipPlanTitle.copyWith(fontSize: 32),
-                        ),
                         const SizedBox(height: 12),
                         Text(
-                          'Hasta 10 items, 1 catálogo, 7 días analytics',
+                          'Activa un plan para acceder a todas las funciones premium de Menucom.',
                           style: PuTextStyle.membershipPlanSubtitle.copyWith(fontSize: 16, color: Colors.white70),
                         ),
                       ],

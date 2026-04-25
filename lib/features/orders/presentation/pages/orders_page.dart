@@ -125,7 +125,7 @@ class _OrdersPageState extends State<OrdersPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Widget de métricas - versión móvil compacta
-            const OrdersMetricsWidget(),
+            OrdersMetricsWidget(orders: ordersController.orders),
             const SizedBox(height: 16),
             // Tabla/lista de órdenes
             _buildOrdersContent(),
@@ -169,7 +169,7 @@ class _OrdersPageState extends State<OrdersPage> {
           ),
           SizedBox(height: isTablet ? 16 : 20),
           // Widget de métricas - versión desktop
-          const OrdersMetricsWidget(),
+          OrdersMetricsWidget(orders: ordersController.orders),
           SizedBox(height: isTablet ? 16 : 20),
           // Tabla de órdenes expandida
           Expanded(

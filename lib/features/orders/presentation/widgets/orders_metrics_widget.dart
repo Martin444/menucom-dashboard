@@ -1,68 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:pu_material/pu_material.dart';
-import '../../getx/my_purchases_controller.dart';
-
-/// Widget que muestra estadísticas y métricas de las órdenes con diseño premium
+import 'package:pu_material/pu_material.dart' as ui;
 class OrdersMetricsWidget extends StatelessWidget {
-  const OrdersMetricsWidget({super.key});
+  final List<ui.Order> orders;
+  const OrdersMetricsWidget({super.key, required this.orders});
 
   @override
   Widget build(BuildContext context) {
-    return GetX<MyPurchasesController>(
-      builder: (controller) {
-        final orders = controller.purchases;
+    return Obx(() {
+      if (orders.isEmpty) {
+        return const SizedBox.shrink();
+      }
 
-        if (orders.isEmpty) {
-          return const SizedBox.shrink();
-        }
+      // Calcular métricas
+      final totalOrders = orders.length;
+      final pendingOrders = orders.where((order) => order.estado == 'Pendiente').length;
+      final completedOrders = orders.where((order) => order.estado == 'Completado').length;
+      final inProgressOrders = orders.where((order) => order.estado == 'En curso').length;
 
-        // Calcular métricas
-        final totalOrders = orders.length;
-        final pendingOrders = orders.where((order) => order.estado == 'Pendiente').length;
-        final completedOrders = orders.where((order) => order.estado == 'Completado').length;
-        final inProgressOrders = orders.where((order) => order.estado == 'En curso').length;
+      final totalRevenue = orders.fold<double>(0, (sum, order) => sum + (order.totalCentavos / 100));
 
-        final totalRevenue = orders.fold<double>(0, (sum, order) => sum + (order.totalCentavos / 100));
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final screenWidth = constraints.maxWidth;
+          final isMobile = screenWidth < 768;
 
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final screenWidth = constraints.maxWidth;
-            final isMobile = screenWidth < 768;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Métricas principales - responsive layout
+              if (isMobile)
+                _buildMobileMetrics(
+                  context,
+                  totalOrders,
+                  pendingOrders,
+                  inProgressOrders,
+                  completedOrders,
+                )
+              else
+                _buildDesktopMetrics(
+                  context,
+                  totalOrders,
+                  pendingOrders,
+                  inProgressOrders,
+                  completedOrders,
+                ),
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Métricas principales - responsive layout
-                if (isMobile)
-                  _buildMobileMetrics(
-                    context,
-                    totalOrders,
-                    pendingOrders,
-                    inProgressOrders,
-                    completedOrders,
-                  )
-                else
-                  _buildDesktopMetrics(
-                    context,
-                    totalOrders,
-                    pendingOrders,
-                    inProgressOrders,
-                    completedOrders,
-                  ),
+              const SizedBox(height: 16),
 
-                const SizedBox(height: 16),
-
-                // Ingresos totales - Diseño Premium
-                _buildRevenueCard(context, totalRevenue, isMobile),
-                const SizedBox(height: 24),
-              ],
-            );
-          },
-        );
-      },
-    );
+              // Ingresos totales - Diseño Premium
+              _buildRevenueCard(context, totalRevenue, isMobile),
+              const SizedBox(height: 24),
+            ],
+          );
+        },
+      );
+    });
   }
 
   Widget _buildRevenueCard(BuildContext context, double totalRevenue, bool isMobile) {
@@ -72,8 +66,8 @@ class OrdersMetricsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
-            PUColors.primaryBlue,
-            PUColors.primaryBlueDark,
+            ui.PUColors.primaryBlue,
+            ui.PUColors.primaryBlueDark,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -81,7 +75,7 @@ class OrdersMetricsWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: PUColors.primaryBlue.withValues(alpha: 0.25),
+            color: ui.PUColors.primaryBlue.withValues(alpha: 0.25),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -108,7 +102,7 @@ class OrdersMetricsWidget extends StatelessWidget {
               children: [
                 Text(
                   'Ingresos Totales',
-                  style: PuTextStyle.bodySmall.copyWith(
+                  style: ui.PuTextStyle.bodySmall.copyWith(
                     color: Colors.white.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
@@ -117,7 +111,7 @@ class OrdersMetricsWidget extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '\$${totalRevenue.toStringAsFixed(2)}',
-                  style: PuTextStyle.title1.copyWith(
+                  style: ui.PuTextStyle.title1.copyWith(
                     color: Colors.white,
                     fontSize: isMobile ? 26 : 32,
                     fontWeight: FontWeight.w700,
@@ -137,7 +131,7 @@ class OrdersMetricsWidget extends StatelessWidget {
               ),
               child: Text(
                 'Bruto',
-                style: PuTextStyle.bodySmall.copyWith(
+                style: ui.PuTextStyle.bodySmall.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 11,
@@ -164,7 +158,7 @@ class OrdersMetricsWidget extends StatelessWidget {
       mainAxisSpacing: 12,
       childAspectRatio: 1.25,
       children: [
-        _buildMetricCard(context, 'Total', totalOrders.toString(), FluentIcons.receipt_24_regular, PUColors.primaryBlue),
+        _buildMetricCard(context, 'Total', totalOrders.toString(), FluentIcons.receipt_24_regular, ui.PUColors.primaryBlue),
         _buildMetricCard(
             context, 'Pendientes', pendingOrders.toString(), FluentIcons.hourglass_24_regular, const Color(0xFFD97706)), // Amber-600
         _buildMetricCard(
@@ -186,7 +180,7 @@ class OrdersMetricsWidget extends StatelessWidget {
       children: [
         Expanded(
             child: _buildMetricCard(
-                context, 'Total', totalOrders.toString(), FluentIcons.receipt_24_regular, PUColors.primaryBlue)),
+                context, 'Total', totalOrders.toString(), FluentIcons.receipt_24_regular, ui.PUColors.primaryBlue)),
         const SizedBox(width: 16),
         Expanded(
             child: _buildMetricCard(
@@ -243,7 +237,7 @@ class OrdersMetricsWidget extends StatelessWidget {
             fit: BoxFit.scaleDown,
             child: Text(
               value,
-              style: PuTextStyle.title3.copyWith(
+              style: ui.PuTextStyle.title3.copyWith(
                 fontSize: 18,
                 color: theme.colorScheme.onSurface,
                 height: 1.1,
@@ -253,7 +247,7 @@ class OrdersMetricsWidget extends StatelessWidget {
           const SizedBox(height: 1),
           Text(
             label,
-            style: PuTextStyle.bodySmall.copyWith(
+            style: ui.PuTextStyle.bodySmall.copyWith(
               fontSize: 10,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               fontWeight: FontWeight.w500,
