@@ -4,23 +4,16 @@ import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pickmeup_dashboard/features/admin/presentation/controllers/admin_dashboard_controller.dart';
-import 'package:pickmeup_dashboard/features/admin/presentation/views/users_view.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
-
-
 
 class AdminDashboardView extends StatelessWidget {
   const AdminDashboardView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // El DinningController ya se inicializa en onInit con addPostFrameCallback
-    // No llamar getMyDinningInfo() aquí
-
     return LayoutBuilder(
       builder: (context, constraints) {
-        final screenWidth = constraints.maxWidth;
-        final isMobile = screenWidth < 768;
+        final isMobile = constraints.maxWidth < 768;
 
         if (isMobile) {
           return const AdminDashboardMobileView();
@@ -56,16 +49,22 @@ class AdminDashboardMobileView extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Obx(() => AdminKpiMolecule(
-                  title: 'Usuarios',
-                  value: '${controller.dashboardData['totalUsers'] ?? 0}',
-                  icon: FluentIcons.people_24_regular,
+            Obx(() => SizedBox(
+                  width: double.infinity,
+                  child: AdminKpiMolecule(
+                    title: 'Usuarios',
+                    value: '${controller.dashboardData['totalUsers'] ?? 0}',
+                    icon: FluentIcons.people_24_regular,
+                  ),
                 )),
             const SizedBox(height: 16),
-            Obx(() => AdminKpiMolecule(
-                  title: 'Órdenes',
-                  value: '${controller.dashboardData['totalOrders'] ?? 0}',
-                  icon: FluentIcons.receipt_24_regular,
+            Obx(() => SizedBox(
+                  width: double.infinity,
+                  child: AdminKpiMolecule(
+                    title: 'Órdenes',
+                    value: '${controller.dashboardData['totalOrders'] ?? 0}',
+                    icon: FluentIcons.receipt_24_regular,
+                  ),
                 )),
           ],
         ),
@@ -79,8 +78,6 @@ class AdminDashboardDesktopView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<AdminDashboardController>();
-
     return Scaffold(
       body: Row(
         children: [
@@ -88,8 +85,8 @@ class AdminDashboardDesktopView extends StatelessWidget {
             width: 250,
             child: MenuSide(isMobile: false),
           ),
-          Expanded(
-            child: _DashboardContent(),
+          const Expanded(
+            child: DashboardContent(),
           ),
         ],
       ),
@@ -97,7 +94,10 @@ class AdminDashboardDesktopView extends StatelessWidget {
   }
 }
 
-class _DashboardContent extends StatelessWidget {
+/// Contenido principal del dashboard administrativo.
+class DashboardContent extends StatelessWidget {
+  const DashboardContent({super.key});
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AdminDashboardController>();
@@ -116,13 +116,13 @@ class _DashboardContent extends StatelessWidget {
               searchHint: 'Buscar órdenes, usuarios...',
               onSearch: (query) => controller.search(query),
               actions: [
-                _buildQuickAction(
+                QuickActionButton(
                   icon: FluentIcons.person_add_24_regular,
                   tooltip: 'Agregar usuario',
                   onTap: () {},
                 ),
                 const SizedBox(width: 8),
-                _buildQuickAction(
+                QuickActionButton(
                   icon: FluentIcons.settings_24_regular,
                   tooltip: 'Configuración',
                   onTap: () {},
@@ -130,20 +130,34 @@ class _DashboardContent extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 24),
-            Obx(() => _KpiGrid(data: Map.from(controller.dashboardData))),
+            Obx(() => DashboardKpiGrid(
+                data: Map.from(controller.dashboardData))),
             const SizedBox(height: 32),
-            Obx(() => _OrdersTable(orders: controller.recentOrders.toList())),
+            Obx(() => DashboardOrdersTable(
+                orders: controller.recentOrders.toList())),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildQuickAction({
-    required IconData icon,
-    required String tooltip,
-    required VoidCallback onTap,
-  }) {
+/// Botón de acción rápida del header del dashboard.
+/// Extraído de _DashboardContent._buildQuickAction para cumplir Atomic Design.
+class QuickActionButton extends StatelessWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  const QuickActionButton({
+    super.key,
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Tooltip(
       message: tooltip,
       child: GestureDetector(
@@ -165,10 +179,11 @@ class _DashboardContent extends StatelessWidget {
   }
 }
 
-class _KpiGrid extends StatelessWidget {
+/// Grid de KPIs del dashboard.
+class DashboardKpiGrid extends StatelessWidget {
   final Map<String, dynamic> data;
 
-  const _KpiGrid({required this.data});
+  const DashboardKpiGrid({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -212,10 +227,11 @@ class _KpiGrid extends StatelessWidget {
   }
 }
 
-class _OrdersTable extends StatelessWidget {
+/// Tabla de órdenes recientes del dashboard.
+class DashboardOrdersTable extends StatelessWidget {
   final List<Map<String, dynamic>> orders;
 
-  const _OrdersTable({required this.orders});
+  const DashboardOrdersTable({super.key, required this.orders});
 
   @override
   Widget build(BuildContext context) {
@@ -272,10 +288,12 @@ class _OrdersTable extends StatelessWidget {
                         o['status']?.toString() ?? '',
                         _getStatusColor(o['status']?.toString() ?? ''),
                       ),
-                      PriceTableCell((o['total'] as num?)?.toDouble() ?? 0),
+                      PriceTableCell(
+                          (o['total'] as num?)?.toDouble() ?? 0),
                       TextTableCell(
                         o['date']?.toString() ?? '',
-                        style: const TextStyle(color: PUColors.textColorMuted),
+                        style:
+                            const TextStyle(color: PUColors.textColorMuted),
                       ),
                     ]))
                 .toList(),

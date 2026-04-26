@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:pickmeup_dashboard/features/admin/presentation/views/admin_dashboard_view.dart';
-import 'package:pickmeup_dashboard/features/admin/presentation/views/users_view.dart';
-import 'package:pickmeup_dashboard/core/navigation/menu_navigation_controller.dart';
 
 class AdminNavItemData {
   final IconData icon;

@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pickmeup_dashboard/features/admin/presentation/controllers/membership_admin_controller.dart';
+import 'package:pickmeup_dashboard/features/admin/presentation/widgets/membership_kpi_panel.dart';
+import 'package:pickmeup_dashboard/features/admin/presentation/widgets/membership_plans_table.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
-
 
 class MembershipAdminView extends StatelessWidget {
   const MembershipAdminView({super.key});
@@ -13,8 +14,7 @@ class MembershipAdminView extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final screenWidth = constraints.maxWidth;
-        final isMobile = screenWidth < 768;
+        final isMobile = constraints.maxWidth < 768;
 
         if (isMobile) {
           return const MembershipAdminMobileView();
@@ -88,11 +88,13 @@ class MembershipAdminMobileView extends StatelessWidget {
                     children: [
                       IconButton(
                         icon: const Icon(FluentIcons.edit_24_regular),
-                        onPressed: () => controller.showEditPlanDialog(plan),
+                        onPressed: () =>
+                            controller.showEditPlanDialog(plan),
                       ),
                       IconButton(
                         icon: const Icon(FluentIcons.delete_24_regular),
-                        onPressed: () => controller.confirmArchivePlan(plan),
+                        onPressed: () =>
+                            controller.confirmArchivePlan(plan),
                         color: Colors.red,
                       ),
                     ],
@@ -128,154 +130,12 @@ class MembershipAdminDesktopView extends StatelessWidget {
               },
             ),
             const SizedBox(height: 24),
-            _buildKPIs(controller),
+            const MembershipKpiPanel(),
             const SizedBox(height: 24),
-            _buildPlansTable(controller),
+            const MembershipPlansTable(),
           ],
         ),
       ),
     );
   }
-
-  Widget _buildKPIs(MembershipAdminController controller) {
-    return Obx(() {
-      final stats = controller.stats;
-      final totalPlans = stats['totalPlans'] ?? 0;
-      final activePlans = stats['activePlans'] ?? 0;
-      final customPlans = stats['customPlans'] ?? 0;
-      final standardPlans = stats['standardPlans'] ?? 0;
-      final archivedPlans = totalPlans - activePlans;
-
-      return Wrap(
-        spacing: 16,
-        runSpacing: 16,
-        children: [
-          SizedBox(
-            width: 220,
-            child: AdminKpiMolecule(
-              title: 'Total Planes',
-              value: '$totalPlans',
-              icon: FluentIcons.premium_24_regular,
-            ),
-          ),
-          SizedBox(
-            width: 220,
-            child: AdminKpiMolecule(
-              title: 'Planes Activos',
-              value: '$activePlans',
-              icon: FluentIcons.checkmark_circle_24_regular,
-              iconColor: Colors.green,
-            ),
-          ),
-          SizedBox(
-            width: 220,
-            child: AdminKpiMolecule(
-              title: 'Archivados',
-              value: '$archivedPlans',
-              icon: FluentIcons.archive_24_regular,
-              iconColor: Colors.grey,
-            ),
-          ),
-          SizedBox(
-            width: 220,
-            child: AdminKpiMolecule(
-              title: 'Custom',
-              value: '$customPlans',
-              icon: FluentIcons.person_star_24_regular,
-              iconColor: Colors.orange,
-            ),
-          ),
-          SizedBox(
-            width: 220,
-            child: AdminKpiMolecule(
-              title: 'Estándar',
-              value: '$standardPlans',
-              icon: FluentIcons.layer_24_regular,
-              iconColor: Colors.blue,
-            ),
-          ),
-        ],
-      );
-    });
-  }
-
-  Widget _buildPlansTable(MembershipAdminController controller) {
-    return ContainerAtom(
-      variant: ContainerVariant.card,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Planes Disponibles',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              ElevatedButton.icon(
-                onPressed: controller.showCreatePlanDialog,
-                icon: const Icon(FluentIcons.add_24_regular),
-                label: const Text('Crear Plan'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: PUColors.primaryColor,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Obx(() {
-            if (controller.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (controller.plans.isEmpty) {
-              return const Padding(
-                padding: EdgeInsets.all(32.0),
-                child: Center(child: Text('No hay planes registrados')),
-              );
-            }
-
-            return AdminDataTableMolecule(
-              headers: const ['Nombre', 'Precio', 'Límites', 'Estado', 'Acciones'],
-              rows: controller.plans.map((plan) {
-                return AdminTableRow([
-                  TextTableCell(plan.displayName ?? plan.name),
-                  TextTableCell('${plan.currency} ${plan.price}'),
-                  TextTableCell('C: ${plan.limits.maxCatalogs} | I: ${plan.limits.maxCatalogItems} | L: ${plan.limits.maxLocations}'),
-                  BadgeTableCell(
-                    plan.isActive ? 'Activo' : 'Archivado',
-                    plan.isActive ? Colors.green : Colors.grey,
-                  ),
-                  WidgetTableCell(
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(FluentIcons.edit_24_regular, size: 20),
-                          onPressed: () => controller.showEditPlanDialog(plan),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
-                        const SizedBox(width: 8),
-                        IconButton(
-                          icon: const Icon(FluentIcons.delete_24_regular, size: 20, color: Colors.red),
-                          onPressed: () => controller.confirmArchivePlan(plan),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ]);
-              }).toList(),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
 }
-
