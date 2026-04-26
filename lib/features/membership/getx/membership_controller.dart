@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
@@ -277,8 +276,7 @@ class MembershipController extends GetxController {
   }
 
   // ── Subscribe With Card ───────────────────────────────────
-  Future<bool> subscribeWithCard(String plan, String cardTokenId,
-      {String? discountCode}) async {
+  Future<bool> subscribeWithCard(String plan, String cardTokenId, {String? discountCode}) async {
     try {
       isLoading.value = true;
 

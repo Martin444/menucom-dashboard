@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:menu_dart_api/menu_com_api.dart';
+import 'package:menu_dart_api/by_feature/user/update_user_role/data/usescases/update_user_role_usecase.dart';
+import 'package:menu_dart_api/by_feature/user/update_user_role/model/update_user_role_request.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import '../../models/business_type.dart';
 import '../../../home/controllers/dinning_controller.dart';
@@ -15,8 +16,8 @@ class BusinessSelectionController extends GetxController {
   final Rx<BusinessType?> _selectedBusinessType = Rx<BusinessType?>(null);
   BusinessType? get selectedBusinessType => _selectedBusinessType.value;
 
-  // Use case para actualizar usuario
-  final UpdateUserUseCase _updateUserUseCase = UpdateUserUseCase();
+  // Use case para actualizar rol del usuario actual
+  final UpdateUserRoleUseCase _updateUserRoleUseCase = UpdateUserRoleUseCase();
 
   // Controller del home para refrescar datos
   late DinningController _dinningController;
@@ -32,7 +33,7 @@ class BusinessSelectionController extends GetxController {
     _selectedBusinessType.value = businessType;
   }
 
-  /// Confirmar la selección y actualizar el usuario
+  /// Confirmar la selección y actualizar el rol del usuario
   Future<void> confirmSelection() async {
     if (_selectedBusinessType.value == null) {
       _showErrorSnackbar('Por favor selecciona un tipo de negocio');
@@ -46,20 +47,13 @@ class BusinessSelectionController extends GetxController {
       debugPrint(
           '🎯 ROL SELECCIONADO: ${_selectedBusinessType.value!.title} (${_selectedBusinessType.value!.roleType.name})');
 
-      // Obtener ID del usuario actual
-      final userId = _dinningController.dinningLogin.id;
-      if (userId == null || userId.isEmpty) {
-        throw Exception('No se pudo obtener el ID del usuario');
-      }
-
-      // Crear request de actualización
-      final request = UpdateUserRequest(
-        userId: userId,
+      // Crear request para el nuevo endpoint seguro
+      final request = UpdateUserRoleRequest(
         role: _selectedBusinessType.value!.roleType.name,
       );
 
-      // Llamar al API
-      final response = await _updateUserUseCase.call(request);
+      // Llamar al API con el nuevo endpoint PATCH /user-roles/my-role
+      final response = await _updateUserRoleUseCase.call(request);
 
       if (response.success) {
         // Actualizar datos locales
@@ -74,7 +68,7 @@ class BusinessSelectionController extends GetxController {
         // Refrescar datos del usuario
         _dinningController.getMyDinningInfo();
       } else {
-        throw Exception(response.message);
+        throw Exception(response.message ?? 'Error desconocido');
       }
     } catch (e) {
       _showErrorSnackbar('Error al actualizar: ${e.toString()}');
