@@ -13,10 +13,12 @@ import 'package:pu_material/pu_material.dart';
 
 class CreateItemPage extends StatefulWidget {
   final bool? isEditPage;
+  final String catalogType;
 
   const CreateItemPage({
     super.key,
     this.isEditPage,
+    this.catalogType = 'menu',
   });
 
   @override
@@ -32,7 +34,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
   void initState() {
     super.initState();
     catalogsController = Get.find<CatalogsController>();
-    catalogsController.loadCatalogsByType('menu');
+    catalogsController.loadCatalogsByType(widget.catalogType);
   }
 
   @override
@@ -109,7 +111,9 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                         Text(
                                           widget.isEditPage ?? false
                                               ? 'Renová tus ideas'
-                                              : 'Deleitá a tus clientes',
+                                              : widget.catalogType == 'menu'
+                                                  ? 'Deleitá a tus clientes'
+                                                  : 'Actualizá tu stock',
                                           textAlign: TextAlign.start,
                                           style: PuTextStyle.title2,
                                         ),
@@ -173,8 +177,12 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                         false) {
                                       if (catCtrl.fileTaked == null) {
                                         GlobalDialogsHandles.snackbarError(
-                                          title: 'Logo obligatorio',
-                                          message: 'Preferentemente PNG',
+                                          title: widget.catalogType == 'menu'
+                                              ? 'Logo obligatorio'
+                                              : 'Foto obligatoria',
+                                          message: widget.catalogType == 'menu'
+                                              ? 'Preferentemente PNG'
+                                              : 'Cargá una foto del producto',
                                         );
                                         return;
                                       }

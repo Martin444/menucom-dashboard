@@ -26,8 +26,7 @@ class MenuHomeView extends StatefulWidget {
   State<MenuHomeView> createState() => _MenuHomeViewState();
 }
 
-class _MenuHomeViewState extends State<MenuHomeView>
-    with WidgetsBindingObserver {
+class _MenuHomeViewState extends State<MenuHomeView> with WidgetsBindingObserver {
   late final CatalogsController catalogsController;
 
   @override
@@ -63,10 +62,8 @@ class _MenuHomeViewState extends State<MenuHomeView>
           builder: (catCtrl) {
             debugPrint('=== MenuHomeView rebuild ===');
             debugPrint('catalogsList length: ${catCtrl.catalogsList.length}');
-            debugPrint(
-                'catalogSelected: ${catCtrl.catalogSelected.value?.description}');
-            debugPrint(
-                'catalogSelected items: ${catCtrl.catalogSelected.value?.items?.length ?? 0}');
+            debugPrint('catalogSelected: ${catCtrl.catalogSelected.value?.description}');
+            debugPrint('catalogSelected items: ${catCtrl.catalogSelected.value?.items?.length ?? 0}');
 
             return LayoutBuilder(
               builder: (context, constrains) {
@@ -86,18 +83,14 @@ class _MenuHomeViewState extends State<MenuHomeView>
                         child: CategoryTagsSection<CatalogModel>(
                           title: 'Mis Catálogos',
                           items: catalogs,
-                          selectedItem: selectedCatalog ??
-                              (catalogs.isNotEmpty ? catalogs.first : null),
-                          onItemSelected: (catalog) =>
-                              catCtrl.changeCatalogSelected(catalog),
-                          descriptionBuilder: (catalog) =>
-                              catalog.description ?? 'Sin nombre',
+                          selectedItem: selectedCatalog ?? (catalogs.isNotEmpty ? catalogs.first : null),
+                          onItemSelected: (catalog) => catCtrl.changeCatalogSelected(catalog),
+                          descriptionBuilder: (catalog) => catalog.description ?? 'Sin nombre',
                           itemCountBuilder: (catalog) => catalog.itemCount,
                           constraints: constrains,
                           icon: FluentIcons.food_24_regular,
                           onEditSelected: () {
-                            final catalog = selectedCatalog ??
-                                (catalogs.isNotEmpty ? catalogs.first : null);
+                            final catalog = selectedCatalog ?? (catalogs.isNotEmpty ? catalogs.first : null);
                             if (catalog != null) {
                               catCtrl.changeCatalogSelected(catalog);
                               catCtrl.gotoEditCatalog(catalog);
@@ -105,8 +98,7 @@ class _MenuHomeViewState extends State<MenuHomeView>
                             }
                           },
                           onDeleteSelected: () async {
-                            final catalog = selectedCatalog ??
-                                (catalogs.isNotEmpty ? catalogs.first : null);
+                            final catalog = selectedCatalog ?? (catalogs.isNotEmpty ? catalogs.first : null);
                             if (catalog != null) {
                               await catCtrl.deleteCatalog(catalog);
                             }
@@ -124,7 +116,11 @@ class _MenuHomeViewState extends State<MenuHomeView>
                                   right: constrains.maxWidth > 1200 ? 20 : 0,
                                 ),
                                 child: catalogs.isEmpty
-                                    ? const CatalogEmptyState()
+                                    ? CatalogEmptyState(
+                                        onCreateCatalog: () {
+                                          Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY);
+                                        },
+                                      )
                                     : _buildCatalogGrid(constrains, catCtrl),
                               ),
                             ),
@@ -138,11 +134,9 @@ class _MenuHomeViewState extends State<MenuHomeView>
                                   padding: const EdgeInsets.only(
                                     left: 20,
                                   ),
-                                  decoration:
-                                      PuStyleContainers.borderLeftContainer,
+                                  decoration: PuStyleContainers.borderLeftContainer,
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Mis catálogos',
@@ -166,25 +160,20 @@ class _MenuHomeViewState extends State<MenuHomeView>
                                         (element) {
                                           return ItemCategoryTile(
                                             item: element,
-                                            isSelected: selectedCatalog?.id ==
-                                                element.id,
+                                            isSelected: selectedCatalog?.id == element.id,
                                             descriptionBuilder: (catalog) {
                                               return catalog.description ?? '';
                                             },
                                             onSelect: (catalog) {
-                                              catCtrl.changeCatalogSelected(
-                                                  catalog);
+                                              catCtrl.changeCatalogSelected(catalog);
                                             },
                                             onDelete: (catalog) async {
-                                              await catCtrl
-                                                  .deleteCatalog(catalog);
+                                              await catCtrl.deleteCatalog(catalog);
                                             },
                                             onEdit: (catalog) {
-                                              catCtrl.changeCatalogSelected(
-                                                  catalog);
+                                              catCtrl.changeCatalogSelected(catalog);
                                               catCtrl.gotoEditCatalog(catalog);
-                                              Get.toNamed(
-                                                  PURoutes.EDIT_MENU_CATEGORY);
+                                              Get.toNamed(PURoutes.EDIT_MENU_CATEGORY);
                                             },
                                           );
                                         },
@@ -208,9 +197,7 @@ class _MenuHomeViewState extends State<MenuHomeView>
     );
   }
 
-
-  Widget _buildCatalogGrid(
-      BoxConstraints constrains, CatalogsController catCtrl) {
+  Widget _buildCatalogGrid(BoxConstraints constrains, CatalogsController catCtrl) {
     final selected = catCtrl.catalogSelected.value;
     final items = selected?.items ?? [];
 
@@ -246,7 +233,9 @@ class _MenuHomeViewState extends State<MenuHomeView>
             ),
             child: ButtonPrimary(
               title: 'Cargar primer producto',
-              onPressed: () {},
+              onPressed: () {
+                Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
+              },
               load: false,
             ),
           ),

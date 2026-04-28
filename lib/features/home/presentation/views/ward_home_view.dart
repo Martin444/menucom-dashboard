@@ -133,7 +133,11 @@ class _WardsHomeViewState extends State<WardsHomeView> with WidgetsBindingObserv
                                     const SizedBox(height: 32),
                                     Expanded(
                                       child: catalogs.isEmpty
-                                          ? const CatalogEmptyState()
+                                          ? CatalogEmptyState(
+                                              onCreateCatalog: () {
+                                                Get.toNamed(PURoutes.REGISTER_WARDROBES);
+                                              },
+                                            )
                                           : CatalogGrid(
                                               constraints: constrains,
                                               catCtrl: catCtrl,

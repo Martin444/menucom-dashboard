@@ -6,7 +6,9 @@ import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class CatalogEmptyState extends StatelessWidget {
-  const CatalogEmptyState({super.key});
+  final VoidCallback? onCreateCatalog;
+
+  const CatalogEmptyState({super.key, this.onCreateCatalog});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +57,7 @@ class CatalogEmptyState extends StatelessWidget {
                 ),
                 child: ButtonPrimary(
                   title: 'Crear mi primer catálogo',
-                  onPressed: () {
+                  onPressed: onCreateCatalog ?? () {
                     Get.toNamed(PURoutes.REGISTER_WARDROBES);
                   },
                   load: false,
