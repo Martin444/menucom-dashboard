@@ -105,7 +105,7 @@ class _MobileContent extends StatelessWidget {
         Expanded(
           child: Center(
             // padding: const EdgeInsets.symmetric(16),
-            child: controller.everyListEmpty.value
+            child: !controller.everyListEmpty.value
                 ? _RoleBasedView(controller: controller, isMobile: true)
                 : StarterBanner(user: controller.dinningLogin),
           ),
@@ -222,7 +222,7 @@ class _DesktopContent extends StatelessWidget {
               horizontal: horizontalPadding,
               vertical: verticalPadding,
             ),
-            child: controller.everyListEmpty.value
+            child: !controller.everyListEmpty.value
                 ? _RoleBasedView(controller: controller, isMobile: false)
                 : StarterBanner(user: controller.dinningLogin),
           ),
@@ -258,6 +258,7 @@ class _RoleBasedView extends StatelessWidget {
       case RolesUsers.service:
         return ServiceHomeView(isMobile: isMobile);
       case RolesUsers.dinning:
+      case RolesUsers.food:
         return MenuHomeView(isMobile: isMobile);
       case RolesUsers.customer:
         return CustomerHomeView(isMobile: isMobile);

@@ -116,13 +116,14 @@ class DinningController extends GetxController with NavigationStateMixin {
 
       debugPrint('Final catalogsList length: ${catalogsList.length}');
       catalogSelected = catalogsList.isNotEmpty ? catalogsList.first : null;
+      everyListEmpty.value = catalogsList.isEmpty;
       debugPrint('Selected catalog: ${catalogSelected?.description}');
       update();
       _isLoadingWardrobes = false;
       return catalogsList;
     } on ApiException catch (e) {
       _isLoadingWardrobes = false;
-      everyListEmpty.value = false;
+      everyListEmpty.value = true;
       update();
       if (e.statusCode == 404) {
         return null;
