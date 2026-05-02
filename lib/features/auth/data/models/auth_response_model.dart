@@ -23,7 +23,7 @@ class AuthResponseModel {
   /// Crea el modelo desde un JSON de respuesta de la API
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
     return AuthResponseModel(
-      accessToken: json['access_token'] ?? '',
+      accessToken: json['access_token'] ?? json['accessToken'] ?? '',
       needToChangePassword: json['needToChangePassword'] ?? false,
       user: json['user'] != null ? UserDataModel.fromJson(json['user']) : null,
     );

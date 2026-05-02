@@ -166,7 +166,9 @@ class AuthController extends GetxController {
       final token = await _loadSavedToken();
 
       if (token == null || token.isEmpty) {
-        _setUnauthenticated();
+        // Solo limpiar el token de la API si no tenemos uno ya en memoria
+        // Esto evita borrar el token recién seteado durante un flujo de login que dispara una verificación
+        _setUnauthenticated(clearApiToken: API.loginAccessToken.isEmpty);
         return;
       }
 
@@ -733,12 +735,14 @@ class AuthController extends GetxController {
     _clearError();
   }
 
-  void _setUnauthenticated() {
+  void _setUnauthenticated({bool clearApiToken = true}) {
     _currentUser.value = null;
     _authState.value = AuthState.unauthenticated;
     
-    // Limpiar token global en la API
-    API.setAccessToken('');
+    // Limpiar token global en la API solo si se solicita
+    if (clearApiToken) {
+      API.setAccessToken('');
+    }
     
     _clearError();
   }

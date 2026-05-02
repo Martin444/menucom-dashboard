@@ -33,7 +33,8 @@ class _PlanFormDialogState extends State<PlanFormDialog> {
   late final TextEditingController _maxUsersController;
   late final TextEditingController _maxApiCallsController;
   late final TextEditingController _storageLimitController;
-  final RxList<TextEditingController> _featuresControllers = <TextEditingController>[].obs;
+  final _featuresControllers = RxList<TextEditingController>([]);
+  final _isDefault = false.obs;
 
   bool get _isEditing => widget.plan != null;
 
@@ -53,10 +54,13 @@ class _PlanFormDialogState extends State<PlanFormDialog> {
     _maxUsersController = TextEditingController(text: plan?.limits.maxUsers.toString() ?? '1');
     _maxApiCallsController = TextEditingController(text: plan?.limits.maxApiCalls.toString() ?? '100');
     _storageLimitController = TextEditingController(text: plan?.limits.storageLimit.toString() ?? '100');
+    _isDefault.value = plan?.isDefault ?? false;
 
-    _featuresControllers.value = (plan?.features ?? [])
-        .map((f) => TextEditingController(text: f))
-        .toList();
+    _featuresControllers.assignAll(
+      (plan?.features ?? [])
+          .map((f) => TextEditingController(text: f))
+          .toList(),
+    );
 
     if (_featuresControllers.isEmpty) {
       _featuresControllers.add(TextEditingController());
@@ -328,6 +332,7 @@ class _PlanFormDialogState extends State<PlanFormDialog> {
       features: features,
       limits: limits,
       isActive: widget.plan?.isActive ?? true,
+      isDefault: _isDefault.value,
     );
 
     widget.onSave(newPlan);

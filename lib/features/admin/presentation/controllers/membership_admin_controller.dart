@@ -8,6 +8,7 @@ import 'package:menu_dart_api/by_feature/membership/data/usecase/create_admin_pl
 import 'package:menu_dart_api/by_feature/membership/data/usecase/update_admin_plan_usecase.dart';
 import 'package:menu_dart_api/by_feature/membership/data/usecase/archive_admin_plan_usecase.dart';
 import 'package:menu_dart_api/by_feature/membership/data/usecase/get_admin_plan_stats_usecase.dart';
+import 'package:menu_dart_api/by_feature/membership/data/usecase/set_default_plan_usecase.dart';
 import 'package:menu_dart_api/by_feature/membership/models/membership_plan_model.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:pickmeup_dashboard/features/admin/presentation/widgets/plan_form_dialog.dart';
@@ -19,6 +20,7 @@ class MembershipAdminController extends GetxController {
   late final UpdateAdminPlanUseCase updatePlanUseCase;
   late final ArchiveAdminPlanUseCase archivePlanUseCase;
   late final GetAdminPlanStatsUseCase getStatsUseCase;
+  late final SetDefaultPlanUseCase setDefaultPlanUseCase;
 
 
   final plans = <MembershipPlanModel>[].obs;
@@ -34,6 +36,7 @@ class MembershipAdminController extends GetxController {
     updatePlanUseCase = UpdateAdminPlanUseCase(repository: repo);
     archivePlanUseCase = ArchiveAdminPlanUseCase(repository: repo);
     getStatsUseCase = GetAdminPlanStatsUseCase(repository: repo);
+    setDefaultPlanUseCase = SetDefaultPlanUseCase(repository: repo);
   }
 
   @override
@@ -179,6 +182,23 @@ class MembershipAdminController extends GetxController {
         onConfirm: () => archivePlan(plan.id!),
       ),
     );
+  }
+
+  Future<void> setDefaultPlan(MembershipPlanModel plan) async {
+    if (plan.id == null) return;
+    isLoading.value = true;
+    try {
+      await setDefaultPlanUseCase.call(plan.id!);
+      GlobalDialogsHandles.snackbarSuccess(
+        title: '¡Éxito!',
+        message: '${plan.displayName ?? plan.name} es ahora el plan predeterminado.',
+      );
+      loadPlans();
+    } catch (e) {
+      _showError('Error al establecer plan predeterminado', e);
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
 

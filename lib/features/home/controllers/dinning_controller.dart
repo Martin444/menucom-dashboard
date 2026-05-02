@@ -42,6 +42,17 @@ class DinningController extends GetxController {
   void getMyDinningInfo() async {
     try {
       isLoadingDataUser.value = true;
+      
+      // Asegurar que el token esté configurado si por alguna razón se perdió
+      if (API.loginAccessToken.isEmpty) {
+        final storage = const FlutterSecureStorage();
+        final savedToken = await storage.read(key: 'access_token');
+        if (savedToken != null && savedToken.isNotEmpty) {
+          API.setAccessToken(savedToken);
+          debugPrint('DinningController: Token recuperado desde storage');
+        }
+      }
+      
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
 

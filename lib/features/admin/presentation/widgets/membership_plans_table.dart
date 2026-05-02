@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pickmeup_dashboard/features/admin/presentation/controllers/membership_admin_controller.dart';
+import 'package:menu_dart_api/by_feature/membership/models/membership_plan_model.dart';
 
 /// Tabla de planes de membresía con encabezado y acciones.
 /// Extraído de MembershipAdminDesktopView._buildPlansTable para cumplir Atomic Design.
@@ -28,7 +28,7 @@ class MembershipPlansTable extends StatelessWidget {
               ),
               ElevatedButton.icon(
                 onPressed: controller.showCreatePlanDialog,
-                icon: const Icon(FluentIcons.add_24_regular),
+                icon: const Icon(Icons.add),
                 label: const Text('Crear Plan'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: PUColors.primaryColor,
@@ -56,6 +56,7 @@ class MembershipPlansTable extends StatelessWidget {
                 'Precio',
                 'Límites',
                 'Estado',
+                'Predeterminado',
                 'Acciones'
               ],
               rows: controller.plans.map((plan) {
@@ -68,13 +69,20 @@ class MembershipPlansTable extends StatelessWidget {
                     plan.isActive ? 'Activo' : 'Archivado',
                     plan.isActive ? Colors.green : Colors.grey,
                   ),
+                  plan.isDefault
+                      ? BadgeTableCell('Sí', Colors.blue)
+                      : WidgetTableCell(
+                          TextButton(
+                            onPressed: () => controller.setDefaultPlan(plan),
+                            child: const Text('Establecer'),
+                          ),
+                        ),
                   WidgetTableCell(
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: const Icon(FluentIcons.edit_24_regular,
-                              size: 20),
+                          icon: const Icon(Icons.edit, size: 20),
                           onPressed: () =>
                               controller.showEditPlanDialog(plan),
                           padding: EdgeInsets.zero,
@@ -82,7 +90,7 @@ class MembershipPlansTable extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          icon: const Icon(FluentIcons.delete_24_regular,
+                          icon: const Icon(Icons.delete,
                               size: 20, color: Colors.red),
                           onPressed: () =>
                               controller.confirmArchivePlan(plan),
