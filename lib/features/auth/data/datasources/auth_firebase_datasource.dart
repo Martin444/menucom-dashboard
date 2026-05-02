@@ -65,41 +65,55 @@ class AuthFirebaseDataSourceImpl implements AuthFirebaseDataSource {
       debugPrint('GoogleSignIn clientId: ${_googleSignIn.clientId}');
       debugPrint('kIsWeb: $kIsWeb');
 
-      // Verificar si Google Sign-In está disponible
-      if (!await _googleSignIn.isSignedIn()) {
-        debugPrint('Usuario no está autenticado con Google, iniciando flujo...');
+      UserCredential userCredential;
+
+      if (kIsWeb) {
+        debugPrint('Web detected: Using Firebase signInWithPopup for Google...');
+        final googleProvider = GoogleAuthProvider();
+        googleProvider.addScope('email');
+        googleProvider.addScope('profile');
+        
+        // Autenticar directamente con Firebase Popup para evitar problemas de idToken en Web
+        userCredential = await _firebaseAuth.signInWithPopup(googleProvider);
+      } else {
+        // Flujo para plataformas nativas (Android/iOS)
+        
+        // Verificar si Google Sign-In está disponible
+        if (!await _googleSignIn.isSignedIn()) {
+          debugPrint('Usuario no está autenticado con Google, iniciando flujo...');
+        }
+
+        // Iniciar el flujo de autenticación con Google
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+        if (googleUser == null) {
+          // El usuario canceló el proceso
+          throw const AuthException('El usuario canceló la autenticación', code: 'sign_in_canceled');
+        }
+
+        debugPrint('Usuario de Google obtenido: ${googleUser.email}');
+
+        // Obtener los detalles de autenticación de la solicitud
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+        if (googleAuth.accessToken == null || googleAuth.idToken == null) {
+          throw const AuthException('No se pudieron obtener las credenciales de Google');
+        }
+
+        debugPrint(
+            'Tokens obtenidos - AccessToken: ${googleAuth.accessToken != null}, IdToken: ${googleAuth.idToken != null}');
+
+        // Crear credenciales de Firebase
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        debugPrint('Credenciales de Firebase creadas, intentando autenticación...');
+
+        // Autenticar con Firebase usando las credenciales de Google
+        userCredential = await _firebaseAuth.signInWithCredential(credential);
       }
-
-      // Iniciar el flujo de autenticación con Google
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-      if (googleUser == null) {
-        // El usuario canceló el proceso
-        throw const AuthException('El usuario canceló la autenticación', code: 'sign_in_canceled');
-      }
-
-      debugPrint('Usuario de Google obtenido: ${googleUser.email}');
-
-      // Obtener los detalles de autenticación de la solicitud
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
-        throw const AuthException('No se pudieron obtener las credenciales de Google');
-      }
-
-      debugPrint(
-          'Tokens obtenidos - AccessToken: ${googleAuth.accessToken != null}, IdToken: ${googleAuth.idToken != null}');
-
-      // Crear credenciales de Firebase
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      debugPrint('Credenciales de Firebase creadas, intentando autenticación...');
-
-      // Autenticar con Firebase usando las credenciales de Google
-      final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
 
       if (userCredential.user == null) {
         throw const AuthException('No se pudo autenticar con Firebase');

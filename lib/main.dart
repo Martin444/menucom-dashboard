@@ -6,7 +6,7 @@ import 'package:pickmeup_dashboard/core/config.dart';
 import 'package:pickmeup_dashboard/core/fcm_util.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // Firebase imports
 import 'package:firebase_core/firebase_core.dart';
 // Auth system imports
@@ -24,7 +24,7 @@ void main() async {
 
   // Inicializar servicios existentes
   await getToken();
-  inicialiceServiceMenucomAPi();
+  initializeServiceMenucomAPI();
 
   // Inicializar sistema de autenticación
   AuthInitializer.initialize();
@@ -64,7 +64,7 @@ Future<void> initializeFirebase() async {
 /// Configura Firebase Cloud Messaging
 // Future<void> setupFCM() async {
 //   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
+//
 //   // 1. Solicitar permisos de notificación
 //   NotificationSettings settings = await _firebaseMessaging.requestPermission(
 //     alert: true,
@@ -75,13 +75,13 @@ Future<void> initializeFirebase() async {
 //     provisional: false,
 //     sound: true,
 //   );
-
+//
 //   debugPrint('User granted permission: ${settings.authorizationStatus}');
-
+//
 //   // 2. Obtener el token de FCM
 //   String? fcmToken = await _firebaseMessaging.getToken();
 //   debugPrint('FCM Token: $fcmToken');
-
+//
 //   // 3. Enviar el token al backend
 //   if (fcmToken != null) {
 //     try {
@@ -93,23 +93,23 @@ Future<void> initializeFirebase() async {
 //       debugPrint('Error al enviar el FCM Token al backend: $e');
 //     }
 //   }
-
+//
 //   // 4. Manejar mensajes en primer plano
 //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
 //     debugPrint('Got a message whilst in the foreground!');
 //     debugPrint('Message data: ${message.data}');
-
+//
 //     if (message.notification != null) {
 //       debugPrint(
 //           'Message also contained a notification: ${message.notification!.title} - ${message.notification!.body}');
 //       // Aquí puedes mostrar una notificación local si lo deseas
 //     }
 //   });
-
+//
 //   // 5. Manejar mensajes en segundo plano/terminados
 //   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 // }
-
+//
 // @pragma('vm:entry-point')
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //   await Firebase.initializeApp(); // Asegúrate de inicializar Firebase en el handler de segundo plano
@@ -117,7 +117,7 @@ Future<void> initializeFirebase() async {
 //   // Aquí puedes procesar la notificación en segundo plano
 // }
 
-void inicialiceServiceMenucomAPi() {
+void initializeServiceMenucomAPI() {
   try {
     API.getInstance(URL_PICKME_API);
   } catch (e) {
@@ -125,15 +125,12 @@ void inicialiceServiceMenucomAPi() {
   }
 }
 
-final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
 Future<String?> getToken() async {
-  var prefs = await _prefs;
-  var token = prefs.getString('access_token') ?? prefs.getString('acccesstoken');
-  if (token != null) {
-    ACCESS_TOKEN = token;
-    API.setAccessToken(ACCESS_TOKEN);
-    debugPrint('Access token cargado desde SharedPreferences: $ACCESS_TOKEN');
+  final storage = const FlutterSecureStorage();
+  final token = await storage.read(key: 'access_token');
+  if (token != null && token.isNotEmpty) {
+    API.setAccessToken(token);
+    debugPrint('Access token cargado desde secure storage');
     setupFCM();
   }
   return token;

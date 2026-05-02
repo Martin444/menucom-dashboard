@@ -1,26 +1,33 @@
-import '../../../helpers/token_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../helpers/token_helper.dart';
 
 import '../../../core/navigation/menu_navigation_controller.dart';
 import '../../../core/config.dart';
 import '../../../core/mixins/navigation_state_mixin.dart';
 
-class DinningController extends GetxController with NavigationStateMixin {
+class DinningController extends GetxController {
   /// Hashea el accessToken actual de la sesión
-  String getHashedAccessToken() {
-    debugPrint("Access Token: $ACCESS_TOKEN");
-    var hashed = hashAccessToken(ACCESS_TOKEN);
+  Future<String> getHashedAccessToken() async {
+    final storage = const FlutterSecureStorage();
+    final token = await storage.read(key: 'access_token');
+    if (token == null || token.isEmpty) {
+      debugPrint("Access Token: null");
+      return '';
+    }
+    debugPrint("Access Token: $token");
+    var hashed = hashAccessToken(token);
     debugPrint("Hashed Access Token: $hashed");
     return hashed;
   }
 
   DinningModel dinningLogin = DinningModel();
 
-  RxBool isLoadingDataUser = false.obs;
+  RxBool isLoadingDataUser = true.obs;
   RxBool everyListEmpty = true.obs;
 
   @override
@@ -258,13 +265,22 @@ class DinningController extends GetxController with NavigationStateMixin {
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
+  void clearData() {
+    dinningLogin = DinningModel();
+    catalogsList.clear();
+    catalogSelected = null;
+    usersByRolesList.clear();
+    everyListEmpty.value = true;
+    update();
+  }
+
   void closeSesion() async {
-    var sesion = await _prefs;
-    await sesion.clear();
-    ACCESS_TOKEN = '';
+    clearData();
+    final storage = const FlutterSecureStorage();
+    await storage.delete(key: 'access_token');
+    await storage.delete(key: 'authenticated_user');
     API.setAccessToken('');
     Get.offAllNamed(PURoutes.LOGIN);
-    update();
   }
 
   @override

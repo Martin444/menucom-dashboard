@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/core/api.dart';
-import 'package:pickmeup_dashboard/core/config.dart';
+import 'package:pickmeup_dashboard/routes/routes.dart';
 import '../controllers/auth_controller.dart';
 
-/// Middleware para proteger rutas que requiere autenticación.
+/// Middleware para proteger rutas que requieren autenticación.
 ///
 /// Este middleware verifica si el usuario está autenticado antes
 /// de permitir el acceso a rutas protegidas.
@@ -14,41 +14,30 @@ class AuthMiddleware extends GetMiddleware {
 
   @override
   RouteSettings? redirect(String? route) {
-    // Verificar primero el token directamente (ya cargado en main.dart)
-    // Esto evita problemas de timing con AuthController
-    final hasDirectToken = ACCESS_TOKEN.isNotEmpty;
-    
-    if (!hasDirectToken) {
-      // Verificar también en API por si acaso
-      final apiToken = API.loginAccessToken;
-      if (apiToken.isEmpty) {
-        debugPrint('AuthMiddleware: Sin token - redirigiendo a login desde: $route');
-        return const RouteSettings(name: '/login');
-      }
-    }
-
     // Verificar si el AuthController está disponible
-    if (Get.isRegistered<AuthController>()) {
-      final authController = Get.find<AuthController>();
-      
-      // Verificar el estado del controller (si ya verificó, usarlo)
-      if (authController.authState == AuthState.authenticated) {
-        debugPrint('AuthMiddleware: Usuario autenticado - permitiendo acceso a: $route');
-        return null;
-      }
-      
-      // Si está verificando, esperar un momento y reintentar
-      // Pero permitir acceso si hay token directo
-      if (authController.authState == AuthState.loading || 
-          authController.authState == AuthState.initial) {
-        debugPrint('AuthMiddleware: Verificando auth - permitiendo acceso con token directo');
-        return null;
-      }
+    if (!Get.isRegistered<AuthController>()) {
+      debugPrint('AuthMiddleware: AuthController no registrado - permitiendo acceso temporal a: $route');
+      return null;
     }
 
-    // Si hay token, permitir acceso (el controller se sincronizará después)
-    debugPrint('AuthMiddleware: Token disponible - permitiendo acceso a: $route');
-    return null;
+    final authController = Get.find<AuthController>();
+
+    // Si está autenticado, permitir acceso
+    if (authController.isAuthenticated) {
+      debugPrint('AuthMiddleware: Usuario autenticado - permitiendo acceso a: $route');
+      return null;
+    }
+
+    // Si está verificando, permitir acceso temporal
+    if (authController.authState == AuthState.loading ||
+        authController.authState == AuthState.initial) {
+      debugPrint('AuthMiddleware: Verificando auth - permitiendo acceso temporal a: $route');
+      return null;
+    }
+
+    // Si no está autenticado, redirigir a login
+    debugPrint('AuthMiddleware: No autenticado - redirigiendo a login desde: $route');
+    return RouteSettings(name: PURoutes.LOGIN);
   }
 }
 
@@ -62,15 +51,8 @@ class GuestMiddleware extends GetMiddleware {
 
   @override
   RouteSettings? redirect(String? route) {
-    // Verificar primero si hay token directamente (más confiable)
-    if (ACCESS_TOKEN.isNotEmpty || API.loginAccessToken.isNotEmpty) {
-      debugPrint('GuestMiddleware: Hay token - redirigiendo a dashboard desde: $route');
-      return const RouteSettings(name: '/dashboard');
-    }
-
     // Verificar si el AuthController está disponible
     if (!Get.isRegistered<AuthController>()) {
-      // Si no está registrado, permitir acceso (probablemente es la primera vez)
       return null;
     }
 
@@ -79,7 +61,7 @@ class GuestMiddleware extends GetMiddleware {
     // Si el usuario ya está autenticado, redirigir al dashboard
     if (authController.isAuthenticated) {
       debugPrint('Usuario ya autenticado - redirigiendo a dashboard desde: $route');
-      return const RouteSettings(name: '/dashboard');
+      return RouteSettings(name: PURoutes.HOME);
     }
 
     // Si no está autenticado, permitir acceso a la página de invitados
@@ -102,16 +84,12 @@ class RoleMiddleware extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
     if (!Get.isRegistered<AuthController>()) {
-      // Si no hay controlador pero hay token, permitir (el controlador se registrará pronto)
-      if (ACCESS_TOKEN.isNotEmpty || API.loginAccessToken.isNotEmpty) {
-        return null;
-      }
-      return const RouteSettings(name: '/login');
+      return RouteSettings(name: PURoutes.LOGIN);
     }
 
     final authController = Get.find<AuthController>();
 
-    // 1. Si ya está autenticado, verificar roles directamente
+    // Si ya está autenticado, verificar roles directamente
     if (authController.isAuthenticated) {
       if (!authController.hasAnyRole(requiredRoles)) {
         debugPrint('RoleMiddleware: Usuario sin permisos para: $route');
@@ -120,20 +98,17 @@ class RoleMiddleware extends GetMiddleware {
       return null;
     }
 
-    // 2. Si está verificando (loading/initial) y hay token, permitir acceso temporal
-    // Esto evita que la recarga de página mande al login antes de que AuthController termine
+    // Si está verificando, permitir acceso temporal
     if (authController.authState == AuthState.loading ||
         authController.authState == AuthState.initial) {
-      if (ACCESS_TOKEN.isNotEmpty || API.loginAccessToken.isNotEmpty) {
-        debugPrint(
-            'RoleMiddleware: Verificando auth/roles - permitiendo acceso temporal con token para: $route');
-        return null;
-      }
+      debugPrint(
+          'RoleMiddleware: Verificando auth/roles - permitiendo acceso temporal para: $route');
+      return null;
     }
 
-    // 3. Si definitivamente no está autenticado, al login
+    // Si definitivamente no está autenticado, al login
     debugPrint('RoleMiddleware: No autenticado - redirigiendo a login');
-    return const RouteSettings(name: '/login');
+    return RouteSettings(name: PURoutes.LOGIN);
   }
 }
 
@@ -160,28 +135,25 @@ class MembershipMiddleware extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
     if (!Get.isRegistered<AuthController>()) {
-      if (ACCESS_TOKEN.isNotEmpty || API.loginAccessToken.isNotEmpty) {
-        return null;
-      }
-      return const RouteSettings(name: '/login');
+      return RouteSettings(name: PURoutes.LOGIN);
     }
 
     final authController = Get.find<AuthController>();
 
-    // 1. Si ya está autenticado, permitir acceso (la lógica de membresía se puede agregar aquí luego)
+    // Si ya está autenticado, permitir acceso
     if (authController.isAuthenticated) {
       return null;
     }
 
-    // 2. Si está cargando y hay token, permitir acceso temporal
+    // Si está cargando, permitir acceso temporal
     if (authController.authState == AuthState.loading ||
         authController.authState == AuthState.initial) {
-      if (ACCESS_TOKEN.isNotEmpty || API.loginAccessToken.isNotEmpty) {
-        return null;
-      }
+      debugPrint(
+          'MembershipMiddleware: Verificando auth - permitiendo acceso temporal a: $route');
+      return null;
     }
 
-    return const RouteSettings(name: '/login');
+    return RouteSettings(name: PURoutes.LOGIN);
   }
 }
 

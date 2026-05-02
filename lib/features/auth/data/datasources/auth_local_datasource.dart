@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../domain/entities/authenticated_user.dart';
 import '../../domain/usecases/login_with_credentials_usecase.dart';
 
@@ -31,31 +31,31 @@ abstract class AuthLocalDataSource {
   Future<bool> isTokenExpired();
 }
 
-/// Implementación del datasource local usando SharedPreferences
+/// Implementación del datasource local usando FlutterSecureStorage
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   static const String _userKey = 'authenticated_user';
   static const String _tokenKey = 'access_token';
   static const String _tokenExpiryKey = 'token_expiry';
 
-  final SharedPreferences sharedPreferences;
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
-  const AuthLocalDataSourceImpl({
-    required this.sharedPreferences,
-  });
+  const AuthLocalDataSourceImpl();
 
   @override
   Future<void> saveAuthenticatedUser(AuthenticatedUser user) async {
     try {
       // Guardar datos completos del usuario
       final userJson = json.encode(user.toMap());
-      await sharedPreferences.setString(_userKey, userJson);
+      await _secureStorage.write(key: _userKey, value: userJson);
 
       // Guardar token por separado para acceso rápido
-      await sharedPreferences.setString(_tokenKey, user.accessToken);
+      await _secureStorage.write(key: _tokenKey, value: user.accessToken);
 
       // Guardar tiempo de expiración estimado (24 horas por defecto)
       final expiryTime = DateTime.now().add(const Duration(hours: 24));
-      await sharedPreferences.setInt(_tokenExpiryKey, expiryTime.millisecondsSinceEpoch);
+      await _secureStorage.write(
+          key: _tokenExpiryKey,
+          value: expiryTime.millisecondsSinceEpoch.toString());
 
       debugPrint('Usuario guardado localmente: ${user.email}');
     } catch (e) {
@@ -66,7 +66,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<AuthenticatedUser?> getAuthenticatedUser() async {
     try {
-      final userJsonString = sharedPreferences.getString(_userKey);
+      final userJsonString = await _secureStorage.read(key: _userKey);
 
       if (userJsonString == null) {
         return null;
@@ -86,7 +86,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<bool> isUserAuthenticated() async {
     try {
       // Verificar si existe el token
-      final token = sharedPreferences.getString(_tokenKey);
+      final token = await _secureStorage.read(key: _tokenKey);
       if (token == null || token.isEmpty) {
         return false;
       }
@@ -97,7 +97,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       }
 
       // Verificar si existen datos del usuario
-      final userJsonString = sharedPreferences.getString(_userKey);
+      final userJsonString = await _secureStorage.read(key: _userKey);
       if (userJsonString == null) {
         return false;
       }
@@ -112,7 +112,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<String?> getAccessToken() async {
     try {
-      return sharedPreferences.getString(_tokenKey);
+      return await _secureStorage.read(key: _tokenKey);
     } catch (e) {
       debugPrint('Error al obtener token de acceso: $e');
       return null;
@@ -122,11 +122,13 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<void> saveAccessToken(String token) async {
     try {
-      await sharedPreferences.setString(_tokenKey, token);
+      await _secureStorage.write(key: _tokenKey, value: token);
 
       // Actualizar tiempo de expiración
       final expiryTime = DateTime.now().add(const Duration(hours: 24));
-      await sharedPreferences.setInt(_tokenExpiryKey, expiryTime.millisecondsSinceEpoch);
+      await _secureStorage.write(
+          key: _tokenExpiryKey,
+          value: expiryTime.millisecondsSinceEpoch.toString());
 
       debugPrint('Token de acceso guardado localmente');
     } catch (e) {
@@ -138,9 +140,9 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<void> clearAuthData() async {
     try {
       await Future.wait([
-        sharedPreferences.remove(_userKey),
-        sharedPreferences.remove(_tokenKey),
-        sharedPreferences.remove(_tokenExpiryKey),
+        _secureStorage.delete(key: _userKey),
+        _secureStorage.delete(key: _tokenKey),
+        _secureStorage.delete(key: _tokenExpiryKey),
       ]);
 
       debugPrint('Datos de autenticación limpiados localmente');
@@ -174,10 +176,15 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<bool> isTokenExpired() async {
     try {
-      final expiryTimestamp = sharedPreferences.getInt(_tokenExpiryKey);
+      final expiryTimestampString = await _secureStorage.read(key: _tokenExpiryKey);
 
-      if (expiryTimestamp == null) {
+      if (expiryTimestampString == null) {
         // Si no hay tiempo de expiración guardado, asumir que no ha expirado
+        return false;
+      }
+
+      final expiryTimestamp = int.tryParse(expiryTimestampString);
+      if (expiryTimestamp == null) {
         return false;
       }
 
@@ -196,11 +203,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 /// Factory para crear instancias del datasource local
 class AuthLocalDataSourceFactory {
   static Future<AuthLocalDataSource> create() async {
-    final sharedPreferences = await SharedPreferences.getInstance();
-    return AuthLocalDataSourceImpl(sharedPreferences: sharedPreferences);
+    return const AuthLocalDataSourceImpl();
   }
 
-  static AuthLocalDataSource createWithPreferences(SharedPreferences prefs) {
-    return AuthLocalDataSourceImpl(sharedPreferences: prefs);
+  static AuthLocalDataSource createWithPreferences() {
+    return const AuthLocalDataSourceImpl();
   }
 }

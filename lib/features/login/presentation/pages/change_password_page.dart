@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
 
-import '../../controllers/login_controller.dart';
+import 'package:pickmeup_dashboard/features/auth/presentation/controllers/auth_controller.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -18,8 +18,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PUColors.primaryBackground,
-      body: GetBuilder<LoginController>(
-        builder: (_) {
+      body: GetBuilder<AuthController>(
+        init: Get.find<AuthController>(),
+        builder: (AuthController _) {
           return Center(
             child: Container(
               alignment: Alignment.center,
@@ -75,7 +76,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                 hintText: 'Email',
                                 textInputAction: TextInputAction.next,
                                 textInputType: TextInputType.visiblePassword,
-                                errorText: _.errorEmailRecovery.isEmpty ? null : _.errorEmailRecovery,
+                                errorText: _.errorEmailRecovery.value.isEmpty
+                                    ? null
+                                    : _.errorEmailRecovery.value,
                                 controller: _.emailRecoveryController,
                                 onSubmited: (p0) {
                                   _.verifyEmailUser();
@@ -121,7 +124,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                     hintText: 'Ej: 5555',
                                     textInputAction: TextInputAction.done,
                                     textInputType: TextInputType.visiblePassword,
-                                    errorText: _.errorCodeRecovery.isEmpty ? null : _.errorCodeRecovery,
+                                    errorText: _.errorCodeRecovery.value.isEmpty
+                                        ? null
+                                        : _.errorCodeRecovery.value,
                                     controller: _.codeRecoveryController,
                                     onSubmited: (p0) {
                                       _.validateCodeOtp();
@@ -167,7 +172,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                         hintText: 'Nueva contraseña',
                                         isPassword: true,
                                         textInputAction: TextInputAction.done,
-                                        errorText: _.errorTextPassword.value.isEmpty ? null : _.errorTextPassword.value,
+                                        errorText: _.errorPasswordRecovery.value.isEmpty
+                                            ? null
+                                            : _.errorPasswordRecovery.value,
                                         controller: _.newPassRecoveryController,
                                         onSubmited: (p0) {
                                           _.changePassword();
@@ -239,7 +246,7 @@ class RecoveryPassSeccion extends StatelessWidget {
             errorText: null,
             controller: TextEditingController(),
             onChanged: (p0) {
-              // _.validateRepitePass();
+              // _.validateRepeatPass();
             },
           ),
         ],

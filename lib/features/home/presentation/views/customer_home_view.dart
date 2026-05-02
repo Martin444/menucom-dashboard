@@ -22,12 +22,15 @@ class CustomerHomeView extends StatefulWidget {
 }
 
 class _CustomerHomeViewState extends State<CustomerHomeView> {
+  String _hashedToken = '';
+
   @override
   void initState() {
     super.initState();
     // Cargar comercios al inicializar la vista
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadCommerces();
+      _loadHashedToken();
     });
   }
 
@@ -38,6 +41,16 @@ class _CustomerHomeViewState extends State<CustomerHomeView> {
       roles: [RolesUsers.dinning, RolesUsers.clothes],
       withVinculedAccount: false,
     );
+  }
+
+  void _loadHashedToken() async {
+    final controller = Get.find<DinningController>();
+    final token = await controller.getHashedAccessToken();
+    if (mounted) {
+      setState(() {
+        _hashedToken = token;
+      });
+    }
   }
 
   void _onCommerceSelected(UserByRoleModel commerce) {
@@ -65,14 +78,14 @@ class _CustomerHomeViewState extends State<CustomerHomeView> {
                         commercesList: controller.usersByRolesList,
                         isLoadingCommerces: controller.isLoadingUsersByRoles,
                         onCommerceSelected: _onCommerceSelected,
-                        accessTokenHashed: controller.getHashedAccessToken(),
+                        accessTokenHashed: _hashedToken,
                       )
                     : CustomerDesktopTemplate(
                         userName: userName,
                         commercesList: controller.usersByRolesList,
                         isLoadingCommerces: controller.isLoadingUsersByRoles,
                         onCommerceSelected: _onCommerceSelected,
-                        accessTokenHashed: controller.getHashedAccessToken(),
+                        accessTokenHashed: _hashedToken,
                       ),
               ),
             );

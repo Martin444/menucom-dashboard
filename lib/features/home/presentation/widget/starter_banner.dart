@@ -22,7 +22,7 @@ class StarterBanner extends StatefulWidget {
 
 class _StarterBannerState extends State<StarterBanner> {
   String getTitleByRole() {
-    final role = RolesFuncionts.getTypeRoleByRoleString(widget.user.role!);
+    final role = RolesFuncionts.getTypeRoleByRoleString(widget.user.role ?? '');
 
     switch (role) {
       case RolesUsers.dinning:
@@ -50,7 +50,7 @@ class _StarterBannerState extends State<StarterBanner> {
   }
 
   String getRouteByRole() {
-    final role = RolesFuncionts.getTypeRoleByRoleString(widget.user.role!);
+    final role = RolesFuncionts.getTypeRoleByRoleString(widget.user.role ?? '');
     switch (role) {
       case RolesUsers.dinning:
       case RolesUsers.food:

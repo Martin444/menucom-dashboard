@@ -25,6 +25,7 @@ dependencies:
   qr_flutter: ^4.1.0
   screenshot: ^3.0.0
   shared_preferences: ^2.2.3
+  flutter_secure_storage: ^9.0.0
   flutter_keyboard_visibility: ^6.0.0
   fluentui_system_icons: ^1.1.273
   svg_flutter: ^0.0.1

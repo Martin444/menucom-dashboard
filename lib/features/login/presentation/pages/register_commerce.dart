@@ -7,7 +7,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/config.dart';
 import 'package:menu_dart_api/core/type_comerce_model.dart';
-import 'package:pickmeup_dashboard/features/login/controllers/login_controller.dart';
+import 'package:pickmeup_dashboard/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/widgets/card_take_photo.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
@@ -29,8 +29,8 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PUColors.primaryBackground,
-      body: GetBuilder<LoginController>(
-        init: Get.find<LoginController>(),
+      body: GetBuilder<AuthController>(
+        init: Get.find<AuthController>(),
         builder: (_) {
           return Obx(() => Stack(
                 alignment: Alignment.bottomCenter,
@@ -53,10 +53,8 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                 children: [
                                   SizedBox(
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
                                         const SizedBox(
                                           height: 35,
@@ -65,8 +63,7 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                           children: [
                                             Flexible(
                                               child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Hero(
                                                     tag: 'dashLogo',
@@ -84,8 +81,7 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                           child: Form(
                                             key: _formRegisterKey,
                                             child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                   'Creá tu cuenta',
@@ -106,8 +102,7 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                     _.pickImageDirectory();
                                                   },
                                                   isTaked: _.fileTaked != null,
-                                                  photoInBytes:
-                                                      _.fileTaked ?? Uint8List(2),
+                                                  photoInBytes: _.fileTaked ?? Uint8List(2),
                                                   isLogo: true,
                                                 ),
                                                 const SizedBox(
@@ -116,26 +111,19 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                 PUInput(
                                                   labelText: 'Email',
                                                   hintText: 'Email',
-                                                  textInputAction:
-                                                      TextInputAction.next,
-                                                  textInputType:
-                                                      TextInputType.emailAddress,
-                                                  controller:
-                                                      _.newemailController,
+                                                  textInputAction: TextInputAction.next,
+                                                  textInputType: TextInputType.emailAddress,
+                                                  controller: _.newEmailController,
                                                   validator: (value) {
                                                     if (value!.isEmpty) {
-                                                      return PUValidators
-                                                          .validatoObligatory(
-                                                              value);
+                                                      return PUValidators.validatoObligatory(value);
                                                     }
-                                                    if (!PUValidators
-                                                        .validateEmail(value)) {
+                                                    if (!PUValidators.validateEmail(value)) {
                                                       return 'Escribe un email valido';
                                                     }
                                                     return null;
                                                   },
-                                                  errorText: _.errorTextEmail
-                                                          .value.isEmpty
+                                                  errorText: _.errorTextEmail.value.isEmpty
                                                       ? null
                                                       : _.errorTextEmail.value,
                                                 ),
@@ -146,15 +134,12 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                   labelText: 'Nombre',
                                                   hintText: 'Nombre',
                                                   isPassword: false,
-                                                  textInputAction:
-                                                      TextInputAction.next,
-                                                  textInputType:
-                                                      TextInputType.name,
-                                                  errorText: _.errorTextName.value
-                                                          .isEmpty
+                                                  textInputAction: TextInputAction.next,
+                                                  textInputType: TextInputType.name,
+                                                  errorText: _.errorTextName.value.isEmpty
                                                       ? null
                                                       : _.errorTextName.value,
-                                                  controller: _.newnameController,
+                                                  controller: _.newNameController,
                                                 ),
                                                 const SizedBox(
                                                   height: 15,
@@ -162,25 +147,19 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                 PUInput(
                                                   hintText: 'Número de teléfono',
                                                   isPassword: false,
-                                                  textInputAction:
-                                                      TextInputAction.next,
-                                                  textInputType:
-                                                      TextInputType.phone,
-                                                  errorText: _.errorTextPhone
-                                                          .value.isEmpty
+                                                  textInputAction: TextInputAction.next,
+                                                  textInputType: TextInputType.phone,
+                                                  errorText: _.errorTextPhone.value.isEmpty
                                                       ? null
                                                       : _.errorTextPhone.value,
-                                                  controller:
-                                                      _.newphoneController,
+                                                  controller: _.newPhoneController,
                                                 ),
                                                 const SizedBox(
                                                   height: 15,
                                                 ),
                                                 PUInputDropDown<TypeComerceModel>(
-                                                  items: _.listCommerceAvilable
-                                                      .map((e) {
-                                                    return DropdownMenuItem<
-                                                        TypeComerceModel>(
+                                                  items: _.listCommerceAvilable.map((e) {
+                                                    return DropdownMenuItem<TypeComerceModel>(
                                                       key: Key(e.id),
                                                       value: e,
                                                       child: Text(
@@ -208,21 +187,14 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                   labelText: 'Contraseña',
                                                   hintText: 'Contraseña',
                                                   isPassword: true,
-                                                  textInputAction:
-                                                      TextInputAction.done,
-                                                  textInputType: TextInputType
-                                                      .visiblePassword,
-                                                  errorText: _.errorTextPassword
-                                                          .value.isEmpty
+                                                  textInputAction: TextInputAction.done,
+                                                  textInputType: TextInputType.visiblePassword,
+                                                  errorText: _.errorTextPassword.value.isEmpty
                                                       ? null
                                                       : _.errorTextPassword.value,
-                                                  controller:
-                                                      _.newpasswordController,
+                                                  controller: _.newPasswordController,
                                                   onSubmited: (p0) {
-                                                    var validRegister =
-                                                        _formRegisterKey
-                                                            .currentState
-                                                            ?.validate();
+                                                    var validRegister = _formRegisterKey.currentState?.validate();
                                                     if (validRegister ?? false) {
                                                       _.registerCommerce();
                                                     }
@@ -234,10 +206,7 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                 ButtonPrimary(
                                                   title: 'Registrate',
                                                   onPressed: () {
-                                                    var validRegister =
-                                                        _formRegisterKey
-                                                            .currentState
-                                                            ?.validate();
+                                                    var validRegister = _formRegisterKey.currentState?.validate();
                                                     if (validRegister ?? false) {
                                                       _.registerCommerce();
                                                     }
@@ -245,36 +214,29 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                   load: _.isRegistering.value,
                                                 ),
                                                 Container(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets.symmetric(
                                                     vertical: 10,
                                                   ),
                                                   child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
+                                                    mainAxisAlignment: MainAxisAlignment.end,
                                                     children: [
                                                       RichText(
                                                         text: TextSpan(
                                                           children: [
                                                             TextSpan(
-                                                              text:
-                                                                  '¿Ya tenés cuenta? ',
-                                                              style: PuTextStyle
-                                                                  .description1,
+                                                              text: '¿Ya tenés cuenta? ',
+                                                              style: PuTextStyle.description1,
                                                             ),
                                                             TextSpan(
-                                                              recognizer:
-                                                                  TapGestureRecognizer()
-                                                                    ..onTap = () {
-                                                                      Get.toNamed(
-                                                                        PURoutes
-                                                                            .LOGIN,
-                                                                      );
-                                                                    },
-                                                              text:
-                                                                  'Inicia sesión',
-                                                              style: PuTextStyle
-                                                                  .redirectLink1,
+                                                              recognizer: TapGestureRecognizer()
+                                                                ..onTap = () {
+                                                                  _.errorTextEmail.value = '';
+                                                                  Get.toNamed(
+                                                                    PURoutes.LOGIN,
+                                                                  );
+                                                                },
+                                                              text: 'Inicia sesión',
+                                                              style: PuTextStyle.redirectLink1,
                                                             ),
                                                           ],
                                                         ),
@@ -313,8 +275,7 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                 height: 60,
                                 color: PUColors.primaryBackground,
                                 child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 20),
+                                  padding: const EdgeInsets.symmetric(vertical: 20),
                                   child: Center(
                                     child: Text(
                                       'Version: $VERSION_APP',
