@@ -527,6 +527,13 @@ class AuthController extends GetxController {
       // El caso de uso maneja todo el flujo: Google Auth -> Firebase -> Backend
       final user = await _loginWithSocialUseCase.executeWithGoogle();
 
+      // Configurar token en API antes de establecer el usuario
+      API.setAccessToken(user.accessToken);
+      
+      // Guardar token y usuario de forma segura (redundante pero asegura consistencia con el repositorio)
+      await _secureStorage.write(key: _tokenKey, value: user.accessToken);
+      await _secureStorage.write(key: _userKey, value: json.encode(user.toMap()));
+
       _setAuthenticatedUser(user);
       debugPrint('✅ Login con Google exitoso y sincronizado');
 
@@ -561,6 +568,13 @@ class AuthController extends GetxController {
       
       // El caso de uso maneja todo el flujo: Apple Auth -> Firebase -> Backend
       final user = await _loginWithSocialUseCase.executeWithApple();
+
+      // Configurar token en API antes de establecer el usuario
+      API.setAccessToken(user.accessToken);
+      
+      // Guardar token y usuario de forma segura
+      await _secureStorage.write(key: _tokenKey, value: user.accessToken);
+      await _secureStorage.write(key: _userKey, value: json.encode(user.toMap()));
 
       _setAuthenticatedUser(user);
       debugPrint('✅ Login con Apple exitoso');
@@ -710,12 +724,22 @@ class AuthController extends GetxController {
   void _setAuthenticatedUser(AuthenticatedUser user) {
     _currentUser.value = user;
     _authState.value = AuthState.authenticated;
+    
+    // Asegurar que el token esté configurado globalmente en la API
+    if (user.accessToken.isNotEmpty) {
+      API.setAccessToken(user.accessToken);
+    }
+    
     _clearError();
   }
 
   void _setUnauthenticated() {
     _currentUser.value = null;
     _authState.value = AuthState.unauthenticated;
+    
+    // Limpiar token global en la API
+    API.setAccessToken('');
+    
     _clearError();
   }
 

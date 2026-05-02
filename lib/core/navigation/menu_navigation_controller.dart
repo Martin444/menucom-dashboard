@@ -3,6 +3,7 @@ import 'package:pickmeup_dashboard/features/admin/presentation/controllers/admin
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import '../navigation/menu_navigation_items.dart';
 import '../../features/home/controllers/dinning_controller.dart';
+import '../../features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter/foundation.dart';
 
 /// Controlador para manejar la navegación del menú lateral
@@ -214,8 +215,13 @@ class MenuNavigationController extends GetxController {
 
   /// Maneja el logout
   void _handleLogout() {
-    final dinningController = Get.find<DinningController>();
-    dinningController.closeSesion();
+    if (Get.isRegistered<AuthController>()) {
+      Get.find<AuthController>().logout();
+    } else {
+      // Fallback si AuthController no está (no debería pasar)
+      final dinningController = Get.find<DinningController>();
+      dinningController.closeSesion();
+    }
   }
 
   /// Construye rutas dinámicas reemplazando parámetros

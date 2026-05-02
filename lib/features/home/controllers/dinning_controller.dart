@@ -8,6 +8,7 @@ import '../../../helpers/token_helper.dart';
 
 import '../../../core/navigation/menu_navigation_controller.dart';
 import '../../../core/config.dart';
+import '../../auth/presentation/controllers/auth_controller.dart';
 import '../../../core/mixins/navigation_state_mixin.dart';
 
 class DinningController extends GetxController {
@@ -275,12 +276,16 @@ class DinningController extends GetxController {
   }
 
   void closeSesion() async {
-    clearData();
-    final storage = const FlutterSecureStorage();
-    await storage.delete(key: 'access_token');
-    await storage.delete(key: 'authenticated_user');
-    API.setAccessToken('');
-    Get.offAllNamed(PURoutes.LOGIN);
+    if (Get.isRegistered<AuthController>()) {
+      Get.find<AuthController>().logout();
+    } else {
+      clearData();
+      final storage = const FlutterSecureStorage();
+      await storage.delete(key: 'access_token');
+      await storage.delete(key: 'authenticated_user');
+      API.setAccessToken('');
+      Get.offAllNamed(PURoutes.LOGIN);
+    }
   }
 
   @override
