@@ -9,11 +9,15 @@ Future<void> fcmBackgroundHandler(RemoteMessage message) async {
   // Aquí puedes procesar la notificación en segundo plano
 }
 
+bool _fcmInitialized = false;
+Future<void> Function(String fcmToken)? _onTokenReceivedCallback;
+
 /// Configura Firebase Cloud Messaging de forma general
 Future<void> setupFCM({
   Future<void> Function(String fcmToken)? onTokenReceived,
   void Function(Object error)? onError,
 }) async {
+  _onTokenReceivedCallback = onTokenReceived;
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   // 1. Solicitar permisos de notificación
@@ -45,18 +49,40 @@ Future<void> setupFCM({
     }
   }
 
-  // 4. Manejar mensajes en primer plano
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    debugPrint('Got a message whilst in the foreground!');
-    debugPrint('Message data: ${message.data}');
+  // 4. Manejar mensajes (solo registrar una vez)
+  if (!_fcmInitialized) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint('Got a message whilst in the foreground!');
+      debugPrint('Message data: ${message.data}');
 
-    if (message.notification != null) {
-      debugPrint(
-          'Message also contained a notification: ${message.notification!.title} - ${message.notification!.body}');
-      // Aquí puedes mostrar una notificación local si lo deseas
-    }
-  });
+      if (message.notification != null) {
+        debugPrint(
+            'Message also contained a notification: ${message.notification!.title} - ${message.notification!.body}');
+      }
+    });
 
-  // 5. Manejar mensajes en segundo plano/terminados
-  FirebaseMessaging.onBackgroundMessage(fcmBackgroundHandler);
+    FirebaseMessaging.onBackgroundMessage(fcmBackgroundHandler);
+    
+    // Escuchar refrescos de token
+    firebaseMessaging.onTokenRefresh.listen((newToken) async {
+      debugPrint('FCM Token refrescado: $newToken');
+      if (_onTokenReceivedCallback != null) {
+        try {
+          await _onTokenReceivedCallback!(newToken);
+          debugPrint('FCM Token refrescado procesado correctamente.');
+        } catch (e) {
+          debugPrint('Error al procesar FCM Token refrescado: $e');
+        }
+      }
+    });
+
+    _fcmInitialized = true;
+    debugPrint('FCM Listeners configurados por primera vez.');
+  }
+}
+
+/// Limpia las referencias de FCM (útil en logout)
+void resetFCM() {
+  _onTokenReceivedCallback = null;
+  debugPrint('FCM callbacks reseteados.');
 }

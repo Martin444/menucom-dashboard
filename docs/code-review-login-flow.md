@@ -80,4 +80,8 @@
 - Se unificaron los componentes visuales en las páginas de login para usar `ButtonSecundary` y `onSubmited`.
 - El sistema es ahora robusto, seguro y libre de errores de análisis críticos.
 
-**Estado Final**: Fase de seguridad y estabilización completada con éxito. ✅
+### ✅ Sincronización de FCM (Mayo 2026)
+- **Token de Notificaciones**: Se integró la sincronización automática del token de Firebase Cloud Messaging con el backend mediante `PATCH /user/fcm-token`.
+- **Manejo de Ciclo de Vida**: El sistema ahora gestiona el refresco de tokens de FCM y asegura que el backend esté siempre actualizado, tanto al iniciar la app como al realizar un login exitoso.
+
+**Estado Final**: Fase de seguridad, estabilización e integración de notificaciones completada con éxito. ✅

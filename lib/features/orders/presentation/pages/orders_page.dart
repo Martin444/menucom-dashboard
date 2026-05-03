@@ -254,9 +254,10 @@ class _OrdersPageState extends State<OrdersPage> {
 
         return Column(
           children: [
-            OrdersTable(
-              padding: EdgeInsets.zero,
-              data: controller.orders,
+            Expanded(
+              child: OrdersTable(
+                data: controller.orders,
+              ),
             ),
             if (controller.isLoading.value && controller.orders.isNotEmpty)
               const Padding(

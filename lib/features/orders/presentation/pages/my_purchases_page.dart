@@ -233,7 +233,7 @@ class _MyPurchasesPageState extends State<MyPurchasesPage> {
         return Column(
           children: [
             OrdersTable(
-              padding: EdgeInsets.zero,
+              // padding: EdgeInsets.zero,
               data: controller.purchases,
             ),
             if (controller.isLoading.value && controller.purchases.isNotEmpty)

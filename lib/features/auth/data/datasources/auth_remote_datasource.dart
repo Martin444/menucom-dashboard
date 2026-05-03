@@ -5,6 +5,7 @@ import '../models/auth_request_model.dart';
 import '../models/auth_response_model.dart';
 import '../../../../core/config.dart';
 import '../../domain/usecases/login_with_credentials_usecase.dart';
+import 'package:menu_dart_api/core/api.dart';
 
 /// Contrato para el datasource remoto de autenticación
 abstract class AuthRemoteDataSource {
@@ -24,9 +25,9 @@ abstract class AuthRemoteDataSource {
   Future<AuthResponseModel> refreshToken(String currentToken);
 }
 
-/// Implementación del datasource remoto usando HTTP
+/// Implementación del datasource remoto usando el cliente de la API
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final http.Client httpClient;
+  final dynamic httpClient;
   final String baseUrl;
 
   const AuthRemoteDataSourceImpl({
@@ -37,12 +38,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<AuthResponseModel> loginWithCredentials(LoginRequestModel request) async {
     try {
+      // Usar el mismo formato que el LoginProvider legacy para asegurar compatibilidad
+      // Enviando como Map para que se use application/x-www-form-urlencoded
       final response = await httpClient.post(
         Uri.parse('$baseUrl/auth/login'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode(request.toJson()),
+        body: request.toJson(),
       );
 
       return _handleResponse(response, 'login tradicional');
@@ -182,12 +182,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 class AuthRemoteDataSourceFactory {
   static AuthRemoteDataSource create() {
     return AuthRemoteDataSourceImpl(
-      httpClient: http.Client(),
+      httpClient: API.httpClient,
       baseUrl: URL_PICKME_API,
     );
   }
 
-  static AuthRemoteDataSource createWithClient(http.Client client) {
+  static AuthRemoteDataSource createWithClient(dynamic client) {
     return AuthRemoteDataSourceImpl(
       httpClient: client,
       baseUrl: URL_PICKME_API,

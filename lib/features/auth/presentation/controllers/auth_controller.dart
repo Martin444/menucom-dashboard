@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:menu_dart_api/core/api.dart';
 import 'package:menu_dart_api/by_feature/upload_images/data/usescases/upload_file_usescases.dart';
-import 'package:menu_dart_api/by_feature/auth/login/data/usescase/login_usescase.dart';
 import 'package:menu_dart_api/by_feature/auth/social_login/data/usecase/social_login_usecase.dart';
 import 'package:menu_dart_api/by_feature/user/change_password/data/usecase/change_password_usescase.dart';
 import 'package:menu_dart_api/by_feature/auth/register/data/usescase/register_commerce_usescase.dart';
@@ -30,6 +29,8 @@ import '../../../../core/config.dart';
 import '../../../../core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/core/helpers/image_size_helper.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
+import 'package:pickmeup_dashboard/core/fcm_util.dart';
+import 'package:menu_dart_api/menu_com_api.dart';
 
 /// Estados posibles de la autenticación
 enum AuthState {
@@ -159,6 +160,12 @@ class AuthController extends GetxController {
 
   /// Verifica el estado de autenticación al iniciar la aplicación
   Future<void> checkAuthenticationStatus() async {
+    // Si ya estamos autenticados (por ejemplo, acabamos de hacer login), no sobreescribir
+    if (isAuthenticated && authState == AuthState.authenticated) {
+      debugPrint('Salteando checkAuthenticationStatus: ya autenticado');
+      return;
+    }
+
     try {
       _setCurrentAction(AuthAction.checkingAuth);
       _setLoading(true);
@@ -197,65 +204,72 @@ class AuthController extends GetxController {
   Future<void> loginWithEmailAndPassword() async {
     try {
       isLogging.value = true;
+      _setCurrentAction(AuthAction.loginTraditional);
+      _clearError();
       update();
 
       if (emailController.text.isEmpty) {
-        throw ApiException(111, 'El email no puede estar vacío');
+        throw ValidationException('El email no puede estar vacío');
       }
 
       if (passwordController.text.isEmpty) {
-        throw ApiException(102, 'La contraseña no puede estar vacía');
+        throw ValidationException('La contraseña no puede estar vacía');
       }
 
-      var responseLogin = await LoginUserUseCase().execute(
-        emailController.text,
-        passwordController.text,
+      final credentials = LoginCredentials(
+        email: emailController.text,
+        password: passwordController.text,
       );
 
-      // Guardar token de forma segura
-      await _secureStorage.write(key: _tokenKey, value: responseLogin.accessToken);
-      API.setAccessToken(responseLogin.accessToken);
+      // Usar el caso de uso unificado que ya maneja persistencia y conversión
+      final user = await _loginWithCredentialsUseCase.execute(credentials);
 
-      // Obtener datos del usuario
-      final user = await _getCurrentUserUseCase.executeWithRefresh();
-      if (user != null) {
-        _setAuthenticatedUser(user);
-        // Guardar usuario de forma segura
-        await _secureStorage.write(key: _userKey, value: json.encode(user.toMap()));
-      }
+      // Configurar token globalmente en la API
+      API.setAccessToken(user.accessToken);
+
+      // Guardar de forma redundante en secure storage para asegurar persistencia
+      await _secureStorage.write(key: _tokenKey, value: user.accessToken);
+      await _secureStorage.write(key: _userKey, value: json.encode(user.toMap()));
+
+      _setAuthenticatedUser(user);
+
+      debugPrint('Login tradicional exitoso para: ${user.email}');
 
       isLogging.value = false;
-      Get.offAllNamed(PURoutes.HOME);
+      _setCurrentAction(AuthAction.none);
       _clearLoginFields();
       update();
-    } on ApiException catch (e) {
+
+      Get.offAllNamed(PURoutes.HOME);
+    } catch (e) {
       isLogging.value = false;
-      _handleLoginError(e);
-      update();
-    } on Exception catch (e) {
-      isLogging.value = false;
+      _setCurrentAction(AuthAction.none);
+      debugPrint('Error en login con email/password: $e');
+      
+      final errorMessage = _getErrorMessage(e);
+      _setError(errorMessage);
+
+      // Manejar errores específicos de la UI (retrocompatibilidad)
+      if (e is ValidationException) {
+        if (e.message.contains('email')) {
+          errorTextEmail.value = e.message;
+        } else if (e.message.contains('contraseña') || e.message.contains('password')) {
+          errorTextPassword.value = e.message;
+        }
+      } else if (e is AuthException) {
+        if (e.code == 'unauthorized' || e.code == 'not_found') {
+          errorTextPassword.value = 'Credenciales incorrectas';
+        }
+      }
+
       Get.snackbar(
         'Error al Iniciar sesión',
-        'No podemos traerte información, vuelve a intentarlo.',
+        errorMessage,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
       );
-      debugPrint('Error en login: $e');
-    }
-  }
-
-  /// Manejo de errores de login
-  void _handleLoginError(ApiException e) {
-    if (e.statusCode == 102) {
-      errorTextPassword.value = e.message;
-    } else if (e.statusCode == 401) {
-      errorTextEmail.value = '';
-      errorTextPassword.value = e.message;
-    } else if (e.statusCode == 404) {
-      errorTextPassword.value = '';
-      errorTextEmail.value = e.message;
-    } else if (e.statusCode == 111) {
-      errorTextEmail.value = e.message;
+      update();
     }
   }
 
@@ -732,7 +746,25 @@ class AuthController extends GetxController {
       API.setAccessToken(user.accessToken);
     }
     
+    // Sincronizar token de FCM con el backend al autenticar
+    _syncFcmToken();
+
     _clearError();
+  }
+
+  /// Sincroniza el token de FCM con el backend
+  void _syncFcmToken() {
+    setupFCM(
+      onTokenReceived: (fcmToken) async {
+        try {
+          final updateUseCase = UpdateFcmTokenUseCase(UpdateFcmTokenProvider());
+          await updateUseCase.execute(fcmToken: fcmToken);
+          debugPrint('FCM Token sincronizado con el backend exitosamente');
+        } catch (e) {
+          debugPrint('Error al sincronizar FCM Token: $e');
+        }
+      },
+    );
   }
 
   void _setUnauthenticated({bool clearApiToken = true}) {
@@ -743,6 +775,9 @@ class AuthController extends GetxController {
     if (clearApiToken) {
       API.setAccessToken('');
     }
+    
+    // Resetear callbacks de FCM al desautenticar
+    resetFCM();
     
     _clearError();
   }
