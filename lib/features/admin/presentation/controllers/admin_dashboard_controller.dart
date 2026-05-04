@@ -69,39 +69,56 @@ class AdminDashboardController extends GetxController {
   Future<void> loadDashboardData() async {
     isLoading.value = true;
     try {
-      // Load KPIs in parallel
-      final results = await Future.wait([
-        _countUsersUseCase.call(const CountUsersAdminParams()),
-        _countOrdersUseCase.execute(),
-        _revenueUseCase.execute(),
-        _getOrdersUseCase.call(page: currentPage.value, limit: pageSize.value),
-      ]);
+      // Create independent tasks to avoid one failure blocking everything
+      final tasks = [
+        _safeCall(() => _countUsersUseCase.call(const CountUsersAdminParams())),
+        _safeCall(() => _countOrdersUseCase.execute()),
+        _safeCall(() => _revenueUseCase.execute()),
+        _safeCall(() => _getOrdersUseCase.call(page: currentPage.value, limit: pageSize.value)),
+      ];
 
-      final usersResult = results[0] as CountUsersAdminResponse;
-      final ordersCount = results[1] as int;
-      final revenue = results[2] as double;
-      final ordersList = results[3] as List<Order>;
+      final results = await Future.wait(tasks);
+
+      // Handle users count
+      int usersCount = 0;
+      if (results[0] is CountUsersAdminResponse) {
+        usersCount = (results[0] as CountUsersAdminResponse).count;
+      }
+
+      // Handle orders count
+      final ordersCount = results[1] as int? ?? 0;
+
+      // Handle revenue
+      final revenue = results[2] as double? ?? 0.0;
+
+      // Handle orders list
+      final ordersList = results[3] as List<Order>? ?? [];
 
       dashboardData.value = {
-        'totalUsers': usersResult.count,
+        'totalUsers': usersCount,
         'totalOrders': ordersCount,
         'revenue': revenue,
-        'activeSessions': 0, // Placeholder if no endpoint exists
+        'activeSessions': 0,
       };
 
       recentOrders.value = ordersList;
-      hasMore.value = ordersList.length == pageSize.value;
+      hasMore.value = ordersList.isNotEmpty && ordersList.length == pageSize.value;
+      
+      debugPrint('Dashboard data loaded: ${recentOrders.length} orders');
     } catch (e) {
-      debugPrint('Error loading dashboard data: $e');
-      Get.snackbar(
-        'Error',
-        'No se pudieron cargar los datos del dashboard: $e',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha: 0.1),
-        colorText: Colors.red,
-      );
+      debugPrint('Unexpected error loading dashboard data: $e');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /// Safely executes a future, returning null on error instead of throwing
+  Future<T?> _safeCall<T>(Future<T> Function() call) async {
+    try {
+      return await call();
+    } catch (e) {
+      debugPrint('Error in dashboard sub-task: $e');
+      return null;
     }
   }
 

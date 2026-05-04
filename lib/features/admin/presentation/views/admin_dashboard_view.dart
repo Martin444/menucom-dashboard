@@ -246,7 +246,14 @@ class DashboardOrdersTable extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        if (orders.isEmpty && !controller.isLoading.value)
+        if (controller.isLoading.value && orders.isEmpty)
+          const Padding(
+            padding: EdgeInsets.all(32.0),
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          )
+        else if (orders.isEmpty)
           ContainerAtom(
             variant: ContainerVariant.card,
             padding: const EdgeInsets.all(32),
