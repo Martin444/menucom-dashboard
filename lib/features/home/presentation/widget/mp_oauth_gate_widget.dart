@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'share_link_menu_dialog.dart';
+import '../organisms/share_link_menu_dialog.dart';
 
 /// Widget que verifica la vinculación de Mercado Pago antes de mostrar el diálogo de compartir
 class MPOAuthGateWidget extends StatefulWidget {
