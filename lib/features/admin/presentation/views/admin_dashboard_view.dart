@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:pu_material/pu_material.dart';
+import 'package:pu_material/pu_material.dart' hide Order, OrderItem;
 import 'package:pickmeup_dashboard/features/admin/presentation/controllers/admin_dashboard_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
+import 'package:menu_dart_api/by_feature/orders/models/order_model.dart';
 
 class AdminDashboardView extends StatelessWidget {
   const AdminDashboardView({super.key});
@@ -45,28 +46,18 @@ class AdminDashboardMobileView extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Obx(() => SizedBox(
-                  width: double.infinity,
-                  child: AdminKpiMolecule(
-                    title: 'Usuarios',
-                    value: '${controller.dashboardData['totalUsers'] ?? 0}',
-                    icon: FluentIcons.people_24_regular,
-                  ),
-                )),
-            const SizedBox(height: 16),
-            Obx(() => SizedBox(
-                  width: double.infinity,
-                  child: AdminKpiMolecule(
-                    title: 'Órdenes',
-                    value: '${controller.dashboardData['totalOrders'] ?? 0}',
-                    icon: FluentIcons.receipt_24_regular,
-                  ),
-                )),
-          ],
+      body: RefreshIndicator(
+        onRefresh: () async => controller.loadDashboardData(),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Obx(() => DashboardKpiGrid(data: Map.from(controller.dashboardData))),
+              const SizedBox(height: 24),
+              Obx(() => DashboardOrdersTable(orders: controller.ordersToDisplay)),
+            ],
+          ),
         ),
       ),
     );
@@ -134,7 +125,7 @@ class DashboardContent extends StatelessWidget {
                 data: Map.from(controller.dashboardData))),
             const SizedBox(height: 32),
             Obx(() => DashboardOrdersTable(
-                orders: controller.recentOrders.toList())),
+                orders: controller.ordersToDisplay)),
           ],
         ),
       ),
@@ -212,7 +203,7 @@ class DashboardKpiGrid extends StatelessWidget {
             ),
             AdminKpiMolecule(
               title: 'Ingresos',
-              value: '\$${data['revenue'] ?? 0}',
+              value: '\$${(data['revenue'] as num? ?? 0).toStringAsFixed(2)}',
               icon: FluentIcons.money_24_regular,
             ),
             AdminKpiMolecule(
@@ -229,12 +220,14 @@ class DashboardKpiGrid extends StatelessWidget {
 
 /// Tabla de órdenes recientes del dashboard.
 class DashboardOrdersTable extends StatelessWidget {
-  final List<Map<String, dynamic>> orders;
+  final List<Order> orders;
 
   const DashboardOrdersTable({super.key, required this.orders});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<AdminDashboardController>();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -253,7 +246,7 @@ class DashboardOrdersTable extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        if (orders.isEmpty)
+        if (orders.isEmpty && !controller.isLoading.value)
           ContainerAtom(
             variant: ContainerVariant.card,
             padding: const EdgeInsets.all(32),
@@ -278,28 +271,53 @@ class DashboardOrdersTable extends StatelessWidget {
             ),
           )
         else
-          AdminDataTableMolecule(
-            headers: const ['ID', 'Cliente', 'Estado', 'Total', 'Fecha'],
-            rows: orders
-                .map((o) => AdminTableRow([
-                      TextTableCell(o['id']?.toString() ?? ''),
-                      TextTableCell(o['customer']?.toString() ?? ''),
-                      BadgeTableCell(
-                        o['status']?.toString() ?? '',
-                        _getStatusColor(o['status']?.toString() ?? ''),
-                      ),
-                      PriceTableCell(
-                          (o['total'] as num?)?.toDouble() ?? 0),
-                      TextTableCell(
-                        o['date']?.toString() ?? '',
-                        style:
-                            const TextStyle(color: PUColors.textColorMuted),
-                      ),
-                    ]))
-                .toList(),
-            showPagination: orders.length > 10,
-            currentPage: 1,
-            totalPages: (orders.length / 10).ceil(),
+          Column(
+            children: [
+              AdminDataTableMolecule(
+                headers: const ['ID', 'Cliente', 'Estado', 'Total', 'Fecha'],
+                rows: orders
+                    .map((o) => AdminTableRow([
+                          TextTableCell(o.id ?? '---'),
+                          TextTableCell(o.customerName ?? o.customerEmail ?? '---'),
+                          BadgeTableCell(
+                            o.status ?? 'PENDIENTE',
+                            _getStatusColor(o.status ?? ''),
+                          ),
+                          PriceTableCell(o.total ?? 0),
+                          TextTableCell(
+                            o.createdAt != null
+                                ? '${o.createdAt!.day}/${o.createdAt!.month}/${o.createdAt!.year}'
+                                : '---',
+                            style: const TextStyle(color: PUColors.textColorMuted),
+                          ),
+                        ]))
+                    .toList(),
+              ),
+              const SizedBox(height: 16),
+              Obx(() => Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: controller.currentPage.value > 1
+                        ? () => controller.changePage(controller.currentPage.value - 1)
+                        : null,
+                    icon: const Icon(FluentIcons.chevron_left_24_regular),
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    'Página ${controller.currentPage.value}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 16),
+                  IconButton(
+                    onPressed: controller.hasMore.value
+                        ? () => controller.changePage(controller.currentPage.value + 1)
+                        : null,
+                    icon: const Icon(FluentIcons.chevron_right_24_regular),
+                  ),
+                ],
+              )),
+            ],
           ),
       ],
     );
@@ -309,15 +327,18 @@ class DashboardOrdersTable extends StatelessWidget {
     switch (status.toLowerCase()) {
       case 'completed':
       case 'completado':
+      case 'success':
         return Colors.green;
       case 'pending':
       case 'pendiente':
         return Colors.orange;
       case 'cancelled':
       case 'cancelado':
+      case 'failed':
         return Colors.red;
       default:
         return PUColors.primaryBlue;
     }
   }
 }
+

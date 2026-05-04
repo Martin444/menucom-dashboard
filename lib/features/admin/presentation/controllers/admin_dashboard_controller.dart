@@ -1,30 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:menu_dart_api/by_feature/orders/models/order_model.dart';
+import 'package:menu_dart_api/by_feature/orders/usescase/count_orders_admin_usecase.dart';
+import 'package:menu_dart_api/by_feature/orders/usescase/get_total_revenue_usecase.dart';
+import 'package:menu_dart_api/by_feature/orders/usescase/order_usescase.dart';
+import 'package:menu_dart_api/by_feature/user/count_users_admin/data/usecase/count_users_admin_usecase.dart';
+import 'package:menu_dart_api/by_feature/user/count_users_admin/model/count_users_admin_params.dart';
 
-class AdminNavItemData {
-  final IconData icon;
-  final String label;
-
-  const AdminNavItemData({required this.icon, required this.label});
-}
+import 'package:menu_dart_api/by_feature/user/count_users_admin/model/count_users_admin_response.dart';
 
 class AdminDashboardController extends GetxController {
   final selectedIndex = 0.obs;
-  final dashboardData = <String, dynamic>{}.obs;
-  final recentOrders = <Map<String, dynamic>>[].obs;
+  final dashboardData = <String, dynamic>{
+    'totalUsers': 0,
+    'totalOrders': 0,
+    'revenue': 0.0,
+    'activeSessions': 0,
+  }.obs;
+  
+  final recentOrders = <Order>[].obs;
   final searchQuery = ''.obs;
   final isLoading = false.obs;
-  final searchResults = <Map<String, dynamic>>[].obs;
+  final searchResults = <Order>[].obs;
+  
+  // Pagination
+  final currentPage = 1.obs;
+  final pageSize = 10.obs;
+  final hasMore = true.obs;
 
+  // Computed
+  List<Order> get ordersToDisplay => searchQuery.isEmpty ? recentOrders : searchResults;
 
-  static const List<AdminNavItemData> navItems = [
-    AdminNavItemData(icon: FluentIcons.home_24_regular, label: 'Dashboard'),
-    AdminNavItemData(icon: FluentIcons.people_24_regular, label: 'Usuarios'),
-    AdminNavItemData(icon: FluentIcons.receipt_24_regular, label: 'Órdenes'),
-    AdminNavItemData(icon: FluentIcons.data_histogram_24_regular, label: 'Estadísticas'),
-    AdminNavItemData(icon: FluentIcons.settings_24_regular, label: 'Configuración'),
-  ];
+  // Use Cases
+  final _countOrdersUseCase = CountOrdersAdminUseCase();
+  final _revenueUseCase = GetTotalRevenueUseCase();
+  final _getOrdersUseCase = GetOrdersAdminUseCase();
+  final _countUsersUseCase = CountUsersAdminUseCase();
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadDashboardData();
+  }
 
   Future<void> search(String query) async {
     searchQuery.value = query;
@@ -33,32 +50,81 @@ class AdminDashboardController extends GetxController {
       return;
     }
     isLoading.value = true;
-    // Simular búsqueda
-    searchResults.value = recentOrders
-        .where((o) =>
-            o['customer'].toString().toLowerCase().contains(query.toLowerCase()) ||
-            o['id'].toString().toLowerCase().contains(query.toLowerCase()))
-        .toList();
-    isLoading.value = false;
+    try {
+      // For now, filtering locally as the API doesn't seem to have a search endpoint for orders yet
+      searchResults.value = recentOrders
+          .where((o) =>
+              (o.id ?? '').toLowerCase().contains(query.toLowerCase()) ||
+              (o.ownerId ?? '').toLowerCase().contains(query.toLowerCase()) ||
+              (o.customerName ?? '').toLowerCase().contains(query.toLowerCase()) ||
+              (o.customerEmail ?? '').toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    } catch (e) {
+      debugPrint('Error searching orders: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> loadDashboardData() async {
     isLoading.value = true;
-    await Future.delayed(const Duration(milliseconds: 500));
-    dashboardData.value = {
-      'totalUsers': 156,
-      'totalOrders': 89,
-      'revenue': '12,450',
-      'activeSessions': 24,
-    };
+    try {
+      // Load KPIs in parallel
+      final results = await Future.wait([
+        _countUsersUseCase.call(const CountUsersAdminParams()),
+        _countOrdersUseCase.execute(),
+        _revenueUseCase.execute(),
+        _getOrdersUseCase.call(page: currentPage.value, limit: pageSize.value),
+      ]);
 
-    recentOrders.value = [
-      {'id': '#001', 'customer': 'Juan Pérez', 'status': 'completed', 'total': 1500, 'date': '2024-01-15'},
-      {'id': '#002', 'customer': 'María García', 'status': 'pending', 'total': 2300, 'date': '2024-01-14'},
-      {'id': '#003', 'customer': 'Carlos López', 'status': 'completed', 'total': 850, 'date': '2024-01-14'},
-      {'id': '#004', 'customer': 'Ana Martínez', 'status': 'cancelled', 'total': 1200, 'date': '2024-01-13'},
-      {'id': '#005', 'customer': 'Pedro Sánchez', 'status': 'pending', 'total': 3200, 'date': '2024-01-12'},
-    ];
-    isLoading.value = false;
+      final usersResult = results[0] as CountUsersAdminResponse;
+      final ordersCount = results[1] as int;
+      final revenue = results[2] as double;
+      final ordersList = results[3] as List<Order>;
+
+      dashboardData.value = {
+        'totalUsers': usersResult.count,
+        'totalOrders': ordersCount,
+        'revenue': revenue,
+        'activeSessions': 0, // Placeholder if no endpoint exists
+      };
+
+      recentOrders.value = ordersList;
+      hasMore.value = ordersList.length == pageSize.value;
+    } catch (e) {
+      debugPrint('Error loading dashboard data: $e');
+      Get.snackbar(
+        'Error',
+        'No se pudieron cargar los datos del dashboard: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withValues(alpha: 0.1),
+        colorText: Colors.red,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> changePage(int page) async {
+    if (page < 1) return;
+    currentPage.value = page;
+    await loadRecentOrders();
+  }
+
+  Future<void> loadRecentOrders() async {
+    isLoading.value = true;
+    try {
+      final orders = await _getOrdersUseCase.call(
+        page: currentPage.value,
+        limit: pageSize.value,
+      );
+      recentOrders.value = orders;
+      hasMore.value = orders.length == pageSize.value;
+    } catch (e) {
+      debugPrint('Error loading orders: $e');
+      Get.snackbar('Error', 'No se pudieron cargar las órdenes');
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
