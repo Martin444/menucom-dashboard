@@ -53,11 +53,11 @@ class LoginWithCredentialsUseCase {
 
       return user;
     } catch (e) {
-      // Re-lanzar la excepción con contexto adicional si es necesario
+      // Re-lanzar la excepción sin modificar el mensaje original
       if (e is AuthException) {
-        throw AuthException('Error de autenticación: ${e.message}');
+        rethrow;
       } else if (e is NetworkException) {
-        throw NetworkException('Error de red durante el login: ${e.message}');
+        rethrow;
       } else {
         throw const AuthException('Error inesperado durante el login');
       }
@@ -92,7 +92,7 @@ class AuthException implements Exception {
   const AuthException(this.message, {this.code});
 
   @override
-  String toString() => 'AuthException: $message${code != null ? ' (Code: $code)' : ''}';
+  String toString() => '$message${code != null ? ' (Code: $code)' : ''}';
 }
 
 /// Excepción específica para errores de red.

@@ -245,23 +245,33 @@ class AuthController extends GetxController {
       isLogging.value = false;
       _setCurrentAction(AuthAction.none);
       debugPrint('Error en login con email/password: $e');
-      
-      final errorMessage = _getErrorMessage(e);
-      _setError(errorMessage);
 
-      // Manejar errores específicos de la UI (retrocompatibilidad)
+      // Errores de validación - NO mostrar snackbar, retorno temprano
       if (e is ValidationException) {
         if (e.message.contains('email')) {
           errorTextEmail.value = e.message;
         } else if (e.message.contains('contraseña') || e.message.contains('password')) {
           errorTextPassword.value = e.message;
         }
-      } else if (e is AuthException) {
-        if (e.code == 'unauthorized' || e.code == 'not_found') {
-          errorTextPassword.value = 'Credenciales incorrectas';
+        update();
+        return;
+      }
+
+      // Errores de autenticación - NO mostrar snackbar para errores de campos, retorno temprano
+      if (e is AuthException) {
+        if (e.code == 'unauthorized') {
+          errorTextPassword.value = e.message.isNotEmpty ? e.message : 'Credenciales incorrectas';
+          update();
+          return;
+        } else if (e.code == 'not_found') {
+          errorTextEmail.value = e.message.isNotEmpty ? e.message : 'No se encontró el usuario';
+          update();
+          return;
         }
       }
 
+      // Solo errores NO relacionados a campos llegan aquí - mostrar snackbar
+      final errorMessage = _getErrorMessage(e);
       Get.snackbar(
         'Error al Iniciar sesión',
         errorMessage,
@@ -807,24 +817,28 @@ class AuthController extends GetxController {
     if (error is ValidationException) {
       return error.message;
     } else if (error is AuthException) {
+      // Usar el mensaje real de la API si está disponible
+      final apiMessage = error.message;
       switch (error.code) {
         case 'sign_in_canceled':
           return 'Autenticación cancelada por el usuario';
         case 'unauthorized':
-          return 'Credenciales incorrectas';
+          return apiMessage.isNotEmpty ? apiMessage : 'Credenciales incorrectas';
         case 'forbidden':
           return 'No tienes permisos para acceder';
         case 'not_found':
-          return 'Usuario no encontrado';
+          return apiMessage.isNotEmpty ? apiMessage : 'Usuario no encontrado';
         case 'conflict':
-          return 'Ya existe una cuenta con este email';
+          return apiMessage.isNotEmpty ? apiMessage : 'Ya existe una cuenta con este email';
         case 'rate_limit':
           return 'Demasiados intentos. Intenta más tarde';
         default:
-          return error.message;
+          return apiMessage.isNotEmpty ? apiMessage : 'Error de autenticación';
       }
     } else if (error is NetworkException) {
       return 'Error de conexión. Verifica tu internet';
+    } else if (error is ApiException) {
+      return error.message.isNotEmpty ? error.message : 'Error del servidor';
     } else {
       return 'Ha ocurrido un error inesperado';
     }

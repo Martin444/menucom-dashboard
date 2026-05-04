@@ -254,10 +254,34 @@ class _OrdersPageState extends State<OrdersPage> {
 
         return Column(
           children: [
-            Expanded(
-              child: OrdersTable(
-                data: controller.orders,
-              ),
+            OrdersTable(
+              data: controller.orders,
+              onViewDetail: (order) {
+                Get.dialog(
+                  AlertDialog(
+                    title: Text('Detalle de Orden #${order.numero}'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Cliente: ${order.alias}'),
+                        Text('Estado: ${order.estado}'),
+                        const Divider(),
+                        const Text('Productos:', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ...order.fullItems.map((item) => Text('${item.quantity}x ${item.productName} - \$${item.price.toStringAsFixed(2)}')),
+                        const Divider(),
+                        Text('Total: \$${(order.totalCentavos / 100).toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Get.back(),
+                        child: const Text('Cerrar'),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             if (controller.isLoading.value && controller.orders.isNotEmpty)
               const Padding(

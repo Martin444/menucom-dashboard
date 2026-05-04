@@ -46,6 +46,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       return _handleResponse(response, 'login tradicional');
+    } on AuthException {
+      rethrow;
+    } on ValidationException {
+      rethrow;
     } catch (e) {
       throw NetworkException('Error de red durante login tradicional: $e');
     }
@@ -61,6 +65,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       return _handleResponse(response, 'login social');
+    } on AuthException {
+      rethrow;
+    } on ValidationException {
+      rethrow;
     } catch (e) {
       throw NetworkException('Error de red durante login social: $e');
     }
@@ -78,6 +86,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       return _handleResponse(response, 'registro tradicional');
+    } on AuthException {
+      rethrow;
+    } on ValidationException {
+      rethrow;
     } catch (e) {
       throw NetworkException('Error de red durante registro tradicional: $e');
     }
@@ -93,6 +105,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       return _handleResponse(response, 'registro social');
+    } on AuthException {
+      rethrow;
+    } on ValidationException {
+      rethrow;
     } catch (e) {
       throw NetworkException('Error de red durante registro social: $e');
     }
@@ -110,6 +126,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       return _handleResponse(response, 'refresco de token');
+    } on AuthException {
+      rethrow;
+    } on ValidationException {
+      rethrow;
     } catch (e) {
       throw NetworkException('Error de red durante refresco de token: $e');
     }
@@ -156,7 +176,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       case 403:
         throw const AuthException('Acceso denegado', code: 'forbidden');
       case 404:
-        throw const AuthException('Recurso no encontrado', code: 'not_found');
+        throw AuthException(errorMessage, code: errorCode ?? 'not_found');
       case 409:
         throw AuthException(errorMessage, code: errorCode ?? 'conflict');
       case 422:

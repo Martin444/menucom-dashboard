@@ -19,7 +19,9 @@ class OrdersMetricsWidget extends StatelessWidget {
       final completedOrders = orders.where((order) => order.estado == 'Completado').length;
       final inProgressOrders = orders.where((order) => order.estado == 'En curso').length;
 
-      final totalRevenue = orders.fold<double>(0, (sum, order) => sum + (order.totalCentavos / 100));
+      final totalRevenue = orders
+          .where((order) => order.estado == 'Completado' || order.estado == 'En curso')
+          .fold<double>(0, (sum, order) => sum + (order.totalCentavos / 100));
 
       return LayoutBuilder(
         builder: (context, constraints) {
