@@ -246,39 +246,44 @@ class DashboardOrdersTable extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        if (controller.isLoading.value && orders.isEmpty)
-          const Padding(
-            padding: EdgeInsets.all(32.0),
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
-        else if (orders.isEmpty)
-          ContainerAtom(
-            variant: ContainerVariant.card,
-            padding: const EdgeInsets.all(32),
-            child: Center(
-              child: Column(
-                children: [
-                  IconAtom(
-                    icon: FluentIcons.receipt_24_regular,
-                    color: PUColors.textColorLight,
-                    size: 48,
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'No hay órdenes recientes',
-                    style: TextStyle(
-                      color: PUColors.textColorMuted,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+        const SizedBox(height: 16),
+        Obx(() {
+          if (controller.isLoading.value && orders.isEmpty) {
+            return const Padding(
+              padding: EdgeInsets.all(32.0),
+              child: Center(
+                child: CircularProgressIndicator(),
               ),
-            ),
-          )
-        else
-          Column(
+            );
+          }
+          
+          if (orders.isEmpty) {
+            return ContainerAtom(
+              variant: ContainerVariant.card,
+              padding: const EdgeInsets.all(32),
+              child: Center(
+                child: Column(
+                  children: [
+                    IconAtom(
+                      icon: FluentIcons.receipt_24_regular,
+                      color: PUColors.textColorLight,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'No hay órdenes recientes',
+                      style: TextStyle(
+                        color: PUColors.textColorMuted,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          return Column(
             children: [
               AdminDataTableMolecule(
                 headers: const ['ID', 'Cliente', 'Estado', 'Total', 'Fecha'],
@@ -301,7 +306,7 @@ class DashboardOrdersTable extends StatelessWidget {
                     .toList(),
               ),
               const SizedBox(height: 16),
-              Obx(() => Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
@@ -323,9 +328,10 @@ class DashboardOrdersTable extends StatelessWidget {
                     icon: const Icon(FluentIcons.chevron_right_24_regular),
                   ),
                 ],
-              )),
+              ),
             ],
-          ),
+          );
+        }),
       ],
     );
   }
