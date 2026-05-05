@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
 import '../../controllers/dinning_controller.dart';
 import '../molecules/mp_banner_header.dart';
 import '../molecules/mp_banner_benefits.dart';
@@ -13,8 +14,17 @@ class MPLinkBanner extends GetView<DinningController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Solo mostrar si no está vinculado
+      // 1. Verificar si el banner debe ser visible globalmente
+      if (!controller.isBannerVisible.value) return const SizedBox.shrink();
+
+      // 2. Solo mostrar si no está vinculado
       if (controller.isLinkedToMP.value) return const SizedBox.shrink();
+
+      // 3. Restringir por rol (ocultar para clientes)
+      final role = RolesFuncionts.getTypeRoleByRoleString(
+        controller.dinningLogin.role ?? '',
+      );
+      if (role == RolesUsers.customer) return const SizedBox.shrink();
 
       return LayoutBuilder(
         builder: (context, constraints) {

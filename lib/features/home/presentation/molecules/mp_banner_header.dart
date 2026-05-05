@@ -72,6 +72,18 @@ class MPBannerHeader extends StatelessWidget {
           const SizedBox(width: 20),
           MPRefreshButton(controller: controller),
         ],
+        // Botón de cerrar
+        const SizedBox(width: 8),
+        IconButton(
+          onPressed: () => controller.setBannerVisible(false),
+          icon: const Icon(
+            Icons.close_rounded,
+            color: Colors.white,
+            size: 24,
+          ),
+          tooltip: 'Ocultar banner',
+          splashRadius: 20,
+        ),
       ],
     );
   }
