@@ -34,10 +34,10 @@ class _MembershipDiscountSectionState extends State<MembershipDiscountSection> {
             color: PUColors.bgItem,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-                color: PUColors.borderInputColor.withValues(alpha: 0.3)),
+                color: PUColors.borderInputColor.withOpacity(0.3)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
+                color: Colors.black.withOpacity(0.02),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -68,10 +68,10 @@ class _MembershipDiscountSectionState extends State<MembershipDiscountSection> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: PUColors.bgSucces.withValues(alpha: 0.1),
+                    color: PUColors.bgSucces.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                        color: PUColors.bgSucces.withValues(alpha: 0.4)),
+                        color: PUColors.bgSucces.withOpacity(0.4)),
                   ),
                   child: Row(
                     children: [
@@ -133,7 +133,7 @@ class _MembershipDiscountSectionState extends State<MembershipDiscountSection> {
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                               color: PUColors.borderInputColor
-                                  .withValues(alpha: 0.5)),
+                                  .withOpacity(0.5)),
                         ),
                         child: Material(
                           color: Colors.transparent,
@@ -144,7 +144,7 @@ class _MembershipDiscountSectionState extends State<MembershipDiscountSection> {
                               border: InputBorder.none,
                               hintStyle: TextStyle(
                                 color:
-                                    PUColors.textColor1.withValues(alpha: 0.7),
+                                    PUColors.textColor1.withOpacity(0.7),
                                 fontFamily: 'Fira Sans',
                               ),
                             ),

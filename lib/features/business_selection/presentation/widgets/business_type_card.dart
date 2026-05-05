@@ -29,13 +29,13 @@ class BusinessTypeCardMobile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         decoration: BoxDecoration(
           color: isSelected
-              ? _getColorFromHex(businessType.colorHex).withValues(alpha: 0.07)
+              ? _getColorFromHex(businessType.colorHex).withOpacity(0.07)
               : Colors.white,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isSelected
                 ? _getColorFromHex(businessType.colorHex)
-                    .withValues(alpha: 0.35)
+                    .withOpacity(0.35)
                 : PUColors.borderInputColor,
             width: isSelected ? 2.5 : 1,
           ),
@@ -43,8 +43,8 @@ class BusinessTypeCardMobile extends StatelessWidget {
             BoxShadow(
               color: isSelected
                   ? _getColorFromHex(businessType.colorHex)
-                      .withValues(alpha: 0.18)
-                  : Colors.grey.withValues(alpha: 0.09),
+                      .withOpacity(0.18)
+                  : Colors.grey.withOpacity(0.09),
               blurRadius: isSelected ? 16 : 6,
               offset: const Offset(0, 6),
               spreadRadius: isSelected ? 3 : 0,
@@ -65,7 +65,7 @@ class BusinessTypeCardMobile extends StatelessWidget {
                       height: 36,
                       decoration: BoxDecoration(
                         color: _getColorFromHex(businessType.colorHex)
-                            .withValues(alpha: 0.22),
+                            .withOpacity(0.22),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Icon(
@@ -140,11 +140,11 @@ class BusinessTypeCardMobile extends StatelessWidget {
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: _getColorFromHex(businessType.colorHex)
-                                  .withValues(alpha: 0.12),
+                                  .withOpacity(0.12),
                               borderRadius: BorderRadius.circular(18),
                               border: Border.all(
                                 color: _getColorFromHex(businessType.colorHex)
-                                    .withValues(alpha: 0.28),
+                                    .withOpacity(0.28),
                                 width: 1,
                               ),
                             ),
@@ -237,13 +237,13 @@ class BusinessTypeCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? _getColorFromHex(businessType.colorHex)
-                  .withValues(alpha: 0.05) // Más suave
+                  .withOpacity(0.05) // Más suave
               : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
                 ? _getColorFromHex(businessType.colorHex)
-                    .withValues(alpha: 0.3) // Más suave
+                    .withOpacity(0.3) // Más suave
                 : PUColors.borderInputColor,
             width: isSelected ? 2 : 1,
           ),
@@ -251,8 +251,8 @@ class BusinessTypeCard extends StatelessWidget {
             BoxShadow(
               color: isSelected
                   ? _getColorFromHex(businessType.colorHex)
-                      .withValues(alpha: 0.15) // Más suave
-                  : Colors.grey.withValues(alpha: 0.1),
+                      .withOpacity(0.15) // Más suave
+                  : Colors.grey.withOpacity(0.1),
               blurRadius: isSelected ? 12 : 4,
               offset: const Offset(0, 4),
               spreadRadius: isSelected ? 2 : 0,
@@ -279,7 +279,7 @@ class BusinessTypeCard extends StatelessWidget {
                 height: 54,
                 decoration: BoxDecoration(
                   color: _getColorFromHex(businessType.colorHex)
-                      .withValues(alpha: 0.18),
+                      .withOpacity(0.18),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
@@ -358,7 +358,7 @@ class BusinessTypeCard extends StatelessWidget {
           height: 38,
           decoration: BoxDecoration(
             color:
-                _getColorFromHex(businessType.colorHex).withValues(alpha: 0.13),
+                _getColorFromHex(businessType.colorHex).withOpacity(0.13),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
@@ -449,11 +449,11 @@ class BusinessTypeCard extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color:
-                _getColorFromHex(businessType.colorHex).withValues(alpha: 0.1),
+                _getColorFromHex(businessType.colorHex).withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: _getColorFromHex(businessType.colorHex)
-                  .withValues(alpha: 0.3),
+                  .withOpacity(0.3),
               width: 1,
             ),
           ),

@@ -77,7 +77,7 @@ class OrdersMetricsWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: ui.PUColors.primaryBlue.withValues(alpha: 0.25),
+            color: ui.PUColors.primaryBlue.withOpacity(0.25),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -88,7 +88,7 @@ class OrdersMetricsWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
+              color: Colors.white.withOpacity(0.15),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(
@@ -105,7 +105,7 @@ class OrdersMetricsWidget extends StatelessWidget {
                 Text(
                   'Ingresos Totales',
                   style: ui.PuTextStyle.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: Colors.white.withOpacity(0.7),
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
                   ),
@@ -127,9 +127,9 @@ class OrdersMetricsWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Colors.white.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
               ),
               child: Text(
                 'Bruto',
@@ -213,10 +213,10 @@ class OrdersMetricsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.1)),
+        border: Border.all(color: color.withOpacity(0.1)),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.05),
+            color: color.withOpacity(0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -229,7 +229,7 @@ class OrdersMetricsWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: 16),
@@ -251,7 +251,7 @@ class OrdersMetricsWidget extends StatelessWidget {
             label,
             style: ui.PuTextStyle.bodySmall.copyWith(
               fontSize: 10,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,

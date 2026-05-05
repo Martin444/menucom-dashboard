@@ -161,10 +161,10 @@ class _WardsHomeViewState extends State<WardsHomeView> with WidgetsBindingObserv
                                     top: 32,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: PUColors.bgItemMenuSelected.withValues(alpha: 0.5),
+                                    color: PUColors.bgItemMenuSelected.withOpacity(0.5),
                                     border: Border(
                                       left: BorderSide(
-                                        color: PUColors.primaryColor.withValues(alpha: 0.05),
+                                        color: PUColors.primaryColor.withOpacity(0.05),
                                         width: 1,
                                       ),
                                     ),

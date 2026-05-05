@@ -30,7 +30,7 @@ class ShareHeader extends StatelessWidget {
           SubtitleAtom(
             text: 'Tu menú ya está disponible para tus clientes',
             textAlign: TextAlign.center,
-            color: Colors.white.withValues(alpha: 0.7),
+            color: Colors.white.withOpacity(0.7),
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),

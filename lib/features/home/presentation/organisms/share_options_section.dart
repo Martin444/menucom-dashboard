@@ -46,7 +46,7 @@ class ShareOptionsSection extends StatelessWidget {
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: Colors.white.withOpacity(0.1),
                       width: 1,
                     ),
                   ),
@@ -58,7 +58,7 @@ class ShareOptionsSection extends StatelessWidget {
               child: AtomText(
                 'COMPARTIR POR',
                 style: PuTextStyle.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withOpacity(0.5),
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.5,
@@ -70,7 +70,7 @@ class ShareOptionsSection extends StatelessWidget {
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: Colors.white.withOpacity(0.1),
                       width: 1,
                     ),
                   ),

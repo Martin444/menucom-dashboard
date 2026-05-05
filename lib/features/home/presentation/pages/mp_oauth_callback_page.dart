@@ -3,6 +3,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pu_material/pu_material.dart';
+import '../../../../core/config.dart';
 
 /// Página de callback para manejar la respuesta de OAuth de Mercado Pago
 class MPOAuthCallbackPage extends StatefulWidget {
@@ -68,7 +69,7 @@ class _MPOAuthCallbackPageState extends State<MPOAuthCallbackPage> {
       }
 
       // Completar la vinculación
-      const redirectUri = 'https://menu-comerce.netlify.app/oauth/callback';
+      final redirectUri = Config.mpRedirectUri;
       final success = await _mpService.completeLinking(code, redirectUri);
 
       if (success) {
@@ -129,7 +130,7 @@ class _MPOAuthCallbackPageState extends State<MPOAuthCallbackPage> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -138,30 +139,32 @@ class _MPOAuthCallbackPageState extends State<MPOAuthCallbackPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Logo o icono principal
-              Container(
-                width: 80,
-                height: 80,
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 500),
+                width: 100,
+                height: 100,
                 decoration: BoxDecoration(
                   color: _isProcessing
-                      ? PUColors.bgButton.withValues(alpha: 0.1)
+                      ? PUColors.bgButton.withOpacity(0.1)
                       : _isSuccess
-                          ? PUColors.bgSucces.withValues(alpha: 0.1)
-                          : PUColors.bgError.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(40),
+                          ? PUColors.bgSucces.withOpacity(0.1)
+                          : PUColors.bgError.withOpacity(0.1),
+                  shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  _isProcessing
-                      ? FluentIcons.arrow_sync_24_regular
-                      : _isSuccess
-                          ? FluentIcons.checkmark_circle_24_regular
-                          : FluentIcons.error_circle_24_regular,
-                  size: 40,
-                  color: _isProcessing
-                      ? PUColors.bgButton
-                      : _isSuccess
-                          ? PUColors.bgSucces
-                          : PUColors.bgError,
+                child: Center(
+                  child: Icon(
+                    _isProcessing
+                        ? FluentIcons.arrow_sync_24_regular
+                        : _isSuccess
+                            ? FluentIcons.checkmark_circle_24_regular
+                            : FluentIcons.error_circle_24_regular,
+                    size: 50,
+                    color: _isProcessing
+                        ? PUColors.bgButton
+                        : _isSuccess
+                            ? PUColors.bgSucces
+                            : PUColors.bgError,
+                  ),
                 ),
               ),
               const SizedBox(height: 24),

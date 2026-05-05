@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:menu_dart_api/core/api.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import '../controllers/auth_controller.dart';
 
@@ -29,8 +28,7 @@ class AuthMiddleware extends GetMiddleware {
     }
 
     // Si está verificando, permitir acceso temporal
-    if (authController.authState == AuthState.loading ||
-        authController.authState == AuthState.initial) {
+    if (authController.authState == AuthState.loading || authController.authState == AuthState.initial) {
       debugPrint('AuthMiddleware: Verificando auth - permitiendo acceso temporal a: $route');
       return null;
     }
@@ -99,10 +97,8 @@ class RoleMiddleware extends GetMiddleware {
     }
 
     // Si está verificando, permitir acceso temporal
-    if (authController.authState == AuthState.loading ||
-        authController.authState == AuthState.initial) {
-      debugPrint(
-          'RoleMiddleware: Verificando auth/roles - permitiendo acceso temporal para: $route');
+    if (authController.authState == AuthState.loading || authController.authState == AuthState.initial) {
+      debugPrint('RoleMiddleware: Verificando auth/roles - permitiendo acceso temporal para: $route');
       return null;
     }
 
@@ -146,10 +142,8 @@ class MembershipMiddleware extends GetMiddleware {
     }
 
     // Si está cargando, permitir acceso temporal
-    if (authController.authState == AuthState.loading ||
-        authController.authState == AuthState.initial) {
-      debugPrint(
-          'MembershipMiddleware: Verificando auth - permitiendo acceso temporal a: $route');
+    if (authController.authState == AuthState.loading || authController.authState == AuthState.initial) {
+      debugPrint('MembershipMiddleware: Verificando auth - permitiendo acceso temporal a: $route');
       return null;
     }
 

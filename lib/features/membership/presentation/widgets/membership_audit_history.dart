@@ -19,10 +19,10 @@ class MembershipAuditHistory extends StatelessWidget {
           decoration: BoxDecoration(
             color: PUColors.bgItem,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: PUColors.borderInputColor.withValues(alpha: 0.3)),
+            border: Border.all(color: PUColors.borderInputColor.withOpacity(0.3)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
+                color: Colors.black.withOpacity(0.02),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -58,7 +58,7 @@ class MembershipAuditHistory extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: PUColors.bgInput.withValues(alpha: 0.5),
+                    color: PUColors.bgInput.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -66,7 +66,7 @@ class MembershipAuditHistory extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF7C3AED).withValues(alpha: 0.1),
+                          color: const Color(0xFF7C3AED).withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(

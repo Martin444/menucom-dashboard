@@ -9,6 +9,7 @@ import 'package:pickmeup_dashboard/features/home/presentation/views/service_home
 import 'package:pickmeup_dashboard/features/home/presentation/widget/head_actions.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/starter_banner.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/organisms/mp_link_banner.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/get_function_button.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
@@ -101,6 +102,9 @@ class _MobileContent extends StatelessWidget {
         // Header móvil
         const HeadDinning(isMobile: true),
 
+        // Banner de vinculación de Mercado Pago
+        const MPLinkBanner(),
+
         // Contenido principal
         Expanded(
           child: Center(
@@ -119,7 +123,7 @@ class _MobileContent extends StatelessWidget {
               color: PUColors.bgItem,
               border: Border(
                 top: BorderSide(
-                  color: PUColors.borderInputColor.withValues(alpha: 0.3),
+                  color: PUColors.borderInputColor.withOpacity(0.3),
                   width: 1,
                 ),
               ),
@@ -214,6 +218,9 @@ class _DesktopContent extends StatelessWidget {
 
         // Head Actions solo en desktop cuando hay espacio
         if (!isTablet) const HeadActions(),
+
+        // Banner de vinculación de Mercado Pago
+        const MPLinkBanner(),
 
         // Contenido principal
         Expanded(

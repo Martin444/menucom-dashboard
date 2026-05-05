@@ -9,40 +9,53 @@ import '../../../helpers/token_helper.dart';
 import '../../../core/navigation/menu_navigation_controller.dart';
 import '../../../core/config.dart';
 import '../../auth/presentation/controllers/auth_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/mixins/navigation_state_mixin.dart';
 
 class DinningController extends GetxController {
+  final MPOAuthService _mpService = MPOAuthService();
+
   /// Hashea el accessToken actual de la sesión
   Future<String> getHashedAccessToken() async {
     final storage = const FlutterSecureStorage();
     final token = await storage.read(key: 'access_token');
-    if (token == null || token.isEmpty) {
-      debugPrint("Access Token: null");
-      return '';
-    }
-    debugPrint("Access Token: $token");
-    var hashed = hashAccessToken(token);
-    debugPrint("Hashed Access Token: $hashed");
-    return hashed;
+    if (token == null || token.isEmpty) return '';
+    return hashAccessToken(token);
   }
 
   DinningModel dinningLogin = DinningModel();
 
   RxBool isLoadingDataUser = true.obs;
   RxBool everyListEmpty = true.obs;
+  RxBool isBannerVisible = true.obs;
+  RxBool isLinkedToMP = false.obs;
+  RxBool isLoadingMPStatus = false.obs;
 
   @override
   void onInit() {
     super.onInit();
+    _loadBannerVisibility();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getMyDinningInfo();
+      checkMPStatus();
     });
+  }
+
+  Future<void> _loadBannerVisibility() async {
+    final prefs = await SharedPreferences.getInstance();
+    isBannerVisible.value = prefs.getBool('mp_banner_visible') ?? true;
+  }
+
+  Future<void> setBannerVisible(bool visible) async {
+    isBannerVisible.value = visible;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('mp_banner_visible', visible);
   }
 
   void getMyDinningInfo() async {
     try {
       isLoadingDataUser.value = true;
-      
+
       // Asegurar que el token esté configurado si por alguna razón se perdió
       if (API.loginAccessToken.isEmpty) {
         final storage = const FlutterSecureStorage();
@@ -52,7 +65,7 @@ class DinningController extends GetxController {
           debugPrint('DinningController: Token recuperado desde storage');
         }
       }
-      
+
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
 
@@ -87,10 +100,10 @@ class DinningController extends GetxController {
       }
 
       isLoadingDataUser.value = false;
-      
+
       // Notificar cambios para que MenuSide y otros se actualicen
       update();
-      
+
       // Sincronizar navegación después de obtener el rol
       if (Get.isRegistered<MenuNavigationController>()) {
         Get.find<MenuNavigationController>().update();
@@ -98,9 +111,82 @@ class DinningController extends GetxController {
     } catch (e) {
       debugPrint('Error getting dinning info: $e');
       // No cerrar sesión automáticamente aquí si es solo un error de red o similar
-      // closeSesion(); 
+      // closeSesion();
       isLoadingDataUser.value = false;
       update();
+    }
+  }
+
+  /// Verifica si la cuenta está vinculada a Mercado Pago
+  Future<void> checkMPStatus() async {
+    try {
+      isLoadingMPStatus.value = true;
+      final linked = await _mpService.isAccountLinked();
+      isLinkedToMP.value = linked;
+      debugPrint('DinningController: MP Linked Status: $linked');
+    } catch (e) {
+      debugPrint('Error checking MP status: $e');
+    } finally {
+      isLoadingMPStatus.value = false;
+      update();
+    }
+  }
+
+  /// Inicia el flujo de vinculación con Mercado Pago
+  Future<void> vincularMercadoPago() async {
+    try {
+      final redirectUri = Config.mpRedirectUri;
+      final result = await _mpService.initiateLinkingFlow(redirectUri);
+
+      if (result.hasAuthUrl) {
+        final uri = Uri.parse(result.authUrl!);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } else {
+          Get.snackbar(
+            'Error',
+            'No se pudo abrir el navegador para la vinculación',
+            backgroundColor: const Color(0xFFFFEAEA),
+            colorText: const Color(0xFFD32F2F),
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      } else if (result.isAlreadyLinked) {
+        isLinkedToMP.value = true;
+        update();
+        Get.snackbar(
+          'Aviso',
+          'Tu cuenta ya se encuentra vinculada',
+          backgroundColor: const Color(0xFFE8F5E9),
+          colorText: const Color(0xFF2E7D32),
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error initiating MP linking: $e');
+      Get.snackbar(
+        'Error',
+        'Ocurrió un error inesperado al iniciar la vinculación',
+        backgroundColor: const Color(0xFFFFEAEA),
+        colorText: const Color(0xFFD32F2F),
+        snackPosition: SnackPosition.BOTTOM,
+        icon: const Icon(Icons.error_outline_rounded, color: Color(0xFFD32F2F)),
+      );
+    }
+  }
+
+  /// Actualiza manualmente el estado de Mercado Pago
+  Future<void> refreshMPStatus() async {
+    await checkMPStatus();
+    if (isLinkedToMP.value) {
+      Get.snackbar(
+        'Sincronizado',
+        'El estado de Mercado Pago se actualizó correctamente',
+        backgroundColor: const Color(0xFFE8F5E9),
+        colorText: const Color(0xFF2E7D32),
+        snackPosition: SnackPosition.BOTTOM,
+        icon: const Icon(Icons.check_circle_outline_rounded, color: Color(0xFF2E7D32)),
+      );
     }
   }
 
@@ -120,17 +206,9 @@ class DinningController extends GetxController {
       catalogsList.clear();
 
       final response = await GetMyCatalogsUseCase().execute(type: type);
-      debugPrint('=== DEBUG DinningController.getCatalogsByType ===');
-      debugPrint('API response catalogs count: ${response.length}');
-
-      for (int i = 0; i < response.length; i++) {
-        debugPrint('API Response Item $i: ${response[i].description} (ID: ${response[i].id})');
-      }
 
       for (var e in response) {
-        debugPrint('Adding catalog: ${e.description} (ID: ${e.id})');
         catalogsList.add(e);
-        debugPrint('catalogsList length after adding: ${catalogsList.length}');
       }
 
       debugPrint('Final catalogsList length: ${catalogsList.length}');
@@ -274,8 +352,6 @@ class DinningController extends GetxController {
   TextEditingController priceController = TextEditingController();
   TextEditingController deliveryController = TextEditingController();
   String photoController = '';
-
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   void clearData() {
     dinningLogin = DinningModel();

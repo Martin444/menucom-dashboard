@@ -241,8 +241,8 @@ class CommerceCard extends StatelessWidget {
         // Badge de productos con mejor diseño
         badgeList.add(BadgeInfo(
           text: '$totalItems platos',
-          backgroundColor: Colors.green.withValues(alpha: 0.15),
-          borderColor: Colors.green.withValues(alpha: 0.4),
+          backgroundColor: Colors.green.withOpacity(0.15),
+          borderColor: Colors.green.withOpacity(0.4),
           textColor: Colors.green[700]!,
         ));
       }
@@ -266,8 +266,8 @@ class CommerceCard extends StatelessWidget {
 
         badgeList.add(BadgeInfo(
           text: deliveryText,
-          backgroundColor: badgeColor.withValues(alpha: 0.15),
-          borderColor: badgeColor.withValues(alpha: 0.4),
+          backgroundColor: badgeColor.withOpacity(0.15),
+          borderColor: badgeColor.withOpacity(0.4),
           textColor: badgeColor,
         ));
       }
@@ -277,8 +277,8 @@ class CommerceCard extends StatelessWidget {
     if (isEmailVerified == true) {
       badgeList.add(BadgeInfo(
         text: '✓ Verificado',
-        backgroundColor: Colors.blue.withValues(alpha: 0.15),
-        borderColor: Colors.blue.withValues(alpha: 0.4),
+        backgroundColor: Colors.blue.withOpacity(0.15),
+        borderColor: Colors.blue.withOpacity(0.4),
         textColor: Colors.blue,
       ));
     }

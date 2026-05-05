@@ -43,7 +43,7 @@ class MembershipStatusCard extends StatelessWidget {
 
         // Glassmorphism properties - Use design system tokens
         final Color baseColor = isActive ? PUColors.glassPremiumBg : PUColors.iconColor;
-        final Color secondaryColor = isActive ? PUColors.premiumAccent.withValues(alpha: 0.65) : Colors.grey.shade400;
+        final Color secondaryColor = isActive ? PUColors.premiumAccent.withOpacity(0.65) : Colors.grey.shade400;
 
         return ClipRRect(
           borderRadius: BorderRadius.circular(24),
@@ -53,13 +53,13 @@ class MembershipStatusCard extends StatelessWidget {
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [baseColor.withValues(alpha: 0.85), secondaryColor.withValues(alpha: 0.65)],
+                  colors: [baseColor.withOpacity(0.85), secondaryColor.withOpacity(0.65)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withOpacity(0.2),
                   width: 1,
                 ),
                 boxShadow: [
@@ -81,7 +81,7 @@ class MembershipStatusCard extends StatelessWidget {
                       height: 150,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: Colors.white.withOpacity(0.1),
                       ),
                     ),
                   ),
@@ -107,9 +107,9 @@ class MembershipStatusCard extends StatelessWidget {
                                     vertical: 8,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.2),
+                                    color: Colors.white.withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(24),
-                                    border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                                    border: Border.all(color: Colors.white.withOpacity(0.3)),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -133,9 +133,9 @@ class MembershipStatusCard extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color: Colors.white.withOpacity(0.2),
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
+                              border: Border.all(color: Colors.white.withOpacity(0.4)),
                             ),
                             child: Icon(
                               isActive ? FluentIcons.premium_32_regular : FluentIcons.star_32_regular,

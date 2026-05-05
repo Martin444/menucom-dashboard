@@ -27,11 +27,11 @@ class ShareActionButton extends StatelessWidget {
         child: ContainerAtom(
           variant: ContainerVariant.compact,
           backgroundColor: isActive
-              ? color.withValues(alpha: 0.15)
-              : Colors.white.withValues(alpha: 0.04),
+              ? color.withOpacity(0.15)
+              : Colors.white.withOpacity(0.04),
           borderColor: isActive
-              ? color.withValues(alpha: 0.5)
-              : Colors.white.withValues(alpha: 0.08),
+              ? color.withOpacity(0.5)
+              : Colors.white.withOpacity(0.08),
           borderWidth: 1.5,
           borderRadius: BorderRadius.circular(16),
           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -50,7 +50,7 @@ class ShareActionButton extends StatelessWidget {
               else
                 IconAtom(
                   icon: icon,
-                  color: isActive ? color : Colors.white.withValues(alpha: 0.6),
+                  color: isActive ? color : Colors.white.withOpacity(0.6),
                   size: 24,
                 ),
               const SizedBox(height: 8),
@@ -59,7 +59,7 @@ class ShareActionButton extends StatelessWidget {
                 style: PuTextStyle.bodySmall.copyWith(
                   fontSize: 12,
                   fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-                  color: isActive ? color : Colors.white.withValues(alpha: 0.5),
+                  color: isActive ? color : Colors.white.withOpacity(0.5),
                 ),
               ),
             ],

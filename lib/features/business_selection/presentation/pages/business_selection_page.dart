@@ -38,8 +38,8 @@ class BusinessSelectionPage extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  PUColors.primaryColor.withValues(alpha: 0.1),
-                  PUColors.secundaryBackground.withValues(alpha: 0.05),
+                  PUColors.primaryColor.withOpacity(0.1),
+                  PUColors.secundaryBackground.withOpacity(0.05),
                 ],
               ),
             ),
@@ -158,9 +158,9 @@ class BusinessSelectionPage extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        PUColors.primaryColor.withValues(alpha: 0.22),
-                        PUColors.primaryColor.withValues(alpha: 0.09),
-                        PUColors.secundaryBackground.withValues(alpha: 0.08),
+                        PUColors.primaryColor.withOpacity(0.22),
+                        PUColors.primaryColor.withOpacity(0.09),
+                        PUColors.secundaryBackground.withOpacity(0.08),
                       ],
                     ),
                   ),
@@ -175,11 +175,11 @@ class BusinessSelectionPage extends StatelessWidget {
                       width: isTablet ? 70 : 90,
                       height: isTablet ? 70 : 90,
                       decoration: BoxDecoration(
-                        color: PUColors.primaryColor.withValues(alpha: 0.13),
+                        color: PUColors.primaryColor.withOpacity(0.13),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: PUColors.primaryColor.withValues(alpha: 0.18),
+                            color: PUColors.primaryColor.withOpacity(0.18),
                             blurRadius: 18,
                             offset: const Offset(0, 8),
                           ),
@@ -211,7 +211,7 @@ class BusinessSelectionPage extends StatelessWidget {
                           color: PUColors.textColor3,
                           shadows: [
                             Shadow(
-                              color: PUColors.primaryColor.withValues(alpha: 0.18),
+                              color: PUColors.primaryColor.withOpacity(0.18),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -228,7 +228,7 @@ class BusinessSelectionPage extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                           shadows: [
                             Shadow(
-                              color: PUColors.primaryColor.withValues(alpha: 0.10),
+                              color: PUColors.primaryColor.withOpacity(0.10),
                               blurRadius: 6,
                               offset: const Offset(0, 1),
                             ),
@@ -253,7 +253,7 @@ class BusinessSelectionPage extends StatelessWidget {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: PUColors.primaryColor.withValues(alpha: 0.08),
+                          color: PUColors.primaryColor.withOpacity(0.08),
                           blurRadius: 12,
                           offset: const Offset(0, -2),
                         ),

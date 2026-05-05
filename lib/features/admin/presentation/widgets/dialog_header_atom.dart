@@ -30,7 +30,7 @@ class DialogHeaderAtom extends StatelessWidget {
       padding: PUSpacing.lg,
       decoration: BoxDecoration(
         color: color == PUColors.errorColor
-            ? PUColors.errorColor.withValues(alpha: 0.05)
+            ? PUColors.errorColor.withOpacity(0.05)
             : PUColors.primaryBackground,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(24),
@@ -46,7 +46,7 @@ class DialogHeaderAtom extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withOpacity(0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),

@@ -1,15 +1,10 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:menu_dart_api/core/api.dart';
-import 'package:menu_dart_api/by_feature/upload_images/data/usescases/upload_file_usescases.dart';
-import 'package:menu_dart_api/by_feature/auth/social_login/data/usecase/social_login_usecase.dart';
 import 'package:menu_dart_api/by_feature/user/change_password/data/usecase/change_password_usescase.dart';
 import 'package:menu_dart_api/by_feature/auth/register/data/usescase/register_commerce_usescase.dart';
-import 'package:menu_dart_api/core/exeptions/api_exception.dart';
 import 'package:menu_dart_api/core/type_comerce_model.dart';
 import 'package:menu_dart_api/by_feature/user/change_password/model/change_password_params.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/pages/succes_register_page.dart';
@@ -24,7 +19,6 @@ import '../../domain/usecases/login_with_social_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/get_current_user_usecase.dart';
 import '../../data/repositories/auth_repository_impl.dart';
-import '../../config/firebase_config.dart';
 import '../../../../core/config.dart';
 import '../../../../core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/core/helpers/image_size_helper.dart';
@@ -385,7 +379,7 @@ class AuthController extends GetxController {
       }
 
       var urlPhoto = await UploadFileUsesCase().execute(toSend);
-      var responseCommerce = await RegisterCommerceUsescase().execute(
+      await RegisterCommerceUsescase().execute(
         photo: urlPhoto,
         email: newEmailController.text,
         name: newNameController.text,
@@ -549,13 +543,13 @@ class AuthController extends GetxController {
       _clearError();
 
       debugPrint('🔐 Iniciando Google Sign-In unificado...');
-      
+
       // El caso de uso maneja todo el flujo: Google Auth -> Firebase -> Backend
       final user = await _loginWithSocialUseCase.executeWithGoogle();
 
       // Configurar token en API antes de establecer el usuario
       API.setAccessToken(user.accessToken);
-      
+
       // Guardar token y usuario de forma segura (redundante pero asegura consistencia con el repositorio)
       await _secureStorage.write(key: _tokenKey, value: user.accessToken);
       await _secureStorage.write(key: _userKey, value: json.encode(user.toMap()));
@@ -567,7 +561,7 @@ class AuthController extends GetxController {
     } catch (e) {
       debugPrint('Error en login con Google: $e');
       _setError(_getErrorMessage(e));
-      
+
       // Mostrar error amigable al usuario
       Get.snackbar(
         'Error',
@@ -591,13 +585,13 @@ class AuthController extends GetxController {
       _clearError();
 
       debugPrint('🔐 Iniciando Apple Sign-In unificado...');
-      
+
       // El caso de uso maneja todo el flujo: Apple Auth -> Firebase -> Backend
       final user = await _loginWithSocialUseCase.executeWithApple();
 
       // Configurar token en API antes de establecer el usuario
       API.setAccessToken(user.accessToken);
-      
+
       // Guardar token y usuario de forma segura
       await _secureStorage.write(key: _tokenKey, value: user.accessToken);
       await _secureStorage.write(key: _userKey, value: json.encode(user.toMap()));
@@ -609,7 +603,7 @@ class AuthController extends GetxController {
     } catch (e) {
       debugPrint('Error en login con Apple: $e');
       _setError(_getErrorMessage(e));
-      
+
       Get.snackbar(
         'Error',
         'No se pudo iniciar sesión con Apple. Inténtalo de nuevo.',
@@ -750,12 +744,12 @@ class AuthController extends GetxController {
   void _setAuthenticatedUser(AuthenticatedUser user) {
     _currentUser.value = user;
     _authState.value = AuthState.authenticated;
-    
+
     // Asegurar que el token esté configurado globalmente en la API
     if (user.accessToken.isNotEmpty) {
       API.setAccessToken(user.accessToken);
     }
-    
+
     // Sincronizar token de FCM con el backend al autenticar
     _syncFcmToken();
 
@@ -780,15 +774,15 @@ class AuthController extends GetxController {
   void _setUnauthenticated({bool clearApiToken = true}) {
     _currentUser.value = null;
     _authState.value = AuthState.unauthenticated;
-    
+
     // Limpiar token global en la API solo si se solicita
     if (clearApiToken) {
       API.setAccessToken('');
     }
-    
+
     // Resetear callbacks de FCM al desautenticar
     resetFCM();
-    
+
     _clearError();
   }
 

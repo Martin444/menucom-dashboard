@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pickmeup_dashboard/features/admin/presentation/controllers/membership_admin_controller.dart';
-import 'package:menu_dart_api/by_feature/membership/models/membership_plan_model.dart';
 
 /// Tabla de planes de membresía con encabezado y acciones.
 /// Extraído de MembershipAdminDesktopView._buildPlansTable para cumplir Atomic Design.
@@ -51,14 +50,7 @@ class MembershipPlansTable extends StatelessWidget {
             }
 
             return AdminDataTableMolecule(
-              headers: const [
-                'Nombre',
-                'Precio',
-                'Límites',
-                'Estado',
-                'Predeterminado',
-                'Acciones'
-              ],
+              headers: const ['Nombre', 'Precio', 'Límites', 'Estado', 'Predeterminado', 'Acciones'],
               rows: controller.plans.map((plan) {
                 return AdminTableRow([
                   TextTableCell(plan.displayName ?? plan.name),
@@ -83,17 +75,14 @@ class MembershipPlansTable extends StatelessWidget {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.edit, size: 20),
-                          onPressed: () =>
-                              controller.showEditPlanDialog(plan),
+                          onPressed: () => controller.showEditPlanDialog(plan),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          icon: const Icon(Icons.delete,
-                              size: 20, color: Colors.red),
-                          onPressed: () =>
-                              controller.confirmArchivePlan(plan),
+                          icon: const Icon(Icons.delete, size: 20, color: Colors.red),
+                          onPressed: () => controller.confirmArchivePlan(plan),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
                         ),

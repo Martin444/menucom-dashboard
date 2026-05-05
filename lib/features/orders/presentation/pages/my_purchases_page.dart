@@ -265,9 +265,9 @@ class _MyPurchasesPageState extends State<MyPurchasesPage> {
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: PUColors.primaryBlue.withValues(alpha: 0.03),
+            color: PUColors.primaryBlue.withOpacity(0.03),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: PUColors.primaryBlue.withValues(alpha: 0.05)),
+            border: Border.all(color: PUColors.primaryBlue.withOpacity(0.05)),
           ),
           child: Row(
             children: [
@@ -275,7 +275,7 @@ class _MyPurchasesPageState extends State<MyPurchasesPage> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.1),
+                  color: Colors.grey.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -288,7 +288,7 @@ class _MyPurchasesPageState extends State<MyPurchasesPage> {
                       width: 120,
                       height: 14,
                       decoration: BoxDecoration(
-                        color: Colors.grey.withValues(alpha: 0.1),
+                        color: Colors.grey.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -297,7 +297,7 @@ class _MyPurchasesPageState extends State<MyPurchasesPage> {
                       width: double.infinity,
                       height: 10,
                       decoration: BoxDecoration(
-                        color: Colors.grey.withValues(alpha: 0.05),
+                        color: Colors.grey.withOpacity(0.05),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -309,7 +309,7 @@ class _MyPurchasesPageState extends State<MyPurchasesPage> {
                 width: 60,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.1),
+                  color: Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),

@@ -25,10 +25,10 @@ class MembershipActionButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
           decoration: BoxDecoration(
-            color: (color ?? PUColors.primaryColor).withValues(alpha: 0.1),
+            color: (color ?? PUColors.primaryColor).withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: (color ?? PUColors.primaryColor).withValues(alpha: 0.2),
+              color: (color ?? PUColors.primaryColor).withOpacity(0.2),
             ),
           ),
           child: Row(

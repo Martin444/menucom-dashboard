@@ -123,7 +123,7 @@ class UserAvatarSmall extends StatelessWidget {
       width: 32,
       height: 32,
       decoration: BoxDecoration(
-        color: PUColors.primaryColor.withValues(alpha: 0.1),
+        color: PUColors.primaryColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: ClipRRect(

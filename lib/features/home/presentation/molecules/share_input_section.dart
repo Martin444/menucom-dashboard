@@ -31,9 +31,9 @@ class ShareInputSection extends StatelessWidget {
         children: [
           ContainerAtom(
             variant: ContainerVariant.minimal,
-            backgroundColor: Colors.white.withValues(alpha: 0.05),
+            backgroundColor: Colors.white.withOpacity(0.05),
             borderRadius: BorderRadius.circular(16),
-            borderColor: Colors.white.withValues(alpha: 0.1),
+            borderColor: Colors.white.withOpacity(0.1),
             borderWidth: 1,
             padding: EdgeInsets.zero,
             child: PUInput(
@@ -63,9 +63,9 @@ class ShareInputSection extends StatelessWidget {
         children: [
           ContainerAtom(
             variant: ContainerVariant.minimal,
-            backgroundColor: Colors.white.withValues(alpha: 0.05),
+            backgroundColor: Colors.white.withOpacity(0.05),
             borderRadius: BorderRadius.circular(16),
-            borderColor: Colors.white.withValues(alpha: 0.1),
+            borderColor: Colors.white.withOpacity(0.1),
             borderWidth: 1,
             padding: EdgeInsets.zero,
             child: PUInput(

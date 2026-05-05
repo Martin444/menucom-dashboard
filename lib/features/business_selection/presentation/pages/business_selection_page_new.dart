@@ -37,8 +37,8 @@
 //                 begin: Alignment.topLeft,
 //                 end: Alignment.bottomRight,
 //                 colors: [
-//                   PUColors.primaryColor.withValues(alpha: 0.1),
-//                   PUColors.secundaryBackground.withValues(alpha: 0.05),
+//                   PUColors.primaryColor.withOpacity(0.1),
+//                   PUColors.secundaryBackground.withOpacity(0.05),
 //                 ],
 //               ),
 //             ),
@@ -153,8 +153,8 @@
 //                   begin: Alignment.topLeft,
 //                   end: Alignment.bottomRight,
 //                   colors: [
-//                     PUColors.primaryColor.withValues(alpha: 0.1),
-//                     PUColors.secundaryBackground.withValues(alpha: 0.05),
+//                     PUColors.primaryColor.withOpacity(0.1),
+//                     PUColors.secundaryBackground.withOpacity(0.05),
 //                   ],
 //                 ),
 //               ),

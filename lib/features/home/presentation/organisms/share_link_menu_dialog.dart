@@ -282,12 +282,12 @@ class _ShareLinkMenuDialogState extends State<ShareLinkMenuDialog> {
         variant: ContainerVariant.spacious,
         backgroundColor: PUColors.secundaryBackground,
         borderRadius: BorderRadius.circular(32),
-        borderColor: Colors.white.withValues(alpha: 0.08),
+        borderColor: Colors.white.withOpacity(0.08),
         borderWidth: 1.5,
         padding: EdgeInsets.zero,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
+            color: Colors.black.withOpacity(0.5),
             blurRadius: 40,
             offset: const Offset(0, 20),
           ),

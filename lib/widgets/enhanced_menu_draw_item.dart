@@ -125,7 +125,7 @@ class EnhancedMenuDrawItem extends StatelessWidget {
                               style: PuTextStyle.description1.copyWith(
                                 fontSize: 8,
                                 fontWeight: FontWeight.bold,
-                                color: PUColors.textColorMuted.withValues(alpha: 0.6),
+                                color: PUColors.textColorMuted.withOpacity(0.6),
                               ),
                             ),
                           ),
@@ -144,14 +144,14 @@ class EnhancedMenuDrawItem extends StatelessWidget {
 
   Color _getIconColor(bool isSelected, bool isComingSoon) {
     if (isComingSoon) {
-      return PUColors.iconColor.withValues(alpha: 0.5);
+      return PUColors.iconColor.withOpacity(0.5);
     }
     return isSelected ? PUColors.primaryColor : PUColors.iconColor;
   }
 
   Color _getTextColor(bool isSelected, bool isComingSoon) {
     if (isComingSoon) {
-      return PUColors.iconColor.withValues(alpha: 0.5);
+      return PUColors.iconColor.withOpacity(0.5);
     }
     return isSelected ? PUColors.primaryColor : PUColors.iconColor;
   }

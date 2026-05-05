@@ -34,23 +34,23 @@ class MembershipPlanCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isCurrentPlan ? accentColor.withValues(alpha: 0.05) : PUColors.bgItem,
+        color: isCurrentPlan ? accentColor.withOpacity(0.05) : PUColors.bgItem,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isCurrentPlan ? accentColor : PUColors.borderInputColor.withValues(alpha: 0.3),
+          color: isCurrentPlan ? accentColor : PUColors.borderInputColor.withOpacity(0.3),
           width: isCurrentPlan ? 2 : 1,
         ),
         boxShadow: isCurrentPlan
             ? [
                 BoxShadow(
-                  color: accentColor.withValues(alpha: 0.15),
+                  color: accentColor.withOpacity(0.15),
                   blurRadius: 15,
                   offset: const Offset(0, 5),
                 ),
               ]
             : [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.02),
+                  color: Colors.black.withOpacity(0.02),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -120,7 +120,7 @@ class MembershipPlanCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: accentColor.withValues(alpha: 0.1),
+                            color: accentColor.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(

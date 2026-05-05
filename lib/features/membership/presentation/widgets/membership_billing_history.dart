@@ -18,10 +18,10 @@ class MembershipBillingHistory extends StatelessWidget {
           decoration: BoxDecoration(
             color: PUColors.bgItem,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: PUColors.borderInputColor.withValues(alpha: 0.3)),
+            border: Border.all(color: PUColors.borderInputColor.withOpacity(0.3)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
+                color: Colors.black.withOpacity(0.02),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -56,7 +56,7 @@ class MembershipBillingHistory extends StatelessWidget {
                       children: [
                         Icon(
                           FluentIcons.document_24_regular,
-                          color: PUColors.iconColor.withValues(alpha: 0.5),
+                          color: PUColors.iconColor.withOpacity(0.5),
                           size: 56,
                         ),
                         const SizedBox(height: 16),
@@ -99,7 +99,7 @@ class MembershipBillingHistory extends StatelessWidget {
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: PUColors.bgInput.withValues(alpha: 0.5),
+                      color: PUColors.bgInput.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
@@ -107,7 +107,7 @@ class MembershipBillingHistory extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: statusColor.withValues(alpha: 0.1),
+                            color: statusColor.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
