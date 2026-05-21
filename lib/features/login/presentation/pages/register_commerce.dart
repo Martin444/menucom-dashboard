@@ -104,6 +104,7 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                   isTaked: _.fileTaked != null,
                                                   photoInBytes: _.fileTaked ?? Uint8List(2),
                                                   isLogo: true,
+                                                  isLoading: _.isLoadingImage.value,
                                                 ),
                                                 const SizedBox(
                                                   height: 15,

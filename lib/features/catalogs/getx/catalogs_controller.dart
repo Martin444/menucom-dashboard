@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +14,7 @@ class CatalogsController extends GetxController {
   final RxList<CatalogModel> catalogsList = <CatalogModel>[].obs;
   final Rxn<CatalogModel> catalogSelected = Rxn<CatalogModel>();
   final RxBool isLoadingCatalogs = false.obs;
+  final RxBool isLoadingImage = false.obs;
 
   static const String typeMenu = 'menu';
   static const String typeWardrobe = 'wardrobe';
@@ -119,22 +121,31 @@ class CatalogsController extends GetxController {
   List<String> tagsCatalog = [];
 
   void pickCoverImageCatalog() async {
-    final ImagePicker pickerImage = ImagePicker();
-    final result = await pickerImage.pickImage(source: ImageSource.gallery);
-    if (result != null) {
-      final String extension = result.name.split('.').last.toLowerCase();
-      if (extension != 'png' && extension != 'jpg' && extension != 'jpeg') {
-        Get.snackbar(
-          'Formato inválido',
-          'Solo se permiten imágenes PNG o JPG.',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-        return;
+    isLoadingImage.value = true;
+    update();
+    try {
+      final ImagePicker pickerImage = ImagePicker();
+      final result = await pickerImage.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1000,
+        maxHeight: 1000,
+      );
+      if (result != null) {
+        final String extension = result.name.split('.').last.toLowerCase();
+        if (extension != 'png' && extension != 'jpg' && extension != 'jpeg') {
+          Get.snackbar(
+            'Formato inválido',
+            'Solo se permiten imágenes PNG o JPG.',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return;
+        }
+        final Uint8List originalFile = await result.readAsBytes();
+        coverImageCatalog = ImageSizeHelper.resizeIfNeeded(originalFile);
       }
-      Uint8List originalFile = await result.readAsBytes();
-      Uint8List reducedFile = ImageSizeHelper.resizeIfNeeded(originalFile);
-      coverImageCatalog = reducedFile;
+    } finally {
+      isLoadingImage.value = false;
       update();
     }
   }
@@ -359,23 +370,33 @@ class CatalogsController extends GetxController {
   }
 
   void pickImageDirectory() async {
-    final ImagePicker pickerImage = ImagePicker();
-    final result = await pickerImage.pickImage(source: ImageSource.gallery);
-    if (result != null) {
-      final String extension = result.name.split('.').last.toLowerCase();
-      if (extension != 'png' && extension != 'jpg' && extension != 'jpeg') {
-        Get.snackbar(
-          'Formato inválido',
-          'Solo se permiten imágenes PNG o JPG.',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-        return;
+    isLoadingImage.value = true;
+    update();
+    try {
+      final ImagePicker pickerImage = ImagePicker();
+      final result = await pickerImage.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1000,
+        maxHeight: 1000,
+      );
+      if (result != null) {
+        final String extension = result.name.split('.').last.toLowerCase();
+        if (extension != 'png' && extension != 'jpg' && extension != 'jpeg') {
+          Get.snackbar(
+            'Formato inválido',
+            'Solo se permiten imágenes PNG o JPG.',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return;
+        }
+        final Uint8List originalFile = await result.readAsBytes();
+        final Uint8List reducedFile = ImageSizeHelper.resizeIfNeeded(originalFile);
+        toSend = reducedFile;
+        fileTaked = reducedFile;
       }
-      Uint8List originalFile = await result.readAsBytes();
-      Uint8List reducedFile = ImageSizeHelper.resizeIfNeeded(originalFile);
-      toSend = reducedFile;
-      fileTaked = reducedFile;
+    } finally {
+      isLoadingImage.value = false;
       update();
     }
   }

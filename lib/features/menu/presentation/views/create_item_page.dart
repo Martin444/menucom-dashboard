@@ -129,6 +129,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                   photoInBytes:
                                       catCtrl.fileTaked ?? Uint8List(0),
                                   isTaked: catCtrl.fileTaked != null,
+                                  isLoading: catCtrl.isLoadingImage.value,
                                 ),
                                 const SizedBox(
                                   height: 20,

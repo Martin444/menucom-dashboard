@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/get_function_button.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/user_info_header.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/dashboard_error_state.dart';
 import 'package:pu_material/utils/style/pu_style_containers.dart';
 
 class HeadActions extends StatefulWidget {
@@ -34,15 +35,11 @@ class _HeadActionsState extends State<HeadActions> {
           // Verificar que dinningLogin no sea null
           if (dinning.dinningLogin.name == null ||
               dinning.dinningLogin.id == null) {
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: PuStyleContainers.borderBottomContainer,
-              child: const Center(
-                child: Text(
-                  'Error: No se pudo cargar la información del usuario',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
+            return DashboardErrorState(
+              isCompact: true,
+              onRetry: () {
+                dinning.getMyDinningInfo();
+              },
             );
           }
 

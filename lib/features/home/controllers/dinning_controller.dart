@@ -26,6 +26,7 @@ class DinningController extends GetxController {
   DinningModel dinningLogin = DinningModel();
 
   RxBool isLoadingDataUser = true.obs;
+  RxBool hasErrorLoadingUser = false.obs;
   RxBool everyListEmpty = true.obs;
   RxBool isBannerVisible = true.obs;
   RxBool isLinkedToMP = false.obs;
@@ -55,6 +56,7 @@ class DinningController extends GetxController {
   void getMyDinningInfo() async {
     try {
       isLoadingDataUser.value = true;
+      hasErrorLoadingUser.value = false;
 
       // Asegurar que el token esté configurado si por alguna razón se perdió
       if (API.loginAccessToken.isEmpty) {
@@ -96,6 +98,10 @@ class DinningController extends GetxController {
         case RolesUsers.pets:
           await getCatalogsByType('wardrobe');
           break;
+        case RolesUsers.event_organizer:
+          // Los organizadores de eventos no usan catálogos tradicionales
+          everyListEmpty.value = true;
+          break;
         default:
       }
 
@@ -112,6 +118,7 @@ class DinningController extends GetxController {
       debugPrint('Error getting dinning info: $e');
       // No cerrar sesión automáticamente aquí si es solo un error de red o similar
       // closeSesion();
+      hasErrorLoadingUser.value = true;
       isLoadingDataUser.value = false;
       update();
     }

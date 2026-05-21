@@ -50,4 +50,10 @@ class PURoutes {
   static String ADMIN_DASHBOARD = '/admin';
   static String ADMIN_USERS = '/admin/usuarios';
   static String ADMIN_MEMBERSHIPS = '/admin/membresias';
+
+  // Events
+  static String EVENTS = '/events';
+  static String EVENT_CREATE = '/events/create';
+  static String EVENT_DETAIL = '/events/detail';
+  static String EVENT_EDIT = '/events/edit';
 }

@@ -15,6 +15,7 @@ import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 
 import '../widget/head_dinning.dart';
+import '../widget/dashboard_error_state.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -44,6 +45,15 @@ class _HomePageState extends State<HomePage> {
               body: const Center(
                 child: CircularProgressIndicator(),
               ),
+            );
+          }
+
+          if (dinning.hasErrorLoadingUser.value) {
+            return DashboardErrorState(
+              onRetry: () {
+                dinning.getMyDinningInfo();
+                dinning.checkMPStatus();
+              },
             );
           }
 
@@ -115,25 +125,24 @@ class _MobileContent extends StatelessWidget {
           ),
         ),
 
-        // Actions principales en la parte inferior para mobile
-        if (controller.everyListEmpty.value) ...[
-          Container(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            decoration: BoxDecoration(
-              color: PUColors.bgItem,
-              border: Border(
-                top: BorderSide(
-                  color: PUColors.borderInputColor.withOpacity(0.3),
-                  width: 1,
-                ),
+        // Footer con acciones principales - siempre visible en mobile
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          decoration: BoxDecoration(
+            color: PUColors.bgItem,
+            border: Border(
+              top: BorderSide(
+                color: PUColors.borderInputColor.withOpacity(0.3),
+                width: 1,
               ),
             ),
-            child: SafeArea(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Header de la sección
+          ),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (controller.everyListEmpty.value)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Text(
@@ -147,13 +156,12 @@ class _MobileContent extends StatelessWidget {
                     ),
                   ),
 
-                  // Botones principales
-                  ActionPrincipalByRole(role: controller),
-                ],
-              ),
+                // Botones principales
+                ActionPrincipalByRole(role: controller),
+              ],
             ),
           ),
-        ],
+        ),
       ],
     );
   }
@@ -269,6 +277,9 @@ class _RoleBasedView extends StatelessWidget {
         return MenuHomeView(isMobile: isMobile);
       case RolesUsers.customer:
         return CustomerHomeView(isMobile: isMobile);
+      case RolesUsers.event_organizer:
+        Future.microtask(() => Get.offNamed(PURoutes.EVENTS));
+        return const Center(child: CircularProgressIndicator());
       default:
         return WardsHomeView(isMobile: isMobile);
     }

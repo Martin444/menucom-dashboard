@@ -263,6 +263,8 @@ class UserAvatarSide extends StatelessWidget {
         return 'Petshop';
       case 'service':
         return 'Servicios';
+      case 'events':
+        return 'Organizador de Eventos';
       case 'admin':
         return 'Administrador';
       case 'customer':

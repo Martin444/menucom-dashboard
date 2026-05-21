@@ -6,6 +6,7 @@ import 'package:pu_material/pu_material.dart';
 import '../../../../routes/routes.dart';
 import '../../controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/membership/getx/membership_controller.dart';
+import 'dashboard_error_state.dart';
 
 class ActionPrincipalByRole extends StatelessWidget {
   final DinningController role;
@@ -26,11 +27,11 @@ class ActionPrincipalByRole extends StatelessWidget {
 
     // Verificar que dinningLogin y role no sean null
     if (role.dinningLogin.role == null || role.dinningLogin.role!.isEmpty) {
-      return const Center(
-        child: Text(
-          'Error: No se pudo cargar la información del usuario',
-          style: TextStyle(color: Colors.red),
-        ),
+      return DashboardErrorState(
+        isCompact: true,
+        onRetry: () {
+          role.getMyDinningInfo();
+        },
       );
     }
 
@@ -223,6 +224,15 @@ class ActionPrincipalByRole extends StatelessWidget {
               'La gestión de servicios estará disponible pronto',
               snackPosition: SnackPosition.TOP,
             );
+          },
+          load: false,
+        );
+
+      case RolesUsers.event_organizer:
+        return ButtonPrimary(
+          title: 'Nuevo evento',
+          onPressed: () {
+            Get.toNamed(PURoutes.EVENT_CREATE);
           },
           load: false,
         );

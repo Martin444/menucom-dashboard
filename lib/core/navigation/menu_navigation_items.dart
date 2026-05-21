@@ -6,6 +6,7 @@ import '../../routes/routes.dart';
 /// Enum que define todos los elementos de navegación disponibles en el menú lateral
 enum MenuNavigationItem {
   home,
+  events,
   orders,
   myPurchases,
   membership,
@@ -24,6 +25,13 @@ enum MenuNavigationItem {
           icon: FluentIcons.home_24_regular,
           label: 'Inicio',
           route: PURoutes.HOME,
+          isNavigationRoute: true,
+        );
+      case MenuNavigationItem.events:
+        return MenuItemConfig(
+          icon: FluentIcons.calendar_24_regular,
+          label: 'Eventos',
+          route: PURoutes.EVENTS,
           isNavigationRoute: true,
         );
       case MenuNavigationItem.orders:
@@ -99,6 +107,7 @@ enum MenuNavigationItem {
   /// Items del menú principal (sin logout que va separado)
   static List<MenuNavigationItem> get mainItems => [
         home,
+        events,
         orders,
         myPurchases,
         membership,
@@ -149,6 +158,8 @@ enum MenuNavigationItem {
         ];
       case 'customer':
         return [home, myPurchases, membership, ...actionItems];
+      case 'events':
+        return [home, events, orders, myPurchases, membership, ...actionItems];
       default:
         return [home, myPurchases, membership, ...actionItems];
     }

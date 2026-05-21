@@ -43,13 +43,17 @@ class BusinessSelectionController extends GetxController {
     try {
       _isLoading.value = true;
 
+      final selectedBackendCode = _selectedBusinessType.value!.backendCode.isNotEmpty
+          ? _selectedBusinessType.value!.backendCode
+          : _selectedBusinessType.value!.roleType.name;
+
       // Print del rol seleccionado
       debugPrint(
-          '🎯 ROL SELECCIONADO: ${_selectedBusinessType.value!.title} (${_selectedBusinessType.value!.roleType.name})');
+          '🎯 ROL SELECCIONADO: ${_selectedBusinessType.value!.title} ($selectedBackendCode)');
 
       // Crear request para el nuevo endpoint seguro
       final request = UpdateUserRoleRequest(
-        role: _selectedBusinessType.value!.roleType.name,
+        role: selectedBackendCode,
       );
 
       // Llamar al API con el nuevo endpoint PATCH /user-roles/my-role
@@ -57,7 +61,7 @@ class BusinessSelectionController extends GetxController {
 
       if (response.success) {
         // Actualizar datos locales
-        _dinningController.dinningLogin.role = _selectedBusinessType.value!.roleType.name;
+        _dinningController.dinningLogin.role = selectedBackendCode;
 
         // Mostrar mensaje de éxito
         _showSuccessSnackbar('¡Tipo de negocio actualizado exitosamente!');

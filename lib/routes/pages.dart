@@ -28,6 +28,10 @@ import 'package:pickmeup_dashboard/features/admin/presentation/views/admin_dashb
 import 'package:pickmeup_dashboard/features/admin/presentation/bindings/admin_dashboard_binding.dart';
 import 'package:pickmeup_dashboard/features/admin/presentation/views/users_view.dart';
 import 'package:pickmeup_dashboard/features/admin/presentation/views/membership_admin_view.dart';
+import 'package:pickmeup_dashboard/features/events/presentation/pages/events_dashboard_page.dart';
+import 'package:pickmeup_dashboard/features/events/presentation/pages/event_detail_page.dart';
+import 'package:pickmeup_dashboard/features/events/presentation/pages/event_create_page.dart';
+import 'package:pickmeup_dashboard/features/events/presentation/bindings/events_binding.dart';
 
 class PUPages {
   static final List<GetPage> listPages = [
@@ -287,6 +291,41 @@ class PUPages {
         AdminDashboardBinding(),
         MenuNavigationBinding(),
         DinningBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.EVENTS,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+      transition: Transition.fadeIn,
+      page: () => const EventsDashboardPage(),
+      bindings: [
+        EventsBinding(),
+        MenuNavigationBinding(),
+        DinningBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.EVENT_CREATE,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+      transition: Transition.rightToLeft,
+      page: () => const EventCreatePage(),
+      bindings: [
+        EventsBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.EVENT_DETAIL,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+      transition: Transition.rightToLeft,
+      page: () => const EventDetailPage(),
+      bindings: [
+        EventsBinding(),
       ],
     ),
   ];

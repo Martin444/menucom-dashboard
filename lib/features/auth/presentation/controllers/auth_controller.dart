@@ -24,7 +24,7 @@ import '../../../../core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/core/helpers/image_size_helper.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/core/fcm_util.dart';
-import 'package:menu_dart_api/menu_com_api.dart';
+import 'package:menu_dart_api/menu_com_api.dart' hide ValidationException;
 
 /// Estados posibles de la autenticación
 enum AuthState {
@@ -104,6 +104,7 @@ class AuthController extends GetxController {
   final RxBool isLogging = false.obs;
   final RxBool isLoggingGoogle = false.obs;
   final RxBool isRegistering = false.obs;
+  final RxBool isLoadingImage = false.obs;
   final RxBool isValidInit = false.obs;
   final RxInt pageValidation = 0.obs;
 
@@ -203,11 +204,11 @@ class AuthController extends GetxController {
       update();
 
       if (emailController.text.isEmpty) {
-        throw ValidationException('El email no puede estar vacío');
+        throw const ValidationException('El email no puede estar vacío');
       }
 
       if (passwordController.text.isEmpty) {
-        throw ValidationException('La contraseña no puede estar vacía');
+        throw const ValidationException('La contraseña no puede estar vacía');
       }
 
       final credentials = LoginCredentials(
@@ -339,23 +340,33 @@ class AuthController extends GetxController {
 
   /// Tomar/Seleccionar imagen para registro
   void pickImageDirectory() async {
-    final ImagePicker pickerImage = ImagePicker();
-    final result = await pickerImage.pickImage(source: ImageSource.gallery);
-    if (result != null) {
-      final String extension = result.name.split('.').last.toLowerCase();
-      if (extension != 'png' && extension != 'jpg' && extension != 'jpeg') {
-        Get.snackbar(
-          'Formato inválido',
-          'Solo se permiten imágenes PNG o JPG.',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-        return;
+    isLoadingImage.value = true;
+    update();
+    try {
+      final ImagePicker pickerImage = ImagePicker();
+      final result = await pickerImage.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1000,
+        maxHeight: 1000,
+      );
+      if (result != null) {
+        final String extension = result.name.split('.').last.toLowerCase();
+        if (extension != 'png' && extension != 'jpg' && extension != 'jpeg') {
+          Get.snackbar(
+            'Formato inválido',
+            'Solo se permiten imágenes PNG o JPG.',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return;
+        }
+        final Uint8List originalFile = await result.readAsBytes();
+        final Uint8List reducedFile = ImageSizeHelper.resizeIfNeeded(originalFile);
+        toSend = reducedFile;
+        fileTaked = reducedFile;
       }
-      Uint8List originalFile = await result.readAsBytes();
-      Uint8List reducedFile = ImageSizeHelper.resizeIfNeeded(originalFile);
-      toSend = reducedFile;
-      fileTaked = reducedFile;
+    } finally {
+      isLoadingImage.value = false;
       update();
     }
   }

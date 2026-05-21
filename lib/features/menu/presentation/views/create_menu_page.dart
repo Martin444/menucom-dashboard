@@ -124,6 +124,7 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
                               photoInBytes:
                                   catCtrl.coverImageCatalog ?? Uint8List(0),
                               isTaked: catCtrl.coverImageCatalog != null,
+                              isLoading: catCtrl.isLoadingImage.value,
                               title: 'Cargá tu banner de catálogo (1200x400px)',
                             ),
                             const SizedBox(height: 20),

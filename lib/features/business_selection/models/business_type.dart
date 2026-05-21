@@ -9,6 +9,7 @@ class BusinessType {
   final RolesUsers roleType;
   final List<String> features;
   final String colorHex;
+  final String backendCode;
 
   const BusinessType({
     required this.id,
@@ -18,9 +19,10 @@ class BusinessType {
     required this.roleType,
     required this.features,
     required this.colorHex,
+    this.backendCode = '',
   });
 
-  /// Lista de tipos de negocio disponibles (12 tipos del registro)
+  /// Lista de tipos de negocio disponibles (14 tipos del registro)
   static List<BusinessType> get availableTypes => [
         // FOOD - Restaurantes y comida
         const BusinessType(
@@ -232,6 +234,22 @@ class BusinessType {
             'Seguimiento',
           ],
           colorHex: '#FECA57',
+        ),
+        // EVENT_ORGANIZER - Organizador de eventos
+        const BusinessType(
+          id: 'event_organizer',
+          title: 'Organizador de Eventos',
+          description: 'Planificación y organización de eventos sociales y corporativos',
+          iconPath: 'assets/business_icons/service.svg',
+          roleType: RolesUsers.event_organizer,
+          features: [
+            'Gestión de eventos',
+            'Presupuestos',
+            'Proveedores',
+            'Cotizaciones',
+          ],
+          colorHex: '#9B5DE5',
+          backendCode: 'events',
         ),
       ];
 

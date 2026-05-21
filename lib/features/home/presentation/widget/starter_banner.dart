@@ -42,6 +42,8 @@ class _StarterBannerState extends State<StarterBanner> {
         return 'Registrá tus productos en catálogos flexibles';
       case RolesUsers.service:
         return 'Empezá a gestionar tus servicios';
+      case RolesUsers.event_organizer:
+        return 'Creá y gestioná tus eventos';
       case RolesUsers.customer:
         return 'Elegí el tipo de negocio para tu emprendimiento';
       default:
@@ -69,6 +71,8 @@ class _StarterBannerState extends State<StarterBanner> {
         return PURoutes.REGISTER_WARDROBES;
       case RolesUsers.customer:
         return PURoutes.BUSINESS_TYPE_SELECTION;
+      case RolesUsers.event_organizer:
+        return PURoutes.EVENT_CREATE;
       default:
         return PURoutes.HOME;
     }

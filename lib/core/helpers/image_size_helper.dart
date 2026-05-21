@@ -16,28 +16,24 @@ class ImageSizeHelper {
   /// Reduce la imagen a un tamaño máximo y devuelve los nuevos bytes.
   /// Si la imagen ya es menor, la devuelve igual.
   static Uint8List resizeIfNeeded(Uint8List bytes, {int maxWidth = 1000, int maxHeight = 1000}) {
-    final image = img.decodeImage(bytes);
-    if (image == null) return bytes;
-
-    // Si estamos en web
     if (kIsWeb) {
-      // Si es web mobile, reducir a width 800 y mantener aspect ratio
-      // No hay una forma directa de detectar mobile en Dart puro, pero puedes usar un width menor por defecto
+      final image = img.decodeImage(bytes);
+      if (image == null) return bytes;
       if (image.width > 800) {
         final resized = img.copyResize(image, width: 800);
         return Uint8List.fromList(img.encodePng(resized));
       }
-      // Si ya es menor, devolver PNG para compatibilidad
       return Uint8List.fromList(img.encodePng(image));
     }
 
-    // Nativo: reducir si supera maxWidth/maxHeight
+    final image = img.decodeImage(bytes);
+    if (image == null) return bytes;
+
     if (image.width > maxWidth || image.height > maxHeight) {
       final resized = img.copyResize(image, width: maxWidth, height: maxHeight);
       return Uint8List.fromList(img.encodePng(resized));
     }
-    // Si ya es menor, devolver PNG para compatibilidad
-    return Uint8List.fromList(img.encodePng(image));
+    return bytes;
   }
 }
 
@@ -46,4 +42,10 @@ class Size {
   final double width;
   final double height;
   const Size(this.width, this.height);
+}
+
+/// Función top-level para usar con [compute] en isolate separado.
+/// Solo recibe bytes y aplica resize, evita bloquear la UI.
+Uint8List resizeImageIsolate(Uint8List bytes) {
+  return ImageSizeHelper.resizeIfNeeded(bytes);
 }
