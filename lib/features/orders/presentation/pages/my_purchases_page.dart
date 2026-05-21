@@ -233,8 +233,35 @@ class _MyPurchasesPageState extends State<MyPurchasesPage> {
         return Column(
           children: [
             OrdersTable(
-              // padding: EdgeInsets.zero,
               data: controller.purchases,
+              onViewDetail: (order) {
+                Get.dialog(
+                  AlertDialog(
+                    title: Text('Detalle de Compra #${order.numero}'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Cliente: ${order.alias}'),
+                        Text('Estado: ${order.estado}'),
+                        if (order.customerEmail != null) Text('Email: ${order.customerEmail}'),
+                        if (order.customerPhone != null) Text('Teléfono: ${order.customerPhone}'),
+                        const Divider(),
+                        const Text('Productos:', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ...order.fullItems.map((item) => Text('${item.quantity}x ${item.productName} - \$${item.price.toStringAsFixed(2)}')),
+                        const Divider(),
+                        Text('Total: \$${(order.totalCentavos / 100).toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Get.back(),
+                        child: const Text('Cerrar'),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             if (controller.isLoading.value && controller.purchases.isNotEmpty)
               const Padding(

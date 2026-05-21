@@ -84,6 +84,14 @@ class _WardsHomeViewState extends State<WardsHomeView> with WidgetsBindingObserv
                           itemCountBuilder: (catalog) => catalog.itemCount,
                           constraints: constrains,
                           icon: FluentIcons.folder_24_regular,
+                          actionButtons: [
+                            HeaderActionButton(
+                              icon: FluentIcons.add_24_regular,
+                              color: PUColors.primaryColor,
+                              onTap: () => Get.toNamed(PURoutes.REGISTER_WARDROBES),
+                              tooltip: 'Nuevo catálogo',
+                            ),
+                          ],
                           onEditSelected: () {
                             final catalog = selected ?? (catalogs.isNotEmpty ? catalogs.first : null);
                             if (catalog != null) {

@@ -58,8 +58,16 @@ class MyPurchasesController extends GetxController {
 
   ui.Order _convertApiOrderToUiOrder(api.Order apiOrder) {
     String detalles = '';
+    List<ui.OrderItem> uiItems = [];
     if (apiOrder.items != null && apiOrder.items!.isNotEmpty) {
       detalles = apiOrder.items!.map((item) => '${item.quantity}x ${item.productName}').join(', ');
+      uiItems = apiOrder.items!
+          .map((item) => ui.OrderItem(
+                productName: item.productName,
+                quantity: item.quantity,
+                price: item.price,
+              ))
+          .toList();
     } else {
       detalles = 'Sin detalles disponibles';
     }
@@ -78,6 +86,11 @@ class MyPurchasesController extends GetxController {
           : (apiOrder.ownerId?.split('-').first ?? 'Tienda'),
       idCliente: apiOrder.ownerId ?? 'Sin identificar',
       totalCentavos: totalCentavos,
+      paymentUrl: apiOrder.paymentUrl,
+      customerEmail: apiOrder.customerEmail,
+      customerPhone: apiOrder.customerPhone,
+      operationId: apiOrder.operationID,
+      fullItems: uiItems,
     );
   }
 

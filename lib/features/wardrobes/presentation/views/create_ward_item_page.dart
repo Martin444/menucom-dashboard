@@ -36,6 +36,9 @@ class _CreateWardItemPageState extends State<CreateWardItemPage> {
     } else {
       catalogsController = Get.put(CatalogsController());
     }
+    if (widget.isEditPage != true) {
+      catalogsController.clearItemForm();
+    }
     catalogsController.loadCatalogsByType('wardrobe');
   }
 

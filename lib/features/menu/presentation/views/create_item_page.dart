@@ -34,6 +34,9 @@ class _CreateItemPageState extends State<CreateItemPage> {
   void initState() {
     super.initState();
     catalogsController = Get.find<CatalogsController>();
+    if (widget.isEditPage != true) {
+      catalogsController.clearItemForm();
+    }
     catalogsController.loadCatalogsByType(widget.catalogType);
   }
 

@@ -89,6 +89,14 @@ class _MenuHomeViewState extends State<MenuHomeView> with WidgetsBindingObserver
                           itemCountBuilder: (catalog) => catalog.itemCount,
                           constraints: constrains,
                           icon: FluentIcons.food_24_regular,
+                          actionButtons: [
+                            HeaderActionButton(
+                              icon: FluentIcons.add_24_regular,
+                              color: PUColors.primaryColor,
+                              onTap: () => Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY),
+                              tooltip: 'Nuevo catálogo',
+                            ),
+                          ],
                           onEditSelected: () {
                             final catalog = selectedCatalog ?? (catalogs.isNotEmpty ? catalogs.first : null);
                             if (catalog != null) {
