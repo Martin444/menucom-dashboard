@@ -44,8 +44,3 @@ class Size {
   const Size(this.width, this.height);
 }
 
-/// Función top-level para usar con [compute] en isolate separado.
-/// Solo recibe bytes y aplica resize, evita bloquear la UI.
-Uint8List resizeImageIsolate(Uint8List bytes) {
-  return ImageSizeHelper.resizeIfNeeded(bytes);
-}

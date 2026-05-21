@@ -72,7 +72,7 @@ class CardTakePhoto extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.hourglass_empty,
+                      FluentIcons.hourglass_24_regular,
                       color: Colors.white,
                       size: 32,
                     ),
