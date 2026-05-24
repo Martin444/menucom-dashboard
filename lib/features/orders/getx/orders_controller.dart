@@ -86,8 +86,9 @@ class OrdersController extends GetxController {
       detalles = 'Sin detalles disponibles';
     }
 
-    // Convertir total a centavos
     int totalCentavos = ((apiOrder.total ?? 0.0) * 100).round();
+    int subtotalCentavos = ((apiOrder.subtotal ?? 0.0) * 100).round();
+    int marketplaceFeeAmountCentavos = ((apiOrder.marketplaceFeeAmount ?? 0.0) * 100).round();
 
     return ui.Order(
       numero: (apiOrder.id != null && apiOrder.id!.length >= 8)
@@ -104,6 +105,13 @@ class OrdersController extends GetxController {
       customerPhone: apiOrder.customerPhone,
       operationId: apiOrder.operationID,
       fullItems: uiItems,
+      statusRaw: apiOrder.status ?? '',
+      subtotalCentavos: subtotalCentavos,
+      marketplaceFeePercentage: apiOrder.marketplaceFeePercentage ?? 0,
+      marketplaceFeeAmountCentavos: marketplaceFeeAmountCentavos,
+      mpProcessingFeeCentavos: apiOrder.mpProcessingFee != null ? ((apiOrder.mpProcessingFee!) * 100).round() : null,
+      netAmountCentavos: apiOrder.netAmount != null ? ((apiOrder.netAmount!) * 100).round() : null,
+      paymentStatus: apiOrder.paymentStatus,
     );
   }
 
@@ -113,9 +121,15 @@ class OrdersController extends GetxController {
       case 'pending':
       case 'created':
         return 'Pendiente';
+      case 'confirmed':
+        return 'Confirmado';
       case 'processing':
       case 'in_progress':
         return 'En curso';
+      case 'shipped':
+        return 'Enviado';
+      case 'delivered':
+        return 'Entregado';
       case 'completed':
       case 'finished':
         return 'Completado';
@@ -126,7 +140,6 @@ class OrdersController extends GetxController {
         return 'Fallido';
       default:
         if (apiStatus != null && apiStatus.isNotEmpty) {
-          // Si el estado es nuevo, mostrarlo capitalizado en lugar de "Desconocido"
           return apiStatus[0].toUpperCase() + apiStatus.substring(1).toLowerCase();
         }
         return 'Desconocido';

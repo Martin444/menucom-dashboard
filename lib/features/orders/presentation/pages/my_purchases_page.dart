@@ -235,32 +235,7 @@ class _MyPurchasesPageState extends State<MyPurchasesPage> {
             OrdersTable(
               data: controller.purchases,
               onViewDetail: (order) {
-                Get.dialog(
-                  AlertDialog(
-                    title: Text('Detalle de Compra #${order.numero}'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Cliente: ${order.alias}'),
-                        Text('Estado: ${order.estado}'),
-                        if (order.customerEmail != null) Text('Email: ${order.customerEmail}'),
-                        if (order.customerPhone != null) Text('Teléfono: ${order.customerPhone}'),
-                        const Divider(),
-                        const Text('Productos:', style: TextStyle(fontWeight: FontWeight.bold)),
-                        ...order.fullItems.map((item) => Text('${item.quantity}x ${item.productName} - \$${item.price.toStringAsFixed(2)}')),
-                        const Divider(),
-                        Text('Total: \$${(order.totalCentavos / 100).toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Get.back(),
-                        child: const Text('Cerrar'),
-                      ),
-                    ],
-                  ),
-                );
+                _showPurchaseDetailDialog(order);
               },
             ),
             if (controller.isLoading.value && controller.purchases.isNotEmpty)
@@ -281,6 +256,69 @@ class _MyPurchasesPageState extends State<MyPurchasesPage> {
           ],
         );
       },
+    );
+  }
+
+  void _showPurchaseDetailDialog(Order order) {
+    Get.dialog(
+      AlertDialog(
+        title: Text('Detalle de Compra #${order.numero}'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Tienda: ${order.alias}', style: const TextStyle(fontWeight: FontWeight.w500)),
+                  StatusBadge(order.estado),
+                ],
+              ),
+              if (order.customerEmail != null) Text('Email: ${order.customerEmail}', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              if (order.customerPhone != null) Text('Teléfono: ${order.customerPhone}', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              if (order.idCliente.isNotEmpty && order.idCliente != order.customerEmail)
+                Text('ID: ${order.idCliente}', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              const Divider(),
+              const Text('Productos:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              ...order.fullItems.map((item) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('${item.quantity}x ${item.productName}'),
+                    Text('\$${(item.price * item.quantity).toStringAsFixed(2)}'),
+                  ],
+                ),
+              )),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Subtotal'),
+                  Text('\$${(order.subtotalCentavos / 100).toStringAsFixed(2)}'),
+                ],
+              ),
+              const Divider(thickness: 2),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Total', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text('\$${(order.totalCentavos / 100).toStringAsFixed(2)}',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
     );
   }
 

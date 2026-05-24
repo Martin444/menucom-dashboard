@@ -20,8 +20,13 @@ class OrdersMetricsWidget extends StatelessWidget {
       final inProgressOrders = orders.where((order) => order.estado == 'En curso').length;
 
       final totalRevenue = orders
-          .where((order) => order.estado == 'Completado' || order.estado == 'En curso')
-          .fold<double>(0, (sum, order) => sum + (order.totalCentavos / 100));
+          .where((order) => order.estado == 'Completado' || order.estado == 'En curso' || order.estado == 'Confirmado' || order.estado == 'Entregado')
+          .fold<double>(0, (sum, order) {
+        if (order.netAmountCentavos != null) {
+          return sum + (order.netAmountCentavos! / 100);
+        }
+        return sum + (order.totalCentavos / 100);
+      });
 
       return LayoutBuilder(
         builder: (context, constraints) {
@@ -132,7 +137,7 @@ class OrdersMetricsWidget extends StatelessWidget {
                 border: Border.all(color: Colors.white.withOpacity(0.2)),
               ),
               child: Text(
-                'Bruto',
+                'Neto',
                 style: ui.PuTextStyle.bodySmall.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,

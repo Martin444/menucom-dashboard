@@ -257,30 +257,7 @@ class _OrdersPageState extends State<OrdersPage> {
             OrdersTable(
               data: controller.orders,
               onViewDetail: (order) {
-                Get.dialog(
-                  AlertDialog(
-                    title: Text('Detalle de Orden #${order.numero}'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Cliente: ${order.alias}'),
-                        Text('Estado: ${order.estado}'),
-                        const Divider(),
-                        const Text('Productos:', style: TextStyle(fontWeight: FontWeight.bold)),
-                        ...order.fullItems.map((item) => Text('${item.quantity}x ${item.productName} - \$${item.price.toStringAsFixed(2)}')),
-                        const Divider(),
-                        Text('Total: \$${(order.totalCentavos / 100).toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Get.back(),
-                        child: const Text('Cerrar'),
-                      ),
-                    ],
-                  ),
-                );
+                _showOrderDetailDialog(order);
               },
             ),
             if (controller.isLoading.value && controller.orders.isNotEmpty)
@@ -302,6 +279,156 @@ class _OrdersPageState extends State<OrdersPage> {
         );
       },
     );
+  }
+
+  void _showOrderDetailDialog(Order order) {
+    final paymentStatusColor = switch (order.paymentStatus?.toLowerCase()) {
+      'approved' => Colors.green,
+      'rejected' || 'refunded' => Colors.red,
+      'pending' => Colors.orange,
+      _ => Colors.grey,
+    };
+    final paymentStatusIcon = switch (order.paymentStatus?.toLowerCase()) {
+      'approved' => FluentIcons.checkmark_circle_24_filled,
+      'rejected' || 'refunded' => FluentIcons.error_circle_24_regular,
+      'pending' => FluentIcons.hourglass_24_regular,
+      _ => FluentIcons.question_24_regular,
+    };
+
+    Get.dialog(
+      AlertDialog(
+        title: Text('Detalle de Orden #${order.numero}'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Cliente: ${order.alias}', style: const TextStyle(fontWeight: FontWeight.w500)),
+                  if (order.customerEmail != null)
+                    Text(order.customerEmail!, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                ],
+              ),
+              if (order.customerPhone != null)
+                Text('Tel: ${order.customerPhone}', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  StatusBadge(order.estado),
+                  const SizedBox(width: 8),
+                  if (order.paymentStatus != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: paymentStatusColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: paymentStatusColor.withOpacity(0.3)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(paymentStatusIcon, size: 14, color: paymentStatusColor),
+                          const SizedBox(width: 4),
+                          Text(
+                            _mapPaymentStatusToLabel(order.paymentStatus!),
+                            style: TextStyle(fontSize: 11, color: paymentStatusColor, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+              const Divider(),
+              const Text('Productos:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              ...order.fullItems.map((item) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('${item.quantity}x ${item.productName}'),
+                    Text('\$${item.price.toStringAsFixed(2)}'),
+                  ],
+                ),
+              )),
+              const Divider(),
+              // Subtotal
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Subtotal'),
+                  Text('\$${(order.subtotalCentavos / 100).toStringAsFixed(2)}'),
+                ],
+              ),
+              // Marketplace fee
+              if (order.marketplaceFeeAmountCentavos > 0)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Comisión Menucom (${order.marketplaceFeePercentage.toStringAsFixed(1)}%)',
+                        style: const TextStyle(color: Colors.red)),
+                    Text('-\$${(order.marketplaceFeeAmountCentavos / 100).toStringAsFixed(2)}',
+                        style: const TextStyle(color: Colors.red)),
+                  ],
+                ),
+              // MP processing fee
+              if (order.mpProcessingFeeCentavos != null && order.mpProcessingFeeCentavos! > 0)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Comisión MP', style: TextStyle(color: Colors.red)),
+                    Text('-\$${(order.mpProcessingFeeCentavos! / 100).toStringAsFixed(2)}',
+                        style: const TextStyle(color: Colors.red)),
+                  ],
+                ),
+              const Divider(),
+              // Net amount
+              if (order.netAmountCentavos != null)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Neto que recibís', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                    Text('\$${(order.netAmountCentavos! / 100).toStringAsFixed(2)}',
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                  ],
+                ),
+              // Total
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Total pagado por el cliente', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('\$${(order.totalCentavos / 100).toStringAsFixed(2)}',
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _mapPaymentStatusToLabel(String status) {
+    switch (status.toLowerCase()) {
+      case 'approved':
+        return 'Pago aprobado';
+      case 'pending':
+        return 'Pendiente de pago';
+      case 'rejected':
+        return 'Pago rechazado';
+      case 'refunded':
+        return 'Reembolsado';
+      default:
+        return status;
+    }
   }
 
   Widget _buildSkeletonLoader() {
