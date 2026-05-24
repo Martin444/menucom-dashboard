@@ -29,15 +29,15 @@ class MyPurchasesController extends GetxController {
       hasError.value = false;
       errorMessage.value = '';
 
-      final List<api.Order> apiOrders = await _getOrdersByOwnerUseCase.call(
+      final api.PaginatedOrdersResponse response = await _getOrdersByOwnerUseCase.call(
         page: currentPage.value,
         limit: pageSize.value,
       );
 
-      if (apiOrders.isEmpty) {
+      if (response.orders.isEmpty) {
         hasMore.value = false;
       } else {
-        final List<ui.Order> uiOrders = apiOrders.map((apiOrder) => _convertApiOrderToUiOrder(apiOrder)).toList();
+        final List<ui.Order> uiOrders = response.orders.map((apiOrder) => _convertApiOrderToUiOrder(apiOrder)).toList();
 
         if (refresh) {
           purchases.assignAll(uiOrders);
@@ -45,6 +45,7 @@ class MyPurchasesController extends GetxController {
           purchases.addAll(uiOrders);
         }
         
+        hasMore.value = response.pagination?.hasNext ?? (response.orders.length == pageSize.value);
         currentPage.value++;
       }
     } catch (e) {

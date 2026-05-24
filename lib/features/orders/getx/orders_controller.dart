@@ -38,17 +38,17 @@ class OrdersController extends GetxController {
       errorMessage.value = '';
 
       // Llamar al caso de uso del API con paginación
-      final List<api.Order> apiOrders = await _getOrdersByBusinessOwnerUseCase.call(
+      final api.PaginatedOrdersResponse response = await _getOrdersByBusinessOwnerUseCase.call(
         businessOwnerId,
         page: currentPage.value,
         limit: pageSize.value,
       );
 
-      if (apiOrders.isEmpty) {
+      if (response.orders.isEmpty) {
         hasMore.value = false;
       } else {
         // Convertir órdenes del API al modelo del UI
-        final List<ui.Order> uiOrders = apiOrders.map((apiOrder) => _convertApiOrderToUiOrder(apiOrder)).toList();
+        final List<ui.Order> uiOrders = response.orders.map((apiOrder) => _convertApiOrderToUiOrder(apiOrder)).toList();
 
         // Actualizar la lista reactiva
         if (refresh) {
@@ -57,6 +57,7 @@ class OrdersController extends GetxController {
           orders.addAll(uiOrders);
         }
         
+        hasMore.value = response.pagination?.hasNext ?? (response.orders.length == pageSize.value);
         currentPage.value++;
       }
     } catch (e) {

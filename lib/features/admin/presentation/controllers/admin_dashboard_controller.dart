@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/by_feature/orders/models/order_model.dart';
+import 'package:menu_dart_api/by_feature/orders/models/paginated_orders_response.dart';
 import 'package:menu_dart_api/by_feature/orders/usescase/count_orders_admin_usecase.dart';
 import 'package:menu_dart_api/by_feature/orders/usescase/get_total_revenue_usecase.dart';
 import 'package:menu_dart_api/by_feature/orders/usescase/order_usescase.dart';
@@ -92,7 +93,8 @@ class AdminDashboardController extends GetxController {
       final revenue = results[2] as double? ?? 0.0;
 
       // Handle orders list
-      final ordersList = results[3] as List<Order>? ?? [];
+      final paginatedResponse = results[3] as PaginatedOrdersResponse?;
+      final ordersList = paginatedResponse?.orders ?? [];
 
       dashboardData.value = {
         'totalUsers': usersCount,
@@ -102,7 +104,7 @@ class AdminDashboardController extends GetxController {
       };
 
       recentOrders.value = ordersList;
-      hasMore.value = ordersList.isNotEmpty && ordersList.length == pageSize.value;
+      hasMore.value = paginatedResponse?.pagination?.hasNext ?? (ordersList.length == pageSize.value);
       
       debugPrint('Dashboard data loaded: ${recentOrders.length} orders');
     } catch (e) {
@@ -131,12 +133,12 @@ class AdminDashboardController extends GetxController {
   Future<void> loadRecentOrders() async {
     isLoading.value = true;
     try {
-      final orders = await _getOrdersUseCase.call(
+      final response = await _getOrdersUseCase.call(
         page: currentPage.value,
         limit: pageSize.value,
       );
-      recentOrders.value = orders;
-      hasMore.value = orders.length == pageSize.value;
+      recentOrders.value = response.orders;
+      hasMore.value = response.pagination?.hasNext ?? (response.orders.length == pageSize.value);
     } catch (e) {
       debugPrint('Error loading orders: $e');
       Get.snackbar('Error', 'No se pudieron cargar las órdenes');
