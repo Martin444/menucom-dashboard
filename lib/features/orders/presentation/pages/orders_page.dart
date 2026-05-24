@@ -139,23 +139,23 @@ class _OrdersPageState extends State<OrdersPage> {
     final horizontalPadding = isTablet ? 24.0 : 32.0;
     final verticalPadding = isTablet ? 16.0 : 24.0;
 
-    return Padding(
+    return SingleChildScrollView(
+      controller: _scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.symmetric(
         horizontal: horizontalPadding,
         vertical: verticalPadding,
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header con título y botón de refresh
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Órdenes',
                 style: PuTextStyle.title1.copyWith(
-                  fontSize: isTablet ? 24 : 32,
+                  fontSize: isTablet ? 22 : 28,
                   color: PUColors.textColorRich,
                 ),
               ),
@@ -167,17 +167,10 @@ class _OrdersPageState extends State<OrdersPage> {
               ),
             ],
           ),
-          SizedBox(height: isTablet ? 16 : 20),
-          // Widget de métricas - versión desktop
+          SizedBox(height: isTablet ? 12 : 16),
           OrdersMetricsWidget(orders: ordersController.orders),
-          SizedBox(height: isTablet ? 16 : 20),
-          // Tabla de órdenes expandida
-          Expanded(
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: _buildOrdersContent(),
-            ),
-          ),
+          SizedBox(height: isTablet ? 12 : 16),
+          _buildOrdersContent(),
         ],
       ),
     );

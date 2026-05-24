@@ -54,11 +54,11 @@ class OrdersMetricsWidget extends StatelessWidget {
                   completedOrders,
                 ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
               // Ingresos totales - Diseño Premium
               _buildRevenueCard(context, totalRevenue, isMobile),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
             ],
           );
         },
@@ -69,7 +69,7 @@ class OrdersMetricsWidget extends StatelessWidget {
   Widget _buildRevenueCard(BuildContext context, double totalRevenue, bool isMobile) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
@@ -79,33 +79,34 @@ class OrdersMetricsWidget extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: ui.PUColors.primaryBlue.withOpacity(0.25),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: ui.PUColors.primaryBlue.withOpacity(0.2),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
               FluentIcons.money_24_filled,
               color: Colors.white,
-              size: 32,
+              size: 24,
             ),
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   'Ingresos Totales',
@@ -113,16 +114,18 @@ class OrdersMetricsWidget extends StatelessWidget {
                     color: Colors.white.withOpacity(0.7),
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
+                    fontSize: 11,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   '\$${totalRevenue.toStringAsFixed(2)}',
                   style: ui.PuTextStyle.title1.copyWith(
                     color: Colors.white,
-                    fontSize: isMobile ? 26 : 32,
+                    fontSize: isMobile ? 24 : 28,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: -1,
+                    letterSpacing: -0.5,
+                    height: 1.2,
                   ),
                 ),
               ],
@@ -130,10 +133,10 @@ class OrdersMetricsWidget extends StatelessWidget {
           ),
           if (!isMobile)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.white.withOpacity(0.2)),
               ),
               child: Text(
@@ -141,7 +144,7 @@ class OrdersMetricsWidget extends StatelessWidget {
                 style: ui.PuTextStyle.bodySmall.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 11,
+                  fontSize: 10,
                 ),
               ),
             ),
@@ -176,7 +179,7 @@ class OrdersMetricsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDesktopMetrics(
+Widget _buildDesktopMetrics(
     BuildContext context,
     int totalOrders,
     int pendingOrders,
@@ -188,15 +191,15 @@ class OrdersMetricsWidget extends StatelessWidget {
         Expanded(
             child: _buildMetricCard(
                 context, 'Total', totalOrders.toString(), FluentIcons.receipt_24_regular, ui.PUColors.primaryBlue)),
-        const SizedBox(width: 16),
+        const SizedBox(width: 12),
         Expanded(
             child: _buildMetricCard(
                 context, 'Pendientes', pendingOrders.toString(), FluentIcons.hourglass_24_regular, const Color(0xFFD97706))),
-        const SizedBox(width: 16),
+        const SizedBox(width: 12),
         Expanded(
             child: _buildMetricCard(
                 context, 'En Curso', inProgressOrders.toString(), FluentIcons.arrow_sync_24_regular, const Color(0xFF7C3AED))),
-        const SizedBox(width: 16),
+        const SizedBox(width: 12),
         Expanded(
             child: _buildMetricCard(context, 'Completadas', completedOrders.toString(),
                 FluentIcons.checkmark_circle_24_regular, const Color(0xFF059669))),
@@ -212,6 +215,12 @@ class OrdersMetricsWidget extends StatelessWidget {
     Color color,
   ) {
     final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth >= 1024;
+
+    if (isDesktop) {
+      return _buildDesktopMetricCard(context, label, value, icon, color);
+    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -262,6 +271,76 @@ class OrdersMetricsWidget extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDesktopMetricCard(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.15)),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: ui.PuTextStyle.bodySmall.copyWith(
+                    fontSize: 11,
+                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    value,
+                    style: ui.PuTextStyle.title3.copyWith(
+                      fontSize: 20,
+                      color: theme.colorScheme.onSurface,
+                      fontWeight: FontWeight.w700,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
