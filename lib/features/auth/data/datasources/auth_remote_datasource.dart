@@ -61,7 +61,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await httpClient.post(
         Uri.parse('$baseUrl/auth/social/login'),
         headers: request.getAuthHeaders(),
-        body: request.toJson() != null ? json.encode(request.toJson()) : null,
+        body: json.encode(request.toJson()),
       );
 
       return _handleResponse(response, 'login social');
@@ -101,7 +101,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await httpClient.post(
         Uri.parse('$baseUrl/auth/social/register'),
         headers: request.getAuthHeaders(),
-        body: request.toJson() != null ? json.encode(request.toJson()) : null,
+        body: json.encode(request.toJson()),
       );
 
       return _handleResponse(response, 'registro social');

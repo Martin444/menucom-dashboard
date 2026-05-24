@@ -154,10 +154,14 @@ class SocialAuthRequestModel {
     );
   }
 
-  /// Convierte solo los datos adicionales a JSON
-  /// (el token va en el header Authorization)
-  Map<String, dynamic>? toJson() {
-    return additionalData?.toJson();
+  /// Convierte el modelo a JSON para enviar al backend.
+  /// Incluye el firebaseIdToken en el body (el backend lo requiere)
+  /// además del header Authorization para compatibilidad.
+  Map<String, dynamic> toJson() {
+    return {
+      'firebaseIdToken': idToken,
+      if (additionalData != null) 'additionalData': additionalData!.toJson(),
+    };
   }
 
   /// Obtiene el header de autorización
