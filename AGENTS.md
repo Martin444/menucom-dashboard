@@ -8,3 +8,6 @@
 
 ## Estilo y Diseño
 - Todos los iconos deben usar `FluentIcons` del paquete `fluentui_system_icons`. No usar iconos de Material Design (`Icons.*`).
+
+## Control de Calidad
+- Antes de cualquier cambio importante de UI o lógica, ejecutar `flutter analyze` y corregir todos los errores y warnings antes de finalizar.

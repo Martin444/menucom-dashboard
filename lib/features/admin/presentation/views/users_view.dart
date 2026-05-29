@@ -88,6 +88,26 @@ class UsersMobileView extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
 
+              if (controller.errorMessage.value.isNotEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(FluentIcons.warning_24_regular, size: 48, color: PUColors.bgError),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Text(
+                          controller.errorMessage.value,
+                          style: const TextStyle(color: PUColors.bgError),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
               if (controller.users.isEmpty) {
                 return const UsersEmptyState(
                   icon: FluentIcons.people_24_regular,

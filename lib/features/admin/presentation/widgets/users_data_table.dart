@@ -23,6 +23,25 @@ class UsersDataTable extends StatelessWidget {
         );
       }
 
+      if (controller.errorMessage.value.isNotEmpty) {
+        return ContainerAtom(
+          variant: ContainerVariant.card,
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(FluentIcons.warning_24_regular, size: 48, color: PUColors.bgError),
+              const SizedBox(height: 16),
+              Text(
+                controller.errorMessage.value,
+                style: const TextStyle(color: PUColors.bgError),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      }
+
       if (controller.users.isEmpty) {
         return const ContainerAtom(
           variant: ContainerVariant.card,
