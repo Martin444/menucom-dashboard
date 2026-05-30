@@ -389,9 +389,8 @@ class AuthController extends GetxController {
         return;
       }
 
-      var urlPhoto = await UploadFileUsesCase().execute(toSend);
       await RegisterCommerceUsescase().execute(
-        photo: urlPhoto,
+        fileBytes: toSend,
         email: newEmailController.text,
         name: newNameController.text,
         phone: newPhoneController.text,
