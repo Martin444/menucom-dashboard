@@ -421,11 +421,8 @@ class CatalogsController extends GetxController {
       isLoadingItems.value = true;
       update();
 
-      Uint8List? photoData;
-      if (toSend.isNotEmpty && toSend.length > 1) {
-        photoItemController = await uploadImage(toSend);
-        photoData = toSend;
-      }
+      final Uint8List? photoData =
+          (toSend.isNotEmpty && toSend.length > 1) ? toSend : null;
 
       final newItem = await CreateCatalogItemUseCase().execute(
         CreateCatalogItemParams(
@@ -494,10 +491,8 @@ class CatalogsController extends GetxController {
       isLoadingItems.value = true;
       update();
 
-      String? photoUrl;
-      if (toSend.isNotEmpty && toSend.length > 1) {
-        photoUrl = await uploadImage(toSend);
-      }
+      final Uint8List? photoData =
+          (toSend.isNotEmpty && toSend.length > 1) ? toSend : null;
 
       final updatedItem = await UpdateCatalogItemUseCase().execute(
         UpdateCatalogItemParams(
@@ -508,7 +503,7 @@ class CatalogsController extends GetxController {
           description: descriptionItemController.text.isEmpty
               ? null
               : descriptionItemController.text,
-          photoURL: photoUrl,
+          photo: photoData,
           price: double.tryParse(priceItemController.text),
           tags: tagsItems.isEmpty ? null : tagsItems,
         ),
