@@ -239,13 +239,12 @@ class DashboardOrdersTable extends StatelessWidget {
             ),
             const Spacer(),
             TextButton.icon(
-              onPressed: () {},
+              onPressed: () => Get.toNamed(PURoutes.ORDERS_PAGES),
               icon: const Icon(FluentIcons.arrow_right_24_regular, size: 16),
               label: const Text('Ver todas'),
             ),
           ],
         ),
-        const SizedBox(height: 16),
         const SizedBox(height: 16),
         Obx(() {
           if (controller.isLoading.value && orders.isEmpty) {
@@ -286,21 +285,73 @@ class DashboardOrdersTable extends StatelessWidget {
           return Column(
             children: [
               AdminDataTableMolecule(
-                headers: const ['ID', 'Cliente', 'Estado', 'Total', 'Fecha'],
+                headers: const ['ID', 'Cliente', 'Contacto', 'Estado', 'Items', 'Total', 'Fecha', 'Acciones'],
                 rows: orders
                     .map((o) => AdminTableRow([
-                          TextTableCell(o.id ?? '---'),
-                          TextTableCell(o.customerName ?? o.customerEmail ?? '---'),
+                          TextTableCell(
+                            o.id != null ? '#${o.id!.substring(0, 8)}' : '---',
+                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                          ),
+                          WidgetTableCell(
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${o.customerName ?? ''} ${o.customerLastName ?? ''}'.trim(),
+                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                                ),
+                                if (o.customerEmail != null)
+                                  Text(
+                                    o.customerEmail!,
+                                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                              ],
+                            ),
+                          ),
+                          WidgetTableCell(
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (o.customerPhone != null)
+                                  Text(o.customerPhone!, style: const TextStyle(fontSize: 12)),
+                                if (o.store?.businessName != null)
+                                  Text(
+                                    o.store!.businessName!,
+                                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                              ],
+                            ),
+                          ),
                           BadgeTableCell(
-                            o.status ?? 'PENDIENTE',
+                            _mapStatus(o.status ?? 'pending'),
                             _getStatusColor(o.status ?? ''),
+                          ),
+                          WidgetTableCell(
+                            Text(
+                              '${o.items?.length ?? 0} artículos',
+                              style: const TextStyle(fontSize: 13),
+                            ),
                           ),
                           PriceTableCell(o.total ?? 0),
                           TextTableCell(
                             o.createdAt != null
-                                ? '${o.createdAt!.day}/${o.createdAt!.month}/${o.createdAt!.year}'
+                                ? '${o.createdAt!.day.toString().padLeft(2, '0')}/${o.createdAt!.month.toString().padLeft(2, '0')}/${o.createdAt!.year}'
                                 : '---',
-                            style: const TextStyle(color: PUColors.textColorMuted),
+                            style: const TextStyle(color: PUColors.textColorMuted, fontSize: 13),
+                          ),
+                          WidgetTableCell(
+                            IconButton(
+                              icon: const Icon(FluentIcons.eye_24_regular, size: 20, color: PUColors.primaryBlue),
+                              onPressed: () => _showOrderDetailDialog(o),
+                              tooltip: 'Ver detalle',
+                              splashRadius: 20,
+                              constraints: const BoxConstraints(),
+                              padding: const EdgeInsets.all(8),
+                            ),
                           ),
                         ]))
                     .toList(),
@@ -336,21 +387,246 @@ class DashboardOrdersTable extends StatelessWidget {
     );
   }
 
+  String _mapStatus(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+      case 'created':
+        return 'Pendiente';
+      case 'confirmed':
+        return 'Confirmado';
+      case 'processing':
+      case 'in_progress':
+        return 'En curso';
+      case 'completed':
+      case 'finished':
+        return 'Completado';
+      case 'cancelled':
+      case 'canceled':
+        return 'Cancelado';
+      case 'failed':
+        return 'Fallido';
+      default:
+        return status;
+    }
+  }
+
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'completed':
       case 'completado':
+      case 'finished':
       case 'success':
         return Colors.green;
+      case 'confirmed':
+        return Colors.blue;
+      case 'processing':
+      case 'in_progress':
+      case 'en curso':
+        return Colors.orange;
       case 'pending':
       case 'pendiente':
-        return Colors.orange;
+      case 'created':
+        return Colors.amber;
       case 'cancelled':
       case 'cancelado':
+      case 'canceled':
       case 'failed':
+      case 'fallido':
         return Colors.red;
       default:
         return PUColors.primaryBlue;
+    }
+  }
+
+  void _showOrderDetailDialog(Order order) {
+    final paymentStatusColor = switch (order.paymentStatus?.toLowerCase()) {
+      'approved' => Colors.green,
+      'rejected' || 'refunded' => Colors.red,
+      'pending' => Colors.orange,
+      _ => Colors.grey,
+    };
+    final paymentStatusIcon = switch (order.paymentStatus?.toLowerCase()) {
+      'approved' => FluentIcons.checkmark_circle_24_filled,
+      'rejected' || 'refunded' => FluentIcons.error_circle_24_regular,
+      'pending' => FluentIcons.hourglass_24_regular,
+      _ => FluentIcons.question_24_regular,
+    };
+
+    final customerName = '${order.customerName ?? ''} ${order.customerLastName ?? ''}'.trim();
+
+    Get.dialog(
+      AlertDialog(
+        title: Text('Detalle de Orden #${order.id?.substring(0, 8) ?? ''}'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (customerName.isNotEmpty)
+                Text('Cliente: $customerName', style: const TextStyle(fontWeight: FontWeight.w500)),
+              if (order.customerEmail != null)
+                Text(order.customerEmail!, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              if (order.customerPhone != null)
+                Text('Tel: ${order.customerPhone}', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  StatusBadge(_mapStatus(order.status ?? 'pending')),
+                  const SizedBox(width: 8),
+                  if (order.paymentStatus != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: paymentStatusColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: paymentStatusColor.withOpacity(0.3)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(paymentStatusIcon, size: 14, color: paymentStatusColor),
+                          const SizedBox(width: 4),
+                          Text(
+                            _mapPaymentStatusToLabel(order.paymentStatus!),
+                            style: TextStyle(fontSize: 11, color: paymentStatusColor, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              if (order.store != null) ...[
+                Row(
+                  children: [
+                    const Icon(FluentIcons.store_microsoft_24_regular, size: 16, color: Colors.grey),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        'Tienda: ${order.store!.businessName ?? '---'}',
+                        style: const TextStyle(fontSize: 13, color: Colors.grey),
+                      ),
+                    ),
+                  ],
+                ),
+                if (order.store!.businessPhone != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 22),
+                    child: Text(
+                      'Tel tienda: ${order.store!.businessPhone}',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ),
+              ],
+              const Divider(),
+              const Text('Productos:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              ...?order.items?.map((item) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text('${item.quantity}x ${item.productName}'),
+                    ),
+                    const SizedBox(width: 16),
+                    Text('\$${item.price.toStringAsFixed(2)}'),
+                  ],
+                ),
+              )),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Subtotal'),
+                  Text('\$${(order.subtotal ?? 0).toStringAsFixed(2)}'),
+                ],
+              ),
+              if ((order.marketplaceFeeAmount ?? 0) > 0)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Comisión Menucom (${(order.marketplaceFeePercentage ?? 0).toStringAsFixed(1)}%)',
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                    Text(
+                      '-\$${(order.marketplaceFeeAmount ?? 0).toStringAsFixed(2)}',
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+              if (order.mpProcessingFee != null && order.mpProcessingFee! > 0)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Comisión MP', style: TextStyle(color: Colors.red)),
+                    Text(
+                      '-\$${order.mpProcessingFee!.toStringAsFixed(2)}',
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+              const Divider(),
+              if (order.netAmount != null)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Neto que recibís', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                    Text(
+                      '\$${order.netAmount!.toStringAsFixed(2)}',
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                    ),
+                  ],
+                ),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Total pagado por el cliente', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    '\$${(order.total ?? 0).toStringAsFixed(2)}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              if (order.operationID != null) ...[
+                const SizedBox(height: 12),
+                const Divider(),
+                Text('Operación: ${order.operationID}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+              ],
+              if (order.paymentUrl != null) ...[
+                const SizedBox(height: 4),
+                SelectableText(
+                  'URL de pago: ${order.paymentUrl}',
+                  style: const TextStyle(fontSize: 11, color: Colors.blue),
+                ),
+              ],
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _mapPaymentStatusToLabel(String status) {
+    switch (status.toLowerCase()) {
+      case 'approved':
+        return 'Pago aprobado';
+      case 'pending':
+        return 'Pendiente de pago';
+      case 'rejected':
+        return 'Pago rechazado';
+      case 'refunded':
+        return 'Reembolsado';
+      default:
+        return status;
     }
   }
 }
