@@ -1,5 +1,7 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 
 import '../../../../core/navigation/menu_navigation_controller.dart';
@@ -169,6 +171,19 @@ class UserAvatarSide extends StatelessWidget {
     this.isMobile = false,
   });
 
+  void _navigateToProfile() {
+    try {
+      final userName = dinningController.dinningLogin.name ?? 'usuario';
+      var newRoutProfile = PURoutes.USER_PROFILE.replaceFirst(
+        ':idUsuario',
+        userName.toLowerCase().split(' ').join('-'),
+      );
+      Get.toNamed(newRoutProfile);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final avatarSize = isMobile ? 80.0 : 100.0;
@@ -177,35 +192,47 @@ class UserAvatarSide extends StatelessWidget {
 
     return Column(
       children: [
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: PUColors.primaryColor.withAlpha((0.3 * 255).toInt()),
-              width: 2,
-            ),
-          ),
-          child: ClipOval(
-            child: PuRobustNetworkImage(
-              imageUrl: dinningController.dinningLogin.photoURL ?? '',
-              height: avatarSize,
-              width: avatarSize,
-              fit: BoxFit.cover,
+        MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: _navigateToProfile,
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: PUColors.primaryColor.withAlpha((0.3 * 255).toInt()),
+                  width: 2,
+                ),
+              ),
+              child: ClipOval(
+                child: PuRobustNetworkImage(
+                  imageUrl: dinningController.dinningLogin.photoURL ?? '',
+                  height: avatarSize,
+                  width: avatarSize,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
         ),
         SizedBox(height: isMobile ? 12 : 16),
         if (dinningController.dinningLogin.name != null) ...[
-          Text(
-            dinningController.dinningLogin.name ?? 'Usuario',
-            style: PuTextStyle.title3.copyWith(
-              fontWeight: FontWeight.w600,
-              color: PUColors.iconColor,
-              fontSize: titleFontSize,
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: _navigateToProfile,
+              child: Text(
+                dinningController.dinningLogin.name ?? 'Usuario',
+                style: PuTextStyle.title3.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: PUColors.iconColor,
+                  fontSize: titleFontSize,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
         ],
@@ -229,6 +256,18 @@ class UserAvatarSide extends StatelessWidget {
             ),
           ),
         ],
+        const SizedBox(height: 12),
+        _ActionLink(
+          icon: FluentIcons.settings_24_regular,
+          label: 'Editar perfil',
+          onTap: () => Get.toNamed(PURoutes.EDIT_PROFILE),
+        ),
+        const SizedBox(height: 8),
+        _ActionLink(
+          icon: FluentIcons.payment_24_regular,
+          label: 'Método de pago',
+          onTap: () => Get.toNamed(PURoutes.PAYMENT_METHODS),
+        ),
       ],
     );
   }
@@ -272,5 +311,47 @@ class UserAvatarSide extends StatelessWidget {
       default:
         return role;
     }
+  }
+}
+
+class _ActionLink extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _ActionLink({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: PUColors.primaryColor.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 16, color: PUColors.primaryColor),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: PuTextStyle.description1.copyWith(
+                  color: PUColors.primaryColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
