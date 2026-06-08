@@ -9,10 +9,13 @@ import 'package:pu_material/pu_material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // Firebase imports
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 // Auth system imports
-import 'package:pickmeup_dashboard/features/auth/presentation/controllers/auth_bindings.dart';
 import 'package:pickmeup_dashboard/features/auth/config/firebase_config.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
+import 'features/auth/presentation/controllers/auth_bindings.dart';
 import 'routes/pages.dart';
 
 void main() async {
@@ -44,6 +47,8 @@ Future<void> initializeFirebase() async {
     debugPrint('Firebase inicializado correctamente para ${Firebase.app().name}');
     debugPrint('Auth Domain: ${Firebase.app().options.authDomain}');
 
+    AnalyticsService().init();
+
     // Solo configurar emuladores en desarrollo si está habilitado
     // Comentado temporalmente para debugging
     // FirebaseDevConfig.configureEmulators();
@@ -57,7 +62,6 @@ Future<void> initializeFirebase() async {
     debugPrint('Continuando sin Firebase - funcionalidad social deshabilitada');
   }
 }
-
 
 void initializeServiceMenucomAPI() {
   try {
@@ -105,6 +109,9 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: PURoutes.HOME,
       getPages: PUPages.listPages,
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+      ],
     );
   }
 }

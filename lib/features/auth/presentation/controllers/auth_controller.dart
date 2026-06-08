@@ -24,6 +24,7 @@ import '../../../../core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/core/helpers/image_size_helper.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/core/fcm_util.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 import 'package:menu_dart_api/menu_com_api.dart' hide ValidationException;
 
 /// Estados posibles de la autenticación
@@ -229,6 +230,8 @@ class AuthController extends GetxController {
       _setAuthenticatedUser(user);
 
       debugPrint('Login tradicional exitoso para: ${user.email}');
+      AnalyticsService().logLogin(method: 'email');
+      AnalyticsService().setUserId(user.id.toString());
 
       isLogging.value = false;
       _setCurrentAction(AuthAction.none);
@@ -263,10 +266,12 @@ class AuthController extends GetxController {
           update();
           return;
         }
+        AnalyticsService().logErrorWithException(e, context: 'login_email_auth_error');
       }
 
       // Solo errores NO relacionados a campos llegan aquí - mostrar snackbar
       final errorMessage = _getErrorMessage(e);
+      AnalyticsService().logError(errorMessage, context: 'login_email_error');
       Get.snackbar(
         'Error al Iniciar sesión',
         errorMessage,
@@ -399,6 +404,7 @@ class AuthController extends GetxController {
       );
 
       isRegistering.value = false;
+      AnalyticsService().logSignUp(method: 'email');
       Get.dialog(
         const SuccesRegisterPage(),
         barrierDismissible: false,
@@ -408,6 +414,7 @@ class AuthController extends GetxController {
     } catch (e) {
       isRegistering.value = false;
       debugPrint('Error en registro: $e');
+      AnalyticsService().logErrorWithException(e, context: 'register_error');
       Get.snackbar(
         'Error en registro',
         'No se pudo completar el registro. Inténtalo de nuevo.',
@@ -566,10 +573,13 @@ class AuthController extends GetxController {
 
       _setAuthenticatedUser(user);
       debugPrint('✅ Login con Google exitoso y sincronizado');
+      AnalyticsService().logLogin(method: 'google');
+      AnalyticsService().setUserId(user.id);
 
       Get.offAllNamed(PURoutes.HOME);
     } catch (e) {
       debugPrint('Error en login con Google: $e');
+      AnalyticsService().logErrorWithException(e, context: 'login_google_error');
       _setError(_getErrorMessage(e));
 
       // Mostrar error amigable al usuario
@@ -608,10 +618,13 @@ class AuthController extends GetxController {
 
       _setAuthenticatedUser(user);
       debugPrint('✅ Login con Apple exitoso');
+      AnalyticsService().logLogin(method: 'apple');
+      AnalyticsService().setUserId(user.id);
 
       Get.offAllNamed(PURoutes.HOME);
     } catch (e) {
       debugPrint('Error en login con Apple: $e');
+      AnalyticsService().logErrorWithException(e, context: 'login_apple_error');
       _setError(_getErrorMessage(e));
 
       Get.snackbar(
@@ -653,6 +666,8 @@ class AuthController extends GetxController {
 
       _setUnauthenticated();
       debugPrint('Logout exitoso - Token y datos limpiados');
+      AnalyticsService().logLogout();
+      AnalyticsService().setUserId(null);
 
       Get.offAllNamed(PURoutes.LOGIN);
     } catch (e) {
@@ -763,6 +778,8 @@ class AuthController extends GetxController {
     // Sincronizar token de FCM con el backend al autenticar
     _syncFcmToken();
 
+    AnalyticsService().setUserId(user.id);
+    AnalyticsService().setUserProperty(name: 'role', value: user.role);
     _clearError();
   }
 

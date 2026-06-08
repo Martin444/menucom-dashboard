@@ -8,6 +8,7 @@ import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:pickmeup_dashboard/core/helpers/image_size_helper.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
 class CatalogsController extends GetxController {
   final RxList<CatalogModel> catalogsList = <CatalogModel>[].obs;
@@ -56,16 +57,13 @@ class CatalogsController extends GetxController {
 
         // Cargar los items del catálogo seleccionado usando getCatalogById
         try {
-          final fullCatalog =
-              await GetCatalogByIdUseCase().execute(selectedCatalog.id);
-          final index =
-              catalogsList.indexWhere((c) => c.id == selectedCatalog.id);
+          final fullCatalog = await GetCatalogByIdUseCase().execute(selectedCatalog.id);
+          final index = catalogsList.indexWhere((c) => c.id == selectedCatalog.id);
           if (index != -1) {
             catalogsList[index] = fullCatalog;
             catalogSelected.value = fullCatalog;
           }
-          debugPrint(
-              '=== Loaded items for catalog ${selectedCatalog.id}: ${fullCatalog.items?.length ?? 0} items ===');
+          debugPrint('=== Loaded items for catalog ${selectedCatalog.id}: ${fullCatalog.items?.length ?? 0} items ===');
         } catch (e) {
           debugPrint('Error loading catalog items: $e');
         }
@@ -105,8 +103,7 @@ class CatalogsController extends GetxController {
         catalogsList[index] = fullCatalog;
         catalogSelected.value = fullCatalog;
       }
-      debugPrint(
-          '=== Loaded items for catalog ${select.id}: ${fullCatalog.items?.length ?? 0} items ===');
+      debugPrint('=== Loaded items for catalog ${select.id}: ${fullCatalog.items?.length ?? 0} items ===');
       update();
     } catch (e) {
       debugPrint('Error loading catalog items: $e');
@@ -160,8 +157,7 @@ class CatalogsController extends GetxController {
   }
 
   Future<CatalogModel?> createCatalog(String type) async {
-    final catalogName =
-        nameCatalog.text.isNotEmpty ? nameCatalog.text : 'Nuevo catálogo';
+    final catalogName = nameCatalog.text.isNotEmpty ? nameCatalog.text : 'Nuevo catálogo';
     try {
       isLoadingCatalogs.value = true;
       update();
@@ -170,9 +166,7 @@ class CatalogsController extends GetxController {
         CreateCatalogParams(
           catalogType: type,
           name: catalogName,
-          description: descriptionCatalog.text.isNotEmpty
-              ? descriptionCatalog.text
-              : null,
+          description: descriptionCatalog.text.isNotEmpty ? descriptionCatalog.text : null,
           isPublic: isPublicCatalog,
           tags: tagsCatalog.isNotEmpty ? tagsCatalog : null,
           coverImage: coverImageCatalog,
@@ -181,6 +175,11 @@ class CatalogsController extends GetxController {
 
       isLoadingCatalogs.value = false;
       update();
+
+      AnalyticsService().logEvent(
+        name: 'catalog_created',
+        parameters: {'type': type, 'name': catalogName, 'id': newCatalog.id},
+      );
 
       GlobalDialogsHandles.snackbarSuccess(
         title: 'Catálogo creado',
@@ -196,6 +195,7 @@ class CatalogsController extends GetxController {
     } on ApiException catch (apiError) {
       isLoadingCatalogs.value = false;
       update();
+      AnalyticsService().logErrorWithException(apiError, context: 'create_catalog_api_error');
       _handleApiError(
         apiError,
         defaultErrorTitle: 'No se pudo crear el catálogo',
@@ -205,6 +205,7 @@ class CatalogsController extends GetxController {
     } catch (e) {
       isLoadingCatalogs.value = false;
       update();
+      AnalyticsService().logErrorWithException(e, context: 'create_catalog_error');
       GlobalDialogsHandles.snackbarError(
         title: 'Error inesperado',
         message: 'Ocurrió un error al crear el catálogo. Inténtalo de nuevo.',
@@ -222,9 +223,7 @@ class CatalogsController extends GetxController {
         UpdateCatalogParams(
           catalogId: catalog.id,
           name: nameCatalog.text,
-          description: descriptionCatalog.text.isNotEmpty
-              ? descriptionCatalog.text
-              : null,
+          description: descriptionCatalog.text.isNotEmpty ? descriptionCatalog.text : null,
           isPublic: isPublicCatalog,
           tags: tagsCatalog.isNotEmpty ? tagsCatalog : null,
           coverImage: coverImageCatalog,
@@ -245,8 +244,7 @@ class CatalogsController extends GetxController {
 
       GlobalDialogsHandles.snackbarSuccess(
         title: 'Catálogo actualizado',
-        message:
-            '${updatedCatalog.name ?? 'El catálogo'} se actualizó exitosamente',
+        message: '${updatedCatalog.name ?? 'El catálogo'} se actualizó exitosamente',
       );
 
       update();
@@ -265,8 +263,7 @@ class CatalogsController extends GetxController {
       update();
       GlobalDialogsHandles.snackbarError(
         title: 'Error inesperada',
-        message:
-            'Ocurrió un error al actualizar el catálogo. Inténtalo de nuevo.',
+        message: 'Ocurrió un error al actualizar el catálogo. Inténtalo de nuevo.',
       );
       return null;
     }
@@ -288,8 +285,7 @@ class CatalogsController extends GetxController {
         catalogsList.removeWhere((c) => c.id == catalog.id);
 
         if (catalogSelected.value?.id == catalog.id) {
-          catalogSelected.value =
-              catalogsList.isNotEmpty ? catalogsList.first : null;
+          catalogSelected.value = catalogsList.isNotEmpty ? catalogsList.first : null;
         }
 
         isLoadingCatalogs.value = false;
@@ -305,14 +301,12 @@ class CatalogsController extends GetxController {
       update();
       GlobalDialogsHandles.snackbarError(
         title: '¡Ups!',
-        message:
-            'No se pudo eliminar ${catalog.description}, vuelve a intentarlo más tarde.',
+        message: 'No se pudo eliminar ${catalog.description}, vuelve a intentarlo más tarde.',
       );
     } catch (e) {
       GlobalDialogsHandles.snackbarError(
         title: '¡Ups!',
-        message:
-            'No se pudo eliminar ${catalog.description}, vuelve a intentarlo más tarde.',
+        message: 'No se pudo eliminar ${catalog.description}, vuelve a intentarlo más tarde.',
       );
     }
   }
@@ -334,8 +328,7 @@ class CatalogsController extends GetxController {
     coverImageCatalog = null;
     try {
       if (catalog.coverImageUrl != null && catalog.coverImageUrl!.isNotEmpty) {
-        coverImageCatalog =
-            await McFunctions().fetchImageAsUint8List(catalog.coverImageUrl!);
+        coverImageCatalog = await McFunctions().fetchImageAsUint8List(catalog.coverImageUrl!);
       }
     } catch (e) {
       debugPrint('Error loading image catalog: $e');
@@ -421,17 +414,14 @@ class CatalogsController extends GetxController {
       isLoadingItems.value = true;
       update();
 
-      final Uint8List? photoData =
-          (toSend.isNotEmpty && toSend.length > 1) ? toSend : null;
+      final Uint8List? photoData = (toSend.isNotEmpty && toSend.length > 1) ? toSend : null;
 
       final newItem = await CreateCatalogItemUseCase().execute(
         CreateCatalogItemParams(
           catalogId: catalogSelected.value!.id,
           name: nameItemController.text,
           price: double.tryParse(priceItemController.text) ?? 0.0,
-          description: descriptionItemController.text.isEmpty
-              ? null
-              : descriptionItemController.text,
+          description: descriptionItemController.text.isEmpty ? null : descriptionItemController.text,
           tags: tagsItems.isEmpty ? null : tagsItems,
           photo: photoData,
         ),
@@ -439,6 +429,15 @@ class CatalogsController extends GetxController {
 
       isLoadingItems.value = false;
       update();
+
+      AnalyticsService().logEvent(
+        name: 'catalog_item_created',
+        parameters: {
+          'name': newItem.name,
+          'price': newItem.price.toString(),
+          'catalog_id': catalogSelected.value!.id,
+        },
+      );
 
       GlobalDialogsHandles.snackbarSuccess(
         title: 'Genial',
@@ -451,6 +450,7 @@ class CatalogsController extends GetxController {
     } on ApiException catch (apiError) {
       isLoadingItems.value = false;
       update();
+      AnalyticsService().logErrorWithException(apiError, context: 'create_catalog_item_api_error');
       _handleApiError(
         apiError,
         defaultErrorTitle: 'No se pudo crear el producto',
@@ -460,6 +460,7 @@ class CatalogsController extends GetxController {
     } catch (e) {
       isLoadingItems.value = false;
       update();
+      AnalyticsService().logErrorWithException(e, context: 'create_catalog_item_error');
       GlobalDialogsHandles.snackbarError(
         title: 'Error inesperado',
         message: 'Ocurrió un error al crear el producto. Inténtalo de nuevo.',
@@ -491,18 +492,14 @@ class CatalogsController extends GetxController {
       isLoadingItems.value = true;
       update();
 
-      final Uint8List? photoData =
-          (toSend.isNotEmpty && toSend.length > 1) ? toSend : null;
+      final Uint8List? photoData = (toSend.isNotEmpty && toSend.length > 1) ? toSend : null;
 
       final updatedItem = await UpdateCatalogItemUseCase().execute(
         UpdateCatalogItemParams(
           catalogId: catalogSelected.value!.id,
           itemId: itemToEdit.id,
-          name:
-              nameItemController.text.isEmpty ? null : nameItemController.text,
-          description: descriptionItemController.text.isEmpty
-              ? null
-              : descriptionItemController.text,
+          name: nameItemController.text.isEmpty ? null : nameItemController.text,
+          description: descriptionItemController.text.isEmpty ? null : descriptionItemController.text,
           photo: photoData,
           price: double.tryParse(priceItemController.text),
           tags: tagsItems.isEmpty ? null : tagsItems,
@@ -569,8 +566,7 @@ class CatalogsController extends GetxController {
       } else {
         GlobalDialogsHandles.snackbarError(
           title: '¡Ups!',
-          message:
-              'No se pudo eliminar ${item.name}, vuelve a intentarlo más tarde.',
+          message: 'No se pudo eliminar ${item.name}, vuelve a intentarlo más tarde.',
         );
       }
     }
@@ -579,10 +575,8 @@ class CatalogsController extends GetxController {
   Future<void> _reloadCatalogItems() async {
     if (catalogSelected.value == null) return;
     try {
-      final fullCatalog =
-          await GetCatalogByIdUseCase().execute(catalogSelected.value!.id);
-      final index =
-          catalogsList.indexWhere((c) => c.id == catalogSelected.value!.id);
+      final fullCatalog = await GetCatalogByIdUseCase().execute(catalogSelected.value!.id);
+      final index = catalogsList.indexWhere((c) => c.id == catalogSelected.value!.id);
       if (index != -1) {
         catalogsList[index] = fullCatalog;
         catalogSelected.value = fullCatalog;
@@ -601,8 +595,7 @@ class CatalogsController extends GetxController {
     photoItemController = item.photoURL ?? '';
     itemToEdit = item;
     try {
-      var resultImage =
-          await McFunctions().fetchImageAsUint8List(photoItemController);
+      var resultImage = await McFunctions().fetchImageAsUint8List(photoItemController);
       fileTaked = resultImage;
       toSend = fileTaked!;
       update();
@@ -651,7 +644,7 @@ class CatalogsController extends GetxController {
     String errorMessage = defaultErrorMessage;
     try {
       String apiMessage = apiError.message.trim();
-      
+
       try {
         // Option 1: It's valid JSON
         final decoded = jsonDecode(apiMessage);
@@ -667,7 +660,7 @@ class CatalogsController extends GetxController {
           }
         }
       }
-      
+
       errorMessage = apiMessage.isNotEmpty ? apiMessage : defaultErrorMessage;
 
       if (errorMessage.toLowerCase().contains('límites') ||
@@ -687,7 +680,7 @@ class CatalogsController extends GetxController {
       }
     } catch (e) {
       String apiMessage = apiError.message.trim();
-      
+
       try {
         final decoded = jsonDecode(apiMessage);
         if (decoded is Map && decoded.containsKey('message')) {
@@ -701,13 +694,12 @@ class CatalogsController extends GetxController {
           }
         }
       }
-      
+
       errorMessage = apiMessage.isNotEmpty ? apiMessage : defaultErrorMessage;
     }
 
     final finalMessage = errorMessage.trim();
-    final validMessage =
-        finalMessage.isNotEmpty ? finalMessage : defaultErrorMessage;
+    final validMessage = finalMessage.isNotEmpty ? finalMessage : defaultErrorMessage;
 
     GlobalDialogsHandles.snackbarError(
       title: defaultErrorTitle,
