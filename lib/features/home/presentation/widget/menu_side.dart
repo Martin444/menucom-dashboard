@@ -1,4 +1,3 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
@@ -256,18 +255,6 @@ class UserAvatarSide extends StatelessWidget {
             ),
           ),
         ],
-        const SizedBox(height: 12),
-        _ActionLink(
-          icon: FluentIcons.settings_24_regular,
-          label: 'Editar perfil',
-          onTap: () => Get.toNamed(PURoutes.EDIT_PROFILE),
-        ),
-        const SizedBox(height: 8),
-        _ActionLink(
-          icon: FluentIcons.payment_24_regular,
-          label: 'Método de pago',
-          onTap: () => Get.toNamed(PURoutes.PAYMENT_METHODS),
-        ),
       ],
     );
   }
@@ -311,47 +298,5 @@ class UserAvatarSide extends StatelessWidget {
       default:
         return role;
     }
-  }
-}
-
-class _ActionLink extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _ActionLink({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: PUColors.primaryColor.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, size: 16, color: PUColors.primaryColor),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: PuTextStyle.description1.copyWith(
-                  color: PUColors.primaryColor,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }
