@@ -12,6 +12,26 @@
 ## Control de Calidad
 - Antes de cualquier cambio importante de UI o lógica, ejecutar `flutter analyze` y corregir todos los errores y warnings antes de finalizar.
 
+## Reglas de GetX (aprendidas del refactor de home)
+
+### Registrar controladores
+- Usar `Get.lazyPut(() => MiController(), fenix: true)` para controladores que deben sobrevivir a `Get.offAllNamed()` (navegación que destruye y recrea rutas).
+- NO usar `GetBuilder(init: Get.find<T>())` — el parámetro `init:` con `assignId: true` puede re-disparar `onInit()` en GetX 5.x. Preferir `GetBuilder(builder: ...)` sin `init:` cuando el controller ya está registrado vía binding.
+- NO hacer `Get.find<T>()` en `initState` si un `GetBuilder<T>` en el `build` ya lo va a resolver.
+
+### No duplicar controladores
+- Antes de crear un controlador nuevo, verificar si ya existe uno en el proyecto con la misma responsabilidad (ej: `CatalogsController` en `lib/features/catalogs/getx/`).
+- Un controlador duplicado que carga los mismos datos que uno existente causa bugs de sincronización: la UI lee de un controller, la lógica escribe en otro.
+
+### Orquestador + sub-controladores
+- Al extraer lógica de un God Object a sub-controladores, mantener el controlador original como fachada con getters delegados para retrocompatibilidad.
+- Usar `ever(subController.rxValue, (_) => update())` en el orquestador para propagar cambios reactivos a `GetBuilder`/`GetView`.
+- No cargar datos desde el orquestador que las vistas ya cargan por sí mismas (ej: catálogos desde `menu_home_view.initState`).
+
+### Flutter web + GetX
+- `WidgetsBinding.instance.addPostFrameCallback` se comporta igual en web que en native.
+- El guard `_isLoadingInternal` en métodos async debe siempre liberarse en `catch` y `finally` para evitar deadlocks.
+
 ---
 
 ## Alineación con la Misión: Profesionalización del Emprendedor

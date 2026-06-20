@@ -28,18 +28,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final DinningController dinningController;
-
   @override
   void initState() {
     super.initState();
-    dinningController = Get.find<DinningController>();
   }
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DinningController>(
-      init: Get.find<DinningController>(),
       builder: (dinning) {
         return Obx(() {
           if (dinning.isLoadingDataUser.value) {
@@ -287,7 +283,10 @@ class _DesktopContent extends StatelessWidget {
 
 /// Decide qué contenido mostrar según el estado del usuario
 Widget _buildMainContent(DinningController controller, {required bool isMobile}) {
-  if (!controller.isCustomerRole && !controller.hasSelectedCommerce.value) {
+  final hasRealCommerce = controller.dinningLogin.commerceId != null
+      && controller.dinningLogin.commerceId!.isNotEmpty;
+
+  if (!controller.isCustomerRole && (!controller.hasSelectedCommerce.value || !hasRealCommerce)) {
     return const _CommerceGate();
   }
 

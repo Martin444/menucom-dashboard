@@ -22,89 +22,98 @@
 
 ## Fase 1: Quick Wins (independientes, sin riesgo)
 
+> ✅ **COMPLETADA** — 2026-06-20
+
 ### 1.1 Centralizar redirect URIs de MercadoPago
 
 **Qué:** Reemplazar 3 ocurrencias de string hardcodeado por `Config.mpRedirectUri`.
 
 **Archivos:**
-- [ ] `lib/features/home/presentation/organisms/head_dinning.dart` (líneas 137, 224)
-- [ ] `lib/features/home/presentation/atoms/user_info_header.dart` (línea 64)
+- [x] `lib/features/home/presentation/widget/head_dinning.dart` (2 ocurrencias)
+- [x] `lib/features/home/presentation/widget/user_info_header.dart` (1 ocurrencia)
 
-**Verificación:** `git grep 'menucom-api.onrender.com/payments/oauth/callback'` debe dar 0 resultados.
+**Nota:** Las rutas reales difieren del plan original (`widget/` en vez de `organisms/` y `atoms/`).
 
 ### 1.2 Fix memory leak en DinningController
 
-**Qué:** Agregar `@override void dispose()` con `.dispose()` para `nameController`, `priceController`, `deliveryController`.
+**Qué:** Agregar `@override void onClose()` con `.dispose()` para `nameController`, `priceController`, `deliveryController`.
 
 **Archivo:**
-- [ ] `lib/features/home/controllers/dinning_controller.dart`
+- [x] `lib/features/home/controllers/dinning_controller.dart`
 
-**Verificación:** `flutter analyze` sin warnings de controllers sin dispose.
+**Nota:** Se usó `onClose()` (GetX) en vez de `dispose()`. Luego migró a `FormController.onClose()`.
 
 ### 1.3 Centralizar breakpoints
 
-**Qué:** Crear constantes compartidas en pu_material.
-
 **Archivo NUEVO (pu_material):**
-- [ ] `pu_material/lib/utils/pu_breakpoints.dart`
-  - `kMobileBreakpoint = 768`
-  - `kTabletBreakpoint = 1024`
-  - `kSmallBreakpoint = 450`
+- [x] `pu_material/lib/utils/pu_breakpoints.dart`
 
-**Archivos a actualizar importando desde pu_material:**
-- [ ] `lib/features/home/presentation/organisms/mp_link_banner.dart` (usaba 700, 450)
-- [ ] `lib/features/home/presentation/widget/unlinked_catalogs_banner.dart` (usaba 700)
-- [ ] `lib/features/home/presentation/organisms/head_dinning.dart` (usaba 768, 1024)
+**Archivos actualizados:**
+- [x] `lib/features/home/presentation/organisms/mp_link_banner.dart`
+- [x] `lib/features/home/presentation/organisms/unlinked_catalogs_banner.dart`
+- [x] `lib/features/home/presentation/widget/head_dinning.dart`
 
 ### 1.4 Reemplazar `Icons.*` por `FluentIcons.*`
 
-**Archivos:**
-- [ ] `lib/features/home/presentation/atoms/ward_item_tile.dart:29` → `FluentIcons.edit_16_regular`
-- [ ] `lib/features/home/presentation/widget/mp_oauth_gate_widget.dart:204,241,278`
-- [ ] `lib/features/home/presentation/widget/mp_banner_header.dart:40,80`
+**Archivos actualizados (18 ocurrencias en 10 archivos):**
+- [x] `ward_item_tile.dart` → `FluentIcons.edit_16_regular`
+- [x] `mp_oauth_gate_widget.dart` → `error_circle_24_regular`, `wallet_24_regular`, `checkmark_circle_24_regular`, `open_24_regular`
+- [x] `mp_banner_header.dart` → `wallet_24_regular`, `dismiss_24_regular`
+- [x] `mp_banner_benefits.dart` → `flash_24_regular`, `shield_checkmark_24_regular`, `data_trending_24_regular`
+- [x] `mp_banner_actions.dart` → `arrow_right_24_regular`
+- [x] `mp_link_banner.dart` → `wallet_24_regular`
+- [x] `mp_refresh_button.dart` → `arrow_sync_24_regular`
+- [x] `dinning_controller.dart` → `error_circle_24_regular`, `checkmark_circle_24_regular`
+- [x] `category_tags_section.dart` → `apps_24_regular`
+- [x] `service_home_view.dart` → `wrench_24_regular`, `clipboard_task_list_ltr_24_regular`
 
-**Referencia:** `docs/FLUENT_ICONS_MAPPING.md`
+### 1.5 Fix extra (no planeado): `home_page.dart` — Corrección en `_buildMainContent`
+
+- [x] Validar `commerceId` no vacío además de `hasSelectedCommerce` para mostrar `_CommerceGate`
 
 ---
 
 ## Fase 2: Refactor de DinningController (God Object)
 
-### 2.1 Extraer controladores
+> ✅ **COMPLETADA** — 2026-06-20
 
-**NUEVOS archivos en `lib/features/home/controllers/`:**
+### Arquitectura resultante
 
-| Controlador | Responsabilidad | Métodos a migrar |
+| Controlador | Líneas | Responsabilidad |
 |---|---|---|
-| `user_session_controller.dart` | Login, logout, token, user info, roles | `dinningLogin()`, `getMyDinningInfo()`, `closeSesion()`, `hashAccessToken()`, `_initUserData()` |
-| `mp_link_controller.dart` | Vinculación MP, OAuth flow | `_verifyMPLinkingStatus()`, `linkMPAccount()`, `unlinkMPAccount()` |
-| `catalog_selection_controller.dart` | Listas de catálogos, cambio de contexto | `menusList`, `catalogList`, `wardList`, `changeCommerceContext()`, `loadCatalogsByRole()` |
-| `form_controller.dart` | Formularios de creación/edición | `nameController`, `priceController`, `deliveryController`, `menusToEdit` |
+| `dinning_controller.dart` | ~95 | Fachada/orquestador. Delega todo a sub-controladores. Expone mismos getters/métodos que antes para retrocompatibilidad. |
+| `user_session_controller.dart` | ~195 | Sesión, user info, roles, `getMyDinningInfo()`, `closeSesion()`, `getUsersByRoles()`, `usersByRolesList`, `everyListEmpty` |
+| `mp_link_controller.dart` | ~103 | Vinculación MP, OAuth, banner visibility, `checkMPStatus()`, `vincularMercadoPago()` |
+| `form_controller.dart` | ~32 | `TextEditingController`s, `menusToEdit` |
 
-**Archivo a modificar:**
-- [ ] `lib/features/home/controllers/dinning_controller.dart` → queda como orquestador mínimo (~80 líneas) con solo `dinningLogin`, `isLoadingDataUser`, `isCustomerRole`. O se elimina por completo si cada sub-controlador se vuelve independiente.
+**Controladores NO creados (desviación del plan):**
+- `catalog_selection_controller.dart` — **Eliminado**. Era un duplicado innecesario de `CatalogsController` (de `lib/features/catalogs/getx/`) que la UI ya usaba. Causó bugs de sincronización.
 
-### 2.2 Actualizar binding
+### Lecciones aprendidas (GetX + ciclo de vida)
 
-- [ ] `lib/features/home/getx/dinning_binding.dart` → registrar todos los nuevos controladores con `Get.lazyPut`
+1. **`fenix: true` en `Get.lazyPut` es necesario** cuando una ruta usa `Get.offAllNamed()`. Sin `fenix`, el controller se destruye al hacer pop de la ruta y la UI nueva observa una instancia fresca sin datos.
 
-### 2.3 Migrar referencias
+2. **No duplicar controladores existentes.** Si la UI ya usa `CatalogsController`, no crear un `CatalogSelectionController` paralelo. La sesión debe usar el mismo controlador o delegar la carga a las vistas.
 
-- [ ] Actualizar `Get.find<DinningController>()` en ~15 widgets al controlador específico correspondiente
-- [ ] `lib/features/home/presentation/pages/home_page.dart`
-- [ ] `lib/features/home/presentation/organisms/head_dinning.dart`
-- [ ] `lib/features/home/presentation/organisms/head_actions.dart`
-- [ ] `lib/features/home/presentation/widget/get_function_button.dart`
-- [ ] `lib/features/home/presentation/widget/mp_oauth_gate_widget.dart`
-- [ ] `lib/features/home/presentation/organisms/mp_link_banner.dart`
-- [ ] `lib/features/home/presentation/widget/mp_banner_header.dart`
-- [ ] `lib/features/home/presentation/widget/mp_banner_actions.dart`
-- [ ] `lib/features/home/presentation/widget/unlinked_catalogs_banner.dart`
-- [ ] `lib/features/home/presentation/widget/missing_logo_banner.dart`
-- [ ] `lib/features/home/presentation/molecules/context_switcher_molecule.dart`
-- [ ] `lib/features/home/presentation/atoms/user_info_header.dart`
-- [ ] `lib/features/home/presentation/views/menu_home_view.dart`
-- [ ] `lib/features/home/presentation/views/ward_home_view.dart`
-- [ ] `lib/features/home/presentation/widget/menu_side.dart`
+3. **`GetBuilder(init: controller)` + `assignId: true`** puede re-disparar `onInit()` en GetX 5.x. Usar solo `GetBuilder(builder: ...)` sin `init:` cuando el controller ya está registrado vía binding.
+
+4. **No cargar catálogos desde `getMyDinningInfo()`** si las vistas (`menu_home_view`, `ward_home_view`) ya lo hacen. Causa doble llamado a `loadCatalogsByType()` con conflicto de guard `_isLoadingCatalogsInternal`.
+
+5. **`ever()` en el orquestador** propaga cambios de Rx en sub-controladores para que `GetBuilder`/`GetView` (que dependen de `update()`) sigan funcionando.
+
+### Binding final
+
+```dart
+// dinning_binding.dart
+Get.lazyPut(() => UserSessionController(), fenix: true);
+Get.lazyPut(() => MPLinkController(), fenix: true);
+Get.lazyPut(() => FormController(), fenix: true);
+Get.lazyPut(() => DinningController(), fenix: true);
+```
+
+### Widgets actualizados
+
+Los widgets **no se migraron** a usar sub-controladores directamente. `DinningController` mantiene la misma API pública mediante getters delegados, por lo que `Get.find<DinningController>()` y `GetBuilder<DinningController>` siguen funcionando sin cambios en ~15 widgets.
 
 ---
 
@@ -193,14 +202,16 @@
 
 ```
 Fase 1: ✅ flutter analyze sin errores
-         ✅ git grep 'menucom-api.onrender.com/payments/oauth/callback' = 0
+         ✅ git grep 'menucom-api.onrender.com/payments/oauth/callback' en home = 0
          ✅ Todos los breakpoints usan constantes de pu_material
          ✅ 0 ocurrencias de Icons.* en lib/features/home/
 
-Fase 2: ✅ DinningController < 100 líneas (o eliminado)
-         ✅ Todos los Get.find apuntan al controlador correcto
+Fase 2: ✅ DinningController ~95 líneas (orquestador)
+         ✅ 3 sub-controladores extraídos + FormController
+         ✅ CatalogSelectionController eliminado (duplicado de CatalogsController)
          ✅ flutter analyze sin errores
-         ✅ git add + commit
+         ✅ catálogos se muestran correctamente
+         ✅ commerce gate funciona tras switchContext
 
 Fase 3: ✅ menu_home_view.dart + ward_home_view.dart < 60 líneas c/u
          ✅ CatalogHomeTemplate en pu_material con tests
