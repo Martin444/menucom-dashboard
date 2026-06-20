@@ -1,3 +1,4 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
@@ -214,7 +215,7 @@ class DinningController extends GetxController {
         backgroundColor: const Color(0xFFFFEAEA),
         colorText: const Color(0xFFD32F2F),
         snackPosition: SnackPosition.BOTTOM,
-        icon: const Icon(Icons.error_outline_rounded, color: Color(0xFFD32F2F)),
+        icon: const Icon(FluentIcons.error_circle_24_regular, color: Color(0xFFD32F2F)),
       );
     }
   }
@@ -229,7 +230,7 @@ class DinningController extends GetxController {
         backgroundColor: const Color(0xFFE8F5E9),
         colorText: const Color(0xFF2E7D32),
         snackPosition: SnackPosition.BOTTOM,
-        icon: const Icon(Icons.check_circle_outline_rounded, color: Color(0xFF2E7D32)),
+        icon: const Icon(FluentIcons.checkmark_circle_24_regular, color: Color(0xFF2E7D32)),
       );
     }
   }
@@ -426,5 +427,13 @@ class DinningController extends GetxController {
     super.onReady();
     // Sincronizar el estado de navegación cuando el controlador esté listo
     syncNavigationState();
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    priceController.dispose();
+    deliveryController.dispose();
+    super.onClose();
   }
 }

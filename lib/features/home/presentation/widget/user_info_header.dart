@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
+import 'package:pickmeup_dashboard/core/config.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/mp_oauth_gate_widget.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
@@ -61,7 +62,7 @@ class UserInfoHeader extends StatelessWidget {
               Get.dialog(
                 MPOAuthGateWidget(
                   idMenu: dinning.dinningLogin.id ?? '',
-                  redirectUri: 'https://menucom-api.onrender.com/payments/oauth/callback',
+                  redirectUri: Config.mpRedirectUri,
                 ),
               );
             },

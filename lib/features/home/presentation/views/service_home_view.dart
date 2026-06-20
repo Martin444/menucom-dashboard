@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
 
 /// Vista para usuarios con rol `service`.
@@ -27,7 +28,7 @@ class ServiceHomeView extends StatelessWidget {
         children: [
           SizedBox(height: isMobile ? 8 : 16),
           Icon(
-            Icons.build_rounded,
+            FluentIcons.wrench_24_regular,
             size: isMobile ? 56 : 80,
             color: PUColors.iconColor,
           ),
@@ -55,7 +56,7 @@ class ServiceHomeView extends StatelessWidget {
             onPressed: () {
               // Placeholder: navegar a la sección de detalles de servicio
             },
-            icon: const Icon(Icons.list_alt_outlined),
+            icon: const Icon(FluentIcons.clipboard_task_list_ltr_24_regular),
             label: const Text('Ver solicitudes'),
             style: ElevatedButton.styleFrom(
               backgroundColor: PUColors.bgButton,

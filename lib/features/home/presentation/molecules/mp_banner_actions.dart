@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 /// Acciones del banner (Botón de vincular).
 class MPBannerActions extends StatelessWidget {
@@ -62,7 +63,7 @@ class _LinkButton extends StatelessWidget {
             ),
           ),
           SizedBox(width: 10),
-          Icon(Icons.arrow_forward_rounded, size: 20),
+          Icon(FluentIcons.arrow_right_24_regular, size: 20),
         ],
       ),
     );

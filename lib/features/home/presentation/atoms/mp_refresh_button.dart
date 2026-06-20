@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import '../../controllers/dinning_controller.dart';
 
@@ -33,7 +34,7 @@ class MPRefreshButton extends StatelessWidget {
               )
             : IconButton(
                 onPressed: () => controller.refreshMPStatus(),
-                icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+                icon: const Icon(FluentIcons.arrow_sync_24_regular, color: Colors.white),
                 tooltip: 'Actualizar estado',
               ),
       ),

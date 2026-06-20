@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
 import '../../controllers/dinning_controller.dart';
 import '../atoms/mp_refresh_button.dart';
@@ -36,7 +37,7 @@ class MPBannerHeader extends StatelessWidget {
             ],
           ),
           child: const Icon(
-            Icons.account_balance_wallet_rounded,
+            FluentIcons.wallet_24_regular,
             color: Color(0xFF009EE3),
             size: 32,
           ),
@@ -77,7 +78,7 @@ class MPBannerHeader extends StatelessWidget {
         IconButton(
           onPressed: () => controller.setBannerVisible(false),
           icon: const Icon(
-            Icons.close_rounded,
+            FluentIcons.dismiss_24_regular,
             color: Colors.white,
             size: 24,
           ),

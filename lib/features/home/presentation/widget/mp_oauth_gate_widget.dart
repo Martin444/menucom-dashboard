@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -201,7 +202,7 @@ class _MPOAuthGateWidgetState extends State<MPOAuthGateWidget> {
             // Error
             else if (_errorMessage != null) ...[
               Icon(
-                Icons.error_outline,
+                FluentIcons.error_circle_24_regular,
                 size: 48,
                 color: PUColors.bgError,
               ),
@@ -239,7 +240,7 @@ class _MPOAuthGateWidgetState extends State<MPOAuthGateWidget> {
             // Estado: no vinculado (no debería llegar aquí normalmente)
             else if (!_isLinked) ...[
               Icon(
-                Icons.account_balance_wallet_outlined,
+                FluentIcons.wallet_24_regular,
                 size: 48,
                 color: PUColors.bgButton,
               ),
@@ -275,7 +276,7 @@ class _MPOAuthGateWidgetState extends State<MPOAuthGateWidget> {
             // Estado: vinculado (no debería llegar aquí, se abre automáticamente)
             else ...[
               Icon(
-                Icons.check_circle,
+                FluentIcons.checkmark_circle_24_regular,
                 size: 48,
                 color: PUColors.bgSucces,
               ),
@@ -331,7 +332,7 @@ class _LinkingInProgressDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(
-              Icons.open_in_browser,
+              FluentIcons.open_24_regular,
               size: 48,
               color: PUColors.bgButton,
             ),

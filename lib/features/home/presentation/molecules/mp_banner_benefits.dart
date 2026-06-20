@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import '../atoms/mp_benefit_badge.dart';
 
 /// Sección de beneficios con badges.
@@ -12,15 +13,15 @@ class MPBannerBenefits extends StatelessWidget {
       runSpacing: 10,
       children: const [
         MPBenefitBadge(
-          icon: Icons.flash_on_rounded,
+          icon: FluentIcons.flash_24_regular,
           text: 'Cobros inmediatos',
         ),
         MPBenefitBadge(
-          icon: Icons.verified_user_rounded,
+          icon: FluentIcons.shield_checkmark_24_regular,
           text: 'Pagos seguros',
         ),
         MPBenefitBadge(
-          icon: Icons.auto_graph_rounded,
+          icon: FluentIcons.data_trending_24_regular,
           text: 'Gestión automática',
         ),
       ],

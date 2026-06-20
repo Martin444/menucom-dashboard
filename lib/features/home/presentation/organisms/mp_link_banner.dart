@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
+import 'package:pu_material/pu_material.dart';
 import '../../controllers/dinning_controller.dart';
 import '../molecules/mp_banner_header.dart';
 import '../molecules/mp_banner_benefits.dart';
@@ -29,8 +31,8 @@ class MPLinkBanner extends GetView<DinningController> {
       return LayoutBuilder(
         builder: (context, constraints) {
           final double width = constraints.maxWidth;
-          final bool isMobile = width < 700;
-          final bool isSmallMobile = width < 450;
+          final bool isMobile = width < kMobileBreakpoint;
+          final bool isSmallMobile = width < kSmallBreakpoint;
 
           return FadeInUp(
             duration: const Duration(milliseconds: 600),
@@ -70,7 +72,7 @@ class MPLinkBanner extends GetView<DinningController> {
                       child: Opacity(
                         opacity: 0.1,
                         child: const Icon(
-                          Icons.account_balance_wallet_rounded,
+                          FluentIcons.wallet_24_regular,
                           size: 250,
                           color: Colors.white,
                         ),

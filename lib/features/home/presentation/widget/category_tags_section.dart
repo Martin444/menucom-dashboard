@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
 
 /// Widget de transición que usa el nuevo CategorySectionOrganism de pu_material
@@ -20,7 +21,7 @@ class CategoryTagsSection<T> extends StatelessWidget {
     this.onEditSelected,
     this.onDeleteSelected,
     this.actionButtons = const [],
-    this.icon = Icons.category,
+    this.icon = FluentIcons.apps_24_regular,
     this.emptyMessage,
   });
 

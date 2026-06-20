@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pu_material/pu_material.dart';
 
@@ -26,7 +27,7 @@ class WardItemTile extends StatelessWidget {
           primaryInfo: (item.tags ?? []).isNotEmpty ? (item.tags ?? []).join(', ') : null,
           isSelected: selected,
           onAddToCart: () => actionSelected(item, 'edit'), // Ahora la acción principal es editar
-          unselectedIcon: Icons.mode_edit_outline_outlined, // Icono de gestión/edición
+          unselectedIcon: FluentIcons.edit_16_regular, // Icono de gestión/edición
           unselectedButtonColor: PUColors.primaryColor,
         ),
         Positioned(
