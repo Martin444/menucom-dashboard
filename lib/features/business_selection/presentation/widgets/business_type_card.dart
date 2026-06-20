@@ -3,6 +3,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
 import '../../models/business_type.dart';
 
@@ -98,7 +99,7 @@ class BusinessTypeCardMobile extends StatelessWidget {
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
-                          Icons.check,
+                          FluentIcons.checkmark_24_regular,
                           color: Colors.white,
                           size: 16,
                         ),
@@ -181,27 +182,36 @@ class BusinessTypeCardMobile extends StatelessWidget {
   /// Obtiene el icono apropiado para cada tipo de negocio
   IconData _getIconForBusinessType(String businessId) {
     switch (businessId) {
-      case 'food_store':
       case 'food':
-        return Icons.restaurant;
+        return FluentIcons.food_24_regular;
       case 'clothes':
+        return FluentIcons.clothes_hanger_24_regular;
       case 'accessories':
-        return Icons.checkroom;
+        return FluentIcons.glasses_24_regular;
       case 'retail':
+        return FluentIcons.building_shop_24_regular;
       case 'electronics':
+        return FluentIcons.plug_connected_24_regular;
       case 'pets':
-        return Icons.store;
+        return FluentIcons.animal_dog_24_regular;
       case 'water_distributor':
+        return FluentIcons.water_24_regular;
       case 'grocery':
+        return FluentIcons.cart_24_regular;
       case 'construction':
-        return Icons.local_shipping;
-      case 'service':
+        return FluentIcons.building_lighthouse_24_regular;
       case 'pharmacy':
+        return FluentIcons.pill_24_regular;
       case 'beauty':
+        return FluentIcons.sparkle_24_regular;
       case 'automotive':
-        return Icons.build;
+        return FluentIcons.vehicle_car_24_regular;
+      case 'service':
+        return FluentIcons.wrench_24_regular;
+      case 'event_organizer':
+        return FluentIcons.calendar_24_regular;
       default:
-        return Icons.business;
+        return FluentIcons.store_microsoft_24_regular;
     }
   }
 }
@@ -316,7 +326,7 @@ class BusinessTypeCard extends StatelessWidget {
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
-                          Icons.check,
+                          FluentIcons.checkmark_24_regular,
                           color: Colors.white,
                           size: 18,
                         ),
@@ -351,60 +361,49 @@ class BusinessTypeCard extends StatelessWidget {
   Widget _buildCompactLayout() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Icono principal
         Container(
-          width: 38,
-          height: 38,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
-            color:
-                _getColorFromHex(businessType.colorHex).withOpacity(0.13),
+            color: _getColorFromHex(businessType.colorHex)
+                .withValues(alpha: 0.13),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
             _getIconForBusinessType(businessType.id),
             color: _getColorFromHex(businessType.colorHex),
-            size: 16,
+            size: 18,
           ),
         ),
-        const SizedBox(height: 5),
-
+        const SizedBox(height: 6),
         // Título
-        Text(
-          businessType.title,
-          style: PuTextStyle.title3.copyWith(
-            color: isSelected
-                ? _getColorFromHex(businessType.colorHex)
-                : PUColors.textColor3,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            fontSize: 11,
+        Expanded(
+          child: Center(
+            child: Text(
+              businessType.title,
+              style: PuTextStyle.title3.copyWith(
+                color: isSelected
+                    ? _getColorFromHex(businessType.colorHex)
+                    : PUColors.textColor3,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                fontSize: 11,
+                height: 1.2,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 3),
-
-        // Descripción abreviada
-        Text(
-          businessType.description,
-          style: PuTextStyle.title3.copyWith(
-            color: PUColors.textColor1,
-            fontSize: 8,
-            height: 1.1,
-          ),
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-
-        const Spacer(),
-
+        const SizedBox(height: 4),
         // Indicador de selección
         if (isSelected)
           Container(
-            width: 22,
-            height: 22,
+            width: 20,
+            height: 20,
             decoration: BoxDecoration(
               color: _getColorFromHex(businessType.colorHex),
               shape: BoxShape.circle,
@@ -412,13 +411,13 @@ class BusinessTypeCard extends StatelessWidget {
             child: const Icon(
               Icons.check,
               color: Colors.white,
-              size: 13,
+              size: 12,
             ),
           )
         else
           Container(
-            width: 22,
-            height: 22,
+            width: 20,
+            height: 20,
             decoration: BoxDecoration(
               color: Colors.transparent,
               shape: BoxShape.circle,
@@ -479,27 +478,36 @@ class BusinessTypeCard extends StatelessWidget {
   /// Obtiene el icono apropiado para cada tipo de negocio
   IconData _getIconForBusinessType(String businessId) {
     switch (businessId) {
-      case 'food_store':
       case 'food':
-        return Icons.restaurant;
+        return FluentIcons.food_24_regular;
       case 'clothes':
+        return FluentIcons.clothes_hanger_24_regular;
       case 'accessories':
-        return Icons.checkroom;
+        return FluentIcons.glasses_24_regular;
       case 'retail':
+        return FluentIcons.building_shop_24_regular;
       case 'electronics':
+        return FluentIcons.plug_connected_24_regular;
       case 'pets':
-        return Icons.store;
+        return FluentIcons.animal_dog_24_regular;
       case 'water_distributor':
+        return FluentIcons.water_24_regular;
       case 'grocery':
+        return FluentIcons.cart_24_regular;
       case 'construction':
-        return Icons.local_shipping;
-      case 'service':
+        return FluentIcons.building_lighthouse_24_regular;
       case 'pharmacy':
+        return FluentIcons.pill_24_regular;
       case 'beauty':
+        return FluentIcons.sparkle_24_regular;
       case 'automotive':
-        return Icons.build;
+        return FluentIcons.vehicle_car_24_regular;
+      case 'service':
+        return FluentIcons.wrench_24_regular;
+      case 'event_organizer':
+        return FluentIcons.calendar_24_regular;
       default:
-        return Icons.business;
+        return FluentIcons.store_microsoft_24_regular;
     }
   }
 }

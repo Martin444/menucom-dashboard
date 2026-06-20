@@ -10,6 +10,7 @@ import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.da
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_empty_state.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/organisms/unlinked_catalogs_banner.dart';
 
 import '../../controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
@@ -78,6 +79,24 @@ class _MenuHomeViewState extends State<MenuHomeView> with WidgetsBindingObserver
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Obx(() {
+                        final unlinked = catCtrl.unlinkedCatalogs.toList();
+                        if (unlinked.isEmpty) return const SizedBox.shrink();
+                        final dinning = Get.find<DinningController>();
+                        if (dinning.currentUserRole.value != 'owner') {
+                          return const SizedBox.shrink();
+                        }
+                        return Column(
+                          children: unlinked
+                              .map(
+                                (catalog) => UnlinkedCatalogsBanner(
+                                  catalog: catalog,
+                                  controller: catCtrl,
+                                ),
+                              )
+                              .toList(),
+                        );
+                      }),
                       Visibility(
                         visible: constrains.maxWidth < 1200,
                         child: CategoryTagsSection<CatalogModel>(

@@ -37,7 +37,7 @@ class MPLinkBanner extends GetView<DinningController> {
             child: Container(
               width: double.infinity,
               margin: EdgeInsets.symmetric(
-                horizontal: isMobile ? 16 : 24,
+                horizontal: isMobile ? 16 : 0,
                 vertical: 16,
               ),
               decoration: BoxDecoration(

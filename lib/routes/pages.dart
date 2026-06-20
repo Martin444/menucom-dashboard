@@ -21,6 +21,7 @@ import 'package:pickmeup_dashboard/features/home/presentation/pages/mp_oauth_cal
 
 import '../features/orders/presentation/pages/orders_page.dart';
 import '../features/orders/presentation/pages/my_purchases_page.dart';
+import '../features/commerce/presentation/pages/create_commerce_page.dart';
 
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_binding.dart';
 import 'package:pickmeup_dashboard/features/membership/presentation/pages/membership_page.dart';
@@ -32,6 +33,11 @@ import 'package:pickmeup_dashboard/features/events/presentation/pages/events_das
 import 'package:pickmeup_dashboard/features/events/presentation/pages/event_detail_page.dart';
 import 'package:pickmeup_dashboard/features/events/presentation/pages/event_create_page.dart';
 import 'package:pickmeup_dashboard/features/events/presentation/bindings/events_binding.dart';
+import 'package:pickmeup_dashboard/features/clients/presentation/views/clients_view.dart';
+import 'package:pickmeup_dashboard/features/clients/getx/clients_binding.dart';
+import 'package:pickmeup_dashboard/features/collaborators/presentation/collaborators.dart';
+import 'package:pickmeup_dashboard/features/profile/presentation/views/business_profile_page.dart';
+import 'package:pickmeup_dashboard/features/profile/presentation/controllers/business_profile_controller.dart';
 
 class PUPages {
   static final List<GetPage> listPages = [
@@ -231,6 +237,15 @@ class PUPages {
       bindings: [DinningBinding()],
     ),
     GetPage(
+      name: PURoutes.BUSINESS_PROFILE,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+      page: () => const BusinessProfilePage(),
+      transition: Transition.rightToLeft,
+      bindings: [DinningBinding()],
+    ),
+    GetPage(
       name: PURoutes.BUSINESS_TYPE_SELECTION,
       middlewares: [
         AuthMiddleware(),
@@ -292,6 +307,40 @@ class PUPages {
         MenuNavigationBinding(),
         DinningBinding(),
       ],
+    ),
+    GetPage(
+      name: PURoutes.CLIENTS,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+      transition: Transition.fadeIn,
+      page: () => const ClientsView(),
+      bindings: [
+        ClientsBinding(),
+        MenuNavigationBinding(),
+        DinningBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.COLLABORATORS,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+      transition: Transition.fadeIn,
+      page: () => const CollaboratorsPage(),
+      bindings: [
+        CollaboratorsBinding(),
+        MenuNavigationBinding(),
+        DinningBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.CREATE_COMMERCE,
+      middlewares: [
+        AuthMiddleware(),
+      ],
+      transition: Transition.rightToLeft,
+      page: () => const CreateCommercePage(),
     ),
     GetPage(
       name: PURoutes.EVENTS,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
@@ -10,12 +11,14 @@ import 'package:pickmeup_dashboard/features/home/presentation/widget/head_action
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/starter_banner.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/organisms/mp_link_banner.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/organisms/missing_logo_banner.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/get_function_button.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 
 import '../widget/head_dinning.dart';
 import '../widget/dashboard_error_state.dart';
+import '../widget/context_switcher_molecule.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -112,21 +115,39 @@ class _MobileContent extends StatelessWidget {
         // Header móvil
         const HeadDinning(isMobile: true),
 
-        // Banner de vinculación de Mercado Pago
-        const MPLinkBanner(),
-
-        // Contenido principal
+        // Contenido con scroll que empieza desde el banner de MP
         Expanded(
-          child: Center(
-            // padding: const EdgeInsets.symmetric(16),
-            child: !controller.everyListEmpty.value
-                ? _RoleBasedView(controller: controller, isMobile: true)
-                : StarterBanner(user: controller.dinningLogin),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Banner de vinculación de Mercado Pago
+                      const MPLinkBanner(),
+
+                      // Banner de logo faltante
+                      const MissingLogoBanner(),
+
+                      // Contenido principal con altura fija para que los
+                      // child views con Expanded funcionen correctamente
+                      SizedBox(
+                        height: constraints.maxHeight,
+                        child: _buildMainContent(controller, isMobile: true),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
 
-        // Footer con acciones principales - siempre visible en mobile
-        Container(
+        // Footer con acciones principales - solo si tiene comercio o es customer
+        if (controller.isCustomerRole || controller.hasSelectedCommerce.value)
+          Container(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
           decoration: BoxDecoration(
             color: PUColors.bgItem,
@@ -216,7 +237,7 @@ class _DesktopContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final horizontalPadding = isTablet ? 24.0 : 32.0;
+    final horizontalPadding = isTablet ? 24.0 : 24.0;
     final verticalPadding = isTablet ? 16.0 : 24.0;
 
     return Column(
@@ -227,22 +248,146 @@ class _DesktopContent extends StatelessWidget {
         // Head Actions solo en desktop cuando hay espacio
         if (!isTablet) const HeadActions(),
 
-        // Banner de vinculación de Mercado Pago
-        const MPLinkBanner(),
-
-        // Contenido principal
+        // Contenido principal con scroll que empieza desde el banner de MP
         Expanded(
           child: Padding(
             padding: EdgeInsets.symmetric(
               horizontal: horizontalPadding,
               vertical: verticalPadding,
             ),
-            child: !controller.everyListEmpty.value
-                ? _RoleBasedView(controller: controller, isMobile: false)
-                : StarterBanner(user: controller.dinningLogin),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Banner de vinculación de Mercado Pago
+                      const MPLinkBanner(),
+
+                      // Banner de logo faltante
+                      const MissingLogoBanner(),
+
+                      // Contenido principal con altura fija para que los
+                      // child views con Expanded funcionen correctamente
+                      SizedBox(
+                        height: constraints.maxHeight,
+                        child: _buildMainContent(controller, isMobile: false),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Decide qué contenido mostrar según el estado del usuario
+Widget _buildMainContent(DinningController controller, {required bool isMobile}) {
+  if (!controller.isCustomerRole && !controller.hasSelectedCommerce.value) {
+    return const _CommerceGate();
+  }
+
+  if (!controller.everyListEmpty.value) {
+    return _RoleBasedView(controller: controller, isMobile: isMobile);
+  }
+
+  return StarterBanner(user: controller.dinningLogin);
+}
+
+/// Muestra la pantalla de selección de comercio a pantalla completa
+class _CommerceGate extends StatefulWidget {
+  const _CommerceGate();
+
+  @override
+  State<_CommerceGate> createState() => _CommerceGateState();
+}
+
+class _CommerceGateState extends State<_CommerceGate> {
+  bool _shown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_shown && mounted) {
+        _shown = true;
+        Get.to(
+          () => const _CommerceSelectionPage(),
+          opaque: true,
+          fullscreenDialog: true,
+          transition: Transition.noTransition,
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox.shrink();
+  }
+}
+
+/// Pantalla completa que bloquea interacción hasta seleccionar comercio
+class _CommerceSelectionPage extends StatelessWidget {
+  const _CommerceSelectionPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: PUColors.primaryBackground,
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 520),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: PUColors.primaryBlueLight.withValues(alpha: 0.3),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        FluentIcons.store_microsoft_24_regular,
+                        size: 40,
+                        color: PUColors.primaryBlue,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Selecciona tu negocio',
+                      style: PuTextStyle.title3.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Elige con qué comercio quieres operar',
+                      style: PuTextStyle.bodySmall.copyWith(
+                        color: PUColors.textColorMuted,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
+                    const CommerceSelectionContent(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

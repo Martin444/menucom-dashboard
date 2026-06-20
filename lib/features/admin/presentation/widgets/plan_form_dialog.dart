@@ -26,6 +26,7 @@ class _PlanFormDialogState extends State<PlanFormDialog> {
   late final TextEditingController _descriptionController;
   late final TextEditingController _priceController;
   late final TextEditingController _currencyController;
+  late final TextEditingController _maxCommercesController;
   late final TextEditingController _maxCatalogsController;
   late final TextEditingController _maxCatalogItemsController;
   late final TextEditingController _maxLocationsController;
@@ -47,6 +48,7 @@ class _PlanFormDialogState extends State<PlanFormDialog> {
     _descriptionController = TextEditingController(text: plan?.description);
     _priceController = TextEditingController(text: plan?.price.toString());
     _currencyController = TextEditingController(text: plan?.currency ?? 'ARS');
+    _maxCommercesController = TextEditingController(text: plan?.limits.maxCommerces.toString() ?? '1');
     _maxCatalogsController = TextEditingController(text: plan?.limits.maxCatalogs.toString() ?? '1');
     _maxCatalogItemsController = TextEditingController(text: plan?.limits.maxCatalogItems.toString() ?? '10');
     _maxLocationsController = TextEditingController(text: plan?.limits.maxLocations.toString() ?? '1');
@@ -74,6 +76,7 @@ class _PlanFormDialogState extends State<PlanFormDialog> {
     _descriptionController.dispose();
     _priceController.dispose();
     _currencyController.dispose();
+    _maxCommercesController.dispose();
     _maxCatalogsController.dispose();
     _maxCatalogItemsController.dispose();
     _maxLocationsController.dispose();
@@ -207,6 +210,7 @@ class _PlanFormDialogState extends State<PlanFormDialog> {
                       spacing: 12,
                       runSpacing: 12,
                       children: [
+                        _PlanLimitField(controller: _maxCommercesController, label: 'Máx. Comercios'),
                         _PlanLimitField(controller: _maxCatalogsController, label: 'Máx. Catálogos'),
                         _PlanLimitField(controller: _maxCatalogItemsController, label: 'Máx. Ítems/Cat'),
                         _PlanLimitField(controller: _maxLocationsController, label: 'Máx. Locales'),
@@ -313,6 +317,7 @@ class _PlanFormDialogState extends State<PlanFormDialog> {
         .toList();
 
     final limits = MembershipPlanLimits(
+      maxCommerces: int.tryParse(_maxCommercesController.text) ?? 1,
       maxCatalogs: int.tryParse(_maxCatalogsController.text) ?? 1,
       maxCatalogItems: int.tryParse(_maxCatalogItemsController.text) ?? 10,
       maxLocations: int.tryParse(_maxLocationsController.text) ?? 1,

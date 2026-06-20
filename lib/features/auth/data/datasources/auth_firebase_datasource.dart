@@ -3,7 +3,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode, debugPrint;
-import '../../domain/usecases/login_with_credentials_usecase.dart';
+import '../../domain/exceptions/auth_exceptions.dart';
 import '../../config/firebase_config.dart';
 
 /// Contrato para el datasource de Firebase

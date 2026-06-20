@@ -56,7 +56,7 @@ class MembershipPlansTable extends StatelessWidget {
                   TextTableCell(plan.displayName ?? plan.name),
                   TextTableCell('${plan.currency} ${plan.price}'),
                   TextTableCell(
-                      'C: ${plan.limits.maxCatalogs} | I: ${plan.limits.maxCatalogItems} | L: ${plan.limits.maxLocations}'),
+                      'M: ${plan.limits.maxCommerces} | C: ${plan.limits.maxCatalogs} | I: ${plan.limits.maxCatalogItems} | L: ${plan.limits.maxLocations}'),
                   BadgeTableCell(
                     plan.isActive ? 'Activo' : 'Archivado',
                     plan.isActive ? Colors.green : Colors.grey,

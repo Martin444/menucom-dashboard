@@ -8,6 +8,7 @@ import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/overflow_text.dart';
 
 import 'mp_oauth_gate_widget.dart';
+import 'context_switcher_molecule.dart';
 
 class HeadDinning extends StatelessWidget {
   final bool? isMobile;
@@ -53,9 +54,7 @@ class HeadDinning extends StatelessWidget {
                   ),
                 ),
               ),
-              child: useMobileLayout
-                  ? _buildMobileLayout(_, context)
-                  : _buildDesktopLayout(_, context, isLargeScreen),
+              child: useMobileLayout ? _buildMobileLayout(_, context) : _buildDesktopLayout(_, context, isLargeScreen),
             );
           },
         );
@@ -63,8 +62,7 @@ class HeadDinning extends StatelessWidget {
     );
   }
 
-  Widget _buildMobileLayout(
-      DinningController controller, BuildContext context) {
+  Widget _buildMobileLayout(DinningController controller, BuildContext context) {
     return Row(
       children: [
         // Menu icon for mobile drawer
@@ -82,25 +80,28 @@ class HeadDinning extends StatelessWidget {
           ),
         ),
 
-        // Spacer to push content to center and right
+        // Center section - Business name + context switcher
         Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Restaurant name - truncated for mobile
               Flexible(
                 child: GestureDetector(
                   onTap: () => _navigateToProfile(controller),
                   child: Text(
-                    controller.dinningLogin.name ?? '',
+                    controller.isCustomerRole
+                        ? (controller.dinningLogin.name ?? '')
+                        : (controller.dinningLogin.businessName ?? ''),
                     style: PuTextStyle.title3.copyWith(
-                      fontSize: 16, // Slightly smaller for mobile
+                      fontSize: 16,
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                 ),
               ),
+              const SizedBox(width: 8),
+              const ContextSwitcherMolecule(compact: true),
             ],
           ),
         ),
@@ -126,18 +127,17 @@ class HeadDinning extends StatelessWidget {
             const SizedBox(width: 8),
             // Share menu (Vinculación MP) - Solo para usuarios NO customer
             if (_canAccessMPOAuth(_getUserRole(controller.dinningLogin.role)))
-MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () {
-                      Get.dialog(
-                        MPOAuthGateWidget(
-                          idMenu: controller.dinningLogin.id ?? '',
-                          redirectUri:
-                              'https://menucom-api.onrender.com/payments/oauth/callback',
-                        ),
-                      );
-                    },
+              MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () {
+                    Get.dialog(
+                      MPOAuthGateWidget(
+                        idMenu: controller.dinningLogin.id ?? '',
+                        redirectUri: 'https://menucom-api.onrender.com/payments/oauth/callback',
+                      ),
+                    );
+                  },
                   child: Tooltip(
                     message: 'Vincular con Mercado Pago',
                     child: Icon(
@@ -154,25 +154,15 @@ MouseRegion(
     );
   }
 
-  Widget _buildDesktopLayout(
-      DinningController controller, BuildContext context, bool isLargeScreen) {
+  Widget _buildDesktopLayout(DinningController controller, BuildContext context, bool isLargeScreen) {
     return Row(
       children: [
-        // Left section - Menu button (hidden on desktop since we have sidebar)
-        const Expanded(
-          flex: 2,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              // Empty space or logo could go here
-              SizedBox(),
-            ],
-          ),
-        ),
+        // Left spacer - balanced with right actions
+        const Spacer(flex: 3),
 
-        // Center section - Restaurant name
+        // Center section - Business name + context switcher
         Expanded(
-          flex: 6,
+          flex: 5,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -182,10 +172,14 @@ MouseRegion(
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: PUOverflowTextDetector(
-                      message: controller.dinningLogin.name ?? '',
+                      message: controller.isCustomerRole
+                          ? (controller.dinningLogin.name ?? '')
+                          : (controller.dinningLogin.businessName ?? ''),
                       children: [
                         Text(
-                          controller.dinningLogin.name ?? '',
+                          controller.isCustomerRole
+                              ? (controller.dinningLogin.name ?? '')
+                              : (controller.dinningLogin.businessName ?? ''),
                           style: PuTextStyle.title3,
                           textAlign: TextAlign.center,
                         ),
@@ -194,6 +188,8 @@ MouseRegion(
                   ),
                 ),
               ),
+              const SizedBox(width: 12),
+              const ContextSwitcherMolecule(),
             ],
           ),
         ),
@@ -204,13 +200,10 @@ MouseRegion(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // Notifications
               MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: GestureDetector(
-                  onTap: () {
-                    // Add notification handling
-                  },
+                  onTap: () {},
                   child: Icon(
                     FluentIcons.alert_24_regular,
                     color: PUColors.iconColor,
@@ -220,7 +213,6 @@ MouseRegion(
               ),
               const SizedBox(width: 16),
 
-              // Vinculación con Mercado Pago - Solo para usuarios NO customer
               if (_canAccessMPOAuth(_getUserRole(controller.dinningLogin.role)))
                 MouseRegion(
                   cursor: SystemMouseCursors.click,
@@ -229,8 +221,7 @@ MouseRegion(
                       Get.dialog(
                         MPOAuthGateWidget(
                           idMenu: controller.dinningLogin.id ?? '',
-                          redirectUri:
-                              'https://menucom-api.onrender.com/payments/oauth/callback',
+                          redirectUri: 'https://menucom-api.onrender.com/payments/oauth/callback',
                         ),
                       );
                     },
@@ -247,7 +238,6 @@ MouseRegion(
 
               if (isLargeScreen) ...[
                 const SizedBox(width: 16),
-                // Additional actions for large screens could go here
               ],
             ],
           ),
@@ -258,12 +248,16 @@ MouseRegion(
 
   void _navigateToProfile(DinningController controller) {
     try {
-      final userName = controller.dinningLogin.name ?? 'usuario';
-      var newRoutProfile = PURoutes.USER_PROFILE.replaceFirst(
-        ':idUsuario',
-        userName.toLowerCase().split(' ').join('-'),
-      );
-      Get.toNamed(newRoutProfile);
+      if (controller.isCustomerRole) {
+        final userName = controller.dinningLogin.name ?? 'usuario';
+        var newRoutProfile = PURoutes.USER_PROFILE.replaceFirst(
+          ':idUsuario',
+          userName.toLowerCase().split(' ').join('-'),
+        );
+        Get.toNamed(newRoutProfile);
+      } else {
+        Get.toNamed(PURoutes.BUSINESS_PROFILE);
+      }
     } catch (e) {
       debugPrint(e.toString());
     }

@@ -5,6 +5,7 @@ import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/category_tags_section.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/item_category_tile.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_empty_state.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/organisms/unlinked_catalogs_banner.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_grid.dart';
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
 import 'package:pu_material/pu_material.dart';
@@ -73,6 +74,24 @@ class _WardsHomeViewState extends State<WardsHomeView> with WidgetsBindingObserv
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Obx(() {
+                        final unlinked = catCtrl.unlinkedCatalogs.toList();
+                        if (unlinked.isEmpty) return const SizedBox.shrink();
+                        final dinning = Get.find<DinningController>();
+                        if (dinning.currentUserRole.value != 'owner') {
+                          return const SizedBox.shrink();
+                        }
+                        return Column(
+                          children: unlinked
+                              .map(
+                                (catalog) => UnlinkedCatalogsBanner(
+                                  catalog: catalog,
+                                  controller: catCtrl,
+                                ),
+                              )
+                              .toList(),
+                        );
+                      }),
                       Visibility(
                         visible: constrains.maxWidth < 1200,
                         child: CategoryTagsSection<CatalogModel>(

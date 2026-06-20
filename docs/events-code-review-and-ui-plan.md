@@ -1931,3 +1931,6 @@ Las pages del dashboard importan los templates y les pasan los controllers.
 - ✅ Agregado concepto de **Switch de Modo** (Organizador ↔ Cliente) en la UI
 - ✅ Documentada redirección post-registro según roles obtenidos
 - ✅ Agregadas consideraciones de UX para onboarding de organizadores
+---
+## Referencias
+- [[EVENT-ORGANIZER-SALES-FLOW]]

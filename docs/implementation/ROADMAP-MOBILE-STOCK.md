@@ -32,3 +32,8 @@ En el roadmap futuro, construiremos una aplicación móvil complementaria diseñ
 - [ ] **Validar Params de la API_CLIENT**: Revisar que `CreateCatalogItemParams` y `UpdateCatalogItemParams` del paquete `menu_dart_api` incluyan los mapeos explícitos para enviar la propiedad `quantity` y `sku` a nuestro servidor centralizado en los casos de uso.
 - [ ] **Desarrollo UI/UX Móvil**: Crear un prototipo rápido priorizando "one-hand use" para que el operario del comercio pueda tomar inventario usando la cámara de forma ininterrumpida.
 - [ ] **Endpoints**: Desarrollar en el framework back-end (si no existe) un buscador en reversa `findBySku(catalogId, sku)` como función optimizada en la capa de datos.
+
+---
+## Referencias
+- [[implementation/FCM-INTEGRATION]]
+- [[MIGRATION_CATALOGS]]

@@ -63,3 +63,7 @@ Integración con WebSockets o Firebase Cloud Messaging (FCM) para que la tabla s
 
 > [!NOTE]
 > Esta documentación debe actualizarse cada vez que se realice un cambio significativo en la estructura o lógica de la tabla de órdenes.
+
+---
+## Referencias
+- [[ORDERS_IMPLEMENTATION]]

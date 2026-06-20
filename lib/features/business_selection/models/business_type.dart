@@ -26,21 +26,6 @@ class BusinessType {
   static List<BusinessType> get availableTypes => [
         // FOOD - Restaurantes y comida
         const BusinessType(
-          id: 'food_store',
-          title: 'Restaurant/Comida',
-          description:
-              'Restaurante, cafetería, panadería o cualquier negocio gastronómico',
-          iconPath: 'assets/business_icons/food_store.svg',
-          roleType: RolesUsers.dinning,
-          features: [
-            'Gestión de menús',
-            'Control de inventario',
-            'Pedidos online',
-            'Delivery integrado',
-          ],
-          colorHex: '#FF6B6B',
-        ),
-        const BusinessType(
           id: 'food',
           title: 'Restaurant/Comida',
           description: 'Restaurant, cocina, comida para llevar',

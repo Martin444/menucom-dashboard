@@ -264,3 +264,8 @@ final testBillingDetails = BillingDetailsModel(
 - Menu Dart API: `menu_dart_api/lib/by_feature/membership/`
 - Existing UI: `lib/features/admin/presentation/views/users_view.dart`
 - Membership Controller: `lib/features/admin/presentation/controllers/membership_admin_controller.dart`
+
+---
+## Referencias
+- [[MP_OAUTH_IMPLEMENTATION_SUMMARY]]
+- [[auth-architecture]]

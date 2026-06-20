@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../domain/entities/authenticated_user.dart';
-import '../../domain/usecases/login_with_credentials_usecase.dart';
+import '../../domain/exceptions/auth_exceptions.dart';
 
 /// Contrato para el datasource local de autenticación
 abstract class AuthLocalDataSource {

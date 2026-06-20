@@ -172,6 +172,14 @@ class MenuNavigationController extends GetxController {
       }
     }
 
+    if (item == MenuNavigationItem.clients) {
+      if (Get.currentRoute != PURoutes.CLIENTS) {
+        Get.toNamed(PURoutes.CLIENTS);
+      }
+      update();
+      return;
+    }
+
     // Navegación estándar para otros items o roles
     if (config.isNavigationRoute && config.route != null) {
       final targetRoute = config.isDynamic ? _buildDynamicRoute(config.route!) : config.route!;
@@ -256,7 +264,11 @@ class MenuNavigationController extends GetxController {
     try {
       final dinningController = Get.find<DinningController>();
       final userRole = dinningController.dinningLogin.role ?? 'guest';
-      return MenuNavigationItem.getItemsByRole(userRole);
+      final systemRole = dinningController.currentUserRole.value;
+      return MenuNavigationItem.getItemsByRole(
+        userRole,
+        systemRole: systemRole.isNotEmpty ? systemRole : 'owner',
+      );
     } catch (e) {
       return [MenuNavigationItem.home, MenuNavigationItem.logout];
     }

@@ -37,6 +37,9 @@ class PURoutes {
   // Payment methods
   static String PAYMENT_METHODS = '/metodos-de-pago';
 
+  // Business profile
+  static String BUSINESS_PROFILE = '/editar-negocio';
+
   // OAuth Mercado Pago
   static String MP_OAUTH_CALLBACK = '/oauth/callback';
 
@@ -51,9 +54,18 @@ class PURoutes {
   static String ADMIN_USERS = '/admin/usuarios';
   static String ADMIN_MEMBERSHIPS = '/admin/membresias';
 
+  // Clients
+  static String CLIENTS = '/clientes';
+
+  // Commerce / Multi-commerce
+  static String CREATE_COMMERCE = '/crear-negocio';
+
   // Events
   static String EVENTS = '/events';
   static String EVENT_CREATE = '/events/create';
   static String EVENT_DETAIL = '/events/detail';
   static String EVENT_EDIT = '/events/edit';
+
+  // Collaborators
+  static String COLLABORATORS = '/colaboradores';
 }

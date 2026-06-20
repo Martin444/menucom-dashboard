@@ -740,3 +740,8 @@ Parámetros recibidos:
 4. **Transferencia de tickets**: Permitir a compradores transferir tickets a otros usuarios
 5. **Estadísticas en tiempo real**: Dashboard del organizador con ventas en vivo
 6. **Múltiples métodos de pago**: Integrar más proveedores además de MercadoPago
+
+---
+## Referencias
+- [[events-code-review-and-ui-plan]]
+- [[MP_OAUTH_IMPLEMENTATION_SUMMARY]]

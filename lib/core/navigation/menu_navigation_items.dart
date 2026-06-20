@@ -11,6 +11,7 @@ enum MenuNavigationItem {
   myPurchases,
   membership,
   clients,
+  collaborators,
   suppliers,
   profile,
   users,
@@ -56,12 +57,18 @@ enum MenuNavigationItem {
           isNavigationRoute: true,
         );
       case MenuNavigationItem.clients:
-        return const MenuItemConfig(
+        return MenuItemConfig(
           icon: FluentIcons.people_24_regular,
           label: 'Clientes',
-          route: null,
-          isNavigationRoute: false,
-          isComingSoon: true,
+          route: PURoutes.CLIENTS,
+          isNavigationRoute: true,
+        );
+      case MenuNavigationItem.collaborators:
+        return MenuItemConfig(
+          icon: FluentIcons.people_team_24_regular,
+          label: 'Colaboradores',
+          route: PURoutes.COLLABORATORS,
+          isNavigationRoute: true,
         );
       case MenuNavigationItem.suppliers:
         return const MenuItemConfig(
@@ -137,18 +144,24 @@ enum MenuNavigationItem {
   static List<String> get menuRoles => ['dinning', 'food'];
 
   /// Items que están disponibles según el rol del usuario
-  static List<MenuNavigationItem> getItemsByRole(String role) {
+  /// [role] es el tipo de negocio (food, retail, etc.)
+  /// [systemRole] es el RoleType del sistema (owner, manager, operator, etc.)
+  static List<MenuNavigationItem> getItemsByRole(String role, {String systemRole = 'owner'}) {
     final roleLower = role.toLowerCase();
+    final isOwner = systemRole.toLowerCase() == 'owner';
+    final collaboratorsOrNone = isOwner ? [collaborators] : <MenuNavigationItem>[];
+
     if (menuRoles.contains(roleLower)) {
-      return [home, orders, myPurchases, membership, ...actionItems];
+      return [home, clients, ...collaboratorsOrNone, orders, myPurchases, membership, ...actionItems];
     }
     if (catalogRoles.contains(roleLower)) {
-      return [home, orders, myPurchases, membership, ...actionItems];
+      return [home, clients, ...collaboratorsOrNone, orders, myPurchases, membership, ...actionItems];
     }
     switch (roleLower) {
       case 'admin':
         return [
           home,
+          clients,
           users,
           adminMemberships,
           orders,
@@ -159,7 +172,7 @@ enum MenuNavigationItem {
       case 'customer':
         return [home, myPurchases, membership, ...actionItems];
       case 'events':
-        return [home, events, orders, myPurchases, membership, ...actionItems];
+        return [home, clients, ...collaboratorsOrNone, events, orders, myPurchases, membership, ...actionItems];
       default:
         return [home, myPurchases, membership, ...actionItems];
     }

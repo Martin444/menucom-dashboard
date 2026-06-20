@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
@@ -172,12 +173,16 @@ class UserAvatarSide extends StatelessWidget {
 
   void _navigateToProfile() {
     try {
-      final userName = dinningController.dinningLogin.name ?? 'usuario';
-      var newRoutProfile = PURoutes.USER_PROFILE.replaceFirst(
-        ':idUsuario',
-        userName.toLowerCase().split(' ').join('-'),
-      );
-      Get.toNamed(newRoutProfile);
+      if (dinningController.isCustomerRole) {
+        final userName = dinningController.dinningLogin.name ?? 'usuario';
+        var newRoutProfile = PURoutes.USER_PROFILE.replaceFirst(
+          ':idUsuario',
+          userName.toLowerCase().split(' ').join('-'),
+        );
+        Get.toNamed(newRoutProfile);
+      } else {
+        Get.toNamed(PURoutes.BUSINESS_PROFILE);
+      }
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -188,6 +193,11 @@ class UserAvatarSide extends StatelessWidget {
     final avatarSize = isMobile ? 80.0 : 100.0;
     final titleFontSize = isMobile ? 14.0 : 16.0;
     final roleFontSize = isMobile ? 10.0 : 12.0;
+    final isCustomer = dinningController.isCustomerRole;
+    final displayName = isCustomer
+        ? (dinningController.dinningLogin.name ?? 'Usuario')
+        : (dinningController.dinningLogin.businessName ?? '');
+    final photoUrl = dinningController.dinningLogin.photoURL;
 
     return Column(
       children: [
@@ -204,37 +214,48 @@ class UserAvatarSide extends StatelessWidget {
                 ),
               ),
               child: ClipOval(
-                child: PuRobustNetworkImage(
-                  imageUrl: dinningController.dinningLogin.photoURL ?? '',
-                  height: avatarSize,
-                  width: avatarSize,
-                  fit: BoxFit.cover,
-                ),
+                child: photoUrl != null && photoUrl.isNotEmpty
+                    ? PuRobustNetworkImage(
+                        imageUrl: photoUrl,
+                        height: avatarSize,
+                        width: avatarSize,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        height: avatarSize,
+                        width: avatarSize,
+                        color: PUColors.primaryColor.withAlpha((0.1 * 255).toInt()),
+                        child: Icon(
+                          isCustomer
+                              ? FluentIcons.person_24_regular
+                              : FluentIcons.store_microsoft_24_regular,
+                          size: avatarSize * 0.45,
+                          color: PUColors.primaryColor.withAlpha((0.5 * 255).toInt()),
+                        ),
+                      ),
               ),
             ),
           ),
         ),
         SizedBox(height: isMobile ? 12 : 16),
-        if (dinningController.dinningLogin.name != null) ...[
-          MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: GestureDetector(
-              onTap: _navigateToProfile,
-              child: Text(
-                dinningController.dinningLogin.name ?? 'Usuario',
-                style: PuTextStyle.title3.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: PUColors.iconColor,
-                  fontSize: titleFontSize,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+        MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: _navigateToProfile,
+            child: Text(
+              displayName,
+              style: PuTextStyle.title3.copyWith(
+                fontWeight: FontWeight.w600,
+                color: PUColors.iconColor,
+                fontSize: titleFontSize,
               ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          const SizedBox(height: 4),
-        ],
+        ),
+        const SizedBox(height: 4),
         if (dinningController.dinningLogin.role != null) ...[
           Container(
             padding: EdgeInsets.symmetric(

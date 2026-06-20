@@ -282,3 +282,7 @@ Si hay problemas críticos, se puede revertir parcialmente:
 ---
 
 *Documento generado automáticamente - Abril 2026*
+---
+## Referencias
+- [[BUSINESS_SELECTION_IMPLEMENTATION]]
+- [[FLUENT_ICONS_MAPPING]]

@@ -63,3 +63,8 @@ void _syncFcmToken() {
 ## Consideraciones de Seguridad
 - El token de FCM solo se envía si existe un `access_token` válido.
 - Se utiliza `flutter_secure_storage` para persistir la sesión, lo que garantiza que el token de acceso esté disponible para la sincronización tras un reinicio de la app.
+
+---
+## Referencias
+- [[FIREBASE_SETUP]]
+- [[google-signin-setup]]

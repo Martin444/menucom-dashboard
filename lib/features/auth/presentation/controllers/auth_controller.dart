@@ -4,30 +4,27 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:menu_dart_api/by_feature/user/change_password/data/usecase/change_password_usescase.dart';
-import 'package:menu_dart_api/by_feature/auth/register/data/usescase/register_commerce_usescase.dart';
-import 'package:menu_dart_api/core/type_comerce_model.dart';
+import 'package:menu_dart_api/by_feature/auth/register/data/usescase/register_commerce_usecase.dart';
+import 'package:menu_dart_api/core/type_commerce_model.dart';
 import 'package:menu_dart_api/by_feature/user/change_password/model/change_password_params.dart';
+import 'package:menu_dart_api/by_feature/auth/login/data/usescase/login_usescase.dart';
+import '../../domain/exceptions/auth_exceptions.dart';
 import 'package:pickmeup_dashboard/features/login/presentation/pages/succes_register_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import '../../domain/entities/authenticated_user.dart';
-import '../../domain/entities/auth_params.dart';
-import '../../domain/usecases/login_with_credentials_usecase.dart';
-import '../../domain/usecases/login_with_social_usecase.dart';
-import '../../domain/usecases/logout_usecase.dart';
-import '../../domain/usecases/get_current_user_usecase.dart';
-import '../../data/repositories/auth_repository_impl.dart';
+import '../../data/datasources/auth_firebase_datasource.dart';
 import '../../../../core/config.dart';
 import '../../../../core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/core/helpers/image_size_helper.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/core/fcm_util.dart';
 import 'package:pickmeup_dashboard/core/analytics_service.dart';
+import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:menu_dart_api/menu_com_api.dart' hide ValidationException;
 
-/// Estados posibles de la autenticación
 enum AuthState {
   initial,
   loading,
@@ -36,7 +33,6 @@ enum AuthState {
   error,
 }
 
-/// Estados específicos para cada tipo de autenticación
 enum AuthAction {
   none,
   loginTraditional,
@@ -49,50 +45,33 @@ enum AuthAction {
   changingPassword,
 }
 
-/// Controlador unificado para el manejo de autenticación.
-///
-/// Este controlador centraliza toda la lógica de autenticación del dashboard,
-/// incluyendo login tradicional, social, registro, recuperación de contraseña y gestión de estado.
 class AuthController extends GetxController {
-  // Casos de uso
-  late final LoginWithCredentialsUseCase _loginWithCredentialsUseCase;
-  late final LoginWithSocialUseCase _loginWithSocialUseCase;
-  late final LogoutUseCase _logoutUseCase;
-  late final GetCurrentUserUseCase _getCurrentUserUseCase;
-
-  // Secure storage para persistencia de token
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   static const String _tokenKey = 'access_token';
   static const String _userKey = 'authenticated_user';
 
-  // Estado reactivo
   final Rx<AuthState> _authState = AuthState.initial.obs;
   final Rx<AuthAction> _currentAction = AuthAction.none.obs;
   final Rx<AuthenticatedUser?> _currentUser = Rx<AuthenticatedUser?>(null);
   final RxString _errorMessage = ''.obs;
   final RxBool _isProcessing = false.obs;
 
-  // Controladores de login tradicional
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  // Controladores de registro
   final TextEditingController newEmailController = TextEditingController();
   final TextEditingController newNameController = TextEditingController();
   final TextEditingController newPhoneController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
 
-  // Controladores de recuperación de contraseña
   final TextEditingController emailRecoveryController = TextEditingController();
   final TextEditingController codeRecoveryController = TextEditingController();
   final TextEditingController newPassRecoveryController = TextEditingController();
   final TextEditingController repeatPassRecoveryController = TextEditingController();
 
-  // Controlador de nueva contraseña (para cambio post-login)
   final TextEditingController newPassController = TextEditingController();
   final TextEditingController newPassRepeatController = TextEditingController();
 
-  // Variables de estado reactivas
   final RxString errorTextEmail = ''.obs;
   final RxString errorTextPassword = ''.obs;
   final RxString errorTextName = ''.obs;
@@ -109,13 +88,13 @@ class AuthController extends GetxController {
   final RxBool isValidInit = false.obs;
   final RxInt pageValidation = 0.obs;
 
-  // Imagen para registro
   Uint8List? fileTaked;
   Uint8List toSend = Uint8List(1);
-  TypeComerceModel? comerceModelSelected;
-  List<TypeComerceModel> listCommerceAvilable = TypeComerceModel.getAvailableCommerceTypes();
+  TypeCommerceModel? commerceModelSelected;
+  List<TypeCommerceModel> listCommerceAvailable = TypeCommerceModel.getAvailableCommerceTypes();
 
-  // Getters para acceso externo
+  AuthFirebaseDataSource? _firebaseDataSource;
+
   AuthState get authState => _authState.value;
   AuthAction get currentAction => _currentAction.value;
   AuthenticatedUser? get currentUser => _currentUser.value;
@@ -127,7 +106,7 @@ class AuthController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    await _initializeUseCases();
+    _firebaseDataSource = AuthFirebaseDataSourceFactory.create();
     await checkAuthenticationStatus();
     _initVersion();
   }
@@ -137,26 +116,7 @@ class AuthController extends GetxController {
     update();
   }
 
-  /// Inicializa los casos de uso con las dependencias necesarias
-  Future<void> _initializeUseCases() async {
-    try {
-      final repository = await AuthRepositoryFactory.create();
-
-      _loginWithCredentialsUseCase = LoginWithCredentialsUseCase(repository);
-      _loginWithSocialUseCase = LoginWithSocialUseCase(repository);
-      _logoutUseCase = LogoutUseCase(repository);
-      _getCurrentUserUseCase = GetCurrentUserUseCase(repository);
-
-      debugPrint('Casos de uso de autenticación inicializados');
-    } catch (e) {
-      debugPrint('Error al inicializar casos de uso: $e');
-      _setError('Error al inicializar el sistema de autenticación');
-    }
-  }
-
-  /// Verifica el estado de autenticación al iniciar la aplicación
   Future<void> checkAuthenticationStatus() async {
-    // Si ya estamos autenticados (por ejemplo, acabamos de hacer login), no sobreescribir
     if (isAuthenticated && authState == AuthState.authenticated) {
       debugPrint('Salteando checkAuthenticationStatus: ya autenticado');
       return;
@@ -167,28 +127,32 @@ class AuthController extends GetxController {
       _setLoading(true);
 
       final token = await _loadSavedToken();
-
       if (token == null || token.isEmpty) {
-        // Solo limpiar el token de la API si no tenemos uno ya en memoria
-        // Esto evita borrar el token recién seteado durante un flujo de login que dispara una verificación
         _setUnauthenticated(clearApiToken: API.loginAccessToken.isEmpty);
         return;
       }
 
-      // Configurar token en API
-      API.setAccessToken(token);
+      final savedUserJson = await _secureStorage.read(key: _userKey);
+      if (savedUserJson != null) {
+        final savedUser = AuthenticatedUser.fromMap(json.decode(savedUserJson));
+        _setAuthenticatedUser(savedUser);
 
-      final user = await _getCurrentUserUseCase.executeWithRefresh();
-
-      if (user != null) {
-        _setAuthenticatedUser(user);
-        debugPrint('Usuario autenticado encontrado: ${user.email}');
+        try {
+          final refreshResponse = await RefreshTokenUseCase().execute();
+          final updatedUser = savedUser.copyWith(
+            accessToken: refreshResponse.accessToken,
+          );
+          _setAuthenticatedUser(updatedUser);
+          await _secureStorage.write(key: _userKey, value: json.encode(updatedUser.toMap()));
+          debugPrint('Token refrescado al iniciar app');
+        } catch (_) {
+          debugPrint('No se pudo refrescar token al inicio, usando token guardado');
+        }
       } else {
         _setUnauthenticated();
-        debugPrint('No hay usuario autenticado');
       }
     } catch (e) {
-      debugPrint('Error al verificar estado de autenticación: $e');
+      debugPrint('Error al verificar estado de autenticacion: $e');
       _setUnauthenticated();
     } finally {
       _setLoading(false);
@@ -196,7 +160,6 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Login tradicional con email y contraseña
   Future<void> loginWithEmailAndPassword() async {
     try {
       isLogging.value = true;
@@ -205,33 +168,53 @@ class AuthController extends GetxController {
       update();
 
       if (emailController.text.isEmpty) {
-        throw const ValidationException('El email no puede estar vacío');
+        throw const ValidationException('El email no puede estar vacio');
       }
 
       if (passwordController.text.isEmpty) {
-        throw const ValidationException('La contraseña no puede estar vacía');
+        throw const ValidationException('La contrasenia no puede estar vacia');
       }
 
-      final credentials = LoginCredentials(
-        email: emailController.text,
-        password: passwordController.text,
+      final userSuccess = await LoginUserUseCase().execute(
+        emailController.text,
+        passwordController.text,
       );
 
-      // Usar el caso de uso unificado que ya maneja persistencia y conversión
-      final user = await _loginWithCredentialsUseCase.execute(credentials);
+      API.setAccessToken(userSuccess.accessToken);
+      await _secureStorage.write(key: _tokenKey, value: userSuccess.accessToken);
 
-      // Configurar token globalmente en la API
-      API.setAccessToken(user.accessToken);
+      AuthenticatedUser authUser;
+      try {
+        final dinning = await GetDinningUseCase().execute();
+        authUser = AuthenticatedUser(
+          id: dinning.id ?? '',
+          email: dinning.email ?? emailController.text,
+          name: dinning.name ?? '',
+          photoURL: dinning.photoURL,
+          phone: dinning.phone,
+          role: dinning.role ?? 'customer',
+          accessToken: userSuccess.accessToken,
+          needToChangePassword: userSuccess.needToChangePassword,
+          isEmailVerified: dinning.isEmailVerified,
+        );
+      } catch (_) {
+        authUser = AuthenticatedUser(
+          id: '',
+          email: emailController.text,
+          name: '',
+          role: 'customer',
+          accessToken: userSuccess.accessToken,
+          needToChangePassword: userSuccess.needToChangePassword,
+          isEmailVerified: false,
+        );
+      }
 
-      // Guardar de forma redundante en secure storage para asegurar persistencia
-      await _secureStorage.write(key: _tokenKey, value: user.accessToken);
-      await _secureStorage.write(key: _userKey, value: json.encode(user.toMap()));
+      await _secureStorage.write(key: _userKey, value: json.encode(authUser.toMap()));
+      _setAuthenticatedUser(authUser);
 
-      _setAuthenticatedUser(user);
-
-      debugPrint('Login tradicional exitoso para: ${user.email}');
+      debugPrint('Login tradicional exitoso para: ${authUser.email}');
       AnalyticsService().logLogin(method: 'email');
-      AnalyticsService().setUserId(user.id.toString());
+      AnalyticsService().setUserId(authUser.id.toString());
 
       isLogging.value = false;
       _setCurrentAction(AuthAction.none);
@@ -244,37 +227,33 @@ class AuthController extends GetxController {
       _setCurrentAction(AuthAction.none);
       debugPrint('Error en login con email/password: $e');
 
-      // Errores de validación - NO mostrar snackbar, retorno temprano
       if (e is ValidationException) {
         if (e.message.contains('email')) {
           errorTextEmail.value = e.message;
-        } else if (e.message.contains('contraseña') || e.message.contains('password')) {
+        } else if (e.message.contains('contrasenia') || e.message.contains('password')) {
           errorTextPassword.value = e.message;
         }
         update();
         return;
       }
 
-      // Errores de autenticación - NO mostrar snackbar para errores de campos, retorno temprano
-      if (e is AuthException) {
-        if (e.code == 'unauthorized') {
+      if (e is ApiException) {
+        if (e.statusCode == 401) {
           errorTextPassword.value = e.message.isNotEmpty ? e.message : 'Credenciales incorrectas';
           update();
           return;
-        } else if (e.code == 'not_found') {
-          errorTextEmail.value = e.message.isNotEmpty ? e.message : 'No se encontró el usuario';
+        } else if (e.statusCode == 404) {
+          errorTextEmail.value = e.message.isNotEmpty ? e.message : 'No se encontro el usuario';
           update();
           return;
         }
-        AnalyticsService().logErrorWithException(e, context: 'login_email_auth_error');
       }
 
-      // Solo errores NO relacionados a campos llegan aquí - mostrar snackbar
-      final errorMessage = _getErrorMessage(e);
-      AnalyticsService().logError(errorMessage, context: 'login_email_error');
+      final errorMsg = _getErrorMessage(e);
+      AnalyticsService().logError(errorMsg, context: 'login_email_error');
       Get.snackbar(
-        'Error al Iniciar sesión',
-        errorMessage,
+        'Error al Iniciar sesion',
+        errorMsg,
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
@@ -283,7 +262,6 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Limpia los campos de login
   void _clearLoginFields() {
     emailController.clear();
     passwordController.clear();
@@ -291,37 +269,31 @@ class AuthController extends GetxController {
     errorTextPassword.value = '';
   }
 
-  /// Validación del botón de login
   bool validateBtnLoginUser() {
     var isEmail = _isValidEmail(emailController.text);
     if (!isEmail && emailController.text.length >= 4) {
-      errorTextEmail.value = 'Ingresa un email válido';
+      errorTextEmail.value = 'Ingresa un email valido';
     } else {
       errorTextEmail.value = '';
     }
 
     var validateItems = (emailController.text.isNotEmpty && passwordController.text.isNotEmpty);
-
     isValidInit.value = validateItems;
     update();
     return validateItems;
   }
 
-  /// Validación de email
   bool _isValidEmail(String email) {
-    final emailRegex = RegExp(
-      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-    );
+    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
     return emailRegex.hasMatch(email);
   }
 
-  /// Validación de repetición de contraseña
   bool validateRepeatPass() {
     final newPassword = newPassController.text;
     final repeatedPassword = newPassRepeatController.text;
 
     if (newPassword.isEmpty || repeatedPassword.isEmpty) {
-      errorRepitPass?.value = 'Las contraseñas no pueden estar vacías';
+      errorRepitPass?.value = 'Las contrasenias no pueden estar vacias';
       update();
       return false;
     }
@@ -331,19 +303,17 @@ class AuthController extends GetxController {
       update();
       return true;
     } else {
-      errorRepitPass?.value = 'Las contraseñas no coinciden';
+      errorRepitPass?.value = 'Las contrasenias no coinciden';
       update();
       return false;
     }
   }
 
-  /// Seleccionar tipo de comercio
-  void selectTypeComerce(TypeComerceModel model) {
-    comerceModelSelected = model;
+  void selectTypeComerce(TypeCommerceModel model) {
+    commerceModelSelected = model;
     update();
   }
 
-  /// Tomar/Seleccionar imagen para registro
   void pickImageDirectory() async {
     isLoadingImage.value = true;
     update();
@@ -358,8 +328,8 @@ class AuthController extends GetxController {
         final String extension = result.name.split('.').last.toLowerCase();
         if (extension != 'png' && extension != 'jpg' && extension != 'jpeg') {
           Get.snackbar(
-            'Formato inválido',
-            'Solo se permiten imágenes PNG o JPG.',
+            'Formato invalido',
+            'Solo se permiten imagenes PNG o JPG.',
             backgroundColor: Colors.red,
             colorText: Colors.white,
           );
@@ -376,13 +346,12 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Registro de comercio
   Future<void> registerCommerce() async {
     try {
       isRegistering.value = true;
       update();
 
-      if (comerceModelSelected == null) {
+      if (commerceModelSelected == null) {
         Get.snackbar(
           'Error',
           'Debes seleccionar un tipo de comercio',
@@ -394,13 +363,13 @@ class AuthController extends GetxController {
         return;
       }
 
-      await RegisterCommerceUsescase().execute(
+      await RegisterCommerceUseCase().execute(
         fileBytes: toSend,
         email: newEmailController.text,
         name: newNameController.text,
         phone: newPhoneController.text,
         password: newPasswordController.text,
-        role: comerceModelSelected!.code,
+        role: commerceModelSelected!.code,
       );
 
       isRegistering.value = false;
@@ -415,35 +384,41 @@ class AuthController extends GetxController {
       isRegistering.value = false;
       debugPrint('Error en registro: $e');
       AnalyticsService().logErrorWithException(e, context: 'register_error');
-      Get.snackbar(
-        'Error en registro',
-        'No se pudo completar el registro. Inténtalo de nuevo.',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      if (e is ApiException &&
+          e.statusCode == 400 &&
+          e.message.toLowerCase().contains('límite')) {
+        GlobalDialogsHandles.showPlanLimitDialog(
+          title: 'Límite de comercios alcanzado',
+          message: e.message,
+          onUpgradePressed: () => Get.toNamed(PURoutes.MEMBERSHIP),
+        );
+      } else {
+        Get.snackbar(
+          'Error en registro',
+          'No se pudo completar el registro. Intentalo de nuevo.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
       update();
     }
   }
 
-  /// Limpia los campos de registro
   void _clearRegisterFields() {
     newPasswordController.clear();
     newEmailController.clear();
     newNameController.clear();
     newPhoneController.clear();
     fileTaked = null;
-    comerceModelSelected = null;
+    commerceModelSelected = null;
     errorTextName.value = '';
     errorTextPhone.value = '';
   }
 
-  /// Verificar email para recuperación de contraseña
   Future<void> verifyEmailUser() async {
     try {
       await ChangePasswordUseCase().execute(
-        ChangePasswordParams(
-          emailRecovery: emailRecoveryController.text,
-        ),
+        ChangePasswordParams(emailRecovery: emailRecoveryController.text),
       );
       errorEmailRecovery.value = '';
       pageValidation.value = 1;
@@ -458,7 +433,6 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Validar código OTP para recuperación
   Future<void> validateCodeOtp() async {
     try {
       await ChangePasswordUseCase().execute(
@@ -472,14 +446,13 @@ class AuthController extends GetxController {
     } catch (e) {
       if (e is ApiException) {
         if (e.statusCode == 409) {
-          errorCodeRecovery.value = 'Código inválido';
+          errorCodeRecovery.value = 'Codigo invalido';
         }
       }
       update();
     }
   }
 
-  /// Cambiar contraseña
   Future<void> changePassword() async {
     try {
       await ChangePasswordUseCase().execute(
@@ -493,20 +466,19 @@ class AuthController extends GetxController {
       pageValidation.value = 0;
       Get.dialog(
         const SuccesRegisterPage(
-          title: '¡Tu contraseña se cambió con éxito!',
+          title: 'Tu contrasenia se cambio con exito!',
           message: '',
-          postData: 'Regresa siempre que olvides tu contraseña',
+          postData: 'Regresa siempre que olvides tu contrasenia',
         ),
         barrierDismissible: false,
       );
       update();
     } catch (e) {
-      debugPrint('Error al cambiar contraseña: $e');
+      debugPrint('Error al cambiar contrasenia: $e');
       rethrow;
     }
   }
 
-  /// Limpia los campos de recuperación
   void _clearRecoveryFields() {
     emailRecoveryController.clear();
     codeRecoveryController.clear();
@@ -517,41 +489,6 @@ class AuthController extends GetxController {
     errorPasswordRecovery.value = '';
   }
 
-  /// Autentica usuario con credenciales tradicionales
-  Future<void> loginWithCredentials({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      _setCurrentAction(AuthAction.loginTraditional);
-      _setLoading(true);
-      _clearError();
-
-      final credentials = LoginCredentials(email: email, password: password);
-      final user = await _loginWithCredentialsUseCase.execute(credentials);
-
-      // Guardar token de forma segura
-      await _secureStorage.write(key: _tokenKey, value: user.accessToken);
-      API.setAccessToken(user.accessToken);
-
-      // Guardar usuario de forma segura
-      await _secureStorage.write(key: _userKey, value: json.encode(user.toMap()));
-
-      _setAuthenticatedUser(user);
-
-      debugPrint('Login tradicional exitoso - Token guardado');
-
-      Get.offAllNamed(PURoutes.HOME);
-    } catch (e) {
-      debugPrint('Error en login tradicional: $e');
-      _setError(_getErrorMessage(e));
-    } finally {
-      _setLoading(false);
-      _setCurrentAction(AuthAction.none);
-    }
-  }
-
-  /// Autentica usuario con Google Sign-In
   Future<void> loginWithGoogle() async {
     try {
       isLoggingGoogle.value = true;
@@ -559,22 +496,37 @@ class AuthController extends GetxController {
       _setLoading(true);
       _clearError();
 
-      debugPrint('🔐 Iniciando Google Sign-In unificado...');
+      debugPrint('Iniciando Google Sign-In unificado...');
 
-      // El caso de uso maneja todo el flujo: Google Auth -> Firebase -> Backend
-      final user = await _loginWithSocialUseCase.executeWithGoogle();
+      final firebaseIdToken = await _firebaseDataSource!.signInWithGoogle();
+      final socialResponse = await SocialLoginUseCase().execute(
+        firebaseIdToken: firebaseIdToken,
+      );
 
-      // Configurar token en API antes de establecer el usuario
-      API.setAccessToken(user.accessToken);
+      final user = socialResponse.user;
+      final authUser = AuthenticatedUser(
+        id: user?.id ?? '',
+        email: user?.email ?? '',
+        name: user?.name ?? '',
+        photoURL: user?.photoURL,
+        phone: user?.phone,
+        role: user?.role ?? 'customer',
+        accessToken: socialResponse.accessToken,
+        needToChangePassword: socialResponse.needToChangePassword,
+        socialToken: user?.socialToken,
+        firebaseProvider: user?.firebaseProvider,
+        isEmailVerified: user?.isEmailVerified ?? true,
+        lastLoginAt: user?.lastLoginAt,
+      );
 
-      // Guardar token y usuario de forma segura (redundante pero asegura consistencia con el repositorio)
-      await _secureStorage.write(key: _tokenKey, value: user.accessToken);
-      await _secureStorage.write(key: _userKey, value: json.encode(user.toMap()));
+      API.setAccessToken(authUser.accessToken);
+      await _secureStorage.write(key: _tokenKey, value: authUser.accessToken);
+      await _secureStorage.write(key: _userKey, value: json.encode(authUser.toMap()));
 
-      _setAuthenticatedUser(user);
-      debugPrint('✅ Login con Google exitoso y sincronizado');
+      _setAuthenticatedUser(authUser);
+      debugPrint('Login con Google exitoso y sincronizado');
       AnalyticsService().logLogin(method: 'google');
-      AnalyticsService().setUserId(user.id);
+      AnalyticsService().setUserId(authUser.id);
 
       Get.offAllNamed(PURoutes.HOME);
     } catch (e) {
@@ -582,10 +534,9 @@ class AuthController extends GetxController {
       AnalyticsService().logErrorWithException(e, context: 'login_google_error');
       _setError(_getErrorMessage(e));
 
-      // Mostrar error amigable al usuario
       Get.snackbar(
         'Error',
-        'No se pudo iniciar sesión con Google. Inténtalo de nuevo.',
+        'No se pudo iniciar sesion con Google. Intentalo de nuevo.',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -597,29 +548,43 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Autentica usuario con Apple Sign-In
   Future<void> loginWithApple() async {
     try {
       _setCurrentAction(AuthAction.loginApple);
       _setLoading(true);
       _clearError();
 
-      debugPrint('🔐 Iniciando Apple Sign-In unificado...');
+      debugPrint('Iniciando Apple Sign-In unificado...');
 
-      // El caso de uso maneja todo el flujo: Apple Auth -> Firebase -> Backend
-      final user = await _loginWithSocialUseCase.executeWithApple();
+      final firebaseIdToken = await _firebaseDataSource!.signInWithApple();
+      final socialResponse = await SocialLoginUseCase().execute(
+        firebaseIdToken: firebaseIdToken,
+      );
 
-      // Configurar token en API antes de establecer el usuario
-      API.setAccessToken(user.accessToken);
+      final user = socialResponse.user;
+      final authUser = AuthenticatedUser(
+        id: user?.id ?? '',
+        email: user?.email ?? '',
+        name: user?.name ?? '',
+        photoURL: user?.photoURL,
+        phone: user?.phone,
+        role: user?.role ?? 'customer',
+        accessToken: socialResponse.accessToken,
+        needToChangePassword: socialResponse.needToChangePassword,
+        socialToken: user?.socialToken,
+        firebaseProvider: user?.firebaseProvider,
+        isEmailVerified: user?.isEmailVerified ?? true,
+        lastLoginAt: user?.lastLoginAt,
+      );
 
-      // Guardar token y usuario de forma segura
-      await _secureStorage.write(key: _tokenKey, value: user.accessToken);
-      await _secureStorage.write(key: _userKey, value: json.encode(user.toMap()));
+      API.setAccessToken(authUser.accessToken);
+      await _secureStorage.write(key: _tokenKey, value: authUser.accessToken);
+      await _secureStorage.write(key: _userKey, value: json.encode(authUser.toMap()));
 
-      _setAuthenticatedUser(user);
-      debugPrint('✅ Login con Apple exitoso');
+      _setAuthenticatedUser(authUser);
+      debugPrint('Login con Apple exitoso');
       AnalyticsService().logLogin(method: 'apple');
-      AnalyticsService().setUserId(user.id);
+      AnalyticsService().setUserId(authUser.id);
 
       Get.offAllNamed(PURoutes.HOME);
     } catch (e) {
@@ -629,7 +594,7 @@ class AuthController extends GetxController {
 
       Get.snackbar(
         'Error',
-        'No se pudo iniciar sesión con Apple. Inténtalo de nuevo.',
+        'No se pudo iniciar sesion con Apple. Intentalo de nuevo.',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -640,26 +605,21 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Cierra la sesión del usuario actual
   Future<void> logout() async {
     try {
       _setCurrentAction(AuthAction.logout);
       _setLoading(true);
       _clearError();
 
-      await _logoutUseCase.execute();
-
-      // Logout de Firebase si está autenticado
       try {
         await FirebaseAuth.instance.signOut();
         await GoogleSignIn().signOut();
       } catch (e) {
-        debugPrint('Error al cerrar sesión de Firebase: $e');
+        debugPrint('Error al cerrar sesion de Firebase: $e');
       }
 
       await _clearSavedToken();
 
-      // Limpiar datos de otros controladores
       if (Get.isRegistered<DinningController>()) {
         Get.find<DinningController>().clearData();
       }
@@ -672,12 +632,10 @@ class AuthController extends GetxController {
       Get.offAllNamed(PURoutes.LOGIN);
     } catch (e) {
       debugPrint('Error en logout: $e');
-
-      await _logoutUseCase.executeForced();
       await _clearSavedToken();
       _setUnauthenticated();
 
-      _setError('Sesión cerrada con advertencias');
+      _setError('Sesion cerrada con advertencias');
       Get.offAllNamed(PURoutes.LOGIN);
     } finally {
       _setLoading(false);
@@ -685,21 +643,23 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Refresca el token del usuario actual
   Future<void> refreshUserToken() async {
     if (!isAuthenticated) return;
 
     try {
       _setCurrentAction(AuthAction.refreshingToken);
 
-      final refreshedUser = await _getCurrentUserUseCase.executeWithRefresh();
+      final refreshResponse = await RefreshTokenUseCase().execute();
+      final updatedUser = _currentUser.value!.copyWith(
+        accessToken: refreshResponse.accessToken,
+      );
 
-      if (refreshedUser != null) {
-        _setAuthenticatedUser(refreshedUser);
-        debugPrint('Token refrescado exitosamente');
-      } else {
-        await logout();
-      }
+      API.setAccessToken(refreshResponse.accessToken);
+      await _secureStorage.write(key: _tokenKey, value: refreshResponse.accessToken);
+      await _secureStorage.write(key: _userKey, value: json.encode(updatedUser.toMap()));
+
+      _setAuthenticatedUser(updatedUser);
+      debugPrint('Token refrescado exitosamente');
     } catch (e) {
       debugPrint('Error al refrescar token: $e');
       await logout();
@@ -708,33 +668,27 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Verifica si el usuario tiene un rol específico
   bool hasRole(String role) {
     return currentUser?.role == role;
   }
 
-  /// Verifica si el usuario tiene cualquiera de los roles especificados
   bool hasAnyRole(List<String> roles) {
     final userRole = currentUser?.role;
     return userRole != null && roles.contains(userRole);
   }
 
-  /// Obtiene el nombre completo del usuario
   String get userDisplayName {
     final user = currentUser;
     if (user == null) return '';
-
     if (user.name.isNotEmpty) return user.name;
     if (user.email.isNotEmpty) return user.email.split('@').first;
     return 'Usuario';
   }
 
-  /// Obtiene la URL de la foto de perfil
   String get userPhotoUrl {
     return currentUser?.photoURL ?? '';
   }
 
-  /// Carga el token guardado desde secure storage
   Future<String?> _loadSavedToken() async {
     try {
       final savedToken = await _secureStorage.read(key: _tokenKey);
@@ -752,7 +706,6 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Limpia el token guardado de secure storage
   Future<void> _clearSavedToken() async {
     try {
       API.setAccessToken('');
@@ -764,26 +717,20 @@ class AuthController extends GetxController {
     }
   }
 
-  // Métodos privados para manejo de estado
-
   void _setAuthenticatedUser(AuthenticatedUser user) {
     _currentUser.value = user;
     _authState.value = AuthState.authenticated;
 
-    // Asegurar que el token esté configurado globalmente en la API
     if (user.accessToken.isNotEmpty) {
       API.setAccessToken(user.accessToken);
     }
 
-    // Sincronizar token de FCM con el backend al autenticar
     _syncFcmToken();
-
     AnalyticsService().setUserId(user.id);
     AnalyticsService().setUserProperty(name: 'role', value: user.role);
     _clearError();
   }
 
-  /// Sincroniza el token de FCM con el backend
   void _syncFcmToken() {
     setupFCM(
       onTokenReceived: (fcmToken) async {
@@ -802,14 +749,11 @@ class AuthController extends GetxController {
     _currentUser.value = null;
     _authState.value = AuthState.unauthenticated;
 
-    // Limpiar token global en la API solo si se solicita
     if (clearApiToken) {
       API.setAccessToken('');
     }
 
-    // Resetear callbacks de FCM al desautenticar
     resetFCM();
-
     _clearError();
   }
 
@@ -833,16 +777,14 @@ class AuthController extends GetxController {
     _errorMessage.value = '';
   }
 
-  /// Convierte excepciones a mensajes amigables para el usuario
   String _getErrorMessage(dynamic error) {
     if (error is ValidationException) {
       return error.message;
     } else if (error is AuthException) {
-      // Usar el mensaje real de la API si está disponible
       final apiMessage = error.message;
       switch (error.code) {
         case 'sign_in_canceled':
-          return 'Autenticación cancelada por el usuario';
+          return 'Autenticacion cancelada por el usuario';
         case 'unauthorized':
           return apiMessage.isNotEmpty ? apiMessage : 'Credenciales incorrectas';
         case 'forbidden':
@@ -852,12 +794,12 @@ class AuthController extends GetxController {
         case 'conflict':
           return apiMessage.isNotEmpty ? apiMessage : 'Ya existe una cuenta con este email';
         case 'rate_limit':
-          return 'Demasiados intentos. Intenta más tarde';
+          return 'Demasiados intentos. Intenta mas tarde';
         default:
-          return apiMessage.isNotEmpty ? apiMessage : 'Error de autenticación';
+          return apiMessage.isNotEmpty ? apiMessage : 'Error de autenticacion';
       }
     } else if (error is NetworkException) {
-      return 'Error de conexión. Verifica tu internet';
+      return 'Error de conexion. Verifica tu internet';
     } else if (error is ApiException) {
       return error.message.isNotEmpty ? error.message : 'Error del servidor';
     } else {

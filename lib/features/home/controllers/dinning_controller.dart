@@ -31,6 +31,14 @@ class DinningController extends GetxController {
   RxBool isBannerVisible = true.obs;
   RxBool isLinkedToMP = false.obs;
   RxBool isLoadingMPStatus = false.obs;
+  RxBool hasMissingLogo = false.obs;
+  RxBool hasSelectedCommerce = false.obs;
+  RxString currentUserRole = ''.obs;
+
+  bool get isCustomerRole {
+    final role = RolesFuncionts.getTypeRoleByRoleString(dinningLogin.role ?? '');
+    return role == RolesUsers.customer;
+  }
 
   @override
   void onInit() {
@@ -70,6 +78,35 @@ class DinningController extends GetxController {
 
       var respDinning = await GetDinningUseCase().execute();
       dinningLogin = respDinning;
+
+      // Sincronizar datos del negocio desde /auth/my-contexts
+      try {
+        final contexts = await GetMyContextsUseCase().execute();
+        final currentContext = contexts.firstWhereOrNull(
+          (c) => c.isCurrent,
+        );
+        hasSelectedCommerce.value = currentContext != null;
+        if (currentContext != null) {
+          hasMissingLogo.value = currentContext.logoUrl == null;
+          if (dinningLogin.commerceId == null || dinningLogin.commerceId!.isEmpty) {
+            dinningLogin.commerceId = currentContext.id;
+          }
+          dinningLogin.businessName = currentContext.businessName;
+          dinningLogin.slug = currentContext.slug;
+          if (currentContext.logoUrl != null) {
+            dinningLogin.photoURL = currentContext.logoUrl;
+          }
+          if (currentContext.coverImageUrl != null) {
+            dinningLogin.coverImageUrl = currentContext.coverImageUrl;
+          }
+          if (currentContext.role != null) {
+            currentUserRole.value = currentContext.role!;
+          }
+        }
+      } catch (e) {
+        debugPrint('Error loading contexts: $e');
+        hasSelectedCommerce.value = false;
+      }
 
       final userRole = dinningLogin.role;
       if (userRole == null || userRole.isEmpty) {
@@ -211,16 +248,17 @@ class DinningController extends GetxController {
       debugPrint('Type: $type');
       debugPrint('Current catalogsList length before clear: ${catalogsList.length}');
       catalogsList.clear();
+      unlinkedCatalogsList.clear();
 
       final response = await GetMyCatalogsUseCase().execute(type: type);
 
-      for (var e in response) {
-        catalogsList.add(e);
-      }
+      catalogsList.addAll(response['linked'] as List<CatalogModel>);
+      unlinkedCatalogsList.addAll(response['unlinked'] as List<CatalogModel>);
 
       debugPrint('Final catalogsList length: ${catalogsList.length}');
+      debugPrint('Unlinked catalogs: ${unlinkedCatalogsList.length}');
       catalogSelected = catalogsList.isNotEmpty ? catalogsList.first : null;
-      everyListEmpty.value = catalogsList.isEmpty;
+      everyListEmpty.value = catalogsList.isEmpty && unlinkedCatalogsList.isEmpty;
       debugPrint('Selected catalog: ${catalogSelected?.description}');
       update();
       _isLoadingWardrobes = false;
@@ -240,6 +278,7 @@ class DinningController extends GetxController {
   }
 
   List<CatalogModel> catalogsList = <CatalogModel>[];
+  List<CatalogModel> unlinkedCatalogsList = <CatalogModel>[];
   CatalogModel? catalogSelected;
 
   // Variables para el manejo de usuarios por roles

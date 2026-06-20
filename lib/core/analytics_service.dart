@@ -102,7 +102,7 @@ class AnalyticsService {
         if (context != null) 'context': context,
         if (stackTrace != null) 'stack_trace': stackTrace,
       };
-      await _analytics?.logEvent(name: 'error', parameters: params);
+      await _analytics?.logEvent(name: 'app_error', parameters: params);
     } catch (e) {
       debugPrint('[Analytics] Error logging error: $e');
     }

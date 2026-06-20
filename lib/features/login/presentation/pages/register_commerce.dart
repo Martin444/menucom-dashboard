@@ -6,12 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:pickmeup_dashboard/core/config.dart';
-import 'package:menu_dart_api/core/type_comerce_model.dart';
+import 'package:menu_dart_api/core/type_commerce_model.dart';
 import 'package:pickmeup_dashboard/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:pickmeup_dashboard/features/menu/presentation/widgets/card_take_photo.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/pu_assets.dart';
-import 'package:pu_material/widgets/inputs/pu_input_dropdown.dart';
 
 import '../../../../routes/routes.dart';
 
@@ -158,9 +157,9 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                 const SizedBox(
                                                   height: 15,
                                                 ),
-                                                PUInputDropDown<TypeComerceModel>(
-                                                  items: _.listCommerceAvilable.map((e) {
-                                                    return DropdownMenuItem<TypeComerceModel>(
+                                                PUInputDropDown<TypeCommerceModel>(
+                                                  items: _.listCommerceAvailable.map((e) {
+                                                    return DropdownMenuItem<TypeCommerceModel>(
                                                       key: Key(e.id),
                                                       value: e,
                                                       child: Text(

@@ -12,9 +12,11 @@ import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
 class CatalogsController extends GetxController {
   final RxList<CatalogModel> catalogsList = <CatalogModel>[].obs;
+  final RxList<CatalogModel> unlinkedCatalogs = <CatalogModel>[].obs;
   final Rxn<CatalogModel> catalogSelected = Rxn<CatalogModel>();
   final RxBool isLoadingCatalogs = false.obs;
   final RxBool isLoadingImage = false.obs;
+  final RxBool isAssigningCatalog = false.obs;
 
   static const String typeMenu = 'menu';
   static const String typeWardrobe = 'wardrobe';
@@ -38,18 +40,17 @@ class CatalogsController extends GetxController {
       debugPrint('Type: $type');
 
       catalogsList.clear();
+      unlinkedCatalogs.clear();
 
       final response = await GetMyCatalogsUseCase().execute(type: type);
 
       debugPrint('=== API Response (getMyCatalogs) ===');
-      debugPrint('Catalogs count: ${response.length}');
+      final linked = response['linked'] as List<CatalogModel>;
+      final unlinkedResp = response['unlinked'] as List<CatalogModel>;
+      debugPrint('Catalogs linked: ${linked.length}, unlinked: ${unlinkedResp.length}');
 
-      for (int i = 0; i < response.length; i++) {
-        debugPrint(
-            'Catalog $i: ${response[i].description} (ID: ${response[i].id}), items: ${response[i].items?.length ?? 0}');
-      }
-
-      catalogsList.addAll(response);
+      catalogsList.addAll(linked);
+      unlinkedCatalogs.addAll(unlinkedResp);
 
       if (catalogsList.isNotEmpty) {
         final selectedCatalog = catalogSelected.value ?? catalogsList.first;
@@ -107,6 +108,38 @@ class CatalogsController extends GetxController {
       update();
     } catch (e) {
       debugPrint('Error loading catalog items: $e');
+    }
+  }
+
+  Future<void> assignCatalogToCommerce(String catalogId) async {
+    try {
+      isAssigningCatalog.value = true;
+      update();
+
+      await AssignCatalogToCommerceUseCase().execute(catalogId);
+
+      isAssigningCatalog.value = false;
+
+      GlobalDialogsHandles.snackbarSuccess(
+        title: 'Catálogo asignado',
+        message: 'El catálogo ahora está vinculado a tu comercio.',
+      );
+
+      await loadCatalogsByType(_currentType);
+    } on ApiException catch (_) {
+      isAssigningCatalog.value = false;
+      update();
+      GlobalDialogsHandles.snackbarError(
+        title: 'Error al asignar',
+        message: 'No se pudo vincular el catálogo al comercio.',
+      );
+    } catch (_) {
+      isAssigningCatalog.value = false;
+      update();
+      GlobalDialogsHandles.snackbarError(
+        title: 'Error inesperado',
+        message: 'Ocurrió un error al vincular el catálogo.',
+      );
     }
   }
 
@@ -352,6 +385,7 @@ class CatalogsController extends GetxController {
 
   final RxBool isLoadingItems = false.obs;
 
+  @Deprecated('Use Supabase Storage instead. Cloudinary upload endpoint is deprecated.')
   Future<String> uploadImage(Uint8List file) async {
     try {
       var responUrl = await UploadFileUsesCase().execute(file);

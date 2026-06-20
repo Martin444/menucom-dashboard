@@ -30,17 +30,26 @@ class UserInfoHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isCustomer = dinning.isCustomerRole;
+    final displayName = isCustomer
+        ? (dinning.dinningLogin.name ?? 'Usuario')
+        : (dinning.dinningLogin.businessName ?? '');
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         GestureDetector(
           onTap: () {
-            Get.toNamed(PURoutes.USER_PROFILE);
+            if (isCustomer) {
+              Get.toNamed(PURoutes.USER_PROFILE);
+            } else {
+              Get.toNamed(PURoutes.BUSINESS_PROFILE);
+            }
           },
           child: MouseRegion(
             cursor: SystemMouseCursors.click,
             child: Text(
-              dinning.dinningLogin.name ?? 'Usuario',
+              displayName,
               style: PuTextStyle.title1,
             ),
           ),
