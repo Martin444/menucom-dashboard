@@ -8,6 +8,14 @@
 
 ## Estilo y Diseño
 - Todos los iconos deben usar `FluentIcons` del paquete `fluentui_system_icons`. No usar iconos de Material Design (`Icons.*`).
+- **Prohibido** usar métodos privados que retornen Widgets (`_buildSeccion()`). Cada sección de UI debe ser un widget público independiente, preferiblemente en `pu_material` siguiendo Atomic Design:
+  - `atoms/` → bloques básicos (botón, texto, ícono, input)
+  - `molecules/` → combinación de atoms (tarjeta, header simple, badge)
+  - `organisms/` → sección funcional compleja (grid, tabla, formulario, sidebar)
+  - `widgets/` → wrappers técnicos (responsive builder, network image)
+  - `features/` → templates y páginas completas por dominio
+- Si un componente depende de tipos del feature (`CatalogModel`, `CatalogsController`, `GetX`), vive en `lib/features/<feature>/presentation/widgets/` como widget público.
+- Si un componente es puramente visual (sin dependencias de feature), vive en `pu_material`.
 
 ## Control de Calidad
 - Antes de cualquier cambio importante de UI o lógica, ejecutar `flutter analyze` y corregir todos los errores y warnings antes de finalizar.

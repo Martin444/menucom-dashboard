@@ -4,6 +4,8 @@ import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.da
 class CatalogsBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put<CatalogsController>(CatalogsController());
+    if (!Get.isRegistered<CatalogsController>()) {
+      Get.put<CatalogsController>(CatalogsController(), permanent: true);
+    }
   }
 }

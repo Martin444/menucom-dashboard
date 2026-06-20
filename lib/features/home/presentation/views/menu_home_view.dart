@@ -3,24 +3,16 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/category_tags_section.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/widget/item_category_tile.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_item_tile.dart';
-import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
-
-import 'package:pu_material/pu_material.dart';
-import 'package:pu_material/utils/pu_assets.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_empty_state.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/organisms/unlinked_catalogs_banner.dart';
-
-import '../../controllers/dinning_controller.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_unlinked_banners.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_sidebar.dart';
+import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
+import 'package:pu_material/pu_material.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
 class MenuHomeView extends StatefulWidget {
-  const MenuHomeView({
-    super.key,
-    required this.isMobile,
-  });
-
+  const MenuHomeView({super.key, required this.isMobile});
   final bool isMobile;
 
   @override
@@ -28,14 +20,14 @@ class MenuHomeView extends StatefulWidget {
 }
 
 class _MenuHomeViewState extends State<MenuHomeView> with WidgetsBindingObserver {
-  late final CatalogsController catalogsController;
+  late final CatalogsController _ctrl;
 
   @override
   void initState() {
     super.initState();
-    catalogsController = Get.find<CatalogsController>();
+    _ctrl = Get.find<CatalogsController>();
     WidgetsBinding.instance.addObserver(this);
-    loadCatalogs();
+    _ctrl.loadCatalogsByType('menu');
   }
 
   @override
@@ -46,257 +38,117 @@ class _MenuHomeViewState extends State<MenuHomeView> with WidgetsBindingObserver
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      loadCatalogs();
-    }
+    if (state == AppLifecycleState.resumed) _ctrl.loadCatalogsByType('menu');
   }
 
-  Future<void> loadCatalogs() async {
-    await catalogsController.loadCatalogsByType('menu');
+  void _editCatalog(CatalogModel catalog) {
+    _ctrl.changeCatalogSelected(catalog);
+    _ctrl.gotoEditCatalog(catalog);
+    Get.toNamed(PURoutes.EDIT_MENU_CATEGORY);
+  }
+
+  Future<void> _deleteCatalog(CatalogModel catalog) async {
+    await _ctrl.deleteCatalog(catalog);
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<DinningController>(
+    return GetBuilder<CatalogsController>(
       builder: (_) {
-        return GetBuilder<CatalogsController>(
-          builder: (catCtrl) {
-            debugPrint('=== MenuHomeView rebuild ===');
-            debugPrint('catalogsList length: ${catCtrl.catalogsList.length}');
-            debugPrint('catalogSelected: ${catCtrl.catalogSelected.value?.description}');
-            debugPrint('catalogSelected items: ${catCtrl.catalogSelected.value?.items?.length ?? 0}');
+        final catalogs = _.catalogsList.toList();
+        final selected = _.catalogSelected.value;
 
-            return LayoutBuilder(
-              builder: (context, constrains) {
-                final catalogs = catCtrl.catalogsList.toList();
-                CatalogModel? selectedCatalog;
-                if (catCtrl.catalogSelected.value != null) {
-                  selectedCatalog = catCtrl.catalogSelected.value;
-                }
-
-                return SizedBox(
-                  height: constrains.maxHeight,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Obx(() {
-                        final unlinked = catCtrl.unlinkedCatalogs.toList();
-                        if (unlinked.isEmpty) return const SizedBox.shrink();
-                        final dinning = Get.find<DinningController>();
-                        if (dinning.currentUserRole.value != 'owner') {
-                          return const SizedBox.shrink();
-                        }
-                        return Column(
-                          children: unlinked
-                              .map(
-                                (catalog) => UnlinkedCatalogsBanner(
-                                  catalog: catalog,
-                                  controller: catCtrl,
-                                ),
-                              )
-                              .toList(),
-                        );
-                      }),
-                      Visibility(
-                        visible: constrains.maxWidth < 1200,
-                        child: CategoryTagsSection<CatalogModel>(
-                          title: 'Mis Catálogos',
-                          items: catalogs,
-                          selectedItem: selectedCatalog ?? (catalogs.isNotEmpty ? catalogs.first : null),
-                          onItemSelected: (catalog) => catCtrl.changeCatalogSelected(catalog),
-                          descriptionBuilder: (catalog) => catalog.description ?? 'Sin nombre',
-                          itemCountBuilder: (catalog) => catalog.itemCount,
-                          constraints: constrains,
-                          icon: FluentIcons.food_24_regular,
-                          actionButtons: [
-                            HeaderActionButton(
-                              icon: FluentIcons.add_24_regular,
-                              color: PUColors.primaryColor,
-                              onTap: () => Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY),
-                              tooltip: 'Nuevo catálogo',
-                            ),
-                          ],
-                          onEditSelected: () {
-                            final catalog = selectedCatalog ?? (catalogs.isNotEmpty ? catalogs.first : null);
-                            if (catalog != null) {
-                              catCtrl.changeCatalogSelected(catalog);
-                              catCtrl.gotoEditCatalog(catalog);
-                              Get.toNamed(PURoutes.EDIT_MENU_CATEGORY);
-                            }
-                          },
-                          onDeleteSelected: () async {
-                            final catalog = selectedCatalog ?? (catalogs.isNotEmpty ? catalogs.first : null);
-                            if (catalog != null) {
-                              await catCtrl.deleteCatalog(catalog);
-                            }
-                          },
-                          emptyMessage: 'No hay catálogos disponibles',
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 8,
-                              child: Container(
-                                padding: EdgeInsets.only(
-                                  right: constrains.maxWidth > 1200 ? 20 : 0,
-                                ),
-                                child: catalogs.isEmpty
-                                    ? CatalogEmptyState(
-                                        onCreateCatalog: () {
-                                          Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY);
-                                        },
-                                      )
-                                    : _buildCatalogGrid(constrains, catCtrl),
-                              ),
-                            ),
-                            Visibility(
-                              visible: constrains.maxWidth > 1200,
-                              child: Expanded(
-                                flex: 2,
-                                child: Container(
-                                  height: constrains.maxHeight,
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.only(
-                                    left: 20,
-                                  ),
-                                  decoration: PuStyleContainers.borderLeftContainer,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Mis catálogos',
-                                        style: PuTextStyle.title1,
-                                      ),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      if (catalogs.isEmpty)
-                                        Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(top: 24.0),
-                                            child: Text(
-                                              'No hay catálogos disponibles',
-                                              style: PuTextStyle.description1,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ...catalogs.map(
-                                        (element) {
-                                          return ItemCategoryTile(
-                                            item: element,
-                                            isSelected: selectedCatalog?.id == element.id,
-                                            descriptionBuilder: (catalog) {
-                                              return catalog.description ?? '';
-                                            },
-                                            onSelect: (catalog) {
-                                              catCtrl.changeCatalogSelected(catalog);
-                                            },
-                                            onDelete: (catalog) async {
-                                              await catCtrl.deleteCatalog(catalog);
-                                            },
-                                            onEdit: (catalog) {
-                                              catCtrl.changeCatalogSelected(catalog);
-                                              catCtrl.gotoEditCatalog(catalog);
-                                              Get.toNamed(PURoutes.EDIT_MENU_CATEGORY);
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+        return LayoutBuilder(
+          builder: (context, constraints) => SizedBox(
+            height: constraints.maxHeight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CatalogUnlinkedBanners(controller: _ctrl),
+                if (constraints.maxWidth < 1200)
+                  CategoryTagsSection<CatalogModel>(
+                    title: 'Mis Catálogos',
+                    items: catalogs,
+                    selectedItem: selected ?? (catalogs.isNotEmpty ? catalogs.first : null),
+                    onItemSelected: (c) => _ctrl.changeCatalogSelected(c),
+                    descriptionBuilder: (c) => c.description ?? 'Sin nombre',
+                    itemCountBuilder: (c) => c.itemCount,
+                    constraints: constraints,
+                    icon: FluentIcons.food_24_regular,
+                    actionButtons: [
+                      HeaderActionButton(
+                        icon: FluentIcons.add_24_regular,
+                        color: PUColors.primaryColor,
+                        onTap: () => Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY),
+                        tooltip: 'Nuevo catálogo',
                       ),
                     ],
+                    onEditSelected: () {
+                      final c = selected ?? (catalogs.isNotEmpty ? catalogs.first : null);
+                      if (c != null) _editCatalog(c);
+                    },
+                    onDeleteSelected: () async {
+                      final c = selected ?? (catalogs.isNotEmpty ? catalogs.first : null);
+                      if (c != null) await _deleteCatalog(c);
+                    },
+                    emptyMessage: 'No hay catálogos disponibles',
                   ),
-                );
-              },
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildCatalogGrid(BoxConstraints constrains, CatalogsController catCtrl) {
-    final selected = catCtrl.catalogSelected.value;
-    final items = selected?.items ?? [];
-
-    if (items.isEmpty) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset(
-            PUImages.noDataImageSvg,
-            height: 140,
-            errorBuilder: (context, error, stackTrace) => Icon(
-              FluentIcons.food_24_regular,
-              size: 60,
-              color: Colors.grey[400],
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 8,
+                        child: Padding(
+                          padding: EdgeInsets.only(right: constraints.maxWidth > 1200 ? 20 : 0),
+                          child: catalogs.isEmpty
+                              ? CatalogEmptyState(onCreateCatalog: () => Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY))
+                              : CatalogGridOrganism<CatalogItemModel>(
+                                  constraints: constraints,
+                                  items: selected?.items ?? [],
+                                  emptyIcon: FluentIcons.food_24_regular,
+                                  emptyMessage: 'No hay productos en ${selected?.description ?? 'este catálogo'}',
+                                  createButtonLabel: 'Cargar primer producto',
+                                  onCreateItem: () => Get.toNamed(PURoutes.REGISTER_ITEM_MENU),
+                                  itemBuilder: (context, item, index) => MenuItemTile(
+                                    item: item,
+                                    selected: false,
+                                    onAddCart: (_) {},
+                                    actionSelected: (_, action) async {
+                                      if (action == 'edit') {
+                                        _ctrl.gotoEditItem(item);
+                                      } else if (action == 'delete') {
+                                        await _ctrl.deleteCatalogItem(item);
+                                        _ctrl.loadCatalogsByType('menu');
+                                      }
+                                    },
+                                  ),
+                                ),
+                        ),
+                      ),
+                      if (constraints.maxWidth > 1200)
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            height: constraints.maxHeight,
+                            width: double.infinity,
+                            padding: const EdgeInsets.only(left: 20),
+                            decoration: PuStyleContainers.borderLeftContainer,
+                            child: CatalogSidebar(
+                              catalogs: catalogs,
+                              selected: selected,
+                              onSelect: (c) => _ctrl.changeCatalogSelected(c),
+                              onEdit: _editCatalog,
+                              onDelete: _deleteCatalog,
+                              descriptionBuilder: (c) => c.description ?? '',
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
-          Center(
-            child: Text(
-              'No hay productos en ${selected?.description ?? 'este catálogo'}',
-              style: PuTextStyle.description1,
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Container(
-            constraints: const BoxConstraints(
-              maxWidth: 300,
-            ),
-            child: ButtonPrimary(
-              title: 'Cargar primer producto',
-              onPressed: () {
-                Get.toNamed(PURoutes.REGISTER_ITEM_MENU);
-              },
-              load: false,
-            ),
-          ),
-        ],
-      );
-    }
-
-    return GridView.builder(
-      itemCount: items.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: constrains.maxWidth < 800
-            ? constrains.maxWidth > 600
-                ? 3
-                : 2
-            : 4,
-        mainAxisExtent: 330,
-        mainAxisSpacing: 0,
-        childAspectRatio: 1.0,
-        crossAxisSpacing: 0,
-      ),
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return MenuItemTile(
-          item: item,
-          selected: false,
-          onAddCart: (val) {},
-          actionSelected: (value, action) async {
-            if (action == 'edit') {
-              catCtrl.gotoEditItem(item);
-            } else if (action == 'delete') {
-              await catCtrl.deleteCatalogItem(item);
-              loadCatalogs();
-            }
-          },
         );
       },
     );

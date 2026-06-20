@@ -3,22 +3,16 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/category_tags_section.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/widget/item_category_tile.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/ward_item_tile.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_empty_state.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/organisms/unlinked_catalogs_banner.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_grid.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_unlinked_banners.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_sidebar.dart';
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
 import 'package:pu_material/pu_material.dart';
-
-import '../../controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
 class WardsHomeView extends StatefulWidget {
-  const WardsHomeView({
-    super.key,
-    required this.isMobile,
-  });
-
+  const WardsHomeView({super.key, required this.isMobile});
   final bool isMobile;
 
   @override
@@ -26,14 +20,14 @@ class WardsHomeView extends StatefulWidget {
 }
 
 class _WardsHomeViewState extends State<WardsHomeView> with WidgetsBindingObserver {
-  late final CatalogsController catalogsController;
+  late final CatalogsController _ctrl;
 
   @override
   void initState() {
     super.initState();
-    catalogsController = Get.find<CatalogsController>();
+    _ctrl = Get.find<CatalogsController>();
     WidgetsBinding.instance.addObserver(this);
-    loadCatalogs();
+    _ctrl.loadCatalogsByType('wardrobe');
   }
 
   @override
@@ -44,219 +38,135 @@ class _WardsHomeViewState extends State<WardsHomeView> with WidgetsBindingObserv
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      loadCatalogs();
-    }
+    if (state == AppLifecycleState.resumed) _ctrl.loadCatalogsByType('wardrobe');
   }
 
-  Future<void> loadCatalogs() async {
-    await catalogsController.loadCatalogsByType('wardrobe');
+  void _editCatalog(CatalogModel catalog) {
+    _ctrl.changeCatalogSelected(catalog);
+    _ctrl.gotoEditCatalog(catalog);
+    Get.toNamed(PURoutes.EDIT_WARDROBES);
+  }
+
+  Future<void> _deleteCatalog(CatalogModel catalog) async {
+    await _ctrl.deleteCatalog(catalog);
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<DinningController>(
+    return GetBuilder<CatalogsController>(
       builder: (_) {
-        return GetBuilder<CatalogsController>(
-          builder: (catCtrl) {
-            debugPrint('=== WardsHomeView rebuild ===');
-            debugPrint('catalogsList length: ${catCtrl.catalogsList.length}');
-            debugPrint('catalogSelected: ${catCtrl.catalogSelected.value?.description}');
-            debugPrint('catalogSelected items: ${catCtrl.catalogSelected.value?.items?.length ?? 0}');
+        final catalogs = _.catalogsList.toList();
+        final selected = _.catalogSelected.value;
 
-            final catalogs = catCtrl.catalogsList.toList();
-            final selected = catCtrl.catalogSelected.value;
-
-            return LayoutBuilder(
-              builder: (context, constrains) {
-                return SizedBox(
-                  height: constrains.maxHeight,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Obx(() {
-                        final unlinked = catCtrl.unlinkedCatalogs.toList();
-                        if (unlinked.isEmpty) return const SizedBox.shrink();
-                        final dinning = Get.find<DinningController>();
-                        if (dinning.currentUserRole.value != 'owner') {
-                          return const SizedBox.shrink();
-                        }
-                        return Column(
-                          children: unlinked
-                              .map(
-                                (catalog) => UnlinkedCatalogsBanner(
-                                  catalog: catalog,
-                                  controller: catCtrl,
-                                ),
-                              )
-                              .toList(),
-                        );
-                      }),
-                      Visibility(
-                        visible: constrains.maxWidth < 1200,
-                        child: CategoryTagsSection<CatalogModel>(
-                          title: 'Mis Catálogos',
-                          items: catalogs,
-                          selectedItem: selected ?? (catalogs.isNotEmpty ? catalogs.first : null),
-                          onItemSelected: (catalog) => catCtrl.changeCatalogSelected(catalog),
-                          descriptionBuilder: (catalog) => catalog.description ?? 'Sin nombre',
-                          itemCountBuilder: (catalog) => catalog.itemCount,
-                          constraints: constrains,
-                          icon: FluentIcons.folder_24_regular,
-                          actionButtons: [
-                            HeaderActionButton(
-                              icon: FluentIcons.add_24_regular,
-                              color: PUColors.primaryColor,
-                              onTap: () => Get.toNamed(PURoutes.REGISTER_WARDROBES),
-                              tooltip: 'Nuevo catálogo',
-                            ),
-                          ],
-                          onEditSelected: () {
-                            final catalog = selected ?? (catalogs.isNotEmpty ? catalogs.first : null);
-                            if (catalog != null) {
-                              catCtrl.changeCatalogSelected(catalog);
-                              catCtrl.gotoEditCatalog(catalog);
-                              Get.toNamed(PURoutes.EDIT_WARDROBES);
-                            }
-                          },
-                          onDeleteSelected: () async {
-                            final catalog = selected ?? (catalogs.isNotEmpty ? catalogs.first : null);
-                            if (catalog != null) {
-                              await catCtrl.deleteCatalog(catalog);
-                            }
-                          },
-                          emptyMessage: 'No hay catálogos disponibles',
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 8,
-                              child: Container(
-                                padding: EdgeInsets.only(
-                                  top: 32,
-                                  left: 24,
-                                  right: constrains.maxWidth > 1200 ? 24 : 0,
-                                  bottom: 24,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Dashboard de Catálogos',
-                                      style: PuTextStyle.title1.copyWith(
-                                        fontSize: 28,
-                                        letterSpacing: -0.5,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Gestiona tus productos y visualiza tu inventario de forma rápida y sencilla.',
-                                      style: PuTextStyle.bodyMedium.copyWith(
-                                        color: const Color(0xFF475569),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 32),
-                                    Expanded(
-                                      child: catalogs.isEmpty
-                                          ? CatalogEmptyState(
-                                              onCreateCatalog: () {
-                                                Get.toNamed(PURoutes.REGISTER_WARDROBES);
-                                              },
-                                            )
-                                          : CatalogGrid(
-                                              constraints: constrains,
-                                              catCtrl: catCtrl,
-                                              onReload: loadCatalogs,
-                                            ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Visibility(
-                              visible: constrains.maxWidth > 1200,
-                              child: Expanded(
-                                flex: 2,
-                                child: Container(
-                                  height: constrains.maxHeight,
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.only(
-                                    left: 20,
-                                    right: 16,
-                                    top: 32,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: PUColors.bgItemMenuSelected.withOpacity(0.5),
-                                    border: Border(
-                                      left: BorderSide(
-                                        color: PUColors.primaryColor.withOpacity(0.05),
-                                        width: 1,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Mis catálogos',
-                                        style: PuTextStyle.title3.copyWith(
-                                          fontSize: 18,
-                                          color: const Color(0xFF0F172A),
-                                          letterSpacing: -0.3,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 24,
-                                      ),
-                                      if (catalogs.isEmpty)
-                                        Center(
-                                          child: Padding(
-                                            padding: EdgeInsets.only(top: 24.0),
-                                            child: Text(
-                                              'No hay catálogos disponibles',
-                                              style: PuTextStyle.bodySmall,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ...catalogs.map(
-                                        (element) {
-                                          return ItemCategoryTile(
-                                            item: element,
-                                            isSelected: selected?.id == element.id,
-                                            descriptionBuilder: (catalog) {
-                                              return catalog.name ?? '';
-                                            },
-                                            onSelect: (catalog) {
-                                              catCtrl.changeCatalogSelected(catalog);
-                                            },
-                                            onDelete: (catalog) async {
-                                              await catCtrl.deleteCatalog(catalog);
-                                            },
-                                            onEdit: (catalog) {
-                                              catCtrl.changeCatalogSelected(catalog);
-                                              catCtrl.gotoEditCatalog(catalog);
-                                              Get.toNamed(PURoutes.EDIT_WARDROBES);
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+        return LayoutBuilder(
+          builder: (context, constraints) => SizedBox(
+            height: constraints.maxHeight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CatalogUnlinkedBanners(controller: _ctrl),
+                if (constraints.maxWidth < 1200)
+                  CategoryTagsSection<CatalogModel>(
+                    title: 'Mis Catálogos',
+                    items: catalogs,
+                    selectedItem: selected ?? (catalogs.isNotEmpty ? catalogs.first : null),
+                    onItemSelected: (c) => _ctrl.changeCatalogSelected(c),
+                    descriptionBuilder: (c) => c.description ?? 'Sin nombre',
+                    itemCountBuilder: (c) => c.itemCount,
+                    constraints: constraints,
+                    icon: FluentIcons.folder_24_regular,
+                    actionButtons: [
+                      HeaderActionButton(
+                        icon: FluentIcons.add_24_regular,
+                        color: PUColors.primaryColor,
+                        onTap: () => Get.toNamed(PURoutes.REGISTER_WARDROBES),
+                        tooltip: 'Nuevo catálogo',
                       ),
                     ],
+                    onEditSelected: () {
+                      final c = selected ?? (catalogs.isNotEmpty ? catalogs.first : null);
+                      if (c != null) _editCatalog(c);
+                    },
+                    onDeleteSelected: () async {
+                      final c = selected ?? (catalogs.isNotEmpty ? catalogs.first : null);
+                      if (c != null) await _deleteCatalog(c);
+                    },
+                    emptyMessage: 'No hay catálogos disponibles',
                   ),
-                );
-              },
-            );
-          },
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 8,
+                        child: Container(
+                          padding: const EdgeInsets.only(top: 32, left: 24, bottom: 24).copyWith(
+                            right: constraints.maxWidth > 1200 ? 24 : 0,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Dashboard de Catálogos',
+                                style: PuTextStyle.title1.copyWith(fontSize: 28, letterSpacing: -0.5)),
+                              const SizedBox(height: 8),
+                              Text('Gestiona tus productos y visualiza tu inventario de forma rápida y sencilla.',
+                                style: PuTextStyle.bodyMedium.copyWith(color: const Color(0xFF475569))),
+                              const SizedBox(height: 32),
+                              Expanded(
+                                child: catalogs.isEmpty
+                                    ? CatalogEmptyState(onCreateCatalog: () => Get.toNamed(PURoutes.REGISTER_WARDROBES))
+                                    : CatalogGridOrganism<CatalogItemModel>(
+                                        constraints: constraints,
+                                        items: selected?.items ?? [],
+                                        emptyIcon: FluentIcons.folder_24_regular,
+                                        emptyMessage: 'No hay productos en ${selected?.name ?? 'este catálogo'}',
+                                        createButtonLabel: 'Cargar primer producto',
+                                        onCreateItem: () => Get.toNamed(PURoutes.REGISTER_ITEM_WARDROBES),
+                                        itemBuilder: (context, item, index) => WardItemTile(
+                                          item: item,
+                                          selected: false,
+                                          onAddCart: (_) {},
+                                          actionSelected: (_, action) async {
+                                            if (action == 'edit') {
+                                              _ctrl.gotoEditItem(item);
+                                            } else if (action == 'delete') {
+                                              await _ctrl.deleteCatalogItem(item);
+                                              _ctrl.loadCatalogsByType('wardrobe');
+                                            }
+                                          },
+                                        ),
+                                      ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (constraints.maxWidth > 1200)
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            height: constraints.maxHeight,
+                            width: double.infinity,
+                            padding: const EdgeInsets.only(left: 20, right: 16, top: 32),
+                            decoration: BoxDecoration(
+                              color: PUColors.bgItemMenuSelected.withOpacity(0.5),
+                              border: Border(left: BorderSide(color: PUColors.primaryColor.withOpacity(0.05), width: 1)),
+                            ),
+                            child: CatalogSidebar(
+                              catalogs: catalogs,
+                              selected: selected,
+                              onSelect: (c) => _ctrl.changeCatalogSelected(c),
+                              onEdit: _editCatalog,
+                              onDelete: _deleteCatalog,
+                              descriptionBuilder: (c) => c.name ?? '',
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
