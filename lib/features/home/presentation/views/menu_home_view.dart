@@ -24,7 +24,9 @@ class _MenuHomeViewState extends State<MenuHomeView> with WidgetsBindingObserver
     super.initState();
     _ctrl = Get.find<CatalogsController>();
     WidgetsBinding.instance.addObserver(this);
-    _ctrl.loadCatalogsByType('menu');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _ctrl.loadCatalogsByType('menu');
+    });
   }
 
   @override

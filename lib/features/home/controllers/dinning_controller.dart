@@ -21,6 +21,7 @@ class DinningController extends GetxController {
   RxBool get hasMissingLogo => _session.hasMissingLogo;
   RxBool get hasSelectedCommerce => _session.hasSelectedCommerce;
   RxString get currentUserRole => _session.currentUserRole;
+  RxString get currentContextType => _session.currentContextType;
   bool get isCustomerRole => _session.isCustomerRole;
 
   Future<String> getHashedAccessToken() => _session.getHashedAccessToken();

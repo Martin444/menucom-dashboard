@@ -9,6 +9,7 @@ import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:pickmeup_dashboard/core/helpers/image_size_helper.dart';
 import 'package:pickmeup_dashboard/core/analytics_service.dart';
+import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 
 class CatalogsController extends GetxController {
   final RxList<CatalogModel> catalogsList = <CatalogModel>[].obs;
@@ -39,10 +40,12 @@ class CatalogsController extends GetxController {
       debugPrint('=== DEBUG loadCatalogsByType CALLED ===');
       debugPrint('Type: $type');
 
+      final apiType = _resolveApiType(type);
+
       catalogsList.clear();
       unlinkedCatalogs.clear();
 
-      final response = await GetMyCatalogsUseCase().execute(type: type);
+      final response = await GetMyCatalogsUseCase().execute(type: apiType);
 
       debugPrint('=== API Response (getMyCatalogs) ===');
       final linked = response['linked'] as List<CatalogModel>;
@@ -669,6 +672,18 @@ class CatalogsController extends GetxController {
   }
 
   String get currentType => _currentType;
+
+  String _resolveApiType(String fallbackType) {
+    if (Get.isRegistered<DinningController>()) {
+      final contextType = Get.find<DinningController>().currentContextType.value;
+      if (contextType.isNotEmpty) {
+        debugPrint('=== Using context type for API: $contextType ===');
+        return contextType;
+      }
+    }
+    debugPrint('=== Context type not available, falling back to: $fallbackType ===');
+    return fallbackType;
+  }
 
   void _handleApiError(
     ApiException apiError, {

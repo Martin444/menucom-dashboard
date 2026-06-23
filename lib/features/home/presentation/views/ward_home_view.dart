@@ -24,7 +24,9 @@ class _WardsHomeViewState extends State<WardsHomeView> with WidgetsBindingObserv
     super.initState();
     _ctrl = Get.find<CatalogsController>();
     WidgetsBinding.instance.addObserver(this);
-    _ctrl.loadCatalogsByType('wardrobe');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _ctrl.loadCatalogsByType('wardrobe');
+    });
   }
 
   @override

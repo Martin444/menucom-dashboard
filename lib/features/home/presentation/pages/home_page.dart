@@ -30,40 +30,40 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      final dinning = Get.find<DinningController>();
+    return GetBuilder<DinningController>(
+      builder: (dinning) {
+        if (dinning.isLoadingDataUser.value) {
+          return Scaffold(
+            backgroundColor: PUColors.primaryBackground,
+            body: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
 
-      if (dinning.isLoadingDataUser.value) {
-        return Scaffold(
-          backgroundColor: PUColors.primaryBackground,
-          body: const Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      }
+        if (dinning.hasErrorLoadingUser.value) {
+          return DashboardErrorState(
+            onRetry: () {
+              dinning.getMyDinningInfo();
+              dinning.checkMPStatus();
+            },
+          );
+        }
 
-      if (dinning.hasErrorLoadingUser.value) {
-        return DashboardErrorState(
-          onRetry: () {
-            dinning.getMyDinningInfo();
-            dinning.checkMPStatus();
+        return PuResponsiveBuilder(
+          builder: (context, info) {
+            if (info.isMobile) {
+              return _MobileLayout(controller: dinning);
+            } else {
+              return _DesktopLayout(
+                controller: dinning,
+                isTablet: info.isTablet,
+              );
+            }
           },
         );
-      }
-
-      return PuResponsiveBuilder(
-        builder: (context, info) {
-          if (info.isMobile) {
-            return _MobileLayout(controller: dinning);
-          } else {
-            return _DesktopLayout(
-              controller: dinning,
-              isTablet: info.isTablet,
-            );
-          }
-        },
-      );
-    });
+      },
+    );
   }
 }
 

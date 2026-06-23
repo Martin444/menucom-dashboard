@@ -18,6 +18,7 @@ class UserSessionController extends GetxController {
   RxBool hasMissingLogo = false.obs;
   RxBool hasSelectedCommerce = false.obs;
   RxString currentUserRole = ''.obs;
+  RxString currentContextType = ''.obs;
 
   bool get isCustomerRole {
     final role = RolesFuncionts.getTypeRoleByRoleString(dinningLogin.role ?? '');
@@ -69,6 +70,9 @@ class UserSessionController extends GetxController {
           }
           if (currentContext.role != null) {
             currentUserRole.value = currentContext.role!;
+          }
+          if (currentContext.context != null) {
+            currentContextType.value = currentContext.context!;
           }
         }
       } catch (e) {
