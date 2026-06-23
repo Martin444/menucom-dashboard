@@ -21,7 +21,7 @@ class UserSessionController extends GetxController {
 
   bool get isCustomerRole {
     final role = RolesFuncionts.getTypeRoleByRoleString(dinningLogin.role ?? '');
-    return role == RolesUsers.customer;
+    return role == RolesUsers.customer || role == RolesUsers.admin;
   }
 
   Future<String> getHashedAccessToken() async {

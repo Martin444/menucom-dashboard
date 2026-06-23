@@ -152,16 +152,15 @@ enum MenuNavigationItem {
     final collaboratorsOrNone = isOwner ? [collaborators] : <MenuNavigationItem>[];
 
     if (menuRoles.contains(roleLower)) {
-      return [home, clients, ...collaboratorsOrNone, orders, myPurchases, membership, ...actionItems];
+      return [home, ...collaboratorsOrNone, orders, myPurchases, membership, ...actionItems];
     }
     if (catalogRoles.contains(roleLower)) {
-      return [home, clients, ...collaboratorsOrNone, orders, myPurchases, membership, ...actionItems];
+      return [home, ...collaboratorsOrNone, orders, myPurchases, membership, ...actionItems];
     }
     switch (roleLower) {
       case 'admin':
         return [
           home,
-          clients,
           users,
           adminMemberships,
           orders,
@@ -172,7 +171,7 @@ enum MenuNavigationItem {
       case 'customer':
         return [home, myPurchases, membership, ...actionItems];
       case 'events':
-        return [home, clients, ...collaboratorsOrNone, events, orders, myPurchases, membership, ...actionItems];
+        return [home, ...collaboratorsOrNone, events, orders, myPurchases, membership, ...actionItems];
       default:
         return [home, myPurchases, membership, ...actionItems];
     }

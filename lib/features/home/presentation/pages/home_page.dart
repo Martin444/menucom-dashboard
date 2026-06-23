@@ -6,19 +6,14 @@ import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.
 import 'package:pickmeup_dashboard/features/home/presentation/views/customer_home_view.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/views/menu_home_view.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/views/ward_home_view.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/views/service_home_view.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/widget/head_actions.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/starter_banner.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/organisms/mp_link_banner.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/organisms/missing_logo_banner.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/head_actions.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/head_dinning.dart';
+import 'package:pickmeup_dashboard/features/home/presentation/widget/context_switcher_molecule.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/get_function_button.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
-
-import '../widget/head_dinning.dart';
-import '../widget/dashboard_error_state.dart';
-import '../widget/context_switcher_molecule.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,50 +30,43 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<DinningController>(
-      builder: (dinning) {
-        return Obx(() {
-          if (dinning.isLoadingDataUser.value) {
-            return Scaffold(
-              backgroundColor: PUColors.primaryBackground,
-              body: const Center(
-                child: CircularProgressIndicator(),
-              ),
+    return Obx(() {
+      final dinning = Get.find<DinningController>();
+
+      if (dinning.isLoadingDataUser.value) {
+        return Scaffold(
+          backgroundColor: PUColors.primaryBackground,
+          body: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+
+      if (dinning.hasErrorLoadingUser.value) {
+        return DashboardErrorState(
+          onRetry: () {
+            dinning.getMyDinningInfo();
+            dinning.checkMPStatus();
+          },
+        );
+      }
+
+      return PuResponsiveBuilder(
+        builder: (context, info) {
+          if (info.isMobile) {
+            return _MobileLayout(controller: dinning);
+          } else {
+            return _DesktopLayout(
+              controller: dinning,
+              isTablet: info.isTablet,
             );
           }
-
-          if (dinning.hasErrorLoadingUser.value) {
-            return DashboardErrorState(
-              onRetry: () {
-                dinning.getMyDinningInfo();
-                dinning.checkMPStatus();
-              },
-            );
-          }
-
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              final screenWidth = constraints.maxWidth;
-              final isMobile = screenWidth < 768;
-              final isTablet = screenWidth >= 768 && screenWidth < 1024;
-
-              if (isMobile) {
-                return _MobileLayout(controller: dinning);
-              } else {
-                return _DesktopLayout(
-                  controller: dinning,
-                  isTablet: isTablet,
-                );
-              }
-            },
-          );
-        });
-      },
-    );
+        },
+      );
+    });
   }
 }
 
-/// Widget para el layout móvil con drawer
 class _MobileLayout extends StatelessWidget {
   const _MobileLayout({required this.controller});
 
@@ -98,7 +86,6 @@ class _MobileLayout extends StatelessWidget {
   }
 }
 
-/// Widget para el contenido móvil
 class _MobileContent extends StatelessWidget {
   const _MobileContent({required this.controller});
 
@@ -108,10 +95,7 @@ class _MobileContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Header móvil
         const HeadDinning(isMobile: true),
-
-        // Contenido con scroll que empieza desde el banner de MP
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -121,14 +105,19 @@ class _MobileContent extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Banner de vinculación de Mercado Pago
-                      const MPLinkBanner(),
-
-                      // Banner de logo faltante
-                      const MissingLogoBanner(),
-
-                      // Contenido principal con altura fija para que los
-                      // child views con Expanded funcionen correctamente
+                      MPLinkBanner(
+                        isVisible: controller.isBannerVisible.value,
+                        isLinked: controller.isLinkedToMP.value,
+                        role: controller.dinningLogin.role,
+                        isLoadingMPStatus: controller.isLoadingMPStatus.value,
+                        onLink: () => controller.vincularMercadoPago(),
+                        onRefresh: () => controller.refreshMPStatus(),
+                        onClose: () => controller.setBannerVisible(false),
+                      ),
+                      MissingLogoBanner(
+                        isVisible: controller.hasMissingLogo.value,
+                        onGoToProfile: () => Get.toNamed(PURoutes.BUSINESS_PROFILE),
+                      ),
                       SizedBox(
                         height: constraints.maxHeight,
                         child: _buildMainContent(controller, isMobile: true),
@@ -140,51 +129,46 @@ class _MobileContent extends StatelessWidget {
             ),
           ),
         ),
-
-        // Footer con acciones principales - solo si tiene comercio o es customer
         if (controller.isCustomerRole || controller.hasSelectedCommerce.value)
           Container(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-          decoration: BoxDecoration(
-            color: PUColors.bgItem,
-            border: Border(
-              top: BorderSide(
-                color: PUColors.borderInputColor.withOpacity(0.3),
-                width: 1,
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            decoration: BoxDecoration(
+              color: PUColors.bgItem,
+              border: Border(
+                top: BorderSide(
+                  color: PUColors.borderInputColor.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (controller.everyListEmpty.value)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        '¿Que haremos hoy?',
+                        style: PuTextStyle.title3.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: PUColors.textColor3,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ActionPrincipalByRole(role: controller),
+                ],
               ),
             ),
           ),
-          child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (controller.everyListEmpty.value)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(
-                      '¿Que haremos hoy?',
-                      style: PuTextStyle.title3.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: PUColors.textColor3,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-
-                // Botones principales
-                ActionPrincipalByRole(role: controller),
-              ],
-            ),
-          ),
-        ),
       ],
     );
   }
 }
 
-/// Widget para el layout desktop/tablet
 class _DesktopLayout extends StatelessWidget {
   const _DesktopLayout({
     required this.controller,
@@ -202,12 +186,10 @@ class _DesktopLayout extends StatelessWidget {
         backgroundColor: PUColors.primaryBackground,
         body: Row(
           children: [
-            // MenuSide fijo
             SizedBox(
               width: isTablet ? 200 : 250,
               child: const MenuSide(isMobile: false),
             ),
-            // Contenido principal
             Expanded(
               child: _DesktopContent(
                 controller: controller,
@@ -221,7 +203,6 @@ class _DesktopLayout extends StatelessWidget {
   }
 }
 
-/// Widget para el contenido desktop
 class _DesktopContent extends StatelessWidget {
   const _DesktopContent({
     required this.controller,
@@ -238,13 +219,8 @@ class _DesktopContent extends StatelessWidget {
 
     return Column(
       children: [
-        // Header desktop
         const HeadDinning(isMobile: false),
-
-        // Head Actions solo en desktop cuando hay espacio
         if (!isTablet) const HeadActions(),
-
-        // Contenido principal con scroll que empieza desde el banner de MP
         Expanded(
           child: Padding(
             padding: EdgeInsets.symmetric(
@@ -257,14 +233,19 @@ class _DesktopContent extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Banner de vinculación de Mercado Pago
-                      const MPLinkBanner(),
-
-                      // Banner de logo faltante
-                      const MissingLogoBanner(),
-
-                      // Contenido principal con altura fija para que los
-                      // child views con Expanded funcionen correctamente
+                      MPLinkBanner(
+                        isVisible: controller.isBannerVisible.value,
+                        isLinked: controller.isLinkedToMP.value,
+                        role: controller.dinningLogin.role,
+                        isLoadingMPStatus: controller.isLoadingMPStatus.value,
+                        onLink: () => controller.vincularMercadoPago(),
+                        onRefresh: () => controller.refreshMPStatus(),
+                        onClose: () => controller.setBannerVisible(false),
+                      ),
+                      MissingLogoBanner(
+                        isVisible: controller.hasMissingLogo.value,
+                        onGoToProfile: () => Get.toNamed(PURoutes.BUSINESS_PROFILE),
+                      ),
                       SizedBox(
                         height: constraints.maxHeight,
                         child: _buildMainContent(controller, isMobile: false),
@@ -281,7 +262,6 @@ class _DesktopContent extends StatelessWidget {
   }
 }
 
-/// Decide qué contenido mostrar según el estado del usuario
 Widget _buildMainContent(DinningController controller, {required bool isMobile}) {
   final hasRealCommerce = controller.dinningLogin.commerceId != null
       && controller.dinningLogin.commerceId!.isNotEmpty;
@@ -297,7 +277,6 @@ Widget _buildMainContent(DinningController controller, {required bool isMobile})
   return StarterBanner(user: controller.dinningLogin);
 }
 
-/// Muestra la pantalla de selección de comercio a pantalla completa
 class _CommerceGate extends StatefulWidget {
   const _CommerceGate();
 
@@ -330,7 +309,6 @@ class _CommerceGateState extends State<_CommerceGate> {
   }
 }
 
-/// Pantalla completa que bloquea interacción hasta seleccionar comercio
 class _CommerceSelectionPage extends StatelessWidget {
   const _CommerceSelectionPage();
 
@@ -391,7 +369,6 @@ class _CommerceSelectionPage extends StatelessWidget {
   }
 }
 
-/// Widget que muestra la vista según el rol del usuario
 class _RoleBasedView extends StatelessWidget {
   const _RoleBasedView({
     required this.controller,
@@ -409,7 +386,6 @@ class _RoleBasedView extends StatelessWidget {
 
     switch (role) {
       case RolesUsers.admin:
-        // Redirigir a la ruta de admin para evitar doble sidebar y mantener consistencia
         Future.microtask(() => Get.offNamed(PURoutes.ADMIN_DASHBOARD));
         return const Center(child: CircularProgressIndicator());
       case RolesUsers.clothes:

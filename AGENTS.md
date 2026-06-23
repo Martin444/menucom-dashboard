@@ -40,6 +40,10 @@
 - `WidgetsBinding.instance.addPostFrameCallback` se comporta igual en web que en native.
 - El guard `_isLoadingInternal` en métodos async debe siempre liberarse en `catch` y `finally` para evitar deadlocks.
 
+### Bindings que se comparten entre rutas
+- Si un `Binding` se aplica en múltiples rutas (ej: `CatalogsBinding` en crear/editar catálogo), usar `Get.put` con `permanent: true` + guard `isRegistered` para no reemplazar la instancia existente al navegar.
+- `Get.put` sin `permanent` destruye el controller al hacer pop de la ruta; si otra ruta aún lo necesita, los datos se pierden.
+
 ---
 
 ## Alineación con la Misión: Profesionalización del Emprendedor

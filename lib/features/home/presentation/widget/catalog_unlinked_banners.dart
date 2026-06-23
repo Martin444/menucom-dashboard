@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/organisms/unlinked_catalogs_banner.dart';
+import 'package:pu_material/pu_material.dart';
 
 class CatalogUnlinkedBanners extends StatelessWidget {
   final CatalogsController controller;
@@ -19,7 +18,11 @@ class CatalogUnlinkedBanners extends StatelessWidget {
       if (dinning.currentUserRole.value != 'owner') return const SizedBox.shrink();
       return Column(
         children: unlinked
-            .map((c) => UnlinkedCatalogsBanner(catalog: c, controller: controller))
+            .map((c) => UnlinkedCatalogsBanner(
+                  catalog: c,
+                  isLoading: controller.isAssigningCatalog.value,
+                  onAssign: () => controller.assignCatalogToCommerce(c.id),
+                ))
             .toList(),
       );
     });

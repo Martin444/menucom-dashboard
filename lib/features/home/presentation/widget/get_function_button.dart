@@ -6,7 +6,6 @@ import 'package:pu_material/pu_material.dart';
 import '../../../../routes/routes.dart';
 import '../../controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/membership/getx/membership_controller.dart';
-import 'dashboard_error_state.dart';
 
 class ActionPrincipalByRole extends StatelessWidget {
   final DinningController role;
@@ -18,24 +17,17 @@ class ActionPrincipalByRole extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Verificar que los datos estén cargados
     if (role.isLoadingDataUser.value) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
-    // Verificar que dinningLogin y role no sean null
     if (role.dinningLogin.role == null || role.dinningLogin.role!.isEmpty) {
       return DashboardErrorState(
         isCompact: true,
-        onRetry: () {
-          role.getMyDinningInfo();
-        },
+        onRetry: () => role.getMyDinningInfo(),
       );
     }
 
-    // Verificar si es plan gratuito
     final isFreePlan = Get.isRegistered<MembershipController>()
         ? (Get.find<MembershipController>().currentPlan.value?.toUpperCase() ==
                 'FREE' ||
@@ -45,62 +37,69 @@ class ActionPrincipalByRole extends StatelessWidget {
     final roleByRoleUser =
         RolesFuncionts.getTypeRoleByRoleString(role.dinningLogin.role ?? '');
 
-    switch (roleByRoleUser) {
+    final config = _getRoleConfig(roleByRoleUser);
+    if (config == null) {
+      return ButtonPrimary(title: 'Error en el rol', onPressed: () {}, load: false);
+    }
+
+    if (config.onTap != null) {
+      return ButtonPrimary(title: config.onTapLabel!, onPressed: config.onTap, load: false);
+    }
+
+    final listIsEmpty = roleByRoleUser == RolesUsers.dinning || roleByRoleUser == RolesUsers.food
+        ? role.menusList.isEmpty
+        : role.wardList.isEmpty;
+
+    if (listIsEmpty) {
+      return ButtonPrimary(
+        title: config.emptyListLabel,
+        onPressed: () => Get.toNamed(config.emptyListRoute),
+        load: false,
+      );
+    }
+
+    if (isFreePlan) {
+      return ButtonSecundary(
+        title: config.singleItemLabel,
+        onPressed: () => Get.toNamed(config.singleItemRoute),
+        load: false,
+      );
+    }
+
+    return Row(
+      children: [
+        Flexible(
+          child: ButtonSecundary(
+            title: config.secondaryLabel,
+            onPressed: () => Get.toNamed(config.secondaryRoute),
+            load: false,
+          ),
+        ),
+        const SizedBox(width: 10),
+        Flexible(
+          child: ButtonPrimary(
+            title: config.primaryLabel,
+            onPressed: () => Get.toNamed(config.primaryRoute),
+            load: false,
+          ),
+        ),
+      ],
+    );
+  }
+
+  RoleActionConfig? _getRoleConfig(RolesUsers? roleType) {
+    switch (roleType) {
       case RolesUsers.dinning:
       case RolesUsers.food:
-        if (role.menusList.isEmpty) {
-          return ButtonPrimary(
-            title: 'Nuevo Menú',
-            onPressed: () {
-              Get.toNamed(
-                PURoutes.REGISTER_MENU_CATEGORY,
-              );
-            },
-            load: false,
-          );
-        }
-
-        // Si es plan gratuito y ya tiene un catálogo, solo permitir agregar items
-        if (isFreePlan) {
-          return ButtonSecundary(
-            title: 'Nuevo plato',
-            onPressed: () {
-              Get.toNamed(
-                PURoutes.REGISTER_ITEM_MENU,
-              );
-            },
-            load: false,
-          );
-        }
-
-        return Row(
-          children: [
-            Flexible(
-              child: ButtonSecundary(
-                title: 'Nuevo plato',
-                onPressed: () {
-                  Get.toNamed(
-                    PURoutes.REGISTER_ITEM_MENU,
-                  );
-                },
-                load: false,
-              ),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Flexible(
-              child: ButtonPrimary(
-                title: 'Nuevo Menú',
-                onPressed: () {
-                  Get.toNamed(
-                    PURoutes.REGISTER_MENU_CATEGORY,
-                  );
-                },
-                load: false,
-              ),
-            ),
-          ],
+        return RoleActionConfig(
+          emptyListLabel: 'Nuevo Menú',
+          emptyListRoute: PURoutes.REGISTER_MENU_CATEGORY,
+          singleItemLabel: 'Nuevo plato',
+          singleItemRoute: PURoutes.REGISTER_ITEM_MENU,
+          secondaryLabel: 'Nuevo plato',
+          secondaryRoute: PURoutes.REGISTER_ITEM_MENU,
+          primaryLabel: 'Nuevo Menú',
+          primaryRoute: PURoutes.REGISTER_MENU_CATEGORY,
         );
       case RolesUsers.clothes:
       case RolesUsers.retail:
@@ -113,136 +112,58 @@ class ActionPrincipalByRole extends StatelessWidget {
       case RolesUsers.construction:
       case RolesUsers.automotive:
       case RolesUsers.pets:
-        if (role.wardList.isEmpty) {
-          return ButtonPrimary(
-            title: 'Nuevo catálogo',
-            onPressed: () {
-              Get.toNamed(PURoutes.REGISTER_WARDROBES);
-            },
-            load: false,
-          );
-        }
-
-        // Si es plan gratuito y ya tiene un catálogo, solo permitir agregar productos
-        if (isFreePlan) {
-          return ButtonSecundary(
-            title: 'Nuevo producto',
-            onPressed: () {
-              Get.toNamed(
-                PURoutes.REGISTER_ITEM_WARDROBES,
-              );
-            },
-            load: false,
-          );
-        }
-
-        return Row(
-          children: [
-            Flexible(
-              child: ButtonSecundary(
-                title: 'Nuevo producto',
-                onPressed: () {
-                  Get.toNamed(
-                    PURoutes.REGISTER_ITEM_WARDROBES,
-                  );
-                },
-                load: false,
-              ),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Flexible(
-              child: ButtonPrimary(
-                title: 'Nuevo catálogo',
-                onPressed: () {
-                  Get.toNamed(PURoutes.REGISTER_WARDROBES);
-                },
-                load: false,
-              ),
-            ),
-          ],
+        return RoleActionConfig(
+          emptyListLabel: 'Nuevo catálogo',
+          emptyListRoute: PURoutes.REGISTER_WARDROBES,
+          singleItemLabel: 'Nuevo producto',
+          singleItemRoute: PURoutes.REGISTER_ITEM_WARDROBES,
+          secondaryLabel: 'Nuevo producto',
+          secondaryRoute: PURoutes.REGISTER_ITEM_WARDROBES,
+          primaryLabel: 'Nuevo catálogo',
+          primaryRoute: PURoutes.REGISTER_WARDROBES,
         );
       case RolesUsers.customer:
-        if (role.wardList.isEmpty) {
-          return ButtonPrimary(
-            title: 'Comenzá a emprender',
-            onPressed: () {
-              Get.toNamed(PURoutes.BUSINESS_TYPE_SELECTION);
-            },
-            load: false,
-          );
-        }
-
-        // Si es plan gratuito y ya tiene un catálogo, solo permitir agregar prendas
-        if (isFreePlan) {
-          return ButtonSecundary(
-            title: 'Nueva prenda',
-            onPressed: () {
-              Get.toNamed(
-                PURoutes.REGISTER_ITEM_WARDROBES,
-              );
-            },
-            load: false,
-          );
-        }
-
-        return Row(
-          children: [
-            Flexible(
-              child: ButtonSecundary(
-                title: 'Nueva prenda',
-                onPressed: () {
-                  Get.toNamed(
-                    PURoutes.REGISTER_ITEM_WARDROBES,
-                  );
-                },
-                load: false,
-              ),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Flexible(
-              child: ButtonPrimary(
-                title: 'Nuevo guardarropas',
-                onPressed: () {
-                  Get.toNamed(PURoutes.REGISTER_WARDROBES);
-                },
-                load: false,
-              ),
-            ),
-          ],
+        return RoleActionConfig(
+          emptyListLabel: 'Comenzá a emprender',
+          emptyListRoute: PURoutes.BUSINESS_TYPE_SELECTION,
+          singleItemLabel: 'Nueva prenda',
+          singleItemRoute: PURoutes.REGISTER_ITEM_WARDROBES,
+          secondaryLabel: 'Nueva prenda',
+          secondaryRoute: PURoutes.REGISTER_ITEM_WARDROBES,
+          primaryLabel: 'Nuevo guardarropas',
+          primaryRoute: PURoutes.REGISTER_WARDROBES,
         );
-
       case RolesUsers.service:
-        return ButtonPrimary(
-          title: 'Gestionar servicios',
-          onPressed: () {
-            Get.snackbar(
-              'Próximamente',
-              'La gestión de servicios estará disponible pronto',
-              snackPosition: SnackPosition.TOP,
-            );
+        return RoleActionConfig(
+          emptyListLabel: '',
+          emptyListRoute: '',
+          singleItemLabel: '',
+          singleItemRoute: '',
+          secondaryLabel: '',
+          secondaryRoute: '',
+          primaryLabel: '',
+          primaryRoute: '',
+          onTap: () {
+            Get.snackbar('Próximamente', 'La gestión de servicios estará disponible pronto',
+                snackPosition: SnackPosition.TOP);
           },
-          load: false,
+          onTapLabel: 'Gestionar servicios',
         );
-
       case RolesUsers.event_organizer:
-        return ButtonPrimary(
-          title: 'Nuevo evento',
-          onPressed: () {
-            Get.toNamed(PURoutes.EVENT_CREATE);
-          },
-          load: false,
+        return RoleActionConfig(
+          emptyListLabel: '',
+          emptyListRoute: '',
+          singleItemLabel: '',
+          singleItemRoute: '',
+          secondaryLabel: '',
+          secondaryRoute: '',
+          primaryLabel: '',
+          primaryRoute: '',
+          onTap: () => Get.toNamed(PURoutes.EVENT_CREATE),
+          onTapLabel: 'Nuevo evento',
         );
-
       default:
-        return ButtonPrimary(
-          title: 'Error en el rol',
-          onPressed: () {},
-          load: false,
-        );
+        return null;
     }
   }
 }

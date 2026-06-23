@@ -32,13 +32,9 @@ class HeadDinning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isSmallScreen = constraints.maxWidth < kMobileBreakpoint;
-        final isLargeScreen = constraints.maxWidth >= kTabletBreakpoint;
-
-        // Determine if we should use mobile layout
-        final useMobileLayout = isMobile ?? isSmallScreen;
+    return PuResponsiveBuilder(
+      builder: (context, info) {
+        final useMobileLayout = isMobile ?? info.isMobile;
 
         return GetBuilder<DinningController>(
           builder: (_) {
@@ -55,7 +51,7 @@ class HeadDinning extends StatelessWidget {
                   ),
                 ),
               ),
-              child: useMobileLayout ? _buildMobileLayout(_, context) : _buildDesktopLayout(_, context, isLargeScreen),
+              child: useMobileLayout ? _buildMobileLayout(_, context) : _buildDesktopLayout(_, context, info.isDesktop),
             );
           },
         );
@@ -111,21 +107,7 @@ class HeadDinning extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Notifications
-            MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: GestureDetector(
-                onTap: () {
-                  // Add notification handling
-                },
-                child: Icon(
-                  FluentIcons.alert_24_regular,
-                  color: PUColors.iconColor,
-                  size: 22,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
+            // Notifications - available via sidebar
             // Share menu (Vinculación MP) - Solo para usuarios NO customer
             if (_canAccessMPOAuth(_getUserRole(controller.dinningLogin.role)))
               MouseRegion(
@@ -201,18 +183,7 @@ class HeadDinning extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Icon(
-                    FluentIcons.alert_24_regular,
-                    color: PUColors.iconColor,
-                    size: 24,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
+              // Notifications - available via sidebar
 
               if (_canAccessMPOAuth(_getUserRole(controller.dinningLogin.role)))
                 MouseRegion(

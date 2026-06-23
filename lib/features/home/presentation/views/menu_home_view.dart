@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/widget/category_tags_section.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_item_tile.dart';
-import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_empty_state.dart';
+import 'package:pu_material/pu_material.dart';
+import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_unlinked_banners.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_sidebar.dart';
-import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
-import 'package:pu_material/pu_material.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
 class MenuHomeView extends StatefulWidget {
@@ -139,6 +136,7 @@ class _MenuHomeViewState extends State<MenuHomeView> with WidgetsBindingObserver
                               onSelect: (c) => _ctrl.changeCatalogSelected(c),
                               onEdit: _editCatalog,
                               onDelete: _deleteCatalog,
+                              onAdd: () => Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY),
                               descriptionBuilder: (c) => c.description ?? '',
                             ),
                           ),

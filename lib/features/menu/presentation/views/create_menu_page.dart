@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/utils/pu_colors.dart';
@@ -24,7 +23,6 @@ class CreateMenuPage extends StatefulWidget {
 }
 
 class _CreateMenuPageState extends State<CreateMenuPage> {
-  var dinningController = Get.find<DinningController>();
   late final CatalogsController catalogsController;
 
   @override
@@ -64,7 +62,11 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
                               cursor: SystemMouseCursors.click,
                               child: GestureDetector(
                                 onTap: () {
-                                  Get.back();
+                                  if (Navigator.of(context).canPop()) {
+                                    Get.back();
+                                  } else {
+                                    Get.offAllNamed(PURoutes.HOME);
+                                  }
                                 },
                                 child: Row(
                                   children: [

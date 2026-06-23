@@ -35,63 +35,31 @@ class MenuSide extends StatelessWidget {
                 .where((item) => MenuNavigationItem.actionItems.contains(item))
                 .toList();
 
-            if (isMobile ?? false) {
+            final mobile = isMobile ?? false;
+            final content = _MenuItemsContent(
+              dinningController: dinningController,
+              mainItems: mainItems,
+              actionItems: actionItems,
+              isMobile: mobile,
+            );
+            final decoration = PuStyleContainers.borderLeftContainer.copyWith(
+              color: PUColors.primaryBackground,
+            );
+
+            if (mobile) {
               return Drawer(
                 backgroundColor: PUColors.bgItem.withOpacity(0.3),
                 elevation: 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 20,
-                  ),
-                  decoration: PuStyleContainers.borderLeftContainer.copyWith(
-                    color: PUColors.primaryBackground,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        children: [
-                          UserAvatarSide(
-                            dinningController: dinningController,
-                            isMobile: true,
-                          ),
-                          const SizedBox(height: 24),
-                          ...mainItems.map((item) => EnhancedMenuDrawItem(
-                                item: item,
-                                showBadge: _shouldShowBadge(item),
-                                badgeText: _getBadgeText(item),
-                              )),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          if (actionItems.isNotEmpty) ...[
-                            Container(
-                              height: 1,
-                              margin: const EdgeInsets.symmetric(vertical: 16),
-                              decoration: BoxDecoration(
-                                color: PUColors.iconColor.withOpacity(0.2),
-                              ),
-                            ),
-                          ],
-                          ...actionItems.map((item) => EnhancedMenuDrawItem(
-                                item: item,
-                              )),
-                        ],
-                      ),
-                    ],
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  decoration: decoration,
+                  child: content,
                 ),
               );
             } else {
               return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
-                ),
-                decoration: PuStyleContainers.borderLeftContainer.copyWith(
-                  color: PUColors.primaryBackground,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                decoration: decoration.copyWith(
                   border: Border(
                     right: BorderSide(
                       color: PUColors.iconColor.withOpacity(0.1),
@@ -99,41 +67,7 @@ class MenuSide extends StatelessWidget {
                     ),
                   ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        UserAvatarSide(
-                          dinningController: dinningController,
-                          isMobile: false,
-                        ),
-                        const SizedBox(height: 32),
-                        ...mainItems.map((item) => EnhancedMenuDrawItem(
-                              item: item,
-                              showBadge: _shouldShowBadge(item),
-                              badgeText: _getBadgeText(item),
-                            )),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        if (actionItems.isNotEmpty) ...[
-                          Container(
-                            height: 1,
-                            margin: const EdgeInsets.symmetric(vertical: 20),
-                            decoration: BoxDecoration(
-                              color: PUColors.iconColor.withOpacity(0.2),
-                            ),
-                          ),
-                        ],
-                        ...actionItems.map((item) => EnhancedMenuDrawItem(
-                              item: item,
-                            )),
-                      ],
-                    ),
-                  ],
-                ),
+                child: content,
               );
             }
           },
@@ -142,22 +76,55 @@ class MenuSide extends StatelessWidget {
     );
   }
 
-  bool _shouldShowBadge(MenuNavigationItem item) {
-    switch (item) {
-      case MenuNavigationItem.orders:
-        return false;
-      default:
-        return false;
-    }
-  }
+}
 
-  String? _getBadgeText(MenuNavigationItem item) {
-    switch (item) {
-      case MenuNavigationItem.orders:
-        return null;
-      default:
-        return null;
-    }
+class _MenuItemsContent extends StatelessWidget {
+  const _MenuItemsContent({
+    required this.dinningController,
+    required this.mainItems,
+    required this.actionItems,
+    required this.isMobile,
+  });
+
+  final DinningController dinningController;
+  final List<MenuNavigationItem> mainItems;
+  final List<MenuNavigationItem> actionItems;
+  final bool isMobile;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = isMobile ? 24.0 : 32.0;
+    final dividerMargin = isMobile ? 16.0 : 20.0;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          children: [
+            UserAvatarSide(
+              dinningController: dinningController,
+              isMobile: isMobile,
+            ),
+            SizedBox(height: spacing),
+            ...mainItems.map((item) => EnhancedMenuDrawItem(item: item)),
+          ],
+        ),
+        Column(
+          children: [
+            if (actionItems.isNotEmpty) ...[
+              Container(
+                height: 1,
+                margin: EdgeInsets.symmetric(vertical: dividerMargin),
+                decoration: BoxDecoration(
+                  color: PUColors.iconColor.withOpacity(0.2),
+                ),
+              ),
+            ],
+            ...actionItems.map((item) => EnhancedMenuDrawItem(item: item)),
+          ],
+        ),
+      ],
+    );
   }
 }
 
