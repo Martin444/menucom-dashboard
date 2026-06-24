@@ -8,7 +8,6 @@ import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pu_material/utils/overflow_text.dart';
 
-import 'mp_oauth_gate_widget.dart';
 import 'context_switcher_molecule.dart';
 
 class HeadDinning extends StatelessWidget {
@@ -108,21 +107,14 @@ class HeadDinning extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Notifications - available via sidebar
-            // Share menu (Vinculación MP) - Solo para usuarios NO customer
+            // Share menu - Solo para usuarios NO customer
             if (_canAccessMPOAuth(_getUserRole(controller.dinningLogin.role)))
               MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: GestureDetector(
-                  onTap: () {
-                    Get.dialog(
-                      MPOAuthGateWidget(
-                        idMenu: controller.dinningLogin.id ?? '',
-                        redirectUri: Config.mpRedirectUri,
-                      ),
-                    );
-                  },
+                  onTap: () => _handleShareLink(controller),
                   child: Tooltip(
-                    message: 'Vincular con Mercado Pago',
+                    message: 'Compartir link',
                     child: Icon(
                       FluentIcons.share_24_regular,
                       color: PUColors.iconColor,
@@ -186,26 +178,10 @@ class HeadDinning extends StatelessWidget {
               // Notifications - available via sidebar
 
               if (_canAccessMPOAuth(_getUserRole(controller.dinningLogin.role)))
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () {
-                      Get.dialog(
-                        MPOAuthGateWidget(
-                          idMenu: controller.dinningLogin.id ?? '',
-                          redirectUri: Config.mpRedirectUri,
-                        ),
-                      );
-                    },
-                    child: Tooltip(
-                      message: 'Vincular con Mercado Pago',
-                      child: Icon(
-                        FluentIcons.share_24_regular,
-                        color: PUColors.iconColor,
-                        size: 24,
-                      ),
-                    ),
-                  ),
+                ButtonSecundary(
+                  title: 'Compartir link',
+                  onPressed: () => _handleShareLink(controller),
+                  load: false,
                 ),
 
               if (isLargeScreen) ...[
@@ -216,6 +192,79 @@ class HeadDinning extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void _handleShareLink(DinningController controller) {
+    if (controller.isLinkedToMP.value) {
+      Get.dialog(
+        ShareLinkMenuDialog(
+          idMenu: controller.dinningLogin.id ?? '',
+          slug: controller.dinningLogin.slug,
+          urlMenuOrigin: URL_MENU_ORIGIN,
+        ),
+      );
+    } else {
+      Get.dialog(
+        Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: ContainerAtom(
+            width: 420,
+            variant: ContainerVariant.spacious,
+            backgroundColor: PUColors.secundaryBackground,
+            borderRadius: BorderRadius.circular(24),
+            borderColor: Colors.white.withOpacity(0.08),
+            borderWidth: 1.5,
+            padding: const EdgeInsets.all(28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  FluentIcons.wallet_credit_card_24_regular,
+                  size: 48,
+                  color: PUColors.bgButton,
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Vincula Mercado Pago',
+                  style: PuTextStyle.title3,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Para compartir tu catálogo necesitamos saber dónde recibirás los pagos. '
+                  'Vincula tu cuenta de Mercado Pago para continuar.',
+                  style: PuTextStyle.bodyMedium.copyWith(
+                    color: PUColors.textColor2.withOpacity(0.8),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ButtonSecundary(
+                      title: 'Cancelar',
+                      onPressed: () => Get.back(),
+                      load: false,
+                    ),
+                    const SizedBox(width: 12),
+                    ButtonPrimary(
+                      title: 'Vincular ahora',
+                      onPressed: () {
+                        Get.back();
+                        controller.vincularMercadoPago();
+                      },
+                      load: false,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   void _navigateToProfile(DinningController controller) {

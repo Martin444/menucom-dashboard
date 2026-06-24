@@ -37,7 +37,6 @@ class _CreateItemPageState extends State<CreateItemPage> {
     if (widget.isEditPage != true) {
       catalogsController.clearItemForm();
     }
-    catalogsController.loadCatalogsByType(widget.catalogType);
   }
 
   @override
@@ -201,8 +200,6 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                       }
 
                                       if (result != null) {
-                                        await catCtrl
-                                            .loadCatalogsByType('menu');
                                         Get.offNamed(PURoutes.HOME);
                                       }
                                     }

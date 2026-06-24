@@ -220,7 +220,7 @@ class _DesktopContent extends StatelessWidget {
     return Column(
       children: [
         const HeadDinning(isMobile: false),
-        if (!isTablet) const HeadActions(),
+        const HeadActions(),
         Expanded(
           child: Padding(
             padding: EdgeInsets.symmetric(

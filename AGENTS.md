@@ -40,6 +40,12 @@
 - `WidgetsBinding.instance.addPostFrameCallback` se comporta igual en web que en native.
 - El guard `_isLoadingInternal` en métodos async debe siempre liberarse en `catch` y `finally` para evitar deadlocks.
 
+### Mapeo businessType → context en creación de comercio
+- `context` (requerido) debe ser un valor del enum `BusinessContext`: `restaurant`, `wardrobe`, `marketplace`, `general`, `events`.
+- `businessType` (opcional) es un string libre como `food`, `clothes`, etc.
+- **Nunca** usar `type.roleType.name` como `context`. Usar siempre `RolesFuncionts.toBusinessContext(type.roleType).value`.
+- El mapeo completo está en `menu_dart_api/lib/by_feature/user/get_me_profile/model/roles_users.dart:69-94`.
+
 ### Bindings que se comparten entre rutas
 - Si un `Binding` se aplica en múltiples rutas (ej: `CatalogsBinding` en crear/editar catálogo), usar `Get.put` con `permanent: true` + guard `isRegistered` para no reemplazar la instancia existente al navegar.
 - `Get.put` sin `permanent` destruye el controller al hacer pop de la ruta; si otra ruta aún lo necesita, los datos se pierden.

@@ -22,11 +22,11 @@ class Config {
   );
 
   static String versionApp = '2.0.7';
-  static String urlMenuOrigin = String.fromEnvironment(
+  static const String urlMenuOrigin = String.fromEnvironment(
     'URL_MENU_ORIGIN',
     defaultValue: 'https://menu-comerce.netlify.app',
   );
-  static String mpRedirectUri = String.fromEnvironment(
+  static const String mpRedirectUri = String.fromEnvironment(
     'MP_REDIRECT_URI',
     defaultValue: 'https://menucom-api.onrender.com/payments/oauth/callback',
   );

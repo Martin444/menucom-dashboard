@@ -10,8 +10,9 @@
             "type": "dart",
             "program": "lib/main.dart",
             "args": [
+                "--web-renderer",
                 "canvaskit",
-                //"--web-port=52245",
+                "--web-port=50066",
                 //"--no-sound-null-safety",
                 "--dart-define=API_URL=http://localhost:3001",
                 "--dart-define=ACCESS_TOKEN_SECRET_KEY=p7Xv9QmL2eR8sTzY4bN1aCwV6jKdFgHu",
@@ -25,7 +26,8 @@
                 "--dart-define=GOOGLE_SIGN_IN_WEB_CLIENT_ID=1053737382833-49iodle61i3kmdte9uocoij5hdg263nk.apps.googleusercontent.com",
                 "--dart-define=GOOGLE_SIGN_IN_IOS_CLIENT_ID=1053737382833-your-ios-client-id.apps.googleusercontent.com",
                 "--dart-define=GOOGLE_SIGN_IN_ANDROID_CLIENT_ID=1053737382833-your-android-client-id.apps.googleusercontent.com",
-                "--dart-define=FIREBASE_IOS_BUNDLE_ID=com.pickmeup.menucomdashboard"
+                "--dart-define=FIREBASE_IOS_BUNDLE_ID=com.pickmeup.menucomdashboard",
+                "--dart-define=MP_REDIRECT_URI=http://localhost:3001/payments/oauth/callback"
             ]
         },
         {

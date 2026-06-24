@@ -39,7 +39,6 @@ class _CreateWardItemPageState extends State<CreateWardItemPage> {
     if (widget.isEditPage != true) {
       catalogsController.clearItemForm();
     }
-    catalogsController.loadCatalogsByType('wardrobe');
   }
 
   @override
@@ -195,8 +194,6 @@ class _CreateWardItemPageState extends State<CreateWardItemPage> {
                                         }
 
                                         if (result != null) {
-                                          await catCtrl
-                                              .loadCatalogsByType('wardrobe');
                                           Get.offNamed(PURoutes.HOME);
                                         }
                                       }

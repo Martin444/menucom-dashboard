@@ -4,6 +4,7 @@ import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/user_session_controller.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/mp_link_controller.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/form_controller.dart';
+import 'package:pickmeup_dashboard/features/home/controllers/user_role_service.dart';
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
 
 class DinningController extends GetxController {
@@ -11,6 +12,7 @@ class DinningController extends GetxController {
   MPLinkController get _mpLink => Get.find<MPLinkController>();
   CatalogsController get _catalogs => Get.find<CatalogsController>();
   FormController get _form => Get.find<FormController>();
+  UserRoleService get _roleService => Get.find<UserRoleService>();
 
   // ─── User session ───
   DinningModel get dinningLogin => _session.dinningLogin;
@@ -87,7 +89,10 @@ class DinningController extends GetxController {
     ever(_session.hasErrorLoadingUser, (_) => update());
     ever(_session.hasSelectedCommerce, (_) => update());
     ever(_session.hasMissingLogo, (_) => update());
-    ever(_session.currentUserRole, (_) => update());
+    ever(_session.currentUserRole, (_) {
+      _roleService.updateRole(_session.currentUserRole.value);
+      update();
+    });
     ever(_session.everyListEmpty, (_) => update());
     ever(_mpLink.isLinkedToMP, (_) => update());
     ever(_mpLink.isBannerVisible, (_) => update());

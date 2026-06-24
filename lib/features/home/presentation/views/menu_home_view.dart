@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
+import 'package:pickmeup_dashboard/features/home/controllers/user_role_service.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_unlinked_banners.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/catalog_sidebar.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
@@ -18,11 +19,13 @@ class MenuHomeView extends StatefulWidget {
 
 class _MenuHomeViewState extends State<MenuHomeView> with WidgetsBindingObserver {
   late final CatalogsController _ctrl;
+  late final UserRoleService _roleService;
 
   @override
   void initState() {
     super.initState();
     _ctrl = Get.find<CatalogsController>();
+    _roleService = Get.find<UserRoleService>();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _ctrl.loadCatalogsByType('menu');
@@ -75,21 +78,26 @@ class _MenuHomeViewState extends State<MenuHomeView> with WidgetsBindingObserver
                     constraints: constraints,
                     icon: FluentIcons.food_24_regular,
                     actionButtons: [
-                      HeaderActionButton(
-                        icon: FluentIcons.add_24_regular,
-                        color: PUColors.primaryColor,
-                        onTap: () => Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY),
-                        tooltip: 'Nuevo catálogo',
-                      ),
+                      if (_roleService.canCreateCatalog)
+                        HeaderActionButton(
+                          icon: FluentIcons.add_24_regular,
+                          color: PUColors.primaryColor,
+                          onTap: () => Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY),
+                          tooltip: 'Nuevo catálogo',
+                        ),
                     ],
-                    onEditSelected: () {
-                      final c = selected ?? (catalogs.isNotEmpty ? catalogs.first : null);
-                      if (c != null) _editCatalog(c);
-                    },
-                    onDeleteSelected: () async {
-                      final c = selected ?? (catalogs.isNotEmpty ? catalogs.first : null);
-                      if (c != null) await _deleteCatalog(c);
-                    },
+                    onEditSelected: _roleService.canUpdateCatalog
+                        ? () {
+                            final c = selected ?? (catalogs.isNotEmpty ? catalogs.first : null);
+                            if (c != null) _editCatalog(c);
+                          }
+                        : null,
+                    onDeleteSelected: _roleService.canDeleteCatalog
+                        ? () async {
+                            final c = selected ?? (catalogs.isNotEmpty ? catalogs.first : null);
+                            if (c != null) await _deleteCatalog(c);
+                          }
+                        : null,
                     emptyMessage: 'No hay catálogos disponibles',
                   ),
                 Expanded(
@@ -100,22 +108,30 @@ class _MenuHomeViewState extends State<MenuHomeView> with WidgetsBindingObserver
                         child: Padding(
                           padding: EdgeInsets.only(right: constraints.maxWidth > 1200 ? 20 : 0),
                           child: catalogs.isEmpty
-                              ? CatalogEmptyState(onCreateCatalog: () => Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY))
+                              ? CatalogEmptyState(
+                                  onCreateCatalog: _roleService.canCreateCatalog
+                                      ? () => Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY)
+                                      : null,
+                                )
                               : CatalogGridOrganism<CatalogItemModel>(
                                   constraints: constraints,
                                   items: selected?.items ?? [],
                                   emptyIcon: FluentIcons.food_24_regular,
                                   emptyMessage: 'No hay productos en ${selected?.description ?? 'este catálogo'}',
                                   createButtonLabel: 'Cargar primer producto',
-                                  onCreateItem: () => Get.toNamed(PURoutes.REGISTER_ITEM_MENU),
+                                  onCreateItem: _roleService.canCreateItem
+                                      ? () => Get.toNamed(PURoutes.REGISTER_ITEM_MENU)
+                                      : null,
                                   itemBuilder: (context, item, index) => MenuItemTile(
                                     item: item,
                                     selected: false,
                                     onAddCart: (_) {},
+                                    showEditAction: _roleService.canUpdateItem,
+                                    showDeleteAction: _roleService.canDeleteItem,
                                     actionSelected: (_, action) async {
-                                      if (action == 'edit') {
+                                      if (action == 'edit' && _roleService.canUpdateItem) {
                                         _ctrl.gotoEditItem(item);
-                                      } else if (action == 'delete') {
+                                      } else if (action == 'delete' && _roleService.canDeleteItem) {
                                         await _ctrl.deleteCatalogItem(item);
                                         _ctrl.loadCatalogsByType('menu');
                                       }
@@ -136,9 +152,11 @@ class _MenuHomeViewState extends State<MenuHomeView> with WidgetsBindingObserver
                               catalogs: catalogs,
                               selected: selected,
                               onSelect: (c) => _ctrl.changeCatalogSelected(c),
-                              onEdit: _editCatalog,
-                              onDelete: _deleteCatalog,
-                              onAdd: () => Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY),
+                              onEdit: _roleService.canUpdateCatalog ? _editCatalog : null,
+                              onDelete: _roleService.canDeleteCatalog ? _deleteCatalog : null,
+                              onAdd: _roleService.canCreateCatalog
+                                  ? () => Get.toNamed(PURoutes.REGISTER_MENU_CATEGORY)
+                                  : null,
                               descriptionBuilder: (c) => c.description ?? '',
                             ),
                           ),

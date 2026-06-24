@@ -148,7 +148,7 @@ class CreateCommerceController extends GetxController {
 
     try {
       final type = selectedType.value!;
-      final context = type.backendCode.isNotEmpty ? type.backendCode : type.roleType.name;
+      final context = type.backendCode.isNotEmpty ? type.backendCode : RolesFuncionts.toBusinessContext(type.roleType).value;
 
       final newCommerce = await CreateCommerceUseCase().execute(
         CreateCommerceRequest(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/by_feature/payments/oauth/mp_oauth.dart';
+import 'package:pickmeup_dashboard/core/config.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -69,8 +70,7 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
     });
 
     try {
-      const redirectUri = 'https://menucom-api.onrender.com/payments/oauth/callback';
-      final result = await _mpOAuthService.initiateLinkingFlow(redirectUri);
+      final result = await _mpOAuthService.initiateLinkingFlow(Config.mpRedirectUri);
 
       if (result.isAlreadyLinked) {
         _showSnackBar('Ya hay una cuenta vinculada: ${result.linkedEmail}', Colors.orange);

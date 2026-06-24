@@ -7,8 +7,8 @@ class CatalogSidebar extends StatelessWidget {
   final List<CatalogModel> catalogs;
   final CatalogModel? selected;
   final ValueChanged<CatalogModel> onSelect;
-  final ValueChanged<CatalogModel> onEdit;
-  final Future<void> Function(CatalogModel) onDelete;
+  final ValueChanged<CatalogModel>? onEdit;
+  final Future<void> Function(CatalogModel)? onDelete;
   final VoidCallback? onAdd;
   final String title;
   final String emptyMessage;
@@ -19,8 +19,8 @@ class CatalogSidebar extends StatelessWidget {
     required this.catalogs,
     required this.selected,
     required this.onSelect,
-    required this.onEdit,
-    required this.onDelete,
+    this.onEdit,
+    this.onDelete,
     this.onAdd,
     this.title = 'Mis catálogos',
     this.emptyMessage = 'No hay catálogos disponibles',
@@ -58,8 +58,8 @@ class CatalogSidebar extends StatelessWidget {
           isSelected: selected?.id == catalog.id,
           descriptionBuilder: descriptionBuilder,
           onSelect: (_) => onSelect(catalog),
-          onDelete: (_) async => await onDelete(catalog),
-          onEdit: (_) => onEdit(catalog),
+          onDelete: onDelete != null ? (_) async => await onDelete!(catalog) : null,
+          onEdit: onEdit != null ? (_) => onEdit!(catalog) : null,
         )),
       ],
     );
