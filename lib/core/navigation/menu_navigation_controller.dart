@@ -43,6 +43,11 @@ class MenuNavigationController extends GetxController {
                 currentRoute.startsWith('/admin/membresias'))) {
           return true;
         }
+        if (item == MenuNavigationItem.notifications &&
+            (currentRoute == PURoutes.ADMIN_NOTIFICATIONS ||
+                currentRoute.startsWith('/admin/notificaciones'))) {
+          return true;
+        }
       }
 
       // Match dinámico (ej: /perfil/:idUsuario)
@@ -81,6 +86,12 @@ class MenuNavigationController extends GetxController {
       }
       if (currentRoute == PURoutes.ADMIN_MEMBERSHIPS) {
         _currentItem.value = MenuNavigationItem.adminMemberships;
+        update();
+        return;
+      }
+      if (currentRoute == PURoutes.ADMIN_NOTIFICATIONS ||
+          currentRoute.startsWith('/admin/notificaciones')) {
+        _currentItem.value = MenuNavigationItem.notifications;
         update();
         return;
       }
@@ -166,6 +177,14 @@ class MenuNavigationController extends GetxController {
         _updateAdminDashboardIndex(2);
         if (Get.currentRoute != PURoutes.ADMIN_MEMBERSHIPS) {
           Get.toNamed(PURoutes.ADMIN_MEMBERSHIPS);
+        }
+        update();
+        return;
+      }
+
+      if (item == MenuNavigationItem.notifications) {
+        if (Get.currentRoute != PURoutes.ADMIN_NOTIFICATIONS) {
+          Get.toNamed(PURoutes.ADMIN_NOTIFICATIONS);
         }
         update();
         return;

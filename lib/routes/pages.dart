@@ -37,7 +37,10 @@ import 'package:pickmeup_dashboard/features/clients/presentation/views/clients_v
 import 'package:pickmeup_dashboard/features/clients/getx/clients_binding.dart';
 import 'package:pickmeup_dashboard/features/collaborators/presentation/collaborators.dart';
 import 'package:pickmeup_dashboard/features/profile/presentation/views/business_profile_page.dart';
-import 'package:pickmeup_dashboard/features/profile/presentation/controllers/business_profile_controller.dart';
+import 'package:pickmeup_dashboard/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:pickmeup_dashboard/features/notifications/presentation/pages/create_template_page.dart';
+import 'package:pickmeup_dashboard/features/notifications/presentation/pages/send_notification_page.dart';
+import 'package:pickmeup_dashboard/features/notifications/getx/notifications_binding.dart';
 
 class PUPages {
   static final List<GetPage> listPages = [
@@ -375,6 +378,44 @@ class PUPages {
       page: () => const EventDetailPage(),
       bindings: [
         EventsBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.ADMIN_NOTIFICATIONS,
+      middlewares: [
+        AuthMiddleware(),
+        AdminMiddleware(),
+      ],
+      transition: Transition.fadeIn,
+      page: () => const NotificationsPage(),
+      bindings: [
+        NotificationsBinding(),
+        MenuNavigationBinding(),
+        DinningBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.ADMIN_NOTIFICATIONS_TEMPLATE_CREATE,
+      middlewares: [
+        AuthMiddleware(),
+        AdminMiddleware(),
+      ],
+      transition: Transition.rightToLeft,
+      page: () => const CreateTemplatePage(),
+      bindings: [
+        NotificationsBinding(),
+      ],
+    ),
+    GetPage(
+      name: PURoutes.ADMIN_NOTIFICATIONS_SEND,
+      middlewares: [
+        AuthMiddleware(),
+        AdminMiddleware(),
+      ],
+      transition: Transition.rightToLeft,
+      page: () => const SendNotificationPage(),
+      bindings: [
+        NotificationsBinding(),
       ],
     ),
   ];

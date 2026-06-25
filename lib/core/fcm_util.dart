@@ -1,5 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 /// Handler para mensajes en segundo plano
 // ...existing code...
@@ -58,6 +60,19 @@ Future<void> setupFCM({
       if (message.notification != null) {
         debugPrint(
             'Message also contained a notification: ${message.notification!.title} - ${message.notification!.body}');
+        final title = message.notification!.title ?? 'Notificación';
+        final body = message.notification!.body ?? '';
+        if (Get.context != null) {
+          Get.snackbar(
+            title,
+            body,
+            duration: const Duration(seconds: 5),
+            snackPosition: SnackPosition.TOP,
+            margin: const EdgeInsets.all(8),
+            borderRadius: 12,
+            isDismissible: true,
+          );
+        }
       }
     });
 

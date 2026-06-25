@@ -16,6 +16,7 @@ enum MenuNavigationItem {
   profile,
   users,
   adminMemberships,
+  notifications,
   logout;
 
   /// Configuración de cada item del menú
@@ -100,6 +101,13 @@ enum MenuNavigationItem {
           route: PURoutes.ADMIN_MEMBERSHIPS,
           isNavigationRoute: true,
         );
+      case MenuNavigationItem.notifications:
+        return MenuItemConfig(
+          icon: FluentIcons.alert_24_regular,
+          label: 'Notificaciones',
+          route: PURoutes.ADMIN_NOTIFICATIONS,
+          isNavigationRoute: true,
+        );
       case MenuNavigationItem.logout:
         return const MenuItemConfig(
           icon: FluentIcons.sign_out_24_regular,
@@ -163,6 +171,7 @@ enum MenuNavigationItem {
           home,
           users,
           adminMemberships,
+          notifications,
           orders,
           myPurchases,
           membership,

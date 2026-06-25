@@ -54,6 +54,11 @@ class PURoutes {
   static String ADMIN_USERS = '/admin/usuarios';
   static String ADMIN_MEMBERSHIPS = '/admin/membresias';
 
+  // Admin Notifications
+  static String ADMIN_NOTIFICATIONS = '/admin/notificaciones';
+  static String ADMIN_NOTIFICATIONS_TEMPLATE_CREATE = '/admin/notificaciones/templates/crear';
+  static String ADMIN_NOTIFICATIONS_SEND = '/admin/notificaciones/enviar';
+
   // Clients
   static String CLIENTS = '/clientes';
 
