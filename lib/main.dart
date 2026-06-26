@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/core/api.dart';
-import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/core/config.dart';
-import 'package:pickmeup_dashboard/core/fcm_util.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -77,17 +75,6 @@ Future<String?> getToken() async {
   if (token != null && token.isNotEmpty) {
     API.setAccessToken(token);
     debugPrint('Access token cargado desde secure storage');
-    setupFCM(
-      onTokenReceived: (fcmToken) async {
-        try {
-          final updateUseCase = UpdateFcmTokenUseCase(UpdateFcmTokenProvider());
-          await updateUseCase.execute(fcmToken: fcmToken);
-          debugPrint('FCM Token actualizado en el backend');
-        } catch (e) {
-          debugPrint('Error al actualizar FCM Token: $e');
-        }
-      },
-    );
   }
   return token;
 }

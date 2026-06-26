@@ -27,10 +27,15 @@ class AuthMiddleware extends GetMiddleware {
       return null;
     }
 
-    // Si está verificando, permitir acceso temporal
-    if (authController.authState == AuthState.loading || authController.authState == AuthState.initial) {
-      debugPrint('AuthMiddleware: Verificando auth - permitiendo acceso temporal a: $route');
+    // Si está cargando, permitir acceso temporal para no bloquear UI
+    if (authController.authState == AuthState.loading) {
       return null;
+    }
+
+    // Si está en estado initial (verificación pendiente), bloquear acceso
+    if (authController.authState == AuthState.initial) {
+      debugPrint('AuthMiddleware: Estado inicial - bloqueando acceso temporal a: $route');
+      return RouteSettings(name: PURoutes.LOGIN);
     }
 
     // Si no está autenticado, redirigir a login
@@ -96,10 +101,15 @@ class RoleMiddleware extends GetMiddleware {
       return null;
     }
 
-    // Si está verificando, permitir acceso temporal
-    if (authController.authState == AuthState.loading || authController.authState == AuthState.initial) {
-      debugPrint('RoleMiddleware: Verificando auth/roles - permitiendo acceso temporal para: $route');
+    // Si está cargando, permitir acceso temporal
+    if (authController.authState == AuthState.loading) {
       return null;
+    }
+
+    // Si está en estado initial, redirigir a login
+    if (authController.authState == AuthState.initial) {
+      debugPrint('RoleMiddleware: Estado inicial - redirigiendo a login');
+      return RouteSettings(name: PURoutes.LOGIN);
     }
 
     // Si definitivamente no está autenticado, al login
@@ -123,7 +133,11 @@ class OperatorMiddleware extends RoleMiddleware {
   OperatorMiddleware() : super(requiredRoles: ['admin', 'operador']);
 }
 
-/// Middleware para verificación de membresías activas
+/// Middleware para verificación de membresías activas.
+///
+/// NOTA: Actualmente solo verifica autenticación.
+/// TODO: Implementar verificación real de membresía cuando el backend
+/// provea un endpoint de estado de membresía (GET /membership/status).
 class MembershipMiddleware extends GetMiddleware {
   @override
   int? get priority => 3; // Ejecutar después de Auth y Role middlewares
@@ -136,15 +150,16 @@ class MembershipMiddleware extends GetMiddleware {
 
     final authController = Get.find<AuthController>();
 
-    // Si ya está autenticado, permitir acceso
     if (authController.isAuthenticated) {
       return null;
     }
 
-    // Si está cargando, permitir acceso temporal
-    if (authController.authState == AuthState.loading || authController.authState == AuthState.initial) {
-      debugPrint('MembershipMiddleware: Verificando auth - permitiendo acceso temporal a: $route');
+    if (authController.authState == AuthState.loading) {
       return null;
+    }
+
+    if (authController.authState == AuthState.initial) {
+      return RouteSettings(name: PURoutes.LOGIN);
     }
 
     return RouteSettings(name: PURoutes.LOGIN);

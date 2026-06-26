@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 
 import '../../../helpers/token_helper.dart';
@@ -26,9 +25,8 @@ class UserSessionController extends GetxController {
   }
 
   Future<String> getHashedAccessToken() async {
-    final storage = const FlutterSecureStorage();
-    final token = await storage.read(key: 'access_token');
-    if (token == null || token.isEmpty) return '';
+    final token = API.loginAccessToken;
+    if (token.isEmpty) return '';
     return hashAccessToken(token);
   }
 
@@ -38,12 +36,11 @@ class UserSessionController extends GetxController {
       hasErrorLoadingUser.value = false;
 
       if (API.loginAccessToken.isEmpty) {
-        final storage = const FlutterSecureStorage();
-        final savedToken = await storage.read(key: 'access_token');
-        if (savedToken != null && savedToken.isNotEmpty) {
-          API.setAccessToken(savedToken);
-          debugPrint('UserSessionController: Token recuperado desde storage');
-        }
+        debugPrint('UserSessionController: No hay token en memoria, abortando carga');
+        hasErrorLoadingUser.value = true;
+        isLoadingDataUser.value = false;
+        update();
+        return;
       }
 
       var respDinning = await GetDinningUseCase().execute();
@@ -103,6 +100,9 @@ class UserSessionController extends GetxController {
 
   void clearData() {
     dinningLogin = DinningModel();
+    currentUserRole.value = '';
+    currentContextType.value = '';
+    hasSelectedCommerce.value = false;
     everyListEmpty.value = true;
     update();
   }
@@ -112,9 +112,6 @@ class UserSessionController extends GetxController {
       Get.find<AuthController>().logout();
     } else {
       clearData();
-      final storage = const FlutterSecureStorage();
-      await storage.delete(key: 'access_token');
-      await storage.delete(key: 'authenticated_user');
       API.setAccessToken('');
       Get.offAllNamed(PURoutes.LOGIN);
     }

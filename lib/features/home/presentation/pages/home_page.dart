@@ -12,6 +12,7 @@ import 'package:pickmeup_dashboard/features/home/presentation/widget/head_action
 import 'package:pickmeup_dashboard/features/home/presentation/widget/head_dinning.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/context_switcher_molecule.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/get_function_button.dart';
+import 'package:pickmeup_dashboard/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import 'package:pu_material/pu_material.dart';
 
@@ -263,6 +264,11 @@ class _DesktopContent extends StatelessWidget {
 }
 
 Widget _buildMainContent(DinningController controller, {required bool isMobile}) {
+  final isAuth = Get.isRegistered<AuthController>() &&
+      Get.find<AuthController>().isAuthenticated;
+
+  if (!isAuth) return const Center(child: CircularProgressIndicator());
+
   final hasRealCommerce = controller.dinningLogin.commerceId != null
       && controller.dinningLogin.commerceId!.isNotEmpty;
 
@@ -291,15 +297,17 @@ class _CommerceGateState extends State<_CommerceGate> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_shown && mounted) {
-        _shown = true;
-        Get.to(
-          () => const _CommerceSelectionPage(),
-          opaque: true,
-          fullscreenDialog: true,
-          transition: Transition.noTransition,
-        );
-      }
+      if (_shown || !mounted) return;
+      final isAuth = Get.isRegistered<AuthController>() &&
+          Get.find<AuthController>().isAuthenticated;
+      if (!isAuth) return;
+      _shown = true;
+      Get.to(
+        () => const _CommerceSelectionPage(),
+        opaque: true,
+        fullscreenDialog: true,
+        transition: Transition.noTransition,
+      );
     });
   }
 
@@ -385,9 +393,6 @@ class _RoleBasedView extends StatelessWidget {
     );
 
     switch (role) {
-      case RolesUsers.admin:
-        Future.microtask(() => Get.offNamed(PURoutes.ADMIN_DASHBOARD));
-        return const Center(child: CircularProgressIndicator());
       case RolesUsers.clothes:
         return WardsHomeView(isMobile: isMobile);
       case RolesUsers.service:
@@ -397,9 +402,6 @@ class _RoleBasedView extends StatelessWidget {
         return MenuHomeView(isMobile: isMobile);
       case RolesUsers.customer:
         return CustomerHomeView(isMobile: isMobile);
-      case RolesUsers.event_organizer:
-        Future.microtask(() => Get.offNamed(PURoutes.EVENTS));
-        return const Center(child: CircularProgressIndicator());
       default:
         return WardsHomeView(isMobile: isMobile);
     }

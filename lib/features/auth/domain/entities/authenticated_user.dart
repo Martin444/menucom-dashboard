@@ -95,7 +95,6 @@ class AuthenticatedUser {
       'photoURL': photoURL,
       'phone': phone,
       'role': role,
-      'accessToken': accessToken,
       'needToChangePassword': needToChangePassword,
       'socialToken': socialToken,
       'firebaseProvider': firebaseProvider,

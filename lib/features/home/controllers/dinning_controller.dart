@@ -6,6 +6,8 @@ import 'package:pickmeup_dashboard/features/home/controllers/mp_link_controller.
 import 'package:pickmeup_dashboard/features/home/controllers/form_controller.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/user_role_service.dart';
 import 'package:pickmeup_dashboard/features/catalogs/getx/catalogs_controller.dart';
+import 'package:pickmeup_dashboard/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:pickmeup_dashboard/routes/routes.dart';
 
 class DinningController extends GetxController {
   UserSessionController get _session => Get.find<UserSessionController>();
@@ -79,11 +81,29 @@ class DinningController extends GetxController {
   // ─── Lifecycle ───
   bool _started = false;
 
+  void _redirectByRoleIfNeeded() {
+    if (!Get.isRegistered<AuthController>() || 
+        !Get.find<AuthController>().isAuthenticated) {
+      return;
+    }
+    final role = RolesFuncionts.getTypeRoleByRoleString(
+      _session.dinningLogin.role ?? '',
+    );
+    if (role == RolesUsers.admin) {
+      Get.offAllNamed(PURoutes.ADMIN_DASHBOARD);
+    } else if (role == RolesUsers.event_organizer) {
+      Get.offAllNamed(PURoutes.EVENTS);
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
     if (_started) return;
     _started = true;
+
+    final auth = Get.find<AuthController>();
+    if (!auth.isAuthenticated) return;
 
     ever(_session.isLoadingDataUser, (_) => update());
     ever(_session.hasErrorLoadingUser, (_) => update());
@@ -91,6 +111,7 @@ class DinningController extends GetxController {
     ever(_session.hasMissingLogo, (_) => update());
     ever(_session.currentUserRole, (_) {
       _roleService.updateRole(_session.currentUserRole.value);
+      _redirectByRoleIfNeeded();
       update();
     });
     ever(_session.everyListEmpty, (_) => update());
@@ -99,6 +120,7 @@ class DinningController extends GetxController {
     ever(_mpLink.isLoadingMPStatus, (_) => update());
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!auth.isAuthenticated) return;
       _session.getMyDinningInfo();
       _mpLink.checkMPStatus();
     });

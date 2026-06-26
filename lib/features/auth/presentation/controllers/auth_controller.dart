@@ -134,7 +134,9 @@ class AuthController extends GetxController {
 
       final savedUserJson = await _secureStorage.read(key: _userKey);
       if (savedUserJson != null) {
-        final savedUser = AuthenticatedUser.fromMap(json.decode(savedUserJson));
+        final savedUserMap = json.decode(savedUserJson) as Map<String, dynamic>;
+        savedUserMap['accessToken'] = token;
+        final savedUser = AuthenticatedUser.fromMap(savedUserMap);
         _setAuthenticatedUser(savedUser);
 
         try {
@@ -691,15 +693,15 @@ class AuthController extends GetxController {
 
   Future<String?> _loadSavedToken() async {
     try {
+      if (API.loginAccessToken.isNotEmpty) {
+        return API.loginAccessToken;
+      }
       final savedToken = await _secureStorage.read(key: _tokenKey);
       if (savedToken != null && savedToken.isNotEmpty) {
         API.setAccessToken(savedToken);
-        debugPrint('Token cargado desde secure storage');
         return savedToken;
-      } else {
-        debugPrint('No hay token guardado en secure storage');
-        return null;
       }
+      return null;
     } catch (e) {
       debugPrint('Error al cargar token desde secure storage: $e');
       return null;

@@ -1,3 +1,7 @@
+// DEPRECATED: Este archivo no es importado por ningún otro archivo del proyecto.
+// AuthController maneja directamente FlutterSecureStorage.
+// Se mantiene por referencia únicamente. Puede eliminarse en el futuro.
+
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
