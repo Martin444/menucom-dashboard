@@ -89,9 +89,10 @@ class DinningController extends GetxController {
     final role = RolesFuncionts.getTypeRoleByRoleString(
       _session.dinningLogin.role ?? '',
     );
-    if (role == RolesUsers.admin) {
+    final current = Get.currentRoute;
+    if (role == RolesUsers.admin && current != PURoutes.ADMIN_DASHBOARD) {
       Get.offAllNamed(PURoutes.ADMIN_DASHBOARD);
-    } else if (role == RolesUsers.event_organizer) {
+    } else if (role == RolesUsers.event_organizer && current != PURoutes.EVENTS) {
       Get.offAllNamed(PURoutes.EVENTS);
     }
   }
