@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -81,7 +79,6 @@ class _TemplateFormState extends State<_TemplateForm> {
   final _bodyCtrl = TextEditingController();
   final _deepLinkCtrl = TextEditingController();
   final _imageUrlCtrl = TextEditingController();
-  final _dataCtrl = TextEditingController();
 
   bool _initialized = false;
 
@@ -97,9 +94,6 @@ class _TemplateFormState extends State<_TemplateForm> {
         _bodyCtrl.text = template.body;
         _deepLinkCtrl.text = template.deepLink ?? '';
         _imageUrlCtrl.text = template.imageUrl ?? '';
-        _dataCtrl.text = template.data != null
-            ? jsonEncode(template.data)
-            : '';
       }
       _initialized = true;
     }
@@ -112,7 +106,6 @@ class _TemplateFormState extends State<_TemplateForm> {
     _bodyCtrl.dispose();
     _deepLinkCtrl.dispose();
     _imageUrlCtrl.dispose();
-    _dataCtrl.dispose();
     super.dispose();
   }
 
@@ -156,7 +149,7 @@ class _TemplateFormState extends State<_TemplateForm> {
           PUInput(
             controller: _deepLinkCtrl,
             labelText: 'Deep link (opcional)',
-            hintText: 'menucom://orden/123',
+            hintText: 'https://menucom-dashboard.netlify.app/orden/123',
           ),
           const SizedBox(height: PUTokens.lg),
           PUInput(
@@ -165,12 +158,6 @@ class _TemplateFormState extends State<_TemplateForm> {
             hintText: 'https://...',
           ),
           const SizedBox(height: PUTokens.lg),
-          PUInput(
-            controller: _dataCtrl,
-            labelText: 'Data adicional JSON (opcional)',
-            hintText: '{"key": "value"}',
-            maxLines: 3,
-          ),
           if (isEdit && template != null) ...[
             const SizedBox(height: PUTokens.xl),
             SwitchListTile(
@@ -241,18 +228,6 @@ class _TemplateFormState extends State<_TemplateForm> {
       NotificationTemplateModel? template) async {
     if (!_formKey.currentState!.validate()) return;
 
-    Map<String, dynamic>? data;
-    if (_dataCtrl.text.trim().isNotEmpty) {
-      try {
-        data = Map<String, dynamic>.from(
-          jsonDecode(_dataCtrl.text.trim()),
-        );
-      } catch (_) {
-        Get.snackbar('Error', 'El campo data no es JSON válido');
-        return;
-      }
-    }
-
     bool success;
     if (isEdit && template != null) {
       final params = UpdateNotificationTemplateParams(
@@ -265,7 +240,6 @@ class _TemplateFormState extends State<_TemplateForm> {
         imageUrl: _imageUrlCtrl.text.trim().isNotEmpty
             ? _imageUrlCtrl.text.trim()
             : null,
-        data: data,
       );
       success = await controller.updateTemplate(template.id!, params);
     } else {
@@ -279,7 +253,6 @@ class _TemplateFormState extends State<_TemplateForm> {
         imageUrl: _imageUrlCtrl.text.trim().isNotEmpty
             ? _imageUrlCtrl.text.trim()
             : null,
-        data: data,
       );
       success = await controller.createTemplate(params);
     }

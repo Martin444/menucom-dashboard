@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
@@ -285,7 +283,7 @@ class NotificationsController extends GetxController {
   Future<SendNotificationResult?> sendDirect({
     required String title,
     required String body,
-    String? data,
+    String? deepLink,
     String? imageUrl,
   }) async {
     if (selectedUserIds.isEmpty) {
@@ -297,24 +295,20 @@ class NotificationsController extends GetxController {
       return null;
     }
 
-    Map<String, dynamic>? parsedData;
-    if (data != null && data.trim().isNotEmpty) {
-      try {
-        parsedData = Map<String, dynamic>.from(jsonDecode(data));
-      } catch (_) {
-        Get.snackbar('Error', 'El campo data no es JSON válido');
-        return null;
-      }
-    }
-
     isSending.value = true;
     try {
+      final trimmedDeepLink = deepLink?.trim();
+      final trimmedImageUrl = imageUrl?.trim();
       final params = SendAdminNotificationParams(
         userIds: selectedUserIds.toList(),
         title: title.trim(),
         body: body.trim(),
-        data: parsedData,
-        imageUrl: imageUrl?.trim().isNotEmpty == true ? imageUrl!.trim() : null,
+        deepLink: (trimmedDeepLink != null && trimmedDeepLink.isNotEmpty)
+            ? trimmedDeepLink
+            : null,
+        imageUrl: (trimmedImageUrl != null && trimmedImageUrl.isNotEmpty)
+            ? trimmedImageUrl
+            : null,
       );
 
       final result = await _sendDirectUseCase.call(params);

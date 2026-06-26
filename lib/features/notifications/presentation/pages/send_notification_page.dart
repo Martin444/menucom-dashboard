@@ -16,7 +16,7 @@ class SendNotificationPage extends StatefulWidget {
 class _SendNotificationPageState extends State<SendNotificationPage> {
   final _titleCtrl = TextEditingController();
   final _bodyCtrl = TextEditingController();
-  final _dataCtrl = TextEditingController();
+  final _urlCtrl = TextEditingController();
   final _imageUrlCtrl = TextEditingController();
   bool _initialized = false;
 
@@ -38,7 +38,7 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
   void dispose() {
     _titleCtrl.dispose();
     _bodyCtrl.dispose();
-    _dataCtrl.dispose();
+    _urlCtrl.dispose();
     _imageUrlCtrl.dispose();
     super.dispose();
   }
@@ -46,7 +46,7 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
   void _clearForm() {
     _titleCtrl.clear();
     _bodyCtrl.clear();
-    _dataCtrl.clear();
+    _urlCtrl.clear();
     _imageUrlCtrl.clear();
   }
 
@@ -60,7 +60,7 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
     await controller.sendDirect(
       title: title,
       body: body,
-      data: _dataCtrl.text,
+      deepLink: _urlCtrl.text,
       imageUrl: _imageUrlCtrl.text,
     );
     _clearForm();
@@ -169,10 +169,9 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
         ),
         const SizedBox(height: PUTokens.md),
         PUInput(
-          controller: _dataCtrl,
-          labelText: 'Data adicional JSON (opcional)',
-          hintText: '{"key": "value"}',
-          maxLines: 3,
+          controller: _urlCtrl,
+          labelText: 'URL de redirección (opcional)',
+          hintText: 'https://menucom-dashboard.netlify.app/orden/123',
         ),
         const SizedBox(height: PUTokens.xl),
         SizedBox(

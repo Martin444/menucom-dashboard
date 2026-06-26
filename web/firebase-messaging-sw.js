@@ -19,8 +19,27 @@ messaging.onBackgroundMessage((payload) => {
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
-        icon: '/logomenucom.png'
+        icon: '/logomenucom.png',
+        data: payload.data || {}
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const data = event.notification.data || {};
+    const url = data.url || data.deepLink || data.deep_link;
+    if (url) {
+        event.waitUntil(clients.openWindow(url));
+    } else {
+        event.waitUntil(clients.matchAll({ type: 'window' }).then((clientList) => {
+            for (const client of clientList) {
+                if (client.url && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            return clients.openWindow('/');
+        }));
+    }
 });
