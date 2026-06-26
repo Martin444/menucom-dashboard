@@ -31,6 +31,7 @@ class DinningController extends GetxController {
   Future<String> getHashedAccessToken() => _session.getHashedAccessToken();
   void getMyDinningInfo() => _session.getMyDinningInfo();
   void clearData() {
+    _started = false;
     _session.clearData();
     _catalogs.catalogsList.clear();
     _catalogs.catalogSelected.value = null;

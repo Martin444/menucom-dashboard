@@ -402,6 +402,9 @@ class _RoleBasedView extends StatelessWidget {
         return MenuHomeView(isMobile: isMobile);
       case RolesUsers.customer:
         return CustomerHomeView(isMobile: isMobile);
+      case RolesUsers.admin:
+      case RolesUsers.event_organizer:
+        return const SizedBox.shrink();
       default:
         return WardsHomeView(isMobile: isMobile);
     }

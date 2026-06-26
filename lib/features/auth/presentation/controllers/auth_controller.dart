@@ -223,7 +223,7 @@ class AuthController extends GetxController {
       _clearLoginFields();
       update();
 
-      Get.offAllNamed(PURoutes.HOME);
+      _navigateByRole(authUser.role);
     } catch (e) {
       isLogging.value = false;
       _setCurrentAction(AuthAction.none);
@@ -530,7 +530,7 @@ class AuthController extends GetxController {
       AnalyticsService().logLogin(method: 'google');
       AnalyticsService().setUserId(authUser.id);
 
-      Get.offAllNamed(PURoutes.HOME);
+      _navigateByRole(authUser.role);
     } catch (e) {
       debugPrint('Error en login con Google: $e');
       AnalyticsService().logErrorWithException(e, context: 'login_google_error');
@@ -588,7 +588,7 @@ class AuthController extends GetxController {
       AnalyticsService().logLogin(method: 'apple');
       AnalyticsService().setUserId(authUser.id);
 
-      Get.offAllNamed(PURoutes.HOME);
+      _navigateByRole(authUser.role);
     } catch (e) {
       debugPrint('Error en login con Apple: $e');
       AnalyticsService().logErrorWithException(e, context: 'login_apple_error');
@@ -806,6 +806,17 @@ class AuthController extends GetxController {
       return error.message.isNotEmpty ? error.message : 'Error del servidor';
     } else {
       return 'Ha ocurrido un error inesperado';
+    }
+  }
+
+  void _navigateByRole(String role) {
+    final r = RolesFuncionts.getTypeRoleByRoleString(role);
+    if (r == RolesUsers.admin) {
+      Get.offAllNamed(PURoutes.ADMIN_DASHBOARD);
+    } else if (r == RolesUsers.event_organizer) {
+      Get.offAllNamed(PURoutes.EVENTS);
+    } else {
+      Get.offAllNamed(PURoutes.HOME);
     }
   }
 

@@ -21,7 +21,7 @@ class UserSessionController extends GetxController {
 
   bool get isCustomerRole {
     final role = RolesFuncionts.getTypeRoleByRoleString(dinningLogin.role ?? '');
-    return role == RolesUsers.customer || role == RolesUsers.admin;
+    return role == RolesUsers.customer;
   }
 
   Future<String> getHashedAccessToken() async {
@@ -30,8 +30,12 @@ class UserSessionController extends GetxController {
     return hashAccessToken(token);
   }
 
+  bool _isLoadingDinningInfo = false;
+
   void getMyDinningInfo() async {
+    if (_isLoadingDinningInfo) return;
     try {
+      _isLoadingDinningInfo = true;
       isLoadingDataUser.value = true;
       hasErrorLoadingUser.value = false;
 
@@ -95,6 +99,8 @@ class UserSessionController extends GetxController {
       hasErrorLoadingUser.value = true;
       isLoadingDataUser.value = false;
       update();
+    } finally {
+      _isLoadingDinningInfo = false;
     }
   }
 
