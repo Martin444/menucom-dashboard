@@ -24,6 +24,7 @@ import 'package:menu_dart_api/by_feature/membership/data/usecase/change_billing_
 import 'package:menu_dart_api/by_feature/membership/data/usecase/migrate_to_auto_billing_usecase.dart';
 import 'package:menu_dart_api/by_feature/membership/data/usecase/migrate_to_manual_billing_usecase.dart';
 import 'package:menu_dart_api/by_feature/membership/data/usecase/manage_user_subscription_usecase.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 
 class UsersController extends GetxController {
@@ -91,6 +92,7 @@ class UsersController extends GetxController {
       final plans = await getAllAdminPlansUseCase.call();
       availablePlans.value = plans;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.loadAvailablePlans');
       debugPrint('Error loading available plans: $e');
     }
   }
@@ -136,6 +138,7 @@ class UsersController extends GetxController {
       totalPages.value = response.totalPages;
       currentPage.value = response.page;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.loadUsers');
       errorMessage.value = 'Error al cargar usuarios: $e';
     } finally {
       isLoading.value = false;
@@ -165,6 +168,7 @@ class UsersController extends GetxController {
 
       verifiedCount.value = 0;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.loadCounts');
       debugPrint('Error loading counts: $e');
     }
   }
@@ -217,6 +221,7 @@ class UsersController extends GetxController {
         );
       }
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.updateUser');
       Get.snackbar(
         'Error',
         'Error inesperado: $e',
@@ -241,6 +246,7 @@ class UsersController extends GetxController {
         loadCounts();
       }
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.deleteUser');
       Get.snackbar(
         'Error',
         'No se pudo eliminar el usuario: $e',
@@ -290,6 +296,7 @@ class UsersController extends GetxController {
       loadUsers();
       loadCounts();
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.assignMembership');
       Get.snackbar(
         'Error',
         'Error al asignar membresía: $e',
@@ -307,6 +314,7 @@ class UsersController extends GetxController {
       final details = await getBillingDetailsUseCase.execute(membershipId);
       currentBillingDetails.value = details;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.loadBillingDetails');
       debugPrint('Error loading billing details: $e');
       currentBillingDetails.value = null;
     } finally {
@@ -340,6 +348,7 @@ class UsersController extends GetxController {
       );
       return result;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.generatePaymentLink');
       _showBillingError(e);
       rethrow;
     } finally {
@@ -367,6 +376,7 @@ class UsersController extends GetxController {
       );
       return result;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.enableAutoBilling');
       _showBillingError(e);
       rethrow;
     } finally {
@@ -390,6 +400,7 @@ class UsersController extends GetxController {
       );
       return result;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.changeBillingAmount');
       _showBillingError(e);
       rethrow;
     } finally {
@@ -406,6 +417,7 @@ class UsersController extends GetxController {
         message: 'La membresía ahora usa facturación manual',
       );
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.migrateToManualBilling');
       _showBillingError(e);
     } finally {
       isLoadingBilling.value = false;
@@ -427,6 +439,7 @@ class UsersController extends GetxController {
         message: 'La membresía ahora usa facturación automática',
       );
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.migrateToAutoBilling');
       _showBillingError(e);
     } finally {
       isLoadingBilling.value = false;
@@ -442,6 +455,7 @@ class UsersController extends GetxController {
         message: 'La suscripción ha sido pausada',
       );
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.pauseSubscription');
       _showBillingError(e);
     } finally {
       isLoadingBilling.value = false;
@@ -457,6 +471,7 @@ class UsersController extends GetxController {
         message: 'La suscripción ha sido reanudada',
       );
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'users_controller.resumeSubscription');
       _showBillingError(e);
     } finally {
       isLoadingBilling.value = false;

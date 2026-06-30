@@ -1,5 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pickmeup_dashboard/core/analytics_events.dart';
 
 class AnalyticsService {
   static final AnalyticsService _instance = AnalyticsService._();
@@ -22,6 +23,8 @@ class AnalyticsService {
 
   FirebaseAnalytics? get instance => _analytics;
 
+  // ── Eventos genéricos ──
+
   Future<void> logEvent({
     required String name,
     Map<String, Object>? parameters,
@@ -33,6 +36,8 @@ class AnalyticsService {
       debugPrint('[Analytics] Error logging event "$name": $e');
     }
   }
+
+  // ── Auth (GA4 standard) ──
 
   Future<void> logLogin({String method = 'email'}) async {
     if (!_initialized) return;
@@ -57,12 +62,34 @@ class AnalyticsService {
   Future<void> logLogout() async {
     if (!_initialized) return;
     try {
-      await _analytics?.logEvent(name: 'logout');
+      await _analytics?.logEvent(name: AnalyticsEvents.logout);
       debugPrint('[Analytics] Logout event');
     } catch (e) {
       debugPrint('[Analytics] Error logging logout: $e');
     }
   }
+
+  // ── Session tracking ──
+
+  Future<void> logAppOpen() async {
+    if (!_initialized) return;
+    try {
+      await _analytics?.logAppOpen();
+      debugPrint('[Analytics] App open event');
+    } catch (e) {
+      debugPrint('[Analytics] Error logging app_open: $e');
+    }
+  }
+
+  Future<void> logAppBackground() async {
+    await logEvent(name: AnalyticsEvents.appBackground);
+  }
+
+  Future<void> logAppResumed() async {
+    await logEvent(name: AnalyticsEvents.appResumed);
+  }
+
+  // ── Screens ──
 
   Future<void> logScreen({required String screenName, String? screenClass}) async {
     if (!_initialized) return;
@@ -76,14 +103,7 @@ class AnalyticsService {
     }
   }
 
-  Future<void> setUserProperty({required String name, required String value}) async {
-    if (!_initialized) return;
-    try {
-      await _analytics?.setUserProperty(name: name, value: value);
-    } catch (e) {
-      debugPrint('[Analytics] Error setting user property "$name": $e');
-    }
-  }
+  // ── User identity y properties ──
 
   Future<void> setUserId(String? id) async {
     if (!_initialized) return;
@@ -94,15 +114,62 @@ class AnalyticsService {
     }
   }
 
+  Future<void> setUserProperty({required String name, required String value}) async {
+    if (!_initialized) return;
+    try {
+      await _analytics?.setUserProperty(name: name, value: value);
+    } catch (e) {
+      debugPrint('[Analytics] Error setting user property "$name": $e');
+    }
+  }
+
+  /// Establece múltiples user properties de una sola vez.
+  Future<void> setUserProfile({
+    String? role,
+    String? businessType,
+    String? subscriptionPlan,
+    int? catalogCount,
+    bool? isEmailVerified,
+  }) async {
+    if (!_initialized) return;
+    try {
+      if (role != null) {
+        await setUserProperty(name: AnalyticsParams.userRole, value: role);
+      }
+      if (businessType != null) {
+        await setUserProperty(name: AnalyticsParams.businessType, value: businessType);
+      }
+      if (subscriptionPlan != null) {
+        await setUserProperty(name: AnalyticsParams.subscriptionPlan, value: subscriptionPlan);
+      }
+      if (catalogCount != null) {
+        await setUserProperty(
+          name: AnalyticsParams.catalogCount,
+          value: catalogCount.toString(),
+        );
+      }
+      if (isEmailVerified != null) {
+        await setUserProperty(
+          name: AnalyticsParams.isEmailVerified,
+          value: isEmailVerified.toString(),
+        );
+      }
+    } catch (e) {
+      debugPrint('[Analytics] Error setting user profile: $e');
+    }
+  }
+
+  // ── Errores ──
+
   Future<void> logError(String error, {String? context, String? stackTrace}) async {
     if (!_initialized) return;
     try {
       final params = <String, Object>{
-        'error': error,
-        if (context != null) 'context': context,
-        if (stackTrace != null) 'stack_trace': stackTrace,
+        AnalyticsParams.error: error,
+        if (context != null) AnalyticsParams.context: context,
+        if (stackTrace != null) AnalyticsParams.stackTrace: stackTrace,
       };
-      await _analytics?.logEvent(name: 'app_error', parameters: params);
+      await _analytics?.logEvent(name: AnalyticsEvents.appError, parameters: params);
     } catch (e) {
       debugPrint('[Analytics] Error logging error: $e');
     }

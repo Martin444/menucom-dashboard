@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
 class MembershipController extends GetxController {
   var currentPlan = Rxn<String>();
@@ -51,6 +52,7 @@ class MembershipController extends GetxController {
       hasError.value = true;
       errorMessage.value = 'Error de conexión: $e';
       debugPrint('Error fetching membership status: $e');
+      AnalyticsService().logError(e.toString(), context: 'membership_controller.fetchMembershipStatus');
     } finally {
       isLoading.value = false;
     }
@@ -80,6 +82,7 @@ class MembershipController extends GetxController {
       debugPrint('Error fetching plans: ${e.message}');
     } catch (e) {
       debugPrint('Error fetching plans: $e');
+      AnalyticsService().logError(e.toString(), context: 'membership_controller.fetchAvailablePlans');
     } finally {
       isLoading.value = false;
     }
@@ -109,6 +112,7 @@ class MembershipController extends GetxController {
       hasError.value = true;
       errorMessage.value = 'Error al suscribirse: $e';
       debugPrint('Error subscribing to plan: $e');
+      AnalyticsService().logError(e.toString(), context: 'membership_controller.subscribeToPlan');
       return false;
     } finally {
       isLoading.value = false;
@@ -148,6 +152,7 @@ class MembershipController extends GetxController {
       hasError.value = true;
       errorMessage.value = 'Error al crear pago: $e';
       debugPrint('Error creating payment: $e');
+      AnalyticsService().logError(e.toString(), context: 'membership_controller.createPayment');
       return false;
     } finally {
       isLoading.value = false;
@@ -175,6 +180,7 @@ class MembershipController extends GetxController {
       return false;
     } catch (e) {
       debugPrint('Error applying discount: $e');
+      AnalyticsService().logError(e.toString(), context: 'membership_controller.applyDiscount');
       errorMessage.value = 'Error al aplicar descuento';
       return false;
     } finally {
@@ -200,6 +206,7 @@ class MembershipController extends GetxController {
       return false;
     } catch (e) {
       debugPrint('Error pausing subscription: $e');
+      AnalyticsService().logError(e.toString(), context: 'membership_controller.pauseSubscription');
       return false;
     } finally {
       isLoading.value = false;
@@ -224,6 +231,7 @@ class MembershipController extends GetxController {
       return false;
     } catch (e) {
       debugPrint('Error resuming subscription: $e');
+      AnalyticsService().logError(e.toString(), context: 'membership_controller.resumeSubscription');
       return false;
     } finally {
       isLoading.value = false;
@@ -249,6 +257,7 @@ class MembershipController extends GetxController {
       return false;
     } catch (e) {
       debugPrint('Error cancelling subscription: $e');
+      AnalyticsService().logError(e.toString(), context: 'membership_controller.cancelSubscription');
       return false;
     } finally {
       isLoading.value = false;
@@ -269,6 +278,7 @@ class MembershipController extends GetxController {
       return false;
     } catch (e) {
       debugPrint('Error upgrading plan: $e');
+      AnalyticsService().logError(e.toString(), context: 'membership_controller.upgradePlan');
       return false;
     } finally {
       isLoading.value = false;
@@ -286,6 +296,7 @@ class MembershipController extends GetxController {
       return result;
     } catch (e) {
       debugPrint('Error subscribing with card: $e');
+      AnalyticsService().logError(e.toString(), context: 'membership_controller.subscribeWithCard');
       return false;
     } finally {
       isLoading.value = false;

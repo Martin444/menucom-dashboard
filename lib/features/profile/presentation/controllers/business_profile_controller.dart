@@ -7,6 +7,8 @@ import 'package:menu_dart_api/by_feature/commerce/models/commerce_requests.dart'
 import 'package:menu_dart_api/by_feature/commerce/data/usecase/commerce_usecases.dart';
 import 'package:menu_dart_api/by_feature/auth/my_contexts/data/usecase/get_my_contexts_usecase.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
+import 'package:pickmeup_dashboard/core/analytics_events.dart';
 
 class BusinessProfileController extends GetxController {
   final nameController = TextEditingController();
@@ -351,6 +353,18 @@ class BusinessProfileController extends GetxController {
 
       _updateDinningData(socialLinks);
 
+      AnalyticsService().logEvent(
+        name: AnalyticsEvents.businessProfileSaved,
+        parameters: {
+          AnalyticsParams.fieldsUpdated: [
+            if (selectedLogoBytes != null) 'logo',
+            if (selectedCoverBytes != null) 'cover',
+            'name',
+            'description',
+          ].join(','),
+        },
+      );
+
       selectedLogoBytes = null;
       selectedCoverBytes = null;
 
@@ -363,6 +377,7 @@ class BusinessProfileController extends GetxController {
         );
       });
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'business_profile_save_error');
       Get.snackbar('Error', 'No se pudo actualizar el perfil: $e');
     } finally {
       isSaving.value = false;

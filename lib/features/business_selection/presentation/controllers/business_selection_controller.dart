@@ -5,6 +5,7 @@ import 'package:menu_dart_api/by_feature/user/update_user_role/model/update_user
 import 'package:pickmeup_dashboard/routes/routes.dart';
 import '../../models/business_type.dart';
 import '../../../home/controllers/dinning_controller.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
 /// Controlador para la selección de tipo de negocio
 class BusinessSelectionController extends GetxController {
@@ -75,6 +76,7 @@ class BusinessSelectionController extends GetxController {
         throw Exception(response.message ?? 'Error desconocido');
       }
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'business_selection_controller.confirmSelection');
       _showErrorSnackbar('Error al actualizar: ${e.toString()}');
     } finally {
       _isLoading.value = false;

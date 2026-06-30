@@ -8,6 +8,7 @@ import 'package:menu_dart_api/by_feature/user_roles/update_role/data/usecase/upd
 import 'package:menu_dart_api/by_feature/user_roles/update_role/model/update_role_request.dart';
 import 'package:menu_dart_api/by_feature/user_roles/my_team/data/usecase/get_my_team_usecase.dart';
 import 'package:menu_dart_api/by_feature/user_roles/my_team/model/my_team_response.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
 class CollaboratorsController extends GetxController {
   final GetMyTeamUseCase _getMyTeamUseCase;
@@ -105,6 +106,7 @@ class CollaboratorsController extends GetxController {
         _commerceId = response.commerceId;
       }
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'collaborators_controller.loadTeam');
       errorMessage.value = 'Error al cargar el equipo';
       if (Get.context != null) {
         Get.snackbar('Error', errorMessage.value,
@@ -136,6 +138,7 @@ class CollaboratorsController extends GetxController {
       await loadTeam();
       return null;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'collaborators_controller.assignRole');
       return 'Error al asignar rol: ${e.toString()}';
     }
   }
@@ -168,6 +171,7 @@ class CollaboratorsController extends GetxController {
       await loadTeam();
       return null;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'collaborators_controller.changeRole');
       return 'Error al cambiar rol: ${e.toString()}';
     }
   }
@@ -191,6 +195,7 @@ class CollaboratorsController extends GetxController {
       await loadTeam();
       return null;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'collaborators_controller.removeCollaborator');
       return 'Error al remover colaborador: ${e.toString()}';
     }
   }
@@ -207,6 +212,7 @@ class CollaboratorsController extends GetxController {
       await loadTeam();
       return null;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'collaborators_controller.updateUserRoleStatus');
       return 'Error al actualizar estado';
     }
   }

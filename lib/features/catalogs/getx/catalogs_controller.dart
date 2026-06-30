@@ -9,6 +9,7 @@ import 'package:pickmeup_dashboard/core/functions/mc_functions.dart';
 import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:pickmeup_dashboard/core/helpers/image_size_helper.dart';
 import 'package:pickmeup_dashboard/core/analytics_service.dart';
+import 'package:pickmeup_dashboard/core/analytics_events.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 
 class CatalogsController extends GetxController {
@@ -98,6 +99,14 @@ class CatalogsController extends GetxController {
   void changeCatalogSelected(CatalogModel select) async {
     catalogSelected.value = select;
     update();
+
+    AnalyticsService().logEvent(
+      name: AnalyticsEvents.catalogSelected,
+      parameters: {
+        AnalyticsParams.catalogId: select.id,
+        AnalyticsParams.catalogName: select.name ?? '',
+      },
+    );
 
     // Cargar los items del catálogo seleccionado
     try {
@@ -213,8 +222,12 @@ class CatalogsController extends GetxController {
       update();
 
       AnalyticsService().logEvent(
-        name: 'catalog_created',
-        parameters: {'type': type, 'name': catalogName, 'id': newCatalog.id},
+        name: AnalyticsEvents.catalogCreated,
+        parameters: {
+          AnalyticsParams.type: type,
+          AnalyticsParams.name: catalogName,
+          AnalyticsParams.id: newCatalog.id,
+        },
       );
 
       GlobalDialogsHandles.snackbarSuccess(
@@ -268,6 +281,14 @@ class CatalogsController extends GetxController {
 
       isLoadingCatalogs.value = false;
       update();
+
+      AnalyticsService().logEvent(
+        name: AnalyticsEvents.catalogUpdated,
+        parameters: {
+          AnalyticsParams.catalogId: catalog.id,
+          AnalyticsParams.catalogName: nameCatalog.text,
+        },
+      );
 
       final index = catalogsList.indexWhere((c) => c.id == catalog.id);
       if (index != -1) {
@@ -326,6 +347,14 @@ class CatalogsController extends GetxController {
 
         isLoadingCatalogs.value = false;
         update();
+
+        AnalyticsService().logEvent(
+          name: AnalyticsEvents.catalogDeleted,
+          parameters: {
+            AnalyticsParams.catalogId: catalog.id,
+            AnalyticsParams.catalogName: catalog.description ?? '',
+          },
+        );
 
         GlobalDialogsHandles.snackbarSuccess(
           title: '¡Perfecto!',
@@ -468,11 +497,11 @@ class CatalogsController extends GetxController {
       update();
 
       AnalyticsService().logEvent(
-        name: 'catalog_item_created',
+        name: AnalyticsEvents.catalogItemCreated,
         parameters: {
-          'name': newItem.name,
-          'price': newItem.price.toString(),
-          'catalog_id': catalogSelected.value!.id,
+          AnalyticsParams.name: newItem.name,
+          AnalyticsParams.price: newItem.price.toString(),
+          AnalyticsParams.catalogId: catalogSelected.value!.id,
         },
       );
 
@@ -546,6 +575,15 @@ class CatalogsController extends GetxController {
       isLoadingItems.value = false;
       update();
 
+      AnalyticsService().logEvent(
+        name: AnalyticsEvents.catalogItemUpdated,
+        parameters: {
+          AnalyticsParams.catalogId: catalogSelected.value!.id,
+          AnalyticsParams.name: nameItemController.text,
+          AnalyticsParams.price: priceItemController.text,
+        },
+      );
+
       GlobalDialogsHandles.snackbarSuccess(
         title: '¡Perfecto!',
         message: '${nameItemController.text} se actualizó exitosamente',
@@ -585,6 +623,16 @@ class CatalogsController extends GetxController {
         catalogId: catalogSelected.value!.id,
         itemId: item.id,
       );
+
+      AnalyticsService().logEvent(
+        name: AnalyticsEvents.catalogItemDeleted,
+        parameters: {
+          AnalyticsParams.catalogId: catalogSelected.value!.id,
+          AnalyticsParams.name: item.name,
+          AnalyticsParams.price: item.price.toString(),
+        },
+      );
+
       GlobalDialogsHandles.snackbarSuccess(
         title: '¡Perfecto!',
         message: 'Se eliminó ${item.name} con éxito.',

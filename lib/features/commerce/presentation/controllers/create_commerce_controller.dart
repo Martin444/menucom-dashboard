@@ -7,6 +7,7 @@ import 'package:pickmeup_dashboard/core/handles/global_handle_dialogs.dart';
 import 'package:pickmeup_dashboard/features/business_selection/models/business_type.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
 class CreateCommerceController extends GetxController {
   final nameCtrl = TextEditingController();
@@ -176,6 +177,7 @@ class CreateCommerceController extends GetxController {
 
       Get.offAllNamed('/');
     } on ApiException catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'create_commerce_controller.createCommerce');
       if (e.statusCode == 400 && e.message.toLowerCase().contains('límite')) {
         GlobalDialogsHandles.showPlanLimitDialog(
           title: 'Límite de comercios alcanzado',
@@ -189,6 +191,7 @@ class CreateCommerceController extends GetxController {
         );
       }
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'create_commerce_controller.createCommerce');
       GlobalDialogsHandles.snackbarError(
         title: 'Error',
         message: 'No se pudo crear el negocio: $e',

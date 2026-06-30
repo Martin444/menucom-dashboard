@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
 import 'package:menu_dart_api/menu_com_api.dart' as api;
 import 'package:pu_material/pu_material.dart' as ui;
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
 class MyPurchasesController extends GetxController {
   var purchases = <ui.Order>[].obs;
@@ -52,6 +53,7 @@ class MyPurchasesController extends GetxController {
       hasError.value = true;
       errorMessage.value = 'Error al cargar compras: $e';
       debugPrint('Error fetching purchases: $e');
+      AnalyticsService().logError(e.toString(), context: 'my_purchases_controller.fetchPurchases');
     } finally {
       isLoading.value = false;
     }

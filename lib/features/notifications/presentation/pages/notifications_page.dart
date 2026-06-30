@@ -4,6 +4,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:pu_material/pu_material.dart';
 import 'package:pickmeup_dashboard/features/home/presentation/widget/menu_side.dart';
 import 'package:pickmeup_dashboard/features/notifications/getx/notifications_controller.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 import 'templates_page.dart';
 import 'send_notification_page.dart';
 
@@ -73,7 +74,12 @@ class _NotificationsMobileViewState extends State<_NotificationsMobileView>
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
-          onTap: (index) => controller.selectedTabIndex.value = index,
+          onTap: (index) {
+            controller.selectedTabIndex.value = index;
+            AnalyticsService().logScreen(
+              screenName: index == 0 ? 'Notifications_Templates' : 'Notifications_Send',
+            );
+          },
           labelColor: PUColors.accentColor,
           unselectedLabelColor: PUColors.textColorMuted,
           indicatorColor: PUColors.accentColor,
@@ -154,8 +160,12 @@ class _NotificationsDesktopViewState extends State<_NotificationsDesktopView>
                       const Spacer(),
                       TabBar(
                         controller: _tabController,
-                        onTap: (index) =>
-                            controller.selectedTabIndex.value = index,
+                        onTap: (index) {
+                          controller.selectedTabIndex.value = index;
+                          AnalyticsService().logScreen(
+                            screenName: index == 0 ? 'Notifications_Templates' : 'Notifications_Send',
+                          );
+                        },
                         isScrollable: true,
                         tabAlignment: TabAlignment.start,
                         labelColor: PUColors.accentColor,

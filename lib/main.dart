@@ -8,7 +8,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // Firebase imports
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 // Auth system imports
 import 'package:pickmeup_dashboard/features/auth/config/firebase_config.dart';
 import 'package:pickmeup_dashboard/core/analytics_service.dart';
@@ -17,23 +16,18 @@ import 'features/auth/presentation/controllers/auth_bindings.dart';
 import 'routes/pages.dart';
 
 void main() async {
-  // Asegurar que los bindings de Flutter estén inicializados
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicializar Firebase
   await initializeFirebase();
 
-  // Inicializar servicios existentes
   await getToken();
   initializeServiceMenucomAPI();
 
-  // Inicializar sistema de autenticación
   AuthInitializer.initialize();
 
   runApp(const MyApp());
 }
 
-/// Inicializa Firebase para la aplicación
 Future<void> initializeFirebase() async {
   try {
     debugPrint('Iniciando configuración de Firebase...');
@@ -46,17 +40,9 @@ Future<void> initializeFirebase() async {
     debugPrint('Auth Domain: ${Firebase.app().options.authDomain}');
 
     AnalyticsService().init();
-
-    // Solo configurar emuladores en desarrollo si está habilitado
-    // Comentado temporalmente para debugging
-    // FirebaseDevConfig.configureEmulators();
   } catch (e) {
     debugPrint('Error al inicializar Firebase: $e');
     debugPrint('Stack trace: ${StackTrace.current}');
-
-    // En desarrollo, continuar sin Firebase para no bloquear la app
-    // TODO: En producción, considera mostrar un error al usuario o usar valores por defecto
-
     debugPrint('Continuando sin Firebase - funcionalidad social deshabilitada');
   }
 }
@@ -70,7 +56,7 @@ void initializeServiceMenucomAPI() {
 }
 
 Future<String?> getToken() async {
-  final storage = const FlutterSecureStorage();
+  const storage = FlutterSecureStorage();
   final token = await storage.read(key: 'access_token');
   if (token != null && token.isNotEmpty) {
     API.setAccessToken(token);
@@ -79,10 +65,51 @@ Future<String?> getToken() async {
   return token;
 }
 
-class MyApp extends StatelessWidget {
+/// Observador de ciclo de vida para session tracking de analytics.
+class _AnalyticsLifecycleObserver extends WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        AnalyticsService().logAppResumed();
+        break;
+      case AppLifecycleState.paused:
+        AnalyticsService().logAppBackground();
+        break;
+      case AppLifecycleState.detached:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.hidden:
+        break;
+    }
+  }
+}
+
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final _lifecycleObserver = _AnalyticsLifecycleObserver();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(_lifecycleObserver);
+    // Registrar app_open en el primer frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AnalyticsService().logAppOpen();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_lifecycleObserver);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

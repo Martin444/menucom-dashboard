@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/by_feature/events/events.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
 import 'events_controller.dart';
 
@@ -57,6 +58,7 @@ class EventDetailController extends GetxController {
       }
     } catch (e) {
       debugPrint('Error loading event: $e');
+      AnalyticsService().logError(e.toString(), context: 'event_detail_controller.loadEvent');
       errorMessage.value = 'Error al cargar el evento.';
     } finally {
       isLoading.value = false;
@@ -70,6 +72,7 @@ class EventDetailController extends GetxController {
       ticketTypes.assignAll(types);
     } catch (e) {
       debugPrint('Error loading ticket types: $e');
+      AnalyticsService().logError(e.toString(), context: 'event_detail_controller.loadTicketTypes');
     }
   }
 
@@ -94,6 +97,7 @@ class EventDetailController extends GetxController {
       );
     } catch (e) {
       debugPrint('Error publishing event: $e');
+      AnalyticsService().logError(e.toString(), context: 'event_detail_controller.publishEvent');
       Get.snackbar(
         'Error',
         'No se pudo publicar el evento',
@@ -127,6 +131,7 @@ class EventDetailController extends GetxController {
       );
     } catch (e) {
       debugPrint('Error cancelling event: $e');
+      AnalyticsService().logError(e.toString(), context: 'event_detail_controller.cancelEvent');
       Get.snackbar(
         'Error',
         'No se pudo cancelar el evento',
@@ -168,6 +173,7 @@ class EventDetailController extends GetxController {
       );
     } catch (e) {
       debugPrint('Error deleting event: $e');
+      AnalyticsService().logError(e.toString(), context: 'event_detail_controller.deleteEvent');
       Get.snackbar(
         'Error',
         'No se pudo eliminar el evento',
@@ -206,6 +212,7 @@ class EventDetailController extends GetxController {
       );
     } catch (e) {
       debugPrint('Error deleting ticket type: $e');
+      AnalyticsService().logError(e.toString(), context: 'event_detail_controller.deleteTicketType');
       Get.snackbar(
         'Error',
         'No se pudo eliminar el tipo de ticket',

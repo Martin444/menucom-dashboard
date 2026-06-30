@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/by_feature/events/events.dart';
 import 'package:pickmeup_dashboard/routes/routes.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
 class EventsController extends GetxController {
   final ListEventsUseCase _listEventsUseCase;
@@ -36,6 +37,7 @@ class EventsController extends GetxController {
       events.assignAll(result);
     } catch (e) {
       debugPrint('Error loading events: $e');
+      AnalyticsService().logError(e.toString(), context: 'events_controller.loadEvents');
       errorMessage.value = 'Error al cargar eventos. Intenta de nuevo.';
     } finally {
       isLoading.value = false;
@@ -50,6 +52,7 @@ class EventsController extends GetxController {
       selectedEvent.value = event;
     } catch (e) {
       debugPrint('Error loading event detail: $e');
+      AnalyticsService().logError(e.toString(), context: 'events_controller.loadEventDetail');
       errorMessage.value = 'Error al cargar el evento.';
     } finally {
       isLoading.value = false;
@@ -70,6 +73,7 @@ class EventsController extends GetxController {
       );
     } catch (e) {
       debugPrint('Error deleting event: $e');
+      AnalyticsService().logError(e.toString(), context: 'events_controller.deleteEvent');
       Get.snackbar(
         'Error',
         'No se pudo eliminar el evento',

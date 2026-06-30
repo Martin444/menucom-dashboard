@@ -729,7 +729,10 @@ class AuthController extends GetxController {
 
     _syncFcmToken();
     AnalyticsService().setUserId(user.id);
-    AnalyticsService().setUserProperty(name: 'role', value: user.role);
+    AnalyticsService().setUserProfile(
+      role: user.role,
+      isEmailVerified: user.isEmailVerified,
+    );
     _clearError();
   }
 

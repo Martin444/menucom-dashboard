@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
 import 'package:menu_dart_api/menu_com_api.dart' as api;
 import 'package:pu_material/pu_material.dart' as ui;
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
+import 'package:pickmeup_dashboard/core/analytics_events.dart';
 
 class OrdersController extends GetxController {
   // Lista reactiva de órdenes (usando el modelo del UI)
@@ -60,10 +62,19 @@ class OrdersController extends GetxController {
         hasMore.value = response.pagination?.hasNext ?? (response.orders.length == pageSize.value);
         currentPage.value++;
       }
+
+      AnalyticsService().logEvent(
+        name: AnalyticsEvents.ordersLoaded,
+        parameters: {
+          AnalyticsParams.orderCount: orders.length,
+          AnalyticsParams.type: refresh ? 'initial' : 'pagination',
+        },
+      );
     } catch (e) {
       hasError.value = true;
       errorMessage.value = 'Error al cargar órdenes: $e';
       debugPrint('Error fetching orders: $e');
+      AnalyticsService().logError(e.toString(), context: 'fetch_orders_error');
     } finally {
       isLoading.value = false;
     }

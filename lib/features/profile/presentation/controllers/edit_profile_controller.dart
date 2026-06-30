@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
 import 'package:pickmeup_dashboard/features/home/controllers/dinning_controller.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
+import 'package:pickmeup_dashboard/core/analytics_events.dart';
 
 /// Controlador para la edición de perfil de usuario
 ///
@@ -153,6 +155,18 @@ class EditProfileController extends GetxController {
         // Solo actualizar si la respuesta es exitosa
         _updateDinningControllerData(response.userData);
 
+        AnalyticsService().logEvent(
+          name: AnalyticsEvents.userProfileSaved,
+          parameters: {
+            AnalyticsParams.fieldsUpdated: [
+              'name',
+              'email',
+              'phone',
+              if (_selectedImageBytes != null) 'photo',
+            ].join(','),
+          },
+        );
+
         // Limpiar la imagen seleccionada ya que se guardó exitosamente
         _selectedImageBytes = null;
 
@@ -169,6 +183,7 @@ class EditProfileController extends GetxController {
       }
     } catch (e) {
       // En caso de error, mantener los datos originales
+      AnalyticsService().logError(e.toString(), context: 'user_profile_save_error');
       _showErrorSnackbar('Error al actualizar el perfil: $e');
     } finally {
       _isLoading = false;

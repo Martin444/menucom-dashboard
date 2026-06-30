@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:menu_dart_api/menu_com_api.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
 class NotificationsController extends GetxController {
   final _createUseCase = CreateNotificationTemplateUseCase();
@@ -82,6 +83,7 @@ class NotificationsController extends GetxController {
     } catch (e) {
       templatesError.value = 'Error al cargar templates: $e';
       debugPrint('Error loading templates: $e');
+      AnalyticsService().logError(e.toString(), context: 'notifications_controller.loadTemplates');
     } finally {
       isTemplatesLoading.value = false;
     }
@@ -108,6 +110,7 @@ class NotificationsController extends GetxController {
       return await _getUseCase.call(id);
     } catch (e) {
       debugPrint('Error getting template: $e');
+      AnalyticsService().logError(e.toString(), context: 'notifications_controller.getTemplate');
       Get.snackbar('Error', 'No se pudo cargar el template');
       return null;
     }
@@ -119,6 +122,7 @@ class NotificationsController extends GetxController {
     try {
       editingTemplate.value = await _getUseCase.call(id);
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'notifications_controller.loadTemplateForEdit');
       Get.snackbar('Error', 'No se pudo cargar el template para editar');
     } finally {
       isSaving.value = false;
@@ -132,6 +136,7 @@ class NotificationsController extends GetxController {
       Get.snackbar('Éxito', 'Template creado correctamente');
       return true;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'notifications_controller.createTemplate');
       Get.snackbar('Error', 'No se pudo crear el template: $e');
       return false;
     } finally {
@@ -148,6 +153,7 @@ class NotificationsController extends GetxController {
       editingTemplate.value = null;
       return true;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'notifications_controller.updateTemplate');
       Get.snackbar('Error', 'No se pudo actualizar el template: $e');
       return false;
     } finally {
@@ -172,6 +178,7 @@ class NotificationsController extends GetxController {
       Get.snackbar('Éxito', 'Template "$name" desactivado');
       await loadTemplates(refresh: true);
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'notifications_controller.deleteTemplate');
       Get.snackbar('Error', 'No se pudo desactivar el template: $e');
     }
   }
@@ -202,6 +209,7 @@ class NotificationsController extends GetxController {
     } catch (e) {
       usersError.value = 'Error al cargar usuarios: $e';
       debugPrint('Error loading users: $e');
+      AnalyticsService().logError(e.toString(), context: 'notifications_controller.loadUsers');
     } finally {
       isUsersLoading.value = false;
     }
@@ -319,6 +327,7 @@ class NotificationsController extends GetxController {
       selectedUserIds.clear();
       return result;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'notifications_controller.sendDirect');
       Get.snackbar('Error', 'No se pudo enviar la notificación: $e');
       return null;
     } finally {
@@ -358,6 +367,7 @@ class NotificationsController extends GetxController {
       _templatePlaceholders.clear();
       return result;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'notifications_controller.sendFromTemplate');
       Get.snackbar('Error', 'No se pudo enviar la notificación: $e');
       return null;
     } finally {

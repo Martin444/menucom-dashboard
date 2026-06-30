@@ -9,6 +9,7 @@ import 'package:menu_dart_api/by_feature/user/count_users_admin/data/usecase/cou
 import 'package:menu_dart_api/by_feature/user/count_users_admin/model/count_users_admin_params.dart';
 
 import 'package:menu_dart_api/by_feature/user/count_users_admin/model/count_users_admin_response.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
 class AdminDashboardController extends GetxController {
   final selectedIndex = 0.obs;
@@ -62,6 +63,7 @@ class AdminDashboardController extends GetxController {
           .toList();
     } catch (e) {
       debugPrint('Error searching orders: $e');
+      AnalyticsService().logError(e.toString(), context: 'admin_dashboard_controller.search');
     } finally {
       isLoading.value = false;
     }
@@ -109,6 +111,7 @@ class AdminDashboardController extends GetxController {
       debugPrint('Dashboard data loaded: ${recentOrders.length} orders');
     } catch (e) {
       debugPrint('Unexpected error loading dashboard data: $e');
+      AnalyticsService().logError(e.toString(), context: 'admin_dashboard_controller.loadDashboardData');
     } finally {
       isLoading.value = false;
     }
@@ -120,6 +123,7 @@ class AdminDashboardController extends GetxController {
       return await call();
     } catch (e) {
       debugPrint('Error in dashboard sub-task: $e');
+      AnalyticsService().logError(e.toString(), context: 'admin_dashboard_controller._safeCall');
       return null;
     }
   }
@@ -141,9 +145,18 @@ class AdminDashboardController extends GetxController {
       hasMore.value = response.pagination?.hasNext ?? (response.orders.length == pageSize.value);
     } catch (e) {
       debugPrint('Error loading orders: $e');
+      AnalyticsService().logError(e.toString(), context: 'admin_dashboard_controller.loadRecentOrders');
       Get.snackbar('Error', 'No se pudieron cargar las órdenes');
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void onTabChanged(int index, String tabName) {
+    selectedIndex.value = index;
+    AnalyticsService().logEvent(
+      name: 'admin_tab_changed',
+      parameters: {'tab_name': tabName, 'tab_index': index},
+    );
   }
 }

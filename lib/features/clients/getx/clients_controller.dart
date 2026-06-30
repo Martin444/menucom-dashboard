@@ -4,6 +4,7 @@ import 'package:menu_dart_api/by_feature/user/get_users_by_roles/model/user_by_r
 import 'package:menu_dart_api/by_feature/user/get_users_by_roles/model/users_by_roles_params.dart';
 import 'package:menu_dart_api/by_feature/user/get_users_by_roles/data/usescase/get_users_by_roles_usecase.dart';
 import 'package:menu_dart_api/by_feature/user/get_me_profile/model/roles_users.dart';
+import 'package:pickmeup_dashboard/core/analytics_service.dart';
 
 class ClientsController extends GetxController {
   final getUsersByRolesUseCase = GetUsersByRolesUseCase();
@@ -73,6 +74,7 @@ class ClientsController extends GetxController {
       totalPages.value = (filteredClients.length / itemsPerPage.value).ceil();
       currentPage.value = 1;
     } catch (e) {
+      AnalyticsService().logError(e.toString(), context: 'clients_controller.loadClients');
       errorMessage.value = 'Error al cargar clientes: $e';
     } finally {
       isLoading.value = false;
@@ -100,6 +102,7 @@ class ClientsController extends GetxController {
       }).length;
     } catch (e) {
       debugPrint('Error loading client counts: $e');
+      AnalyticsService().logError(e.toString(), context: 'clients_controller.loadCounts');
     }
   }
 
