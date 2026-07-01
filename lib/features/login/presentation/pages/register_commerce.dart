@@ -88,7 +88,7 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                   style: PuTextStyle.title1,
                                                 ),
                                                 Text(
-                                                  'Completá los campos con información de tu negocio.',
+                                                  'Completá los campos con información personal.',
                                                   textAlign: TextAlign.start,
                                                   style: PuTextStyle.title2,
                                                   softWrap: true,
@@ -97,13 +97,14 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                   height: 20,
                                                 ),
                                                 CardTakePhoto(
-                                                  onTaka: () {
-                                                    _.pickImageDirectory();
-                                                  },
                                                   isTaked: _.fileTaked != null,
+                                                  title: 'Cargá tu foto de perfil (.jpg, .png)',
                                                   photoInBytes: _.fileTaked ?? Uint8List(2),
                                                   isLogo: true,
                                                   isLoading: _.isLoadingImage.value,
+                                                  onTaka: () {
+                                                    _.pickImageDirectory();
+                                                  },
                                                 ),
                                                 const SizedBox(
                                                   height: 15,
@@ -123,9 +124,8 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                     }
                                                     return null;
                                                   },
-                                                  errorText: _.errorTextEmail.value.isEmpty
-                                                      ? null
-                                                      : _.errorTextEmail.value,
+                                                  errorText:
+                                                      _.errorTextEmail.value.isEmpty ? null : _.errorTextEmail.value,
                                                 ),
                                                 const SizedBox(
                                                   height: 15,
@@ -136,9 +136,8 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                   isPassword: false,
                                                   textInputAction: TextInputAction.next,
                                                   textInputType: TextInputType.name,
-                                                  errorText: _.errorTextName.value.isEmpty
-                                                      ? null
-                                                      : _.errorTextName.value,
+                                                  errorText:
+                                                      _.errorTextName.value.isEmpty ? null : _.errorTextName.value,
                                                   controller: _.newNameController,
                                                 ),
                                                 const SizedBox(
@@ -149,9 +148,8 @@ class _RegisterCommerceState extends State<RegisterCommerce> {
                                                   isPassword: false,
                                                   textInputAction: TextInputAction.next,
                                                   textInputType: TextInputType.phone,
-                                                  errorText: _.errorTextPhone.value.isEmpty
-                                                      ? null
-                                                      : _.errorTextPhone.value,
+                                                  errorText:
+                                                      _.errorTextPhone.value.isEmpty ? null : _.errorTextPhone.value,
                                                   controller: _.newPhoneController,
                                                 ),
                                                 const SizedBox(
